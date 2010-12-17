@@ -1,0 +1,61 @@
+package org.liris.ktbs.core.impl;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.Trace;
+
+public class TraceImpl extends KtbsResourceImpl implements Trace {
+
+	private Map<String,Obsel> obsels;
+	private String traceModelURI;
+	private Date origin;
+	private Base base;
+	
+	TraceImpl(String resourceUri,String traceModelURI, Date origin, Base base) {
+		super(resourceUri);
+		this.traceModelURI = traceModelURI;
+		obsels = new HashMap<String, Obsel>();
+		this.origin = origin;
+		this.base = base;
+	}
+
+	@Override
+	public Collection<Obsel> getObsels() {
+		return obsels.values();
+	}
+
+	@Override
+	public void addObsel(Obsel obsel) {
+		obsels.put(obsel.getURI(),obsel);
+	}
+
+	@Override
+	public void removeObsel(String obselURI) {
+		obsels.remove(obselURI);
+	}
+
+	@Override
+	public String getTraceModelUri() {
+		return traceModelURI;
+	}
+
+	@Override
+	public Collection<String> getObselURIs() {
+		return obsels.keySet();
+	}
+
+	@Override
+	public Date getOrigin() {
+		return origin;
+	}
+
+	@Override
+	public Base getBase() {
+		return base;
+	}
+}

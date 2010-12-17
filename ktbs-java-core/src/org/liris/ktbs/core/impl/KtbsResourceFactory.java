@@ -14,37 +14,48 @@ import org.liris.ktbs.core.Trace;
 
 public class KtbsResourceFactory {
 
-	public static KtbsRoot createKtbsRoot(String resourceUri, String... strings) {
-		return new KTBSRootImpl(resourceUri);
+	public static KtbsRoot createKtbsRoot(String resourceUri, String label, String... baseURIs) {
+		KtbsRootImpl ktbsRootImpl = new KtbsRootImpl(resourceUri, baseURIs);
+		ktbsRootImpl.setLabel(label);
+		return ktbsRootImpl;
 	}
 
-	public static Base createBase(String baseLocalName, String rootURI, String[] traceURIs, String[] traceModelURIs) {
-		return new BaseImpl(baseLocalName, rootURI,traceURIs,traceModelURIs);
+	public static Base createBase(String baseLocalName, String rootURI, String label, String[] traceURIs, String[] traceModelURIs) {
+		BaseImpl baseImpl = new BaseImpl(baseLocalName, rootURI,traceURIs,traceModelURIs);
+		baseImpl.setLabel(label);
+		return baseImpl;
 	}
 	
-	public static Base createBase(String baseUri, KtbsRoot root) {
-		return new BaseImpl(baseUri, root);
+	public static Base createBase(String baseUri, KtbsRoot root, String label) {
+		BaseImpl baseImpl = new BaseImpl(baseUri, root);
+		baseImpl.setLabel(label);
+		return baseImpl;
 	}
 
-	public static Trace createTrace(String resourceUri, String traceModelURI, Date origin, Base base) {
-		return new TraceImpl(resourceUri, traceModelURI, origin, base);
+	public static Trace createTrace(String resourceUri, String traceModelURI, String label, Date origin, Base base) {
+		TraceImpl traceImpl = new TraceImpl(resourceUri, traceModelURI, origin, base);
+		traceImpl.setLabel(label);
+		return traceImpl;
 	}
 
-	public static Obsel createObsel(String resourceUri, Trace parentTrace, Date begin, Date end, String typeURI, Map<String, Serializable> attributes) {
+	public static Obsel createObsel(String resourceUri, Trace parentTrace, Date begin, Date end, String typeURI, Map<String, Serializable> attributes, String label) {
 		if(parentTrace.getObselURIs().contains(resourceUri))
 			throw new IllegalStateException("There is already an obsel with the same uri \""+resourceUri+"\" in the trace \""+parentTrace.getURI()+"\".");
-		return new ObselImpl(resourceUri, parentTrace, begin, end, typeURI, attributes);
+		ObselImpl obselImpl = new ObselImpl(resourceUri, parentTrace, begin, end, typeURI, attributes);
+		obselImpl.setLabel(label);
+		return obselImpl;
 	}
 
 	public static long obselID = 0;
-	public static Obsel createObsel(Trace parentTrace, Date begin, Date end, String typeURI, Map<String, Serializable> attributes) {
+	
+	public static Obsel createObsel(Trace parentTrace, String label, Date begin, Date end, String typeURI, Map<String, Serializable> attributes) {
 		
 		Collection<String> obselURIs = parentTrace.getObselURIs();
 		while(obselURIs.contains(parentTrace.getURI()+ KtbsResourceFactory.obselID + "/"))
 			KtbsResourceFactory.obselID++;
 		String resourceUri = parentTrace.getURI()+ KtbsResourceFactory.obselID + "/";
 
-		return createObsel(resourceUri, parentTrace, begin, end, typeURI, attributes);
+		return createObsel(resourceUri, parentTrace, begin, end, typeURI, attributes, label);
 	}
 
 	public static Relation createRelation(Obsel from, String relationName, Obsel to) {
@@ -70,14 +81,16 @@ public class KtbsResourceFactory {
 		return relation;
 	}
 
-	public static Base createBase(String uri) {
-		return createBase(uri, (KtbsRoot)null);
+	public static Base createBase(String uri, String label) {
+		return createBase(uri, (KtbsRoot)null, label);
 	}
 
 	public static Obsel createObsel(String obselURI, String traceURI,
 			Date begin, Date end, String typeURI,
-			Map<String, Serializable> attributes) {
-		return new ObselImpl(obselURI, traceURI, begin, end, typeURI, attributes);
+			Map<String, Serializable> attributes, String label) {
+		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, begin, end, typeURI, attributes);
+		obselImpl.setLabel(label);
+		return obselImpl;
 	}
 	
 }

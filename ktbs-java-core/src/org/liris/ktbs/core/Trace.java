@@ -21,4 +21,5 @@ public interface Trace extends KtbsResource {
 	public String getTraceModelUri();
 
 	public Base getBase();
+	public String getBaseURI();
 }

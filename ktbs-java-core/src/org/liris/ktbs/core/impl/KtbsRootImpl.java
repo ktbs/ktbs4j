@@ -9,11 +9,11 @@ import java.util.Map;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsRoot;
 
-public class KTBSRootImpl extends KtbsResourceImpl implements KtbsRoot {
+public class KtbsRootImpl extends KtbsResourceImpl implements KtbsRoot {
 
 	private Map<String,Base> bases;
 	
-	KTBSRootImpl(String resourceUri, String... baseURIs) {
+	KtbsRootImpl(String resourceUri, String... baseURIs) {
 		super(resourceUri);
 		bases = new HashMap<String, Base>();
 		for(String baseURI:baseURIs)

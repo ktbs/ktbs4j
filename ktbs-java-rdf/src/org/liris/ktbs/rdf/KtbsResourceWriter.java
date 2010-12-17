@@ -15,20 +15,22 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class KtbsResourceWriter {
 
-	private KtbsResource ktbsResource;
+	private KtbsResource[] ktbsResources;
 
-	public KtbsResourceWriter(KtbsResource ktbsResource) {
+	public KtbsResourceWriter(KtbsResource... ktbsResources) {
 		super();
-		this.ktbsResource = ktbsResource;
+		this.ktbsResources = ktbsResources;
 	}
 
 	public String serializeToString(String jenaSyntax, boolean withParent) {
 		Model jenaModel = ModelFactory.createDefaultModel();
 
-		KtbsResourceWriter.addResourceToModel(ktbsResource, jenaModel, withParent);
+		for(KtbsResource resource:ktbsResources)
+			KtbsResourceWriter.addResourceToModel(resource, jenaModel, withParent);
 
 		StringWriter writer = new StringWriter();
 
@@ -37,6 +39,7 @@ public class KtbsResourceWriter {
 		return writer.toString();
 	}
 
+	
 	/**
 	 * Transforms a {@link KtbsResource} into a RDF {@link Resource} and add it to
 	 * a Jena model, or returns the RDF resource if it already exists in the Jena model.
@@ -77,6 +80,10 @@ public class KtbsResourceWriter {
 				addResourceToModel(obsel, jenaModel, false);
 			}
 
+			if(withParent) {
+				Resource baseResource = jenaModel.createResource(trace.getBaseURI());
+				baseResource.addProperty(jenaModel.createProperty(KtbsConstants.KTBS_OWNS), rdfResource);
+			}
 			return rdfResource;
 		} else if (ktbsResource instanceof Obsel) {
 			Obsel obsel = (Obsel) ktbsResource;
@@ -134,6 +141,7 @@ public class KtbsResourceWriter {
 						targetResource);
 			}
 
+			
 			return rdfResource;
 		} else if (ktbsResource instanceof Base) {
 			Base base = (Base) ktbsResource;
@@ -154,6 +162,39 @@ public class KtbsResourceWriter {
 		}
 	}
 
+	public static String traceModelToString(String baseURI, String traceModelURI, String label, String jenaSyntax) {
+		Model jenaModel = ModelFactory.createDefaultModel();
+		
+		jenaModel.add(
+				jenaModel.createResource(baseURI),
+				jenaModel.createProperty(KtbsConstants.KTBS_OWNS),
+				jenaModel.createResource(traceModelURI)
+		);
+
+		jenaModel.add(
+				jenaModel.createResource(traceModelURI),
+				RDF.type,
+				jenaModel.createResource(KtbsConstants.KTBS_TRACEMODEL)
+		);
+
+		addLabelToModel(traceModelURI, label, jenaModel);
+		
+		StringWriter writer = new StringWriter();
+		jenaModel.write(writer, jenaSyntax);
+		
+		return writer.toString();
+	}
+
+	private static void addLabelToModel(String baseURI, String label,
+			Model jenaModel) {
+		jenaModel.add(
+				jenaModel.createResource(baseURI),
+				RDFS.label,
+				jenaModel.createLiteral(label)
+		);
+	}
+	
+	
 	public static String relationToString(String fromObselURI,
 			String relationName, String toObselURI, String jenaSyntax) {
 		Model jenaModel = ModelFactory.createDefaultModel();

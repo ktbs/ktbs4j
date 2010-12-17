@@ -5,30 +5,30 @@ package org.liris.ktbs.client;
  * @author Damien Cram
  *
  */
-public interface KtbsResponseStatus {
+public enum KtbsResponseStatus {
 	
 	/**
 	 * the KTBS resource has been created on the server with no issue
 	 */
-	public static final int RESOURCE_CREATED = 0;
+	RESOURCE_CREATED,
 	
 	
 	/**
 	 * the KTBS resource has been modified on the server with no issue
 	 */
-	public static final int RESOURCE_MODIFIED = 1;
+	RESOURCE_MODIFIED,
 	
 	
 	/**
 	 * the KTBS resource has been deleted from the server with no issue
 	 */
-	public static final int RESOURCE_DELETED = 2;
+	RESOURCE_DELETED,
 	
 	
 	/**
 	 * the KTBS resource has been retrieved from the server with no issue
 	 */
-	public static final int RESOURCE_RETRIVED = 3;
+	RESOURCE_RETRIEVED,
 	
 	/**
 	 * Represents an exception (not necessary an error, e.g. it could be a "resource already exists" 
@@ -36,10 +36,10 @@ public interface KtbsResponseStatus {
 	 * executing the request. Users might want to call KtbsResponseStatus.getHttpStatus() to 
 	 * get more information about the exception.
 	 */
-	public static final int SERVER_EXCEPTION = 4;
+	SERVER_EXCEPTION,
 	
 	/**
 	 * represents an error occurred within the KTBS client when executing the request.
 	 */
-	public static final int INTERNAL_ERR0R = 5;
+	INTERNAL_ERR0R
 }

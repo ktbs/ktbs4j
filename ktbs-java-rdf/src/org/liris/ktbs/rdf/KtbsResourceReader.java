@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import javax.management.InstanceAlreadyExistsException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.Base;
@@ -19,9 +17,7 @@ import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.datatypes.xsd.impl.XSDDateTimeType;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -36,7 +32,7 @@ public class KtbsResourceReader {
 
 	private static Log log = LogFactory.getLog(KtbsResourceReader.class);
 
-	public <T extends KtbsResource> T deserializeFromStream(String ktbsResourceURI, InputStream stream, String jenaSyntax, Class<T> ktbsResourceType, String restAspect) {
+	public KtbsResource deserializeFromStream(String ktbsResourceURI, InputStream stream, String jenaSyntax, Class<?> ktbsResourceType, String restAspect) {
 
 		Model jenaModel = ModelFactory.createDefaultModel();
 
@@ -45,14 +41,14 @@ public class KtbsResourceReader {
 
 		if(restAspect != null && !restAspect.equals(""))
 			ktbsResourceURI = ktbsResourceURI.replaceAll(restAspect, "");
-		T resource = createResourceFromRDFModel(ktbsResourceURI, jenaModel, ktbsResourceType, restAspect);
+		KtbsResource resource = createResourceFromRDFModel(ktbsResourceURI, jenaModel, ktbsResourceType, restAspect);
 		return resource;
 	}
 
 
 	@SuppressWarnings("unchecked")
-	private <T extends KtbsResource> T createResourceFromRDFModel(String ktbsResourceURI, Model jenaModel,
-			Class<T> ktbsResourceType, String restAspect) {
+	private KtbsResource createResourceFromRDFModel(String ktbsResourceURI, Model jenaModel,
+			Class<?> ktbsResourceType, String restAspect) {
 		if(KtbsRoot.class.isAssignableFrom(ktbsResourceType)) {
 
 			Resource ktbsRootType = jenaModel.getResource(KtbsConstants.KTBS_KTBSROOT);
@@ -72,10 +68,14 @@ public class KtbsResourceReader {
 				baseURIs.add(statement.getObject().asResource().getURI());
 			}
 
-			KtbsRoot ktbsRoot = KtbsResourceFactory.createKtbsRoot(ktbsRDFResource.getURI(),baseURIs.toArray(new String[baseURIs.size()]));
-			getKtbsResourceLabel(ktbsRDFResource, ktbsRoot);
+			String label = getKtbsResourceLabel(ktbsRDFResource);
+			KtbsRoot ktbsRoot = KtbsResourceFactory.createKtbsRoot(
+					ktbsRDFResource.getURI(),
+					label,
+					baseURIs.toArray(new String[baseURIs.size()])
+				);
 
-			return (T) ktbsRoot;
+			return ktbsRoot;
 		} else if(Base.class.isAssignableFrom(ktbsResourceType)) {
 			// the RDF resource that represents this base
 			Resource ktbsRDFResource = jenaModel.getResource(ktbsResourceURI);
@@ -113,17 +113,17 @@ public class KtbsResourceReader {
 
 
 			// creates the base object
+			String label = getKtbsResourceLabel(ktbsRDFResource);
 			Base base = KtbsResourceFactory.createBase(
 					ktbsRDFResource.getURI(),
 					ktbsRootURI, 
+					label,
 					traceURIs.toArray(new String[traceURIs.size()]),
 					traceModelURIs.toArray(new String[traceModelURIs.size()])
 			);
 
-			// adds the rdf label to this base
-			getKtbsResourceLabel(ktbsRDFResource, base);
 
-			return (T) base;
+			return base;
 
 		} else if(Trace.class.isAssignableFrom(ktbsResourceType)) {
 			Resource thisTraceResource = jenaModel.getResource(ktbsResourceURI);
@@ -136,7 +136,7 @@ public class KtbsResourceReader {
 				// This is a @obsels trace request
 
 				StmtIterator obselResourceIt = jenaModel.listStatements(null, hasTraceProperty, thisTraceResource);
-				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null);
+				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null, null);
 				
 				Collection<Statement> obselRelationStatements = new LinkedList<Statement>();
 				Map<String, Obsel> uriToObsel = new HashMap<String, Obsel>();
@@ -175,17 +175,17 @@ public class KtbsResourceReader {
 				} else {
 					origin = ((XSDDateTime)thisTraceResource.getProperty(hasOrigin).getObject().asLiteral().getValue()).asCalendar().getTime();
 				}
-				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, traceModelURI, origin, null);
+				String label = getKtbsResourceLabel(thisTraceResource);
+				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, traceModelURI, label, origin, null);
 
-				getKtbsResourceLabel(thisTraceResource, trace);
 			}
 
-			return (T) trace;
+			return trace;
 		} else if(Obsel.class.isAssignableFrom(ktbsResourceType)) {
 			Collection<Statement> relations = new LinkedList<Statement>();
 			Obsel obsel = createObselFromRDFModel(ktbsResourceURI, jenaModel, relations);
 			
-			return (T) obsel;
+			return obsel;
 		} else {
 			throw new UnsupportedOperationException("Cannot read a KTBS resource of type " + ktbsResourceType.getCanonicalName()+ ".");
 		}
@@ -252,19 +252,19 @@ public class KtbsResourceReader {
 			}
 		}
 
-		Obsel obsel = KtbsResourceFactory.createObsel(obselURI, traceURI, begin, end, typeURI, attributes);
+		String label = getKtbsResourceLabel(obselResource);
+		Obsel obsel = KtbsResourceFactory.createObsel(obselURI, traceURI, begin, end, typeURI, attributes,label);
 
-		getKtbsResourceLabel(obselResource, obsel);
 
 		return obsel;
 	}
 
-	private void getKtbsResourceLabel(Resource ktbsRDFResource,
-			KtbsResource ktbsResource) {
-
+	private String getKtbsResourceLabel(Resource ktbsRDFResource) {
 		Statement st = ktbsRDFResource.getProperty(RDFS.label);
 		if(st!=null && st.getObject() != null)
-			ktbsResource.setLabel(st.getString());
+			return st.getString();
+		else
+			return null;
 	}
 
 }

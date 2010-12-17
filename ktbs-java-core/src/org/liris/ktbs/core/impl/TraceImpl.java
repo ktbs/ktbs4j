@@ -15,13 +15,23 @@ public class TraceImpl extends KtbsResourceImpl implements Trace {
 	private String traceModelURI;
 	private Date origin;
 	private Base base;
-	
+	private String baseURI;
+
+
 	TraceImpl(String resourceUri,String traceModelURI, Date origin, Base base) {
 		super(resourceUri);
 		this.traceModelURI = traceModelURI;
 		obsels = new HashMap<String, Obsel>();
 		this.origin = origin;
 		this.base = base;
+	}
+
+	TraceImpl(String resourceUri,String traceModelURI, Date origin, String baseURI) {
+		super(resourceUri);
+		this.traceModelURI = traceModelURI;
+		obsels = new HashMap<String, Obsel>();
+		this.origin = origin;
+		this.baseURI = baseURI;
 	}
 
 	@Override
@@ -57,5 +67,13 @@ public class TraceImpl extends KtbsResourceImpl implements Trace {
 	@Override
 	public Base getBase() {
 		return base;
+	}
+
+	@Override
+	public String getBaseURI() {
+		if(getBase() != null) 
+			this.baseURI = getBase().getURI();
+		return baseURI;
+
 	}
 }

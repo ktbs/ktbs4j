@@ -9,7 +9,7 @@ import org.liris.ktbs.rdf.KtbsResourceWriter;
 public class CoreTests {
 	public static void main(String[] args) {
 		TraceBuilder builder = new TraceBuilder();
-		builder.createNewTrace("http://mydomain/mytrace/", "http://mydomain/mymodel/", "15-12-2010", "14:15:00");
+		builder.createNewTrace("http://mydomain/mytrace/", "http://mydomain/mymodel/", "Ma super trace de Damien", "15-12-2010", "14:15:00");
 		builder.addInstantObsel("14:18:00", "Envoyermail", "destinataire", "Damien", "message", "Salut tout le monde, regardez ces pièces jointes", "nbpiecesjointes", 3);
 		builder.addInstantObsel("14:21:21", "Recevoirmail", "expediteur", "PA", "message", "Très intéressant");
 		Obsel obs1 = builder.addInstantObsel("14:29:50", "Recevoirmail", "expediteur", "Yannick", "message", "J'ai modifié le rapport", "nbpiecesjointes", 1);

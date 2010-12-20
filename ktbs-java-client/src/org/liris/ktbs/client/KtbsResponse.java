@@ -45,4 +45,17 @@ public interface KtbsResponse {
 	 */
 	public HttpResponse getHTTPResponse();
 	
+	/**
+	 * 
+	 * @return the ETag header of a GET response, null if none.
+	 */
+	public String getHTTPETag();
+
+	/**
+	 * 
+	 * @return the location header returned by the KTBS server to give the URI
+	 * of the created resource, null if none.
+	 */
+	public String getHTTPLocation();
+	
 }

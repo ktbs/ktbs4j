@@ -18,6 +18,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
@@ -57,6 +58,8 @@ import org.liris.ktbs.rdf.RDFResourceBuilder;
  * @see KtbsClientService
  */
 public class KtbsClient implements KtbsClientService {
+
+	public static final String MESSAGE_DELETE_NOT_SUPPORTED = "DELETE method are not supported by the KTBS server in the current version";
 
 	private static Log log = LogFactory.getLog(KtbsClient.class);
 
@@ -161,6 +164,26 @@ public class KtbsClient implements KtbsClientService {
 	public KtbsResponse getKtbsRoot(String rootURI) {
 		return performGetRequest(rootURI, KtbsRoot.class, null);
 	}
+	
+	
+	private KtbsResponse performDeleteRequest(String ktbsResourceURI) {
+		HttpDelete delete = new HttpDelete(ktbsResourceURI);
+		HttpResponse response = null;
+		KtbsResponseStatus ktbsResponseStatus = null;
+		try {
+			response = httpClient.execute(delete);
+		} catch (ClientProtocolException e) {
+			log.warn("HTTP error when trying to delete the resource \""+ktbsResourceURI+"\".",e);
+		} catch (IOException e) {
+			log.warn("HTTP error when trying to delete the resource \""+ktbsResourceURI+"\".",e);
+		}
+		return new KtbsResponseImpl(
+				null, 
+				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_DELETED, 
+				ktbsResponseStatus, 
+				response);
+	}
+
 
 	private KtbsResponse performGetRequest(String ktbsResourceURI, Class<?> clazz, String restAspect) {
 		HttpGet get = new HttpGet(ktbsResourceURI);
@@ -314,52 +337,33 @@ public class KtbsClient implements KtbsClientService {
 	@Override
 	public KtbsResponse deleteRelation(String traceURI, String relationName,
 			String fromObselURI, String toObselURI) {
-		// TODO Auto-generated method stub
-
-		return null;
+		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
 
 	@Override
 	public KtbsResponse deleteBase(String rootURI, String baseLocalName) {
-		// TODO Auto-generated method stub
-
-		return null;
-	}
-
-	@Override
-	public KtbsResponse deleteBase(String rootURI, Base base) {
-		// TODO Auto-generated method stub
-
-		return null;
+		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
 
 	@Override
 	public KtbsResponse deleteBase(String baseURI) {
-		// TODO Auto-generated method stub
-
-		return null;
+		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
 
 	@Override
-	public KtbsResponse deleteTrace(String baseURI, String traceLocalName) {
-		// TODO Auto-generated method stub
-
-		return null;
+	public KtbsResponse deleteTrace(String baseURI, String baseLocalName) {
+		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
 
 	@Override
 	public KtbsResponse deleteTrace(String traceURI) {
-		// TODO Auto-generated method stub
-
-		return null;
+		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
-
+	
 	@Override
 	public KtbsResponse deleteObsel(String obselURI) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
-
 
 	@Override
 	public KtbsResponse getObsel(String traceURI, String obselLocalName) {
@@ -401,7 +405,7 @@ public class KtbsClient implements KtbsClientService {
 			String... outgoingRelations) {
 
 		Obsel obsel = KtbsResourceFactory.createObsel(
-				traceURI+obselLocalName+"/", 
+				traceURI+obselLocalName, 
 				traceURI, 
 				subject,
 				begin, 

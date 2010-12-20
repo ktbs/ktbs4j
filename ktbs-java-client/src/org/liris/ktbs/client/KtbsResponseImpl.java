@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.protocol.HTTP;
 import org.liris.ktbs.core.KtbsResource;
 
 public class KtbsResponseImpl implements KtbsResponse {
@@ -79,5 +82,26 @@ public class KtbsResponseImpl implements KtbsResponse {
 		}
 		s+=resource==null?"(Resource is null)":"(Resource is not null)"+sep;
 		return s;
+	}
+
+	@Override
+	public String getHTTPETag() {
+		return readHeader(HttpHeaders.ETAG);
+			
+	}
+
+	public String readHeader(String headerName) {
+		if(httpResponse==null)
+				return null;
+		
+		Header[] headers = httpResponse.getHeaders(headerName);
+		if(headers==null || headers.length > 0)
+			return null;
+		return headers[0].getValue();
+	}
+
+	@Override
+	public String getHTTPLocation() {
+		return readHeader(HttpHeaders.LOCATION);
 	}
 }

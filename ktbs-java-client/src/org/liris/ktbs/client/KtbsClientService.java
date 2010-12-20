@@ -70,7 +70,6 @@ public interface KtbsClientService {
 	 * Services bound to a DELETE request
 	 */
 	public KtbsResponse deleteBase(String rootURI, String baseLocalName);
-	public KtbsResponse deleteBase(String rootURI, Base base);
 	public KtbsResponse deleteBase(String baseURI);
 	public KtbsResponse deleteTrace(String baseURI, String traceLocalName);
 	public KtbsResponse deleteTrace(String traceURI);

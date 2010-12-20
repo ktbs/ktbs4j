@@ -26,7 +26,7 @@ public class ClientTest {
 		KtbsClient client = app.getKtbsClient("http://localhost:8001/");
 		client.startSession();
 		
-//		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/f71b1f2a3cb8b2c741b468fd911551b2/");
+//		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/0cd86043ba40d40aa91ad18bdd714634");
 //		KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
 //		KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
 //		KtbsResponse response = client.getKtbsRoot("http://localhost:8001/");
@@ -43,7 +43,7 @@ public class ClientTest {
 //		Collection<Obsel> obsels = traceBuilder.getTrace().getObsels();
 //		KtbsResponse response = client.addObselsToTrace("http://localhost:8001/base1/t01/", obsels);
 		
-		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+//		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
 //		attributes.put("http://localhost:8001/base1/model1/message", "Recevez-vous ce message ?");
 //		KtbsResponse response = client.createObsel(
 //				"http://localhost:8001/base1/t01/", 
@@ -57,20 +57,22 @@ public class ClientTest {
 //				"http://localhost:8001/base1/model1/onChannel",
 //				"http://localhost:8001/base1/t01/openchat2/"
 //		);
-		attributes.put("http://localhost:8001/base1/model1/channel", "BBC 2");
-		KtbsResponse response = client.createObsel(
-				"http://localhost:8001/base1/t01/", 
-				"openchat2", 
-				"micheal", 
-				"Mon 3ème observé", 
-				"http://localhost:8001/base1/model1/OpenChat", 
-				new Date(), 
-				new Date(), 
-				attributes
-		);
+//		attributes.put("http://localhost:8001/base1/model1/channel", "BBC 2");
+//		KtbsResponse response = client.createObsel(
+//				"http://localhost:8001/base1/t01/", 
+//				"openchat2", 
+//				"micheal", 
+//				"Mon 3ème observé", 
+//				"http://localhost:8001/base1/model1/OpenChat", 
+//				new Date(), 
+//				new Date(), 
+//				attributes
+//		);
 		
-		
-		
+		KtbsResponse response = client.deleteTrace("http://localhost:8001/base1/");
+//		KtbsResponse response = client.deleteTrace("http://localhost:8001/base1/t01/8d375d5fd9edc11de41c07b9d19549c5");
+//		KtbsResponse response = client.deleteTrace("http://localhost:8001/base1/t01/");
+
 		System.out.println("###########################################################");
 		System.out.println(response.toString());
 		System.out.println("###########################################################");

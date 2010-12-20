@@ -17,6 +17,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	private Date begin;
 	private Date end;
 	private String typeURI;
+	private String subject;
 
 	private Collection<Relation> incomingRelations;
 	private Collection<Relation> outgoingRelations;
@@ -26,7 +27,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	private Trace parentTrace;
 	private String traceURI;
 
-	ObselImpl(String resourceUri, Trace parentTrace, Date begin, Date end, String typeURI, Map<String, Serializable> attributes) {
+	ObselImpl(String resourceUri, Trace parentTrace, String subject, Date begin, Date end, String typeURI, Map<String, Serializable> attributes) {
 		super(resourceUri);
 
 
@@ -35,6 +36,8 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 		this.end = end;
 		this.typeURI = typeURI;
 
+		this.subject = subject;
+		
 		this.attributes = new HashMap<String, Serializable>();
 		if(attributes!=null) 
 			this.attributes.putAll(attributes);
@@ -43,9 +46,9 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 		this.outgoingRelations = new LinkedList<Relation>();
 	}
 
-	ObselImpl(String obselURI, String traceURI, Date begin2, Date end2,
+	ObselImpl(String obselURI, String traceURI, String subject, Date begin2, Date end2,
 			String typeURI2, Map<String, Serializable> attributes2) {
-		this(obselURI, (Trace)null, begin2, end2, typeURI2, attributes2);
+		this(obselURI, (Trace)null, subject, begin2, end2, typeURI2, attributes2);
 		this.traceURI = traceURI;
 	}
 
@@ -109,16 +112,16 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 
 	@Override
 	public void addOutgoingRelation(Relation relation) {
-		if(relation == null || relation.getFromObsel() == null  || !relation.getFromObsel().getURI().equals(this.getURI())) 
-			throw new IllegalStateException("Invalid source obsel for the relation \"" + relation + "\". Expected: \"" + this.getURI() + "\", actual:\"" + relation.getFromObsel() +"\".");
+		if(relation == null || (relation.getFromObsel() == null  && relation.getFromObselURI()==null)) 
+			throw new IllegalStateException("Invalid source obsel for the relation \"" + relation + "\".");
 		this.outgoingRelations.add(relation);
 
 	}
 
 	@Override
 	public void addIncomingRelation(Relation relation) {
-		if(relation == null || relation.getToObsel() == null  || !relation.getToObsel().getURI().equals(this.getURI())) 
-			throw new IllegalStateException("Invalid target obsel for the relation \"" + relation + "\". Expected: \"" + this.getURI() + "\", actual:\"" + relation.getToObsel() +"\".");
+		if(relation == null || (relation.getToObsel() == null  && relation.getToObselURI()==null)) 
+			throw new IllegalStateException("Invalid target obsel for the relation \"" + relation + "\".");
 		this.incomingRelations.add(relation);
 	}
 
@@ -130,5 +133,9 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 			traceURI = parentTrace.getURI();
 		return traceURI;
 	}
-
+	
+	@Override
+	public String getSubject() {
+		return subject;
+	}
 }

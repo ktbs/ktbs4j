@@ -4,7 +4,7 @@ import org.liris.ktbs.TraceBuilder;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.KtbsResourceWriter;
+import org.liris.ktbs.rdf.RDFResourceBuilder;
 
 public class CoreTests {
 	public static void main(String[] args) {
@@ -18,8 +18,10 @@ public class CoreTests {
 		
 		Trace trace = builder.getTrace();
 		
-		KtbsResourceWriter writer = new KtbsResourceWriter(trace);
-		String s = writer.serializeToString(JenaConstants.JENA_SYNTAX_TURTLE,false);
+		RDFResourceBuilder rdfBuilder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		rdfBuilder.addTrace(trace, false);
+		
+		String s = rdfBuilder.getRDFResourceAsString();
 		
 		System.out.println(s);
 	}

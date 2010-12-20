@@ -12,6 +12,8 @@ public interface Obsel extends KtbsResource {
 	public Date getEnd();
 
 	public String getTypeURI();
+
+	public String getSubject();
 	
 	public void addOutgoingRelation(Relation relation);
 	public void addIncomingRelation(Relation relation);

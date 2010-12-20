@@ -36,15 +36,15 @@ public class TraceBuilder {
 		}
 	}
 
-	public Obsel addInstantObsel(String beginend, String label, String type, Object... attributes) {
-		return addObsel(beginend, beginend, label, type, attributes);
+	public Obsel addInstantObsel(String beginend, String subject, String label, String type, Object... attributes) {
+		return addObsel(beginend, beginend, subject, label, type, attributes);
 	}
 
 	public Relation addRelation(Obsel from, Obsel to, String relationName) {
 		return KtbsResourceFactory.createRelation(from, traceModelUri+relationName, to);
 	}
 
-	public Obsel addObsel(String begin, String end, String label, String type, Object... attributes) {
+	public Obsel addObsel(String begin, String end, String subject, String label, String type, Object... attributes) {
 		try {
 			Date beginDate = DATE_FORMAT.parse(day+" " + begin);
 			Date endDate = DATE_FORMAT.parse(day+" " + end);
@@ -62,7 +62,7 @@ public class TraceBuilder {
 				}
 			}
 
-			Obsel obsel = KtbsResourceFactory.createObsel(trace, label, beginDate, endDate, typeUri, attributeMap);
+			Obsel obsel = KtbsResourceFactory.createObsel(trace, subject, label, beginDate, endDate, typeUri, attributeMap);
 			trace.addObsel(obsel);
 			return obsel;
 

@@ -73,7 +73,7 @@ public class KtbsResourceReader {
 					ktbsRDFResource.getURI(),
 					label,
 					baseURIs.toArray(new String[baseURIs.size()])
-				);
+			);
 
 			return ktbsRoot;
 		} else if(Base.class.isAssignableFrom(ktbsResourceType)) {
@@ -137,28 +137,28 @@ public class KtbsResourceReader {
 
 				StmtIterator obselResourceIt = jenaModel.listStatements(null, hasTraceProperty, thisTraceResource);
 				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null, null);
-				
+
 				Collection<Statement> obselRelationStatements = new LinkedList<Statement>();
 				Map<String, Obsel> uriToObsel = new HashMap<String, Obsel>();
-				
+
 				while (obselResourceIt.hasNext()) {
 					Statement statement = (Statement) obselResourceIt.next();
 					Resource obselResource = statement.getSubject();
 					String obselURI = obselResource.getURI();
-					
-					
+
+
 					Obsel obsel = createObselFromRDFModel(obselURI, jenaModel, obselRelationStatements);
 					trace.addObsel(obsel);
 					uriToObsel.put(obselURI, obsel);
 				}
-				
+
 				for(Statement stmt:obselRelationStatements) {
 					KtbsResourceFactory.createRelation(
 							uriToObsel.get(stmt.getSubject().getURI()),
 							stmt.getPredicate().getURI(), 
 							uriToObsel.get(stmt.getObject().asResource().getURI()));
 				}
-				
+
 			} else if(restAspect != null && restAspect.equals(KtbsConstants.ABOUT_ASPECT)) {
 				// This is a @about trace request
 				Property hasTraceModelProperty = jenaModel.getProperty(KtbsConstants.KTBS_HASMODEL);
@@ -184,7 +184,7 @@ public class KtbsResourceReader {
 		} else if(Obsel.class.isAssignableFrom(ktbsResourceType)) {
 			Collection<Statement> relations = new LinkedList<Statement>();
 			Obsel obsel = createObselFromRDFModel(ktbsResourceURI, jenaModel, relations);
-			
+
 			return obsel;
 		} else {
 			throw new UnsupportedOperationException("Cannot read a KTBS resource of type " + ktbsResourceType.getCanonicalName()+ ".");
@@ -206,7 +206,7 @@ public class KtbsResourceReader {
 		Resource obselResource = jenaModel.getResource(ktbsResourceURI);
 
 		String typeURI = null;
-		
+
 		String traceModelURI = null;
 
 		Statement typeStatement = obselResource.getProperty(RDF.type);
@@ -217,13 +217,14 @@ public class KtbsResourceReader {
 			typeURI = typeResource.getURI();
 			traceModelURI = typeResource.getNameSpace();
 		}
-		
+
 
 		StmtIterator it = jenaModel.listStatements(obselResource, null, (RDFNode)null);
 		String traceURI = null;
 		Date begin = null;
 		Date end= null;
 		String obselURI = null;
+		String subject = null;
 
 		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
 		while(it.hasNext()) {
@@ -238,6 +239,8 @@ public class KtbsResourceReader {
 				end = endXSD.asCalendar().getTime();
 			} else if(predicateURI.equals(KtbsConstants.KTBS_HASTRACE))
 				traceURI = statement.getObject().asResource().getURI();
+			else if(predicateURI.equals(KtbsConstants.KTBS_HASSUBJECT))
+				subject = statement.getObject().asLiteral().toString();
 			else if (traceModelURI != null && predicateURI.startsWith(traceModelURI)) {
 				RDFNode object = statement.getObject();
 				if(object.isLiteral()) {
@@ -252,8 +255,9 @@ public class KtbsResourceReader {
 			}
 		}
 
+
 		String label = getKtbsResourceLabel(obselResource);
-		Obsel obsel = KtbsResourceFactory.createObsel(obselURI, traceURI, begin, end, typeURI, attributes,label);
+		Obsel obsel = KtbsResourceFactory.createObsel(obselURI, traceURI, subject, begin, end, typeURI, attributes,label);
 
 
 		return obsel;

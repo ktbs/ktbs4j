@@ -36,12 +36,13 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 import org.liris.ktbs.rdf.JenaConstants;
 import org.liris.ktbs.rdf.KtbsConstants;
 import org.liris.ktbs.rdf.KtbsResourceReader;
-import org.liris.ktbs.rdf.KtbsResourceWriter;
+import org.liris.ktbs.rdf.RDFResourceBuilder;
 
 
 /**
@@ -107,21 +108,45 @@ public class KtbsClient implements KtbsClientService {
 		super.finalize();
 	}
 
+	/**
+	 * Adds the parameter obsel one by one to the KTBS, since the current implementation 
+	 * of KTBS does not seem to support grouped resource posting for the moment.
+	 * <p>
+	 * This implementation will automatically retry to create the obsels when the server returns 
+	 * "400 URI Already in use", with a PUT request, instead of a POST request.
+	 * </p>
+	 */
 	@Override
 	public KtbsResponse addObselsToTrace(String traceURI, Collection<Obsel> obsels) {
-		return postKtbsResource(traceURI, obsels.toArray(new Obsel[obsels.size()]));
-	}
+		log.warn("The service addObselsToTrace/2 will perform one POST request per obsel, intead of sending one single request for all obsels. To be optimized soon...");
 
-	private KtbsResponse postKtbsResource(String parentURI, KtbsResource... ktbsResources) {
-		String stringRepresentation = new KtbsResourceWriter(ktbsResources).serializeToString(JenaConstants.JENA_SYNTAX_TURTLE,true);
-		log.debug("String representation of resource: " + stringRepresentation);
-
-		return performPostRequest(parentURI, stringRepresentation);
+		KtbsResponse response = null;
+		for(Obsel obsel:obsels) {
+			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+			builder.addObsel(traceURI, obsels.toArray(new Obsel[obsels.size()]));
+			String stringRepresentation = builder.getRDFResourceAsString();
+			log.debug("Sending the obsel \""+obsel.getTypeURI()+"\" to the KTBS.");
+			response = performPostRequest(traceURI, stringRepresentation);
+			if(response.getHTTPResponse() != null && response.getHTTPResponse().getStatusLine().equals(HttpStatus.SC_BAD_REQUEST)) {
+				/*
+				 * 	The URI of this obsel may be already in use. Retry this with a put request.
+				 * 
+				 *  TODO redirect this to a PUT request.
+				 */
+			}
+		}
+		
+		return response;
 	}
 
 	@Override
 	public KtbsResponse createRelation(String traceURI, String relationName, String fromObselURI, String toObselURI) {
-		String stringRepresentation = KtbsResourceWriter.relationToString(fromObselURI, relationName, toObselURI, JenaConstants.JENA_SYNTAX_N_TRIPLES);
+		/*
+		 * TODO test this service implementation. This probably requires a PUT rather than a POST.
+		 */
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		builder.addRelation(fromObselURI, relationName, toObselURI);
+		String stringRepresentation = builder.getRDFResourceAsString();
 		return performPostRequest(traceURI, stringRepresentation);
 	}
 
@@ -157,7 +182,7 @@ public class KtbsClient implements KtbsClientService {
 			if(entity == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+ktbsResourceURI+"\".");
 				ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
-			} else {
+			} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 
 				KtbsResourceReader reader = new KtbsResourceReader();
 
@@ -174,7 +199,8 @@ public class KtbsClient implements KtbsClientService {
 				EntityUtils.consume(entity);
 
 				ktbsResponseStatus=KtbsResponseStatus.RESOURCE_RETRIEVED;
-			}
+			} else 
+				ktbsResponseStatus=KtbsResponseStatus.SERVER_EXCEPTION;
 
 		} catch (ClientProtocolException e) {
 			log.warn("A HTTP exception occurred when getting the resource \""+ktbsResourceURI+"\" from the KTBS server.", e);
@@ -245,7 +271,12 @@ public class KtbsClient implements KtbsClientService {
 	public KtbsResponse createBase(String rootURI, String baseLocalName, String label) {
 		KtbsRoot createKtbsRoot = KtbsResourceFactory.createKtbsRoot(rootURI, label);
 		Base b = KtbsResourceFactory.createBase(createKtbsRoot.getURI()+baseLocalName+"/", createKtbsRoot, label);
-		return postKtbsResource(rootURI, b);
+
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		builder.addBase(b);
+		String stringRepresentation = builder.getRDFResourceAsString(rootURI);
+
+		return performPostRequest(rootURI, stringRepresentation);
 	}
 
 	@Override
@@ -262,7 +293,12 @@ public class KtbsClient implements KtbsClientService {
 	public KtbsResponse createTrace(String baseURI, String traceLocalName, String traceModelURI, Date origin, String label) {
 		Base base = KtbsResourceFactory.createBase(baseURI, null);
 		Trace trace = KtbsResourceFactory.createTrace(base.getURI()+traceLocalName+"/", traceModelURI, label, origin, base);
-		return postKtbsResource(baseURI, trace);
+
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		builder.addTrace(trace, true);
+		String stringRepresentation = builder.getRDFResourceAsString();
+
+		return performPostRequest(baseURI, stringRepresentation);
 	}
 
 	@Override
@@ -359,38 +395,45 @@ public class KtbsClient implements KtbsClientService {
 
 
 	@Override
-	public KtbsResponse createObsel(String traceURI, String obselLocalName,
+	public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject,
 			String label, String typeURI, Date begin, Date end,
 			Map<String, Serializable> attributes,
 			String... outgoingRelations) {
-		
+
 		Obsel obsel = KtbsResourceFactory.createObsel(
 				traceURI+obselLocalName+"/", 
 				traceURI, 
+				subject,
 				begin, 
 				end, 
 				typeURI, 
 				attributes,
 				label);
 		if(outgoingRelations != null && outgoingRelations.length%2==0) {
-			for(int k=0; k<outgoingRelations.length;k+=2)
+			for(int k=0; k<outgoingRelations.length;k+=2) {
+				Relation rel = KtbsResourceFactory.createRelation(
+						obsel.getURI(), 
+						outgoingRelations[k], 
+						outgoingRelations[k+1]);
 				obsel.addOutgoingRelation(
-						KtbsResourceFactory.createRelation(
-								obsel.getURI(), 
-								outgoingRelations[k], 
-								outgoingRelations[k+1])
+						rel
 				);
+			}
 		}
-		
-		return postKtbsResource(traceURI, obsel);
+
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		builder.addObsel(traceURI, obsel);
+		String stringRepresentation = builder.getRDFResourceAsString();
+		return performPostRequest(traceURI, stringRepresentation);
 	}
 
 
 	@Override
 	public KtbsResponse createTraceModel(String baseURI,
 			String traceModelLocalName, String label) {
-		
-		String stringRepresentation = KtbsResourceWriter.traceModelToString(baseURI, baseURI+traceModelLocalName+"/", label, JenaConstants.JENA_SYNTAX_TURTLE);
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		builder.addTraceModel(baseURI, baseURI+traceModelLocalName+"/", label);
+		String stringRepresentation = builder.getRDFResourceAsString();
 		log.debug("String representation of trace model: " + stringRepresentation);
 
 		return performPostRequest(baseURI, stringRepresentation); 

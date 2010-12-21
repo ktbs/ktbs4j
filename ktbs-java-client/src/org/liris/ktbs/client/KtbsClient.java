@@ -67,7 +67,6 @@ public class KtbsClient implements KtbsClientService {
 	KtbsClient() {
 	}
 
-
 	private HttpClient httpClient;
 	private boolean started = false;
 
@@ -120,26 +119,29 @@ public class KtbsClient implements KtbsClientService {
 	 * </p>
 	 */
 	@Override
-	public KtbsResponse addObselsToTrace(String traceURI, Collection<Obsel> obsels) {
+	public KtbsResponse[] addObselsToTrace(String traceURI, Collection<Obsel> obsels) {
 		log.warn("The service addObselsToTrace/2 will perform one POST request per obsel, intead of sending one single request for all obsels. To be optimized soon...");
 
-		KtbsResponse response = null;
+		KtbsResponse[] response = new KtbsResponse[obsels.size()];
+		int k = 0;
 		for(Obsel obsel:obsels) {
-			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
-			builder.addObsel(traceURI, obsels.toArray(new Obsel[obsels.size()]));
+			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+			builder.addObsel(traceURI, false, obsel);
 			String stringRepresentation = builder.getRDFResourceAsString();
 			log.debug("Sending the obsel \""+obsel.getTypeURI()+"\" to the KTBS.");
-			response = performPostRequest(traceURI, stringRepresentation);
-			if(response.getHTTPResponse() != null && response.getHTTPResponse().getStatusLine().equals(HttpStatus.SC_BAD_REQUEST)) {
-				/*
-				 * 	The URI of this obsel may be already in use. Retry this with a put request.
-				 * 
-				 *  TODO redirect this to a PUT request.
-				 */
-			}
+			response[k] = performPostRequest(traceURI, stringRepresentation);
+			k++;
 		}
 		
 		return response;
+	}
+
+
+	public String getGETSyntax() {
+		return JenaConstants.JENA_SYNTAX_N_TRIPLES;
+	}
+	public String getPOSTSyntax() {
+		return JenaConstants.JENA_SYNTAX_TURTLE;
 	}
 
 	@Override
@@ -147,7 +149,7 @@ public class KtbsClient implements KtbsClientService {
 		/*
 		 * TODO test this service implementation. This probably requires a PUT rather than a POST.
 		 */
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
 		builder.addRelation(fromObselURI, relationName, toObselURI);
 		String stringRepresentation = builder.getRDFResourceAsString();
 		return performPostRequest(traceURI, stringRepresentation);
@@ -213,7 +215,7 @@ public class KtbsClient implements KtbsClientService {
 					ktbsResource = reader.deserializeFromStream(
 							ktbsResourceURI,
 							entity.getContent(), 
-							JenaConstants.JENA_SYNTAX_N_TRIPLES, 
+							getGETSyntax(), 
 							clazz,
 							restAspect);
 				}
@@ -295,7 +297,7 @@ public class KtbsClient implements KtbsClientService {
 		KtbsRoot createKtbsRoot = KtbsResourceFactory.createKtbsRoot(rootURI, label);
 		Base b = KtbsResourceFactory.createBase(createKtbsRoot.getURI()+baseLocalName+"/", createKtbsRoot, label);
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
 		builder.addBase(b);
 		String stringRepresentation = builder.getRDFResourceAsString(rootURI);
 
@@ -317,7 +319,7 @@ public class KtbsClient implements KtbsClientService {
 		Base base = KtbsResourceFactory.createBase(baseURI, null);
 		Trace trace = KtbsResourceFactory.createTrace(base.getURI()+traceLocalName+"/", traceModelURI, label, origin, base);
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
 		builder.addTrace(trace, true);
 		String stringRepresentation = builder.getRDFResourceAsString();
 
@@ -425,8 +427,8 @@ public class KtbsClient implements KtbsClientService {
 			}
 		}
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
-		builder.addObsel(traceURI, obsel);
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		builder.addObsel(traceURI, true, obsel);
 		String stringRepresentation = builder.getRDFResourceAsString();
 		return performPostRequest(traceURI, stringRepresentation);
 	}
@@ -435,7 +437,7 @@ public class KtbsClient implements KtbsClientService {
 	@Override
 	public KtbsResponse createTraceModel(String baseURI,
 			String traceModelLocalName, String label) {
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(JenaConstants.JENA_SYNTAX_TURTLE);
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
 		builder.addTraceModel(baseURI, baseURI+traceModelLocalName+"/", label);
 		String stringRepresentation = builder.getRDFResourceAsString();
 		log.debug("String representation of trace model: " + stringRepresentation);

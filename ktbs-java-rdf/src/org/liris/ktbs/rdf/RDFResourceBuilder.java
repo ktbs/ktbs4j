@@ -24,7 +24,7 @@ public class RDFResourceBuilder {
 
 	private Model jenaModel;
 	private String jenaSyntax;
-	
+
 	/**
 	 * A static constructor that creates a new KTBS resource builder. 
 	 * <p>
@@ -37,7 +37,7 @@ public class RDFResourceBuilder {
 	public static RDFResourceBuilder newBuilder(String jenaSyntax) {
 		return new RDFResourceBuilder(jenaSyntax);
 	}
-	
+
 	private RDFResourceBuilder(String jenaSyntax) {
 		super();
 		this.jenaModel = ModelFactory.createDefaultModel();
@@ -45,7 +45,7 @@ public class RDFResourceBuilder {
 		this.jenaModel.setNsPrefix("rdfs", RDFS.getURI());
 		this.jenaSyntax = jenaSyntax;
 	}
-	
+
 	/**
 	 * Adds one or several obsels to the RDF internal (Jena) model, with a URI given as parameter 
 	 * the defines the parent trace that contains all the obsels. 
@@ -58,15 +58,17 @@ public class RDFResourceBuilder {
 	 * 
 	 * </p>
 	 * the parent trace
+	 * @param withObselURI true if the URIs of obsels returned by the method Obsel.getURI() should be put
+	 * in the RDF representation of each obsel, null if no obsel URI needs to be specified in the RDF model
 	 * @param traceURI The URI of the parent trace that will contain all the parameter obsels. 
 	 * Can be null, in which case the parent trace URI for each obsel is obtained by calling 
 	 * obsel.getTraceURI().
 	 * @param obsels the obsels to be added in the model
 	 */
-	public void addObsel(String traceURI, Obsel... obsels) {
-		
+	public void addObsel(String traceURI, boolean withObselURI, Obsel... obsels) {
+
 		for(Obsel obsel:obsels)
-			createRDFObsel(traceURI, obsel);
+			createRDFObsel(traceURI, obsel, withObselURI);
 	}
 
 	public String getRDFResourceAsString() {
@@ -80,30 +82,14 @@ public class RDFResourceBuilder {
 		jenaModel.write(writer, jenaSyntax, base);
 		return writer.toString();
 	}
-	
-	public void baseToString(Base base, boolean withParent) {
 
-		if(jenaModel.containsResource(jenaModel.getResource(base.getURI())))
-			return;
-		
-		Resource baseResource = jenaModel.createResource();
-			
-		if(withParent) {
-			Resource rootResource = jenaModel.createResource(base.getKtbsRoot().getURI());
-			rootResource.addProperty(jenaModel.createProperty(KtbsConstants.KTBS_HASBASE), baseResource);
-		}
-		setType(baseResource, KtbsConstants.KTBS_BASE);
-		setLabel(base.getURI(), base.getLabel());
-	}
-
-	
 	public void addTrace(Trace trace, boolean withParent) {
 
 		if(jenaModel.containsResource(jenaModel.getResource(trace.getURI())))
 			return;
 
 		Resource traceResource = jenaModel.createResource(trace.getURI());
-		
+
 		setType(traceResource, KtbsConstants.KTBS_STOREDTRACE);
 
 		jenaModel.add(
@@ -122,15 +108,15 @@ public class RDFResourceBuilder {
 		);
 
 		for(Obsel obsel:trace.getObsels()) {
-			addObsel(trace.getURI(), obsel);
+			addObsel(trace.getURI(), false, obsel);
 		}
 
 		if(withParent) {
 			Resource baseResource = jenaModel.createResource(trace.getBaseURI());
 			baseResource.addProperty(jenaModel.createProperty(KtbsConstants.KTBS_OWNS), traceResource);
 		}
-		
-		setLabel(trace.getURI(), trace.getLabel());
+
+		setLabel(traceResource, trace.getLabel());
 	}
 
 	/**
@@ -140,14 +126,18 @@ public class RDFResourceBuilder {
 	 * 
 	 * @param traceURI the URI of the trace contained the osbel
 	 * @param obsel the obsel to be added in the model
+	 * @param withObselURI 
 	 */
-	private void createRDFObsel(String traceURI, Obsel obsel) {
-		
-		
+	private void createRDFObsel(String traceURI, Obsel obsel, boolean withObselURI) {
+
+
 		if(jenaModel.containsResource(jenaModel.getResource(obsel.getURI())))
 			return;
-
-		Resource obselResource = jenaModel.createResource(obsel.getURI());
+		Resource obselResource;
+		if(withObselURI)
+			obselResource = jenaModel.createResource(obsel.getURI());
+		else
+			obselResource = jenaModel.createResource();
 
 		setType(obselResource, obsel.getTypeURI());
 
@@ -162,7 +152,7 @@ public class RDFResourceBuilder {
 				jenaModel.createProperty(KtbsConstants.KTBS_HASSUBJECT), 
 				jenaModel.createLiteral(obsel.getSubject())
 		);
-		
+
 		// adds the begin date
 		Calendar beginCal = Calendar.getInstance();
 		beginCal.setTime(obsel.getBegin());
@@ -192,7 +182,7 @@ public class RDFResourceBuilder {
 		for(Relation rel:obsel.getOutgoingRelations()) {
 			Resource targetResource = null;
 			if(rel.getToObsel() != null) {
-				addObsel(traceURI, rel.getToObsel());
+				addObsel(traceURI, false, rel.getToObsel());
 				jenaModel.getResource(rel.getToObselURI());
 			}
 			else if(rel.getToObselURI()!=null)
@@ -209,33 +199,34 @@ public class RDFResourceBuilder {
 					jenaModel.createProperty(rel.getRelationName()), 
 					targetResource);
 		}
-		
-		setLabel(obsel.getURI(), obsel.getLabel());
+
+		setLabel(obselResource, obsel.getLabel());
 	}
 
 	public void addTraceModel(String baseURI, String traceModelURI, String label) {
-		
+
 		Resource traceModelResource = jenaModel.createResource(traceModelURI);
+		Resource baseResource = jenaModel.createResource(baseURI);
 		jenaModel.add(
-				jenaModel.createResource(baseURI),
+				baseResource,
 				jenaModel.createProperty(KtbsConstants.KTBS_OWNS),
 				traceModelResource
 		);
 
 		setType(traceModelResource, KtbsConstants.KTBS_TRACEMODEL);
 
-		setLabel(traceModelURI, label);
+		setLabel(baseResource, label);
 	}
 
-	private void setLabel(String baseURI, String label) {
+	private void setLabel(Resource rdfResource, String label) {
 		jenaModel.add(
-				jenaModel.createResource(baseURI),
+				rdfResource,
 				RDFS.label,
 				jenaModel.createLiteral(label)
 		);
 	}
-	
-	
+
+
 	public void addRelation(String fromObselURI,
 			String relationName, String toObselURI) {
 
@@ -253,13 +244,13 @@ public class RDFResourceBuilder {
 		Resource baseResource = jenaModel.createResource(base.getURI());
 
 		setType(baseResource,KtbsConstants.KTBS_BASE);
-		
+
 		jenaModel.add(
 				jenaModel.createResource(base.getKtbsRootURI()),
 				jenaModel.createProperty(KtbsConstants.KTBS_HASBASE),
 				baseResource);
-		
-		setLabel(base.getURI(), base.getLabel());
+
+		setLabel(baseResource, base.getLabel());
 	}
 
 	public void setType(Resource rdfResource, String typeURI) {

@@ -32,7 +32,24 @@ public interface KtbsClientService {
 	public KtbsResponse createBase(String rootURI, String baseLocalName, String label);
 	public KtbsResponse createTraceModel(String baseURI, String traceModelLocalName, String label);
 	public KtbsResponse createTrace(String baseURI, String traceLocalName, String traceModelURI, Date origin, String label);
-	public KtbsResponse addObselsToTrace(String traceURI, Collection<Obsel> obsels);
+	
+	/**
+	 * Creates a collection of obsels remotely on the KTBS server in a unique trace. The local names
+	 * of created obsels are set automatically by the KTBS server, meaning that the value returned by 
+	 * obsel.getURI() when requesting for the creation of new obsels.
+	 * 
+	 * <p>
+	 * In the current version of the KTBS API, the only way to create multiple 
+	 * obsels is to send as many POST requests to the KTBS server as obsels to create.
+	 * </p>
+	 * 
+	 * @param traceURI the URI of the unique parent trace contained all the created obsels
+	 * @param obsels the collection of obsels to be created 
+	 * @return the {@link KtbsResponse} objects sent back by the KTBS server. Since each obsel creation 
+	 * is performed by one POST request, there are as many objects in the returned array as there
+	 * are obsels in the obsels parameter.
+	 */
+	public KtbsResponse[] addObselsToTrace(String traceURI, Collection<Obsel> obsels);
 	
 	/**
 	 * Creates an obsel on the KTBS server remotely, using a POST request.
@@ -55,7 +72,7 @@ public interface KtbsClientService {
 	 * otherwise this parameter is ignored. This array is interpreted according to this scheme: 
 	 * ["relationURI_1", "targetObselURI_1", "relationURI_2", "targetObselURI_2", etc].
 	 * @return the {@link KtbsResponse} object of this request
-	 * @see method addObselToTace()
+	 * @see method addObselsToTrace()
 	 */
 	public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject, String label, String typeURI, Date begin, Date end, Map<String, Serializable> attributes, String... outgoingRelations);
 

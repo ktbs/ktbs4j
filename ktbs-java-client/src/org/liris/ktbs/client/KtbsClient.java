@@ -207,24 +207,7 @@ public class KtbsClient implements KtbsClientService {
 		KtbsResponseStatus ktbsResponseStatus = null;
 
 		try {
-			if(restAspect==null)
-				response = httpClient.execute(get);
-			else {
-				/*
-				 * The following lines handles a GET request as expected by the user in 
-				 * spite of the KTBS issue with ETags and resource aspects (cf. Ticket #18).
-				 * 
-				 * To overcome this issue, when ther is an non null resource aspect, the 
-				 * following lines ignore the ETag header by executing the same GET request 
-				 * on a new HTTP client that does not handle automatically HTTP caching.
-				 * 
-				 * TODO maybe instanciating a new Default HTTP client for this purpose 
-				 * is not optimal. If there is any other mean to perform the same GET request
-				 * without the ETag header, it should be implemented as such instead.
-				 */
-				DefaultHttpClient defaultHttpClient = new DefaultHttpClient(httpParams);
-				response = defaultHttpClient.execute(get);
-			}
+			response = httpClient.execute(get);
 
 			if(response == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+ktbsResourceURI+"\".");

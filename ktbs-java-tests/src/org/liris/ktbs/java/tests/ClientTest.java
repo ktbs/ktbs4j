@@ -14,6 +14,8 @@ import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 
+import com.ibm.icu.util.Calendar;
+
 public class ClientTest {
 
 	/**
@@ -89,11 +91,13 @@ public class ClientTest {
 
 
 	private static KtbsResponse testPutTrace(KtbsClient client) {
+		Calendar c1 = Calendar.getInstance();
 		KtbsResponse responseGet = client.getTraceObsels("http://localhost:8001/base1/t01/");
+		Calendar c2 = Calendar.getInstance();
 		Trace traceObsels = (Trace) responseGet.getBodyAsKtbsResource();
 		String etag = responseGet.getHTTPETag();
-		System.out.println(etag);
 		responseGet = client.getTraceInfo("http://localhost:8001/base1/t01/");
+		Calendar c3 = Calendar.getInstance();
 		
 		Trace traceInfo = (Trace) responseGet.getBodyAsKtbsResource();
 
@@ -117,6 +121,13 @@ public class ClientTest {
 		}
 
 		KtbsResponse putResponse = client.putTraceObsels(traceInfo, etag);
+		
+		System.out.println("*********************************************************************************");
+		System.out.println("*********************************************************************************");
+		System.out.println("Première requête: " + (c2.getTimeInMillis() - c1.getTimeInMillis()));
+		System.out.println("Deuxième requête: " + (c3.getTimeInMillis() - c2.getTimeInMillis()));
+		System.out.println("*********************************************************************************");
+		System.out.println("*********************************************************************************");
 		return putResponse;
 	}
 

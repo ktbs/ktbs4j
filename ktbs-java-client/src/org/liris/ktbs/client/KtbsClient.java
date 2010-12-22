@@ -97,6 +97,13 @@ public class KtbsClient implements KtbsClientService {
 
 		httpClient = new CachingHttpClient(new DefaultHttpClient(httpParams), cacheConfig);
 		this.started = true;
+		
+		/*
+		 * Ensure that Jena classes required for model creation are loaded now, so that
+		 * there is no need to do it in a middle of a REST request (loading Jena classes
+		 * introduces a small delay of a half-second).
+		 */
+		KtbsResourceReader.loadJenaClasses();
 	}
 
 
@@ -411,9 +418,6 @@ public class KtbsClient implements KtbsClientService {
 		return getTraceObsels(rootURI+baseLocalName+"/", traceLocalName);
 	}
 
-	/*
-	 * TODO To be tested after the bug 19 is fixed
-	 */
 	@Override
 	public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject,
 			String label, String typeURI, Date beginDT, Date endDT,
@@ -513,18 +517,11 @@ public class KtbsClient implements KtbsClientService {
 				response);
 	}
 
-
-	/*
-	 * TODO To be tested after the bug 19 is fixed
-	 */
 	@Override
 	public KtbsResponse putTraceObsels(Trace trace, String traceETag) {
 		return putTraceObsels(trace.getURI(), trace.getObsels(), traceETag);
 	}
 
-	/*
-	 * TODO To be tested after the bug 19 is fixed
-	 */
 	@Override
 	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels, String traceETag) {
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
@@ -538,17 +535,9 @@ public class KtbsClient implements KtbsClientService {
 		builder.addObsels(uriWithoutAspect, true, obsels.toArray(new Obsel[obsels.size()]));
 		String stringRepresentation = builder.getRDFResourceAsString();
 
-		System.out.println("-----------------------");
-		System.out.println(stringRepresentation);
-		System.out.println("-----------------------");
-
 		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
 	}
 
-
-	/*
-	 * TODO To be tested after the bug 19 is fixed
-	 */
 	@Override
 	public KtbsResponse putTraceInfo(Trace trace, String traceETag) {
 		String traceURI = trace.getURI();

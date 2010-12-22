@@ -289,4 +289,12 @@ public class KtbsResourceReader {
 			return null;
 	}
 
+
+	public static void loadJenaClasses() {
+		/*
+		 * Loads Jena classes required for model creation.
+		 */
+		ModelFactory.createDefaultModel();
+	}
+
 }

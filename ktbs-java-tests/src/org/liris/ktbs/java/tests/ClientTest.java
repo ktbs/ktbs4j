@@ -1,5 +1,6 @@
 package org.liris.ktbs.java.tests;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,12 +30,13 @@ public class ClientTest {
 		KtbsClient client = app.getKtbsClient("http://localhost:8001/");
 		client.startSession();
 
-//				KtbsResponse response = testPutTraceObsels(client);
-				KtbsResponse response = testPutTraceInfo(client);
+		//				KtbsResponse response = testPutTraceObsels(client);
+		//				KtbsResponse response = testPutTraceInfo(client);
+		KtbsResponse response = testCreateFile(client);
 		//				KtbsResponse response = testCreateObsel(client);
 		//		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/0cd86043ba40d40aa91ad18bdd714634");
-//		KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
-//				KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
+		//		KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
+		//				KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
 		//		KtbsResponse response = client.getKtbsRoot("http://localhost:8001/");
 		//		KtbsResponse response = client.getBase("http://localhost:8001/","base1");
 		//		KtbsResponse response = client.addObselsToTrace("http://localhost:8001/","t01");
@@ -51,10 +53,22 @@ public class ClientTest {
 			//			displayBase((Base) response.getBodyAsKtbsResource());
 			//			displayRoot((KtbsRoot) response.getBodyAsKtbsResource());
 			//			displayObsel((Obsel) response.getBodyAsKtbsResource());
-			displayTrace((Trace) response.getBodyAsKtbsResource());
+			//			displayTrace((Trace) response.getBodyAsKtbsResource());
 		} 
 
 		client.closeSession();
+	}
+
+
+	private static KtbsResponse testCreateFile(KtbsClient client) {
+		KtbsResponse createKtbsResource = null;
+
+		for(int i=1;i<1000;i++) {
+			File f = new File("bin/org/liris/ktbs/java/tests/observe1.ttl");
+			createKtbsResource = client.createKtbsResource("http://localhost:8001/base1/t01/", f);
+		}
+		
+		return createKtbsResource;
 	}
 
 

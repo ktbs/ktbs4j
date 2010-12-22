@@ -2,6 +2,12 @@ package org.liris.ktbs.client;
 
 import java.util.HashMap;
 
+/**
+ * TODO Writes the user manual here
+ * 
+ * @author Damien Cram
+ *
+ */
 public class KTBSClientApplication {
 
 	private static final KTBSClientApplication instance = new KTBSClientApplication();

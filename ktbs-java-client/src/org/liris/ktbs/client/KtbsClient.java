@@ -1,8 +1,14 @@
 package org.liris.ktbs.client;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
@@ -547,5 +553,39 @@ public class KtbsClient implements KtbsClientService {
 //		builder.addTrace(trace, false, false);
 //		String stringRepresentation = builder.getRDFResourceAsString();
 //		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
+	}
+
+
+	@Override
+	public KtbsResponse createKtbsResource(String resourceURI, Reader reader) {
+		StringWriter writer = new StringWriter();
+		int c;
+		try {
+			while((c=reader.read())!=-1)
+				writer.write(c);
+		} catch (IOException e) {
+			log.warn("Cannot read in the parameter reader", e);
+		}
+		
+		String stringRepresentation = writer.getBuffer().toString();
+		return performPostRequest(resourceURI, stringRepresentation);
+	}
+
+
+	@Override
+	public KtbsResponse createKtbsResource(String resourceURI,
+			InputStream stream) {
+		return createKtbsResource(resourceURI, new InputStreamReader(stream));
+	}
+
+
+	@Override
+	public KtbsResponse createKtbsResource(String resourceURI, File file) {
+		try {
+			return createKtbsResource(resourceURI, new FileReader(file));
+		} catch (FileNotFoundException e) {
+			log.warn("Unable to read from the parameter file", e);
+			return new KtbsResponseImpl(null, false, null, null);
+		}
 	}
 }

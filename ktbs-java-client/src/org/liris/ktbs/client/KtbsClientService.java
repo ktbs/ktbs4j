@@ -1,5 +1,8 @@
 package org.liris.ktbs.client;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -32,6 +35,9 @@ public interface KtbsClientService {
 	public KtbsResponse createBase(String rootURI, String baseLocalName, String label);
 	public KtbsResponse createTraceModel(String baseURI, String traceModelLocalName, String label);
 	public KtbsResponse createTrace(String baseURI, String traceLocalName, String traceModelURI, Date origin, String label);
+	public KtbsResponse createKtbsResource(String resourceURI, Reader reader);
+	public KtbsResponse createKtbsResource(String resourceURI, InputStream stream);
+	public KtbsResponse createKtbsResource(String resourceURI, File file);
 	
 	/**
 	 * Creates a collection of obsels remotely on the KTBS server in a unique trace. The local names

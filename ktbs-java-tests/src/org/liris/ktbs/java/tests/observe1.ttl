@@ -1,0 +1,11 @@
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ktbs:    <http://liris.cnrs.fr/silex/2009/ktbs#> .
+
+[a       <http://localhost:8001/base1/model1/SendMsg> ;
+	rdfs:label "Mon Premier Observe" ;
+	ktbs:hasBegin 4000 ;
+	ktbs:hasEnd 4000 ;
+	ktbs:hasSubject "Damien" ;
+	ktbs:hasTrace <http://localhost:8001/base1/t01/> ;
+	<http://localhost:8001/base1/model1/message>
+		"Hello All" ].

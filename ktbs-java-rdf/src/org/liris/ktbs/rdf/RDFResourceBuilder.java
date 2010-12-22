@@ -103,6 +103,24 @@ public class RDFResourceBuilder {
 				jenaModel.createResource(trace.getTraceModelUri())
 		);
 
+		/*
+		 * TODO Uncomment the followings lines when bug #21 is fixed
+		 */
+//		jenaModel.add(
+//				traceResource, 
+//				jenaModel.createProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL), 
+//				jenaModel.createTypedLiteral(trace.isCompliantWithModel())
+//		);
+		
+		/*
+		 * TODO Suppress the followings lines when bug #21 is fixed
+		 */
+		jenaModel.add(
+				traceResource, 
+				jenaModel.createProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL), 
+				trace.isCompliantWithModel()?jenaModel.createLiteral("yes"):jenaModel.createLiteral("no")
+		);
+
 		// sets the trace origin
 		Calendar originCal = Calendar.getInstance();
 		originCal.setTime(trace.getOrigin());

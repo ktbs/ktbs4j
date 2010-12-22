@@ -25,6 +25,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.shared.BadBooleanException;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
@@ -34,9 +35,6 @@ public class KtbsResourceReader {
 
 	public KtbsResource deserializeFromStream(String ktbsResourceURI, InputStream stream, String jenaSyntax, Class<?> ktbsResourceType, String restAspect) {
 
-		/*
-		 * TODO the following model creation may be a bit long when executed the first time. Investigate why.
-		 */
 		Model jenaModel = ModelFactory.createDefaultModel();
 
 		jenaModel.read(stream, "", jenaSyntax);
@@ -46,6 +44,25 @@ public class KtbsResourceReader {
 			ktbsResourceURI = ktbsResourceURI.replaceAll(restAspect, "");
 		KtbsResource resource = createResourceFromRDFModel(ktbsResourceURI, jenaModel, ktbsResourceType, restAspect);
 		return resource;
+	}
+
+
+	public boolean isTraceCompliantWithModel(String traceURI, InputStream stream, String jenaSyntax) {
+		Model jenaModel = ModelFactory.createDefaultModel();
+
+		jenaModel.read(stream, "", jenaSyntax);
+
+		Statement stmt = jenaModel.getProperty(
+				jenaModel.getResource(traceURI),
+				jenaModel.getProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL));
+
+		if(stmt == null || stmt.getObject()==null)
+			return false;
+		String string = stmt.getObject().asLiteral().getString();
+		if(string.equals("yes"))
+			return true;
+		else
+			return false;
 	}
 
 
@@ -138,7 +155,7 @@ public class KtbsResourceReader {
 				// This is a @obsels trace request
 
 				StmtIterator obselResourceIt = jenaModel.listStatements(null, hasTraceProperty, thisTraceResource);
-				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null, null);
+				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null, null, false);
 
 				Collection<Statement> obselRelationStatements = new LinkedList<Statement>();
 
@@ -176,7 +193,21 @@ public class KtbsResourceReader {
 					origin = ((XSDDateTime)thisTraceResource.getProperty(hasOrigin).getObject().asLiteral().getValue()).asCalendar().getTime();
 				}
 				String label = getKtbsResourceLabel(thisTraceResource);
-				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, traceModelURI, label, origin, null);
+				boolean compliantWithModel = false;
+				Property isCompliantProperty = jenaModel.getProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL);
+				if(isCompliantProperty != null && thisTraceResource.getProperty(isCompliantProperty) != null) {
+					try {
+						compliantWithModel = thisTraceResource.getProperty(isCompliantProperty).getObject().asLiteral().getBoolean();
+					} catch(BadBooleanException e) {
+						/*
+						 * This is bug #21 of the KTBS server. 
+						 * Try reading this property as a string
+						 */
+						String string = thisTraceResource.getProperty(isCompliantProperty).getObject().asLiteral().getString();
+						compliantWithModel = string.equals("yes");
+					}
+				}
+				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, traceModelURI, label, origin, null, compliantWithModel);
 
 			}
 

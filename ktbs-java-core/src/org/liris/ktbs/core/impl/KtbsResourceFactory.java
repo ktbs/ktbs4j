@@ -32,8 +32,8 @@ public class KtbsResourceFactory {
 		return baseImpl;
 	}
 
-	public static Trace createTrace(String resourceUri, String traceModelURI, String label, Date origin, Base base) {
-		TraceImpl traceImpl = new TraceImpl(resourceUri, traceModelURI, origin, base);
+	public static Trace createTrace(String resourceUri, String traceModelURI, String label, Date origin, Base base, boolean compliantWithModel) {
+		TraceImpl traceImpl = new TraceImpl(resourceUri, traceModelURI, origin, base, compliantWithModel);
 		traceImpl.setLabel(label);
 		return traceImpl;
 	}

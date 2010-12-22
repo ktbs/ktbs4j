@@ -17,6 +17,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 	private boolean executedWithSuccess;
 	private KtbsResponseStatus ktbsResponseStatus;
 	private HttpResponse httpResponse;
+	private Object value;
 
 	public KtbsResponseImpl(KtbsResource resource, boolean executedWithSuccess,
 			KtbsResponseStatus ktbsResponseStatus,
@@ -103,5 +104,15 @@ public class KtbsResponseImpl implements KtbsResponse {
 	@Override
 	public String getHTTPLocation() {
 		return readHeader(HttpHeaders.LOCATION);
+	}
+
+	@Override
+	public Object getValue() {
+		return value;
+	}
+
+	@Override
+	public void setValue(Object value) {
+		this.value = value;
 	}
 }

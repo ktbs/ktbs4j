@@ -330,7 +330,7 @@ public class KtbsClient implements KtbsClientService {
 	@Override
 	public KtbsResponse createTrace(String baseURI, String traceLocalName, String traceModelURI, Date origin, String label) {
 		Base base = KtbsResourceFactory.createBase(baseURI, null);
-		Trace trace = KtbsResourceFactory.createTrace(base.getURI()+traceLocalName+"/", traceModelURI, label, origin, base);
+		Trace trace = KtbsResourceFactory.createTrace(base.getURI()+traceLocalName+"/", traceModelURI, label, origin, base, false);
 
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
 		builder.addTrace(trace, true, false);
@@ -521,20 +521,31 @@ public class KtbsClient implements KtbsClientService {
 		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
 	}
 
+	/*
+	 * The following service needs to send the complete list of rdf statement about the trace.
+	 * This cannot be done properly without performing a GET on trace@about beforehand.
+	 * 
+	 * The service will be implemented when it is possible to amend trace informations by sending
+	 * only the RDF triple with the property to modify.
+	 * 
+	 * (non-Javadoc)
+	 * @see org.liris.ktbs.client.KtbsClientService#putTraceInfo(org.liris.ktbs.core.Trace, java.lang.String)
+	 */
 	@Override
 	public KtbsResponse putTraceInfo(Trace trace, String traceETag) {
-		String traceURI = trace.getURI();
-		String uriWithAspect = new String(traceURI);
-		String uriWithoutAspect = new String(traceURI);
-		if(traceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
-			uriWithoutAspect=uriWithoutAspect.replaceAll(KtbsConstants.OBSELS_ASPECT, "");
-		else
-			uriWithAspect+=KtbsConstants.OBSELS_ASPECT;
-
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addTrace(trace, false, false);
-		String stringRepresentation = builder.getRDFResourceAsString();
-		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
+		throw new UnsupportedOperationException("This operation cannot be performed properly right now, due to a lack of KTBS specification on modifying trace infos.");
+		
+//		String traceURI = trace.getURI();
+//		String uriWithAspect = new String(traceURI);
+//		String uriWithoutAspect = new String(traceURI);
+//		if(traceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
+//			uriWithoutAspect=uriWithoutAspect.replaceAll(KtbsConstants.OBSELS_ASPECT, "");
+//		else
+//			uriWithAspect+=KtbsConstants.OBSELS_ASPECT;
+//
+//		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+//		builder.addTrace(trace, false, false);
+//		String stringRepresentation = builder.getRDFResourceAsString();
+//		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
 	}
-
 }

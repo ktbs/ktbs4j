@@ -29,11 +29,12 @@ public class ClientTest {
 		KtbsClient client = app.getKtbsClient("http://localhost:8001/");
 		client.startSession();
 
-		//		KtbsResponse response = testPutTrace(client);
+//				KtbsResponse response = testPutTraceObsels(client);
+				KtbsResponse response = testPutTraceInfo(client);
 		//				KtbsResponse response = testCreateObsel(client);
 		//		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/0cd86043ba40d40aa91ad18bdd714634");
-		KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
-		//		KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
+//		KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
+//				KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
 		//		KtbsResponse response = client.getKtbsRoot("http://localhost:8001/");
 		//		KtbsResponse response = client.getBase("http://localhost:8001/","base1");
 		//		KtbsResponse response = client.addObselsToTrace("http://localhost:8001/","t01");
@@ -54,6 +55,14 @@ public class ClientTest {
 		} 
 
 		client.closeSession();
+	}
+
+
+	private static KtbsResponse testPutTraceInfo(KtbsClient client) {
+		KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
+		Trace traceInfo = (Trace) response.getBodyAsKtbsResource();
+		traceInfo.setLabel("Bonjour Nestor");
+		return client.putTraceInfo(traceInfo, response.getHTTPETag());
 	}
 
 
@@ -90,7 +99,7 @@ public class ClientTest {
 	}
 
 
-	private static KtbsResponse testPutTrace(KtbsClient client) {
+	private static KtbsResponse testPutTraceObsels(KtbsClient client) {
 		Calendar c1 = Calendar.getInstance();
 		KtbsResponse responseGet = client.getTraceObsels("http://localhost:8001/base1/t01/");
 		Calendar c2 = Calendar.getInstance();
@@ -160,6 +169,7 @@ public class ClientTest {
 		System.out.println("Label: " + trace.getLabel());
 		System.out.println("Origin: " + trace.getOrigin());
 		System.out.println("Trace Model URI: " + trace.getTraceModelUri());
+		System.out.println("Complies with model: " + trace.isCompliantWithModel());
 
 		for(Obsel obsel:trace.getObsels()) {
 			displayObsel(obsel);

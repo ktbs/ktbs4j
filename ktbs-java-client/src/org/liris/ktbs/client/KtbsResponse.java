@@ -58,4 +58,11 @@ public interface KtbsResponse {
 	 */
 	public String getHTTPLocation();
 	
+	/**
+	 * 
+	 * @return the value of the request once the KTBS response body 
+	 * is interpreted by the client
+	 */
+	public Object getValue();
+	void setValue(Object value);
 }

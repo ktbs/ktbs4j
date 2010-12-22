@@ -30,7 +30,7 @@ public class TraceBuilder {
 			this.traceModelUri = traceModelUri;
 			this.day = day;
 			originDate = DATE_FORMAT.parse(day+" "+origin);
-			trace = KtbsResourceFactory.createTrace(traceUri, traceModelUri, label, originDate, null);
+			trace = KtbsResourceFactory.createTrace(traceUri, traceModelUri, label, originDate, null, false);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

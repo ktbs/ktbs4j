@@ -33,4 +33,5 @@ public interface KtbsConstants {
 	public static final String KTBS_HASMODEL = KTBS_NAMESPACE + "hasModel";
 	public static final String KTBS_HASORIGIN = KTBS_NAMESPACE + "hasOrigin";
 	public static final String KTBS_DESCRIPTION_OF = KTBS_NAMESPACE + "descriptionOf";
+	public static final String KTBS_COMPLIES_WITH_MODEL = KTBS_NAMESPACE + "compliesWithModel";
 }

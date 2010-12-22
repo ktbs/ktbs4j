@@ -223,8 +223,8 @@ public class KtbsResourceReader {
 		String traceURI = null;
 		Date beginDT = null;
 		Date endDT= null;
-		int begin = -1;
-		int end= -1;
+		long begin = -1l;
+		long end= -1l;
 		String obselURI = null;
 		String subject = null;
 
@@ -240,11 +240,9 @@ public class KtbsResourceReader {
 				XSDDateTime endXSD = (XSDDateTime) statement.getObject().asLiteral().getValue();
 				endDT = endXSD.asCalendar().getTime();
 			} else if(predicateURI.equals(KtbsConstants.KTBS_HASBEGIN)) {
-				//TODO Attention !!! Changer ceci en getLong() après modification du bug 19
-				begin = statement.getObject().asLiteral().getInt();
+				begin = statement.getObject().asLiteral().getLong();
 			} else if(predicateURI.equals(KtbsConstants.KTBS_HASEND)) {
-				//TODO Attention !!! Changer ceci en getLong() après modification du bug 19
-				end = statement.getObject().asLiteral().getInt();
+				end = statement.getObject().asLiteral().getLong();
 			} else if(predicateURI.equals(KtbsConstants.KTBS_HASTRACE))
 				traceURI = statement.getObject().asResource().getURI();
 			else if(predicateURI.equals(KtbsConstants.KTBS_HASSUBJECT))

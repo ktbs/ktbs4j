@@ -29,10 +29,10 @@ public class ClientTest {
 		KtbsClient client = app.getKtbsClient("http://localhost:8001/");
 		client.startSession();
 
-		KtbsResponse response = testPutTrace(client);
-		//		KtbsResponse response = testCreateObsel(client);
+		//		KtbsResponse response = testPutTrace(client);
+		//				KtbsResponse response = testCreateObsel(client);
 		//		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/0cd86043ba40d40aa91ad18bdd714634");
-		//				KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
+		KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
 		//		KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
 		//		KtbsResponse response = client.getKtbsRoot("http://localhost:8001/");
 		//		KtbsResponse response = client.getBase("http://localhost:8001/","base1");
@@ -50,7 +50,7 @@ public class ClientTest {
 			//			displayBase((Base) response.getBodyAsKtbsResource());
 			//			displayRoot((KtbsRoot) response.getBodyAsKtbsResource());
 			//			displayObsel((Obsel) response.getBodyAsKtbsResource());
-			//									displayTrace((Trace) response.getBodyAsKtbsResource());
+			displayTrace((Trace) response.getBodyAsKtbsResource());
 		} 
 
 		client.closeSession();
@@ -98,7 +98,7 @@ public class ClientTest {
 		String etag = responseGet.getHTTPETag();
 		responseGet = client.getTraceInfo("http://localhost:8001/base1/t01/");
 		Calendar c3 = Calendar.getInstance();
-		
+
 		Trace traceInfo = (Trace) responseGet.getBodyAsKtbsResource();
 
 		int cnt = 0;
@@ -110,8 +110,8 @@ public class ClientTest {
 				Map<String, Serializable> attributes  = new HashMap<String, Serializable>(obsel.getAttributes());
 				attributes.remove(messageAtt);
 				attributes.put(messageAtt, "#my-channel-modified23");
-				
-				
+
+
 				Obsel newObsel = KtbsResourceFactory.createObsel(obsel.getURI(), obsel.getTraceURI(), "fion du bois", obsel.getBeginDT(), obsel.getEndDT(), 900, obsel.getEnd(), obsel.getTypeURI(), attributes, obsel.getLabel());
 				newObsel.setLabel("Mon étiquette");
 				traceInfo.addObsel(newObsel);
@@ -121,7 +121,7 @@ public class ClientTest {
 		}
 
 		KtbsResponse putResponse = client.putTraceObsels(traceInfo, etag);
-		
+
 		System.out.println("*********************************************************************************");
 		System.out.println("*********************************************************************************");
 		System.out.println("Première requête: " + (c2.getTimeInMillis() - c1.getTimeInMillis()));

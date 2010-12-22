@@ -11,13 +11,13 @@ public interface Obsel extends KtbsResource {
 	 * 
 	 * @return the relative begin date in milliseconds, -1 if unset
 	 */
-	public int getBegin();
+	public long getBegin();
 
 	/**
 	 * 
 	 * @return the relative end date in milliseconds, -1 if unset
 	 */
-	public int getEnd();
+	public long getEnd();
 
 	public Date getBeginDT();
 	public Date getEndDT();

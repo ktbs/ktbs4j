@@ -14,8 +14,8 @@ import org.liris.ktbs.core.Trace;
 
 public class ObselImpl extends KtbsResourceImpl implements Obsel {
 
-	private int begin;
-	private int end;
+	private long begin;
+	private long end;
 	
 	private Date beginDT;
 	private Date endDT;
@@ -31,7 +31,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	private String traceURI;
 
 	
-	ObselImpl(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, int begin, int end, String typeURI, Map<String, Serializable> attributes) {
+	ObselImpl(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, long begin, long end, String typeURI, Map<String, Serializable> attributes) {
 		super(resourceUri);
 
 		this.parentTrace = parentTrace;
@@ -52,7 +52,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 		this.outgoingRelations = new LinkedList<Relation>();
 	}
 
-	ObselImpl(String obselURI, String traceURI, String subject, Date beginDT, Date endDT, int begin, int end,
+	ObselImpl(String obselURI, String traceURI, String subject, Date beginDT, Date endDT, long begin, long end,
 			String typeURI2, Map<String, Serializable> attributes2) {
 		this(obselURI, (Trace)null, subject, beginDT, endDT,begin, end, typeURI2, attributes2);
 		this.traceURI = traceURI;
@@ -146,12 +146,12 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	}
 
 	@Override
-	public int getBegin() {
+	public long getBegin() {
 		return begin;
 	}
 
 	@Override
-	public int getEnd() {
+	public long getEnd() {
 		return end;
 	}
 

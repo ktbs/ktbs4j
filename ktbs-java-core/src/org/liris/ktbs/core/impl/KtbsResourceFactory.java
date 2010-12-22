@@ -38,24 +38,24 @@ public class KtbsResourceFactory {
 		return traceImpl;
 	}
 
-	public static Obsel createObsel(String resourceUri, Trace parentTrace, String subject, Date begin, Date end, String typeURI, Map<String, Serializable> attributes, String label) {
+	public static Obsel createObsel(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, String typeURI, Map<String, Serializable> attributes, String label) {
 		if(parentTrace.getObselURIs().contains(resourceUri))
 			throw new IllegalStateException("There is already an obsel with the same uri \""+resourceUri+"\" in the trace \""+parentTrace.getURI()+"\".");
-		ObselImpl obselImpl = new ObselImpl(resourceUri, parentTrace, subject, begin, end, -1, -1, typeURI, attributes);
+		ObselImpl obselImpl = new ObselImpl(resourceUri, parentTrace, subject, beginDT, endDT, -1l, -1l, typeURI, attributes);
 		obselImpl.setLabel(label);
 		return obselImpl;
 	}
 
 	public static long obselID = 0;
 	
-	public static Obsel createObsel(Trace parentTrace, String subject, String label, Date begin, Date end, String typeURI, Map<String, Serializable> attributes) {
+	public static Obsel createObsel(Trace parentTrace, String subject, String label, Date beginDT, Date endDT, String typeURI, Map<String, Serializable> attributes) {
 		
 		Collection<String> obselURIs = parentTrace.getObselURIs();
 		while(obselURIs.contains(parentTrace.getURI()+ KtbsResourceFactory.obselID + "/"))
 			KtbsResourceFactory.obselID++;
 		String resourceUri = parentTrace.getURI()+ KtbsResourceFactory.obselID + "/";
 
-		return createObsel(resourceUri, parentTrace, subject, begin, end, typeURI, attributes, label);
+		return createObsel(resourceUri, parentTrace, subject, beginDT, endDT, typeURI, attributes, label);
 	}
 
 	public static Relation createRelation(Obsel from, String relationName, Obsel to) {
@@ -90,7 +90,7 @@ public class KtbsResourceFactory {
 			Date endDT,
 			String typeURI,
 			Map<String, Serializable> attributes, String label) {
-		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, beginDT, endDT, -1, -1, typeURI, attributes);
+		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, beginDT, endDT, -1l, -1l, typeURI, attributes);
 		obselImpl.setLabel(label);
 		return obselImpl;
 	}
@@ -98,8 +98,8 @@ public class KtbsResourceFactory {
 	public static Obsel createObsel(String obselURI, String traceURI,  String subject,
 			Date beginDT, 
 			Date endDT,
-			int begin, 
-			int end,
+			long begin, 
+			long end,
 			String typeURI,
 			Map<String, Serializable> attributes, String label) {
 		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, beginDT, endDT, begin, end, typeURI, attributes);
@@ -108,8 +108,8 @@ public class KtbsResourceFactory {
 	}
 
 	public static Obsel createObsel(String obselURI, String traceURI,  String subject,
-			int begin, 
-			int end,
+			long begin, 
+			long end,
 			String typeURI,
 			Map<String, Serializable> attributes, String label) {
 		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, null, null, begin, end, typeURI, attributes);

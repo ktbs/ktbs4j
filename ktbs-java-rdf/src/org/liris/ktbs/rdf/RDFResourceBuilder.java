@@ -8,13 +8,14 @@ import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
  * 
@@ -41,6 +42,9 @@ public class RDFResourceBuilder {
 
 	private RDFResourceBuilder(String jenaSyntax) {
 		super();
+		/*
+		 * TODO the following model creation may be a bit long when executed the first time. Investigate why.
+		 */
 		this.jenaModel = ModelFactory.createDefaultModel();
 		this.jenaModel.setNsPrefix("ktbs", KtbsConstants.KTBS_NAMESPACE);
 		this.jenaModel.setNsPrefix("rdfs", RDFS.getURI());
@@ -134,7 +138,10 @@ public class RDFResourceBuilder {
 	private void createRDFObsel(String traceURI, Obsel obsel, boolean withObselURI) {
 
 
-		if(jenaModel.containsResource(jenaModel.getResource(obsel.getURI())))
+		/*
+		 * The following lines crashes when a target obsel was previously 
+		 */
+		if(jenaModel.contains(jenaModel.getResource(obsel.getURI()),null,(RDFNode)null))
 			return;
 		Resource obselResource;
 		if(withObselURI)
@@ -175,14 +182,13 @@ public class RDFResourceBuilder {
 					jenaModel.createProperty(KtbsConstants.KTBS_HASEND_DT), 
 					jenaModel.createTypedLiteral(new XSDDateTime(endCal)));
 		}
-
 		
 		// adds the begin date
 		if(obsel.getBegin() != -1) {
 			jenaModel.add(
 					obselResource, 
 					jenaModel.createProperty(KtbsConstants.KTBS_HASBEGIN), 
-					jenaModel.createTypedLiteral(obsel.getBegin()));
+					jenaModel.createTypedLiteral(obsel.getBegin(), XSD.integer.getURI()));
 		}
 		
 		// adds the end date
@@ -190,7 +196,7 @@ public class RDFResourceBuilder {
 			jenaModel.add(
 					obselResource, 
 					jenaModel.createProperty(KtbsConstants.KTBS_HASEND), 
-					jenaModel.createLiteral(Integer.toString(obsel.getEnd())));
+					jenaModel.createTypedLiteral(obsel.getEnd(), XSD.integer.getURI()));
 		}
 		
 		// add attributes to the Jena model

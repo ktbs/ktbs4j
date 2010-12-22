@@ -62,6 +62,9 @@ public class KtbsClient implements KtbsClientService {
 
 	public static final String MESSAGE_DELETE_NOT_SUPPORTED = "DELETE method are not supported by the KTBS server in the current version";
 
+	
+	private static final String MESSAGE_CLIENT_NOT_STARTED = "The HTTP client is not started. Please call KtbsClient.startSession() before calling any KTBS remote service.";
+
 	private static Log log = LogFactory.getLog(KtbsClient.class);
 
 	// instanciated from KTBSClientApplication only
@@ -158,6 +161,8 @@ public class KtbsClient implements KtbsClientService {
 	}
 
 	private KtbsResponse performDeleteRequest(String ktbsResourceURI) {
+		checkStarted(); 
+		
 		HttpDelete delete = new HttpDelete(ktbsResourceURI);
 		HttpResponse response = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
@@ -176,7 +181,17 @@ public class KtbsClient implements KtbsClientService {
 	}
 
 
+	private void checkStarted() {
+		if(!isStarted()) {
+			log.error(MESSAGE_CLIENT_NOT_STARTED);
+			throw new IllegalStateException(MESSAGE_CLIENT_NOT_STARTED);
+		}
+	}
+
+
 	private KtbsResponse performGetRequest(String ktbsResourceURI, Class<?> clazz, String restAspect) {
+		checkStarted(); 
+
 		HttpGet get = new HttpGet(ktbsResourceURI);
 		get.addHeader(HttpHeaders.ACCEPT, getGETMimeType());
 
@@ -253,6 +268,8 @@ public class KtbsClient implements KtbsClientService {
 
 	private KtbsResponse performPostRequest(String parentURI,
 			String stringRepresentation) {
+		checkStarted(); 
+
 		HttpPost post = new HttpPost(parentURI);
 		post.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
 
@@ -445,6 +462,8 @@ public class KtbsClient implements KtbsClientService {
 
 	private KtbsResponse performPutRequest(String parentURI,
 			String stringRepresentation, String eTag) {
+		checkStarted(); 
+
 		HttpPut put = new HttpPut(parentURI);
 		put.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
 		put.addHeader(HttpHeaders.IF_MATCH, eTag);

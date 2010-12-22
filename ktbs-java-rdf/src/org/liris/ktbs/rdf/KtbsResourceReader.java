@@ -34,6 +34,9 @@ public class KtbsResourceReader {
 
 	public KtbsResource deserializeFromStream(String ktbsResourceURI, InputStream stream, String jenaSyntax, Class<?> ktbsResourceType, String restAspect) {
 
+		/*
+		 * TODO the following model creation may be a bit long when executed the first time. Investigate why.
+		 */
 		Model jenaModel = ModelFactory.createDefaultModel();
 
 		jenaModel.read(stream, "", jenaSyntax);
@@ -46,7 +49,6 @@ public class KtbsResourceReader {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	private KtbsResource createResourceFromRDFModel(String ktbsResourceURI, Model jenaModel,
 			Class<?> ktbsResourceType, String restAspect) {
 		if(KtbsRoot.class.isAssignableFrom(ktbsResourceType)) {
@@ -139,7 +141,6 @@ public class KtbsResourceReader {
 				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null, null);
 
 				Collection<Statement> obselRelationStatements = new LinkedList<Statement>();
-				Map<String, Obsel> uriToObsel = new HashMap<String, Obsel>();
 
 				while (obselResourceIt.hasNext()) {
 					Statement statement = (Statement) obselResourceIt.next();
@@ -149,14 +150,13 @@ public class KtbsResourceReader {
 
 					Obsel obsel = createObselFromRDFModel(obselURI, jenaModel, obselRelationStatements);
 					trace.addObsel(obsel);
-					uriToObsel.put(obselURI, obsel);
 				}
 
 				for(Statement stmt:obselRelationStatements) {
 					KtbsResourceFactory.createRelation(
-							uriToObsel.get(stmt.getSubject().getURI()),
+							stmt.getSubject().getURI(),
 							stmt.getPredicate().getURI(), 
-							uriToObsel.get(stmt.getObject().asResource().getURI()));
+							stmt.getObject().asResource().getURI());
 				}
 
 			} else if(restAspect != null && restAspect.equals(KtbsConstants.ABOUT_ASPECT)) {

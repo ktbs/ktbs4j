@@ -1,8 +1,6 @@
 package org.liris.ktbs.java.tests;
 
-
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +23,12 @@ public class ClientTest {
 		KTBSClientApplication app = KTBSClientApplication.getInstance();
 
 		System.out.println(Integer.MAX_VALUE);
-		
+
 		KtbsClient client = app.getKtbsClient("http://localhost:8001/");
 		client.startSession();
 
-		//		KtbsResponse response = testPutTrace(client);
-		KtbsResponse response = testCreateObsel(client);
+		KtbsResponse response = testPutTrace(client);
+		//		KtbsResponse response = testCreateObsel(client);
 		//		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/0cd86043ba40d40aa91ad18bdd714634");
 		//				KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
 		//		KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
@@ -49,8 +47,8 @@ public class ClientTest {
 		if(response.executedWithSuccess()) {
 			//			displayBase((Base) response.getBodyAsKtbsResource());
 			//			displayRoot((KtbsRoot) response.getBodyAsKtbsResource());
-//			displayObsel((Obsel) response.getBodyAsKtbsResource());
-//									displayTrace((Trace) response.getBodyAsKtbsResource());
+			//			displayObsel((Obsel) response.getBodyAsKtbsResource());
+			//									displayTrace((Trace) response.getBodyAsKtbsResource());
 		} 
 
 		client.closeSession();
@@ -73,19 +71,19 @@ public class ClientTest {
 				10000, 
 				attributes
 		);
-//		attributes.put("http://localhost:8001/base1/model1/channel", "BBC 2");
-//		KtbsResponse response = client.createObsel(
-//				"http://localhost:8001/base1/t01/", 
-//				"openchat2", 
-//				"micheal", 
-//				"Mon 3ème observé", 
-//				"http://localhost:8001/base1/model1/OpenChat", 
-//				new Date(), 
-//				new Date(), 
-//				-1,
-//				-1,
-//				attributes
-//		);
+		//		attributes.put("http://localhost:8001/base1/model1/channel", "BBC 2");
+		//		KtbsResponse response = client.createObsel(
+		//				"http://localhost:8001/base1/t01/", 
+		//				"openchat2", 
+		//				"micheal", 
+		//				"Mon 3ème observé", 
+		//				"http://localhost:8001/base1/model1/OpenChat", 
+		//				new Date(), 
+		//				new Date(), 
+		//				-1,
+		//				-1,
+		//				attributes
+		//		);
 		return response;
 	}
 
@@ -93,31 +91,34 @@ public class ClientTest {
 	private static KtbsResponse testPutTrace(KtbsClient client) {
 		KtbsResponse responseGet = client.getTraceObsels("http://localhost:8001/base1/t01/");
 		Trace traceObsels = (Trace) responseGet.getBodyAsKtbsResource();
+		String etag = responseGet.getHTTPETag();
+		System.out.println(etag);
 		responseGet = client.getTraceInfo("http://localhost:8001/base1/t01/");
+		
 		Trace traceInfo = (Trace) responseGet.getBodyAsKtbsResource();
-
 
 		int cnt = 0;
 		for(Obsel obsel:traceObsels.getObsels()) {
-			String messageAtt = "http://localhost:8001/base1/model1/message";
+			String messageAtt = "http://localhost:8001/base1/model1/channel";
 			Serializable message = obsel.getAttributeValue(messageAtt);
 			if(message!= null && cnt == 0) {
 				cnt++;
 				Map<String, Serializable> attributes  = new HashMap<String, Serializable>(obsel.getAttributes());
 				attributes.remove(messageAtt);
-				attributes.put(messageAtt, "Bonjour le Monde Entier !!!!");
-				Obsel newObsel = KtbsResourceFactory.createObsel(obsel.getURI(), obsel.getTraceURI(), obsel.getSubject(), obsel.getBeginDT(), obsel.getEndDT(), obsel.getTypeURI(), attributes, obsel.getLabel());
+				attributes.put(messageAtt, "#my-channel-modified23");
+				
+				
+				Obsel newObsel = KtbsResourceFactory.createObsel(obsel.getURI(), obsel.getTraceURI(), "fion du bois", obsel.getBeginDT(), obsel.getEndDT(), 900, obsel.getEnd(), obsel.getTypeURI(), attributes, obsel.getLabel());
+				newObsel.setLabel("Mon étiquette");
 				traceInfo.addObsel(newObsel);
 			} else {
 				traceInfo.addObsel(obsel);
 			}
 		}
 
-		String httpeTag = responseGet.getHTTPETag();
-		KtbsResponse putResponse = client.putTraceObsels(traceInfo, httpeTag);
+		KtbsResponse putResponse = client.putTraceObsels(traceInfo, etag);
 		return putResponse;
 	}
-
 
 	private static void displayBase(Base base) {
 		System.out.println("********************************************************");

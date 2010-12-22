@@ -14,8 +14,11 @@ import org.liris.ktbs.core.Trace;
 
 public class ObselImpl extends KtbsResourceImpl implements Obsel {
 
-	private Date begin;
-	private Date end;
+	private int begin;
+	private int end;
+	
+	private Date beginDT;
+	private Date endDT;
 	private String typeURI;
 	private String subject;
 
@@ -27,13 +30,13 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	private Trace parentTrace;
 	private String traceURI;
 
-	ObselImpl(String resourceUri, Trace parentTrace, String subject, Date begin, Date end, String typeURI, Map<String, Serializable> attributes) {
+	
+	ObselImpl(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, int begin, int end, String typeURI, Map<String, Serializable> attributes) {
 		super(resourceUri);
 
-
 		this.parentTrace = parentTrace;
-		this.begin = begin;
-		this.end = end;
+		this.beginDT = beginDT;
+		this.endDT = endDT;
 		this.typeURI = typeURI;
 
 		this.subject = subject;
@@ -42,24 +45,27 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 		if(attributes!=null) 
 			this.attributes.putAll(attributes);
 
+		this.begin = begin;
+		this.end = end;
+		
 		this.incomingRelations = new LinkedList<Relation>();
 		this.outgoingRelations = new LinkedList<Relation>();
 	}
 
-	ObselImpl(String obselURI, String traceURI, String subject, Date begin2, Date end2,
+	ObselImpl(String obselURI, String traceURI, String subject, Date beginDT, Date endDT, int begin, int end,
 			String typeURI2, Map<String, Serializable> attributes2) {
-		this(obselURI, (Trace)null, subject, begin2, end2, typeURI2, attributes2);
+		this(obselURI, (Trace)null, subject, beginDT, endDT,begin, end, typeURI2, attributes2);
 		this.traceURI = traceURI;
 	}
 
 	@Override
-	public Date getBegin() {
-		return begin;
+	public Date getBeginDT() {
+		return beginDT;
 	}
 
 	@Override
-	public Date getEnd() {
-		return end;
+	public Date getEndDT() {
+		return endDT;
 	}
 
 	@Override
@@ -138,4 +144,15 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	public String getSubject() {
 		return subject;
 	}
+
+	@Override
+	public int getBegin() {
+		return begin;
+	}
+
+	@Override
+	public int getEnd() {
+		return end;
+	}
+
 }

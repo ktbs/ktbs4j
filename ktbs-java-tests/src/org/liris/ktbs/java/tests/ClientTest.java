@@ -1,9 +1,11 @@
 package org.liris.ktbs.java.tests;
 
 
-import java.util.Collection;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.liris.ktbs.TraceBuilder;
 import org.liris.ktbs.client.KTBSClientApplication;
 import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.client.KtbsResponse;
@@ -12,6 +14,7 @@ import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
+import org.liris.ktbs.core.impl.KtbsResourceFactory;
 
 public class ClientTest {
 
@@ -21,11 +24,15 @@ public class ClientTest {
 	public static void main(String[] args) {
 		KTBSClientApplication app = KTBSClientApplication.getInstance();
 
+		System.out.println(Integer.MAX_VALUE);
+		
 		KtbsClient client = app.getKtbsClient("http://localhost:8001/");
 		client.startSession();
 
+		//		KtbsResponse response = testPutTrace(client);
+		KtbsResponse response = testCreateObsel(client);
 		//		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/0cd86043ba40d40aa91ad18bdd714634");
-				KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
+		//				KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/t01/");
 		//		KtbsResponse response = client.getTraceInfo("http://localhost:8001/base1/t01/");
 		//		KtbsResponse response = client.getKtbsRoot("http://localhost:8001/");
 		//		KtbsResponse response = client.getBase("http://localhost:8001/","base1");
@@ -34,58 +41,81 @@ public class ClientTest {
 		//		KtbsResponse response = client.createTrace("http://localhost:8001/baseHector2/", "traceHermes","http://localhost:8001/baseHector2/modelRene/",new Date(), "Une trace pour tester.");
 		//		KtbsResponse response = client.createTraceModel("http://localhost:8001/baseHector2/", "modelRene","Super modèle qui dechire");
 
-//		TraceBuilder traceBuilder = new TraceBuilder();
-//		traceBuilder.createNewTrace("http://localhost:8001/base1/t01/", "http://localhost:8001/base1/model1/", "Une trace", "25-12-2010", "10:00:00");
-//		traceBuilder.addObsel("10:18:00", "10:25:00", "Joseph", "Observé que j'ai vu", "OpenChat", "http://localhost:8001/base1/t01/model1/#channel", "Mon channel 3");
-//		traceBuilder.addObsel("10:20:00", "10:26:00", "Damien", "Observé que j'ai vu aussi", "SendMsg", "http://localhost:8001/base1/t01/model1/#message", "Bonjour Jacqueline");
-//		Collection<Obsel> obsels = traceBuilder.getTrace().getObsels();
-//		KtbsResponse[] responses = client.addObselsToTrace("http://localhost:8001/base1/t01/", obsels);
-
-
-
-		//		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
-		//		attributes.put("http://localhost:8001/base1/model1/message", "Recevez-vous ce message ?");
-		//		KtbsResponse response = client.createObsel(
-		//				"http://localhost:8001/base1/t01/", 
-		//				"observe5", 
-		//				"hervé", 
-		//				"Mon nième observé", 
-		//				"http://localhost:8001/base1/model1/SendMsg", 
-		//				new Date(), 
-		//				new Date(), 
-		//				attributes,
-		//				"http://localhost:8001/base1/model1/onChannel",
-		//				"http://localhost:8001/base1/t01/openchat2/"
-		//		);
-		//		attributes.put("http://localhost:8001/base1/model1/channel", "BBC 2");
-		//		KtbsResponse response = client.createObsel(
-		//				"http://localhost:8001/base1/t01/", 
-		//				"openchat2", 
-		//				"micheal", 
-		//				"Mon 3ème observé", 
-		//				"http://localhost:8001/base1/model1/OpenChat", 
-		//				new Date(), 
-		//				new Date(), 
-		//				attributes
-		//		);
-
-		//		KtbsResponse response = client.deleteTrace("http://localhost:8001/base1/");
-		//		KtbsResponse response = client.deleteTrace("http://localhost:8001/base1/t01/8d375d5fd9edc11de41c07b9d19549c5");
-		//		KtbsResponse response = client.deleteTrace("http://localhost:8001/base1/t01/");
-
-//		for(KtbsResponse response:responses) {
-			System.out.println("###########################################################");
-			System.out.println(response.toString());
-			System.out.println("###########################################################");
-//		}
-//		if(response.executedWithSuccess()) {
+		//		for(KtbsResponse response:responses) {
+		System.out.println("###########################################################");
+		System.out.println(response.toString());
+		System.out.println("###########################################################");
+		//		}
+		if(response.executedWithSuccess()) {
 			//			displayBase((Base) response.getBodyAsKtbsResource());
 			//			displayRoot((KtbsRoot) response.getBodyAsKtbsResource());
-			//			displayObsel((Obsel) response.getBodyAsKtbsResource());
-						displayTrace((Trace) response.getBodyAsKtbsResource());
-//		} 
+//			displayObsel((Obsel) response.getBodyAsKtbsResource());
+//									displayTrace((Trace) response.getBodyAsKtbsResource());
+		} 
 
 		client.closeSession();
+	}
+
+
+	private static KtbsResponse testCreateObsel(KtbsClient client) {
+
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		attributes.put("http://localhost:8001/base1/model1/message", "Hello Girl");
+		KtbsResponse response = client.createObsel(
+				"http://localhost:8001/base1/t01/", 
+				"observe6", 
+				"dam", 
+				"Mon 6ième observé", 
+				"http://localhost:8001/base1/model1/SendMsg", 
+				null, 
+				null, 
+				10000, 
+				10000, 
+				attributes
+		);
+//		attributes.put("http://localhost:8001/base1/model1/channel", "BBC 2");
+//		KtbsResponse response = client.createObsel(
+//				"http://localhost:8001/base1/t01/", 
+//				"openchat2", 
+//				"micheal", 
+//				"Mon 3ème observé", 
+//				"http://localhost:8001/base1/model1/OpenChat", 
+//				new Date(), 
+//				new Date(), 
+//				-1,
+//				-1,
+//				attributes
+//		);
+		return response;
+	}
+
+
+	private static KtbsResponse testPutTrace(KtbsClient client) {
+		KtbsResponse responseGet = client.getTraceObsels("http://localhost:8001/base1/t01/");
+		Trace traceObsels = (Trace) responseGet.getBodyAsKtbsResource();
+		responseGet = client.getTraceInfo("http://localhost:8001/base1/t01/");
+		Trace traceInfo = (Trace) responseGet.getBodyAsKtbsResource();
+
+
+		int cnt = 0;
+		for(Obsel obsel:traceObsels.getObsels()) {
+			String messageAtt = "http://localhost:8001/base1/model1/message";
+			Serializable message = obsel.getAttributeValue(messageAtt);
+			if(message!= null && cnt == 0) {
+				cnt++;
+				Map<String, Serializable> attributes  = new HashMap<String, Serializable>(obsel.getAttributes());
+				attributes.remove(messageAtt);
+				attributes.put(messageAtt, "Bonjour le Monde Entier !!!!");
+				Obsel newObsel = KtbsResourceFactory.createObsel(obsel.getURI(), obsel.getTraceURI(), obsel.getSubject(), obsel.getBeginDT(), obsel.getEndDT(), obsel.getTypeURI(), attributes, obsel.getLabel());
+				traceInfo.addObsel(newObsel);
+			} else {
+				traceInfo.addObsel(obsel);
+			}
+		}
+
+		String httpeTag = responseGet.getHTTPETag();
+		KtbsResponse putResponse = client.putTraceObsels(traceInfo, httpeTag);
+		return putResponse;
 	}
 
 
@@ -131,6 +161,8 @@ public class ClientTest {
 		System.out.println("Type: " + obsel.getTypeURI());
 		if(obsel.getLabel()!=null) System.out.println("Label: " + obsel.getLabel());
 		if(obsel.getSubject()!=null) System.out.println("Subject: " + obsel.getSubject());
+		System.out.println("Begin DT: " + obsel.getBeginDT());
+		System.out.println("End DT: " + obsel.getEndDT());
 		System.out.println("Begin: " + obsel.getBegin());
 		System.out.println("End: " + obsel.getEnd());
 		for(String att:obsel.getAttributes().keySet())

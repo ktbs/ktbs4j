@@ -21,6 +21,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -70,27 +71,28 @@ public class KtbsClient implements KtbsClientService {
 	private HttpClient httpClient;
 	private boolean started = false;
 
+	private HttpParams httpParams;
+
 	public void startSession() {
 
 		CacheConfig cacheConfig = new CacheConfig();  
 		cacheConfig.setMaxCacheEntries(1000);
 		cacheConfig.setMaxObjectSizeBytes(10000);
 
-		// configure the HttpClient to handle automatically http redirections (303)
-		HttpParams params = new BasicHttpParams();
-		params.setParameter(ClientPNames.HANDLE_REDIRECTS, true);
+		httpParams = new BasicHttpParams();
+		httpParams.setParameter(ClientPNames.HANDLE_REDIRECTS, true);
 
-		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-		HttpProtocolParams.setContentCharset(params, HTTP.DEFAULT_CONTENT_CHARSET);
-		HttpConnectionParams.setTcpNoDelay(params, true);
-		HttpConnectionParams.setSocketBufferSize(params, 8192);
+		HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
+		HttpProtocolParams.setContentCharset(httpParams, HTTP.DEFAULT_CONTENT_CHARSET);
+		HttpConnectionParams.setTcpNoDelay(httpParams, true);
+		HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 
 		// determine the release version from packaged version info
 		final VersionInfo vi = VersionInfo.loadVersionInfo("org.apache.http.client", KTBSClientApplication.class.getClassLoader());
 		final String release = (vi != null) ? vi.getRelease() : VersionInfo.UNAVAILABLE;
-		HttpProtocolParams.setUserAgent(params, "KTBS Client, based on Apache-HttpClient/" + release + " (java 1.5)");
+		HttpProtocolParams.setUserAgent(httpParams, "KTBS Client, based on Apache-HttpClient/" + release + " (java 1.5)");
 
-		httpClient = new CachingHttpClient(new DefaultHttpClient(params), cacheConfig);
+		httpClient = new CachingHttpClient(new DefaultHttpClient(httpParams), cacheConfig);
 		this.started = true;
 	}
 
@@ -126,48 +128,35 @@ public class KtbsClient implements KtbsClientService {
 		int k = 0;
 		for(Obsel obsel:obsels) {
 			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-			builder.addObsel(traceURI, false, obsel);
+			builder.addObsels(traceURI, false, obsel);
 			String stringRepresentation = builder.getRDFResourceAsString();
 			log.debug("Sending the obsel \""+obsel.getTypeURI()+"\" to the KTBS.");
 			response[k] = performPostRequest(traceURI, stringRepresentation);
 			k++;
 		}
-		
+
 		return response;
 	}
 
 
-	public String getGETSyntax() {
+	private String getGETSyntax() {
 		return JenaConstants.JENA_SYNTAX_N_TRIPLES;
 	}
-	public String getPOSTSyntax() {
+	private String getPOSTSyntax() {
 		return JenaConstants.JENA_SYNTAX_TURTLE;
 	}
-
-	@Override
-	public KtbsResponse createRelation(String traceURI, String relationName, String fromObselURI, String toObselURI) {
-		/*
-		 * TODO test this service implementation. This probably requires a PUT rather than a POST.
-		 */
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addRelation(fromObselURI, relationName, toObselURI);
-		String stringRepresentation = builder.getRDFResourceAsString();
-		return performPostRequest(traceURI, stringRepresentation);
+	private String getGETMimeType() {
+		return KtbsConstants.MIME_NTRIPLES;
 	}
-
-	@Override
-	public KtbsResponse addAttributeToObsel(String obselURI, String attributeName,
-			Serializable value) {
-		//TODO put request
-		return null;
+	private String getPOSTMimeType() {
+		return KtbsConstants.MIME_TURTLE;
 	}
 
 	@Override
 	public KtbsResponse getKtbsRoot(String rootURI) {
 		return performGetRequest(rootURI, KtbsRoot.class, null);
 	}
-	
-	
+
 	private KtbsResponse performDeleteRequest(String ktbsResourceURI) {
 		HttpDelete delete = new HttpDelete(ktbsResourceURI);
 		HttpResponse response = null;
@@ -189,14 +178,31 @@ public class KtbsClient implements KtbsClientService {
 
 	private KtbsResponse performGetRequest(String ktbsResourceURI, Class<?> clazz, String restAspect) {
 		HttpGet get = new HttpGet(ktbsResourceURI);
-		get.addHeader(HttpHeaders.ACCEPT, KtbsConstants.MIME_NTRIPLES);
+		get.addHeader(HttpHeaders.ACCEPT, getGETMimeType());
 
 		HttpResponse response = null;
 		KtbsResource ktbsResource = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
 
 		try {
-			response = httpClient.execute(get);
+			if(restAspect==null)
+				response = httpClient.execute(get);
+			else {
+				/*
+				 * The following lines handles a GET request as expected by the user in 
+				 * spite of the KTBS issue with ETags and resource aspects (cf. Ticket #18).
+				 * 
+				 * To overcome this issue, when ther is an non null resource aspect, the 
+				 * following lines ignore the ETag header by executing the same GET request 
+				 * on a new HTTP client that does not handle automatically HTTP caching.
+				 * 
+				 * TODO maybe instanciating a new Default HTTP client for this purpose 
+				 * is not optimal. If there is any other mean to perform the same GET request
+				 * without the ETag header, it should be implemented as such instead.
+				 */
+				DefaultHttpClient defaultHttpClient = new DefaultHttpClient(httpParams);
+				response = defaultHttpClient.execute(get);
+			}
 
 			if(response == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+ktbsResourceURI+"\".");
@@ -248,7 +254,7 @@ public class KtbsClient implements KtbsClientService {
 	private KtbsResponse performPostRequest(String parentURI,
 			String stringRepresentation) {
 		HttpPost post = new HttpPost(parentURI);
-		post.addHeader(HttpHeaders.CONTENT_TYPE, KtbsConstants.MIME_TURTLE);
+		post.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
 
 		HttpResponse response = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
@@ -320,7 +326,7 @@ public class KtbsClient implements KtbsClientService {
 		Trace trace = KtbsResourceFactory.createTrace(base.getURI()+traceLocalName+"/", traceModelURI, label, origin, base);
 
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addTrace(trace, true);
+		builder.addTrace(trace, true, false);
 		String stringRepresentation = builder.getRDFResourceAsString();
 
 		return performPostRequest(baseURI, stringRepresentation);
@@ -334,12 +340,6 @@ public class KtbsClient implements KtbsClientService {
 	@Override
 	public KtbsResponse getTraceInfo(String traceURI) {
 		return performGetRequest(traceURI+KtbsConstants.ABOUT_ASPECT, Trace.class, KtbsConstants.ABOUT_ASPECT);
-	}
-
-	@Override
-	public KtbsResponse deleteRelation(String traceURI, String relationName,
-			String fromObselURI, String toObselURI) {
-		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
 
 	@Override
@@ -359,11 +359,6 @@ public class KtbsClient implements KtbsClientService {
 
 	@Override
 	public KtbsResponse deleteTrace(String traceURI) {
-		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
-	}
-	
-	@Override
-	public KtbsResponse deleteObsel(String obselURI) {
 		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
 	}
 
@@ -399,17 +394,21 @@ public class KtbsClient implements KtbsClientService {
 		return getTraceObsels(rootURI+baseLocalName+"/", traceLocalName);
 	}
 
-
+	/*
+	 * TODO To be tested after the bug 19 is fixed
+	 */
 	@Override
 	public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject,
-			String label, String typeURI, Date begin, Date end,
-			Map<String, Serializable> attributes,
+			String label, String typeURI, Date beginDT, Date endDT,
+			int begin, int end,Map<String, Serializable> attributes,
 			String... outgoingRelations) {
 
 		Obsel obsel = KtbsResourceFactory.createObsel(
 				traceURI+obselLocalName, 
 				traceURI, 
 				subject,
+				beginDT, 
+				endDT, 
 				begin, 
 				end, 
 				typeURI, 
@@ -428,11 +427,10 @@ public class KtbsClient implements KtbsClientService {
 		}
 
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addObsel(traceURI, true, obsel);
+		builder.addObsels(traceURI, true, obsel);
 		String stringRepresentation = builder.getRDFResourceAsString();
 		return performPostRequest(traceURI, stringRepresentation);
 	}
-
 
 	@Override
 	public KtbsResponse createTraceModel(String baseURI,
@@ -444,4 +442,108 @@ public class KtbsClient implements KtbsClientService {
 
 		return performPostRequest(baseURI, stringRepresentation); 
 	}
+
+	private KtbsResponse performPutRequest(String parentURI,
+			String stringRepresentation, String eTag) {
+		HttpPut put = new HttpPut(parentURI);
+		put.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
+		put.addHeader(HttpHeaders.IF_MATCH, eTag);
+
+		HttpResponse response = null;
+		KtbsResponseStatus ktbsResponseStatus = null;
+
+		try {
+			put.setEntity(new StringEntity(stringRepresentation, HTTP.UTF_8));
+		} catch (UnsupportedEncodingException e) {
+			log.warn("Cannot decode the content of the response sent by the KTBS", e);
+			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+		}
+
+		try {
+			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
+			response = httpClient.execute(put);
+			if(response == null)
+				ktbsResponseStatus=KtbsResponseStatus.INTERNAL_ERR0R;
+			else {
+				int sc = response.getStatusLine().getStatusCode();
+				ktbsResponseStatus = sc==HttpStatus.SC_CREATED ?
+						KtbsResponseStatus.RESOURCE_CREATED:
+							((sc==HttpStatus.SC_OK ||sc==HttpStatus.SC_NO_CONTENT)?
+									KtbsResponseStatus.RESOURCE_MODIFIED:
+										KtbsResponseStatus.SERVER_EXCEPTION);
+			}
+
+			if(log.isDebugEnabled()) {
+				InputStream contentStream = response.getEntity().getContent();
+				String body = IOUtils.toString(contentStream);
+				log.debug("Response header:" + response.getStatusLine());
+				log.debug("Response body:\n" + body);
+			}
+		} catch (ClientProtocolException e) {
+			log.error("An error occured when communicating with the KTBS", e);
+			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+		} catch (IOException e) {
+			log.error("An exception occurred when reading the content of the HTTP response", e);
+			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+		}
+
+		return new KtbsResponseImpl(
+				null, 
+				(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED)||(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_MODIFIED), 
+				ktbsResponseStatus, 
+				response);
+	}
+
+
+	/*
+	 * TODO To be tested after the bug 19 is fixed
+	 */
+	@Override
+	public KtbsResponse putTraceObsels(Trace trace, String traceETag) {
+		return putTraceObsels(trace.getURI(), trace.getObsels(), traceETag);
+	}
+
+	/*
+	 * TODO To be tested after the bug 19 is fixed
+	 */
+	@Override
+	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels, String traceETag) {
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		String uriWithAspect = new String(traceURI);
+		String uriWithoutAspect = new String(traceURI);
+		if(traceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
+			uriWithoutAspect=uriWithoutAspect.replaceAll(KtbsConstants.OBSELS_ASPECT, "");
+		else
+			uriWithAspect+=KtbsConstants.OBSELS_ASPECT;
+
+		builder.addObsels(uriWithoutAspect, true, obsels.toArray(new Obsel[obsels.size()]));
+		String stringRepresentation = builder.getRDFResourceAsString();
+
+		System.out.println("-----------------------");
+		System.out.println(stringRepresentation);
+		System.out.println("-----------------------");
+
+		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
+	}
+
+
+	/*
+	 * TODO To be tested after the bug 19 is fixed
+	 */
+	@Override
+	public KtbsResponse putTraceInfo(Trace trace, String traceETag) {
+		String traceURI = trace.getURI();
+		String uriWithAspect = new String(traceURI);
+		String uriWithoutAspect = new String(traceURI);
+		if(traceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
+			uriWithoutAspect=uriWithoutAspect.replaceAll(KtbsConstants.OBSELS_ASPECT, "");
+		else
+			uriWithAspect+=KtbsConstants.OBSELS_ASPECT;
+
+		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		builder.addTrace(trace, false, false);
+		String stringRepresentation = builder.getRDFResourceAsString();
+		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
+	}
+
 }

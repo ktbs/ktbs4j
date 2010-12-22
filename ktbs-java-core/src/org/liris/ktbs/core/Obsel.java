@@ -7,9 +7,20 @@ import java.util.Map;
 
 public interface Obsel extends KtbsResource {
 	
-	
-	public Date getBegin();
-	public Date getEnd();
+	/**
+	 * 
+	 * @return the relative begin date in milliseconds, -1 if unset
+	 */
+	public int getBegin();
+
+	/**
+	 * 
+	 * @return the relative end date in milliseconds, -1 if unset
+	 */
+	public int getEnd();
+
+	public Date getBeginDT();
+	public Date getEndDT();
 
 	public String getTypeURI();
 

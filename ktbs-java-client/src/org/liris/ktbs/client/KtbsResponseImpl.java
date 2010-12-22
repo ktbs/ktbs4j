@@ -8,7 +8,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HTTP;
 import org.liris.ktbs.core.KtbsResource;
 
 public class KtbsResponseImpl implements KtbsResponse {
@@ -95,7 +94,8 @@ public class KtbsResponseImpl implements KtbsResponse {
 				return null;
 		
 		Header[] headers = httpResponse.getHeaders(headerName);
-		if(headers==null || headers.length > 0)
+		
+		if(headers==null || headers.length == 0)
 			return null;
 		return headers[0].getValue();
 	}

@@ -8,6 +8,7 @@ import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -65,7 +66,7 @@ public class RDFResourceBuilder {
 	 * obsel.getTraceURI().
 	 * @param obsels the obsels to be added in the model
 	 */
-	public void addObsel(String traceURI, boolean withObselURI, Obsel... obsels) {
+	public void addObsels(String traceURI, boolean withObselURI, Obsel... obsels) {
 
 		for(Obsel obsel:obsels)
 			createRDFObsel(traceURI, obsel, withObselURI);
@@ -83,7 +84,7 @@ public class RDFResourceBuilder {
 		return writer.toString();
 	}
 
-	public void addTrace(Trace trace, boolean withParent) {
+	public void addTrace(Trace trace, boolean withParent, boolean withObsels) {
 
 		if(jenaModel.containsResource(jenaModel.getResource(trace.getURI())))
 			return;
@@ -107,8 +108,10 @@ public class RDFResourceBuilder {
 				jenaModel.createTypedLiteral(new XSDDateTime(originCal))
 		);
 
-		for(Obsel obsel:trace.getObsels()) {
-			addObsel(trace.getURI(), false, obsel);
+		if(withObsels) {
+			for(Obsel obsel:trace.getObsels()) {
+				addObsels(trace.getURI(), false, obsel);
+			}
 		}
 
 		if(withParent) {
@@ -153,22 +156,43 @@ public class RDFResourceBuilder {
 				jenaModel.createLiteral(obsel.getSubject())
 		);
 
+		// adds the beginDT date
+		if(obsel.getBeginDT() != null) {
+			Calendar beginCal = Calendar.getInstance();
+			beginCal.setTime(obsel.getBeginDT());
+			jenaModel.add(
+					obselResource, 
+					jenaModel.createProperty(KtbsConstants.KTBS_HASBEGIN_DT), 
+					jenaModel.createTypedLiteral(new XSDDateTime(beginCal)));
+		}
+
+		// adds the endDT date
+		if(obsel.getEndDT() != null) {
+			Calendar endCal = Calendar.getInstance();
+			endCal.setTime(obsel.getEndDT());
+			jenaModel.add(
+					obselResource, 
+					jenaModel.createProperty(KtbsConstants.KTBS_HASEND_DT), 
+					jenaModel.createTypedLiteral(new XSDDateTime(endCal)));
+		}
+
+		
 		// adds the begin date
-		Calendar beginCal = Calendar.getInstance();
-		beginCal.setTime(obsel.getBegin());
-		jenaModel.add(
-				obselResource, 
-				jenaModel.createProperty(KtbsConstants.KTBS_HASBEGIN_DT), 
-				jenaModel.createTypedLiteral(new XSDDateTime(beginCal)));
-
+		if(obsel.getBegin() != -1) {
+			jenaModel.add(
+					obselResource, 
+					jenaModel.createProperty(KtbsConstants.KTBS_HASBEGIN), 
+					jenaModel.createTypedLiteral(obsel.getBegin()));
+		}
+		
 		// adds the end date
-		Calendar endCal = Calendar.getInstance();
-		endCal.setTime(obsel.getEnd());
-		jenaModel.add(
-				obselResource, 
-				jenaModel.createProperty(KtbsConstants.KTBS_HASEND_DT), 
-				jenaModel.createTypedLiteral(new XSDDateTime(endCal)));
-
+		if(obsel.getEnd() != -1) {
+			jenaModel.add(
+					obselResource, 
+					jenaModel.createProperty(KtbsConstants.KTBS_HASEND), 
+					jenaModel.createLiteral(Integer.toString(obsel.getEnd())));
+		}
+		
 		// add attributes to the Jena model
 		for(String att:obsel.getAttributes().keySet()) {
 			jenaModel.add(
@@ -181,11 +205,7 @@ public class RDFResourceBuilder {
 		// add relation to the Jena model
 		for(Relation rel:obsel.getOutgoingRelations()) {
 			Resource targetResource = null;
-			if(rel.getToObsel() != null) {
-				addObsel(traceURI, false, rel.getToObsel());
-				jenaModel.getResource(rel.getToObselURI());
-			}
-			else if(rel.getToObselURI()!=null)
+			if(rel.getToObselURI()!=null)
 				targetResource = jenaModel.createResource(rel.getToObselURI());
 			else
 				/*
@@ -219,11 +239,12 @@ public class RDFResourceBuilder {
 	}
 
 	private void setLabel(Resource rdfResource, String label) {
-		jenaModel.add(
-				rdfResource,
-				RDFS.label,
-				jenaModel.createLiteral(label)
-		);
+		if(label != null)
+			jenaModel.add(
+					rdfResource,
+					RDFS.label,
+					jenaModel.createLiteral(label)
+			);
 	}
 
 

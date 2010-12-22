@@ -221,8 +221,10 @@ public class KtbsResourceReader {
 
 		StmtIterator it = jenaModel.listStatements(obselResource, null, (RDFNode)null);
 		String traceURI = null;
-		Date begin = null;
-		Date end= null;
+		Date beginDT = null;
+		Date endDT= null;
+		int begin = -1;
+		int end= -1;
 		String obselURI = null;
 		String subject = null;
 
@@ -233,10 +235,16 @@ public class KtbsResourceReader {
 			String predicateURI = statement.getPredicate().getURI();
 			if(predicateURI.equals(KtbsConstants.KTBS_HASBEGIN_DT)) {
 				XSDDateTime beginXSD = (XSDDateTime) statement.getObject().asLiteral().getValue();
-				begin = beginXSD.asCalendar().getTime();
+				beginDT = beginXSD.asCalendar().getTime();
 			} else if(predicateURI.equals(KtbsConstants.KTBS_HASEND_DT)) {
 				XSDDateTime endXSD = (XSDDateTime) statement.getObject().asLiteral().getValue();
-				end = endXSD.asCalendar().getTime();
+				endDT = endXSD.asCalendar().getTime();
+			} else if(predicateURI.equals(KtbsConstants.KTBS_HASBEGIN)) {
+				//TODO Attention !!! Changer ceci en getLong() après modification du bug 19
+				begin = statement.getObject().asLiteral().getInt();
+			} else if(predicateURI.equals(KtbsConstants.KTBS_HASEND)) {
+				//TODO Attention !!! Changer ceci en getLong() après modification du bug 19
+				end = statement.getObject().asLiteral().getInt();
 			} else if(predicateURI.equals(KtbsConstants.KTBS_HASTRACE))
 				traceURI = statement.getObject().asResource().getURI();
 			else if(predicateURI.equals(KtbsConstants.KTBS_HASSUBJECT))
@@ -257,7 +265,17 @@ public class KtbsResourceReader {
 
 
 		String label = getKtbsResourceLabel(obselResource);
-		Obsel obsel = KtbsResourceFactory.createObsel(obselURI, traceURI, subject, begin, end, typeURI, attributes,label);
+		Obsel obsel = KtbsResourceFactory.createObsel(
+				obselURI, 
+				traceURI, 
+				subject, 
+				beginDT, 
+				endDT, 
+				begin, 
+				end, 
+				typeURI, 
+				attributes,
+				label);
 
 
 		return obsel;

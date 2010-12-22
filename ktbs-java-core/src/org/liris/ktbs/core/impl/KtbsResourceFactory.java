@@ -41,7 +41,7 @@ public class KtbsResourceFactory {
 	public static Obsel createObsel(String resourceUri, Trace parentTrace, String subject, Date begin, Date end, String typeURI, Map<String, Serializable> attributes, String label) {
 		if(parentTrace.getObselURIs().contains(resourceUri))
 			throw new IllegalStateException("There is already an obsel with the same uri \""+resourceUri+"\" in the trace \""+parentTrace.getURI()+"\".");
-		ObselImpl obselImpl = new ObselImpl(resourceUri, parentTrace, subject, begin, end, typeURI, attributes);
+		ObselImpl obselImpl = new ObselImpl(resourceUri, parentTrace, subject, begin, end, -1, -1, typeURI, attributes);
 		obselImpl.setLabel(label);
 		return obselImpl;
 	}
@@ -86,9 +86,33 @@ public class KtbsResourceFactory {
 	}
 
 	public static Obsel createObsel(String obselURI, String traceURI,  String subject,
-			Date begin, Date end, String typeURI,
+			Date beginDT, 
+			Date endDT,
+			String typeURI,
 			Map<String, Serializable> attributes, String label) {
-		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, begin, end, typeURI, attributes);
+		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, beginDT, endDT, -1, -1, typeURI, attributes);
+		obselImpl.setLabel(label);
+		return obselImpl;
+	}
+
+	public static Obsel createObsel(String obselURI, String traceURI,  String subject,
+			Date beginDT, 
+			Date endDT,
+			int begin, 
+			int end,
+			String typeURI,
+			Map<String, Serializable> attributes, String label) {
+		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, beginDT, endDT, begin, end, typeURI, attributes);
+		obselImpl.setLabel(label);
+		return obselImpl;
+	}
+
+	public static Obsel createObsel(String obselURI, String traceURI,  String subject,
+			int begin, 
+			int end,
+			String typeURI,
+			Map<String, Serializable> attributes, String label) {
+		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, null, null, begin, end, typeURI, attributes);
 		obselImpl.setLabel(label);
 		return obselImpl;
 	}

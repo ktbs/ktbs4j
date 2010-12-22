@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.Trace;
 
 public interface KtbsClientService {
 
@@ -64,8 +64,10 @@ public interface KtbsClientService {
 	 * @param subject the subject of the obsel, can be null
 	 * @param label any comment about the obsel, can be null
 	 * @param typeURI the URI of the obsel type, must already exist in the KTBS server
-	 * @param begin the absolute begin date of the obsel (bound to ktbs:hasBeginDT)
-	 * @param end the end date of the obsel (bound to ktbs:hasEndDT)
+	 * @param beginDT the absolute begin date of the obsel (bound to ktbs:hasBeginDT), default is null
+	 * @param endDT the end date of the obsel (bound to ktbs:hasEndDT), default is null
+	 * @param begin the begin date in milliseconds relative to the trace origin, default is null
+	 * @param end the end date in milliseconds relative to the trace origin, default is null
 	 * @param attributes the attributes of the obsel. Key values are attribute URIs.
 	 * @param outgoingRelations an array that holds alternatively the outgoing relation URIs
 	 * and URIs of the target obsels. The number of elements in this array must be an even number, 
@@ -74,14 +76,48 @@ public interface KtbsClientService {
 	 * @return the {@link KtbsResponse} object of this request
 	 * @see method addObselsToTrace()
 	 */
-	public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject, String label, String typeURI, Date begin, Date end, Map<String, Serializable> attributes, String... outgoingRelations);
+	public KtbsResponse createObsel(
+			String traceURI, 
+			String obselLocalName, 
+			String subject, 
+			String label, 
+			String typeURI, 
+			Date beginDT, 
+			Date endDT, 
+			int begin, 
+			int end, 
+			Map<String, Serializable> attributes, 
+			String... outgoingRelations);
 
 	/*
 	 * Services bound to a PUT request
 	 */
-	public KtbsResponse createRelation(String traceURI, String relationName, String fromObselURI, String toObselURI);
-	public KtbsResponse addAttributeToObsel(String obselURI, String attributeName, Serializable value);
-	public KtbsResponse deleteRelation(String traceURI, String relationName, String fromObselURI, String toObselURI);
+
+	/**
+	 * Resubmit a trace and all its obsels to a KTBS server, by the mean
+	 * of an underlying  PUT request.
+	 * 
+	 * @param trace the trace to be resubmitted to the KTBS server
+	 * @param traceETag the ETag (the value of the etag header in the HTTP response 
+	 * sent by the KTBS server when getting the trace) of the trace resource when 
+	 * the last GET was performed.
+	 * @return the {@link KtbsResponse} object of this request
+	 */
+	public KtbsResponse putTraceObsels(Trace trace, String traceETag);
+	
+	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels,String traceETag);
+
+	/**
+	 * Resubmit trace metadata to a KTBS server, by the mean
+	 * of an underlying  PUT request.
+	 * 
+	 * @param trace the trace to be resubmitted to the KTBS server
+	 * @param traceETag the ETag (the value of the etag header in the HTTP response 
+	 * sent by the KTBS server when getting the trace) of the trace resource when 
+	 * the last GET was performed.
+	 * @return the {@link KtbsResponse} object of this request
+	 */
+	public KtbsResponse putTraceInfo(Trace trace, String traceETag);
 
 	/*
 	 * Services bound to a DELETE request
@@ -90,5 +126,4 @@ public interface KtbsClientService {
 	public KtbsResponse deleteBase(String baseURI);
 	public KtbsResponse deleteTrace(String baseURI, String traceLocalName);
 	public KtbsResponse deleteTrace(String traceURI);
-	public KtbsResponse deleteObsel(String obselURI);
 }

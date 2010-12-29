@@ -16,25 +16,24 @@ public interface KtbsClientService {
 	/*
 	 * Services bound to a GET request
 	 */
-	public KtbsResponse getKtbsRoot(String rootURI);
-	public KtbsResponse getBase(String rootURI, String baseLocalName);
-	public KtbsResponse getBase(String baseURI);
+	public KtbsResponse getKtbsRoot();
+	public KtbsResponse getBase(String baseLocalName);
+	public KtbsResponse getBaseFromURI(String baseURI);
+	public KtbsResponse getObsel(String baseLocalName, String traceLocalName, String obselLocalName);
 	public KtbsResponse getObsel(String traceURI, String obselLocalName);
 	public KtbsResponse getObsel(String obselURI);
 	public KtbsResponse getTraceInfo(String traceURI);
-	public KtbsResponse getTraceInfo(String baseURI, String traceLocalName);
-	public KtbsResponse getTraceInfo(String rootURI, String baseLocalName, String traceLocalName);
+	public KtbsResponse getTraceInfo(String baseLocalName, String traceLocalName);
 	public KtbsResponse getTraceObsels(String traceURI);
 	public KtbsResponse getTraceObsels(String baseURI, String traceLocalName);
 	public KtbsResponse getTraceObsels(String rootURI, String baseLocalName, String traceLocalName);
-	
 
 	/*
 	 * Services bound to a POST request
 	 */
-	public KtbsResponse createBase(String rootURI, String baseLocalName, String label);
-	public KtbsResponse createTraceModel(String baseURI, String traceModelLocalName, String label);
-	public KtbsResponse createTrace(String baseURI, String traceLocalName, String traceModelURI, Date origin, String label);
+	public KtbsResponse createBase(String baseLocalName, String label);
+	public KtbsResponse createTraceModel(String baseLocalName, String traceModelLocalName, String label);
+	public KtbsResponse createTrace(String baseLocalName, String traceLocalName, String traceModelLocalName, Date origin, String label);
 	public KtbsResponse createKtbsResource(String resourceURI, Reader reader);
 	public KtbsResponse createKtbsResource(String resourceURI, InputStream stream);
 	public KtbsResponse createKtbsResource(String resourceURI, File file);
@@ -128,8 +127,8 @@ public interface KtbsClientService {
 	/*
 	 * Services bound to a DELETE request
 	 */
-	public KtbsResponse deleteBase(String rootURI, String baseLocalName);
-	public KtbsResponse deleteBase(String baseURI);
-	public KtbsResponse deleteTrace(String baseURI, String traceLocalName);
+	public KtbsResponse deleteBase(String baseLocalName);
+	public KtbsResponse deleteBaseFromURI(String baseURI);
+	public KtbsResponse deleteTrace(String baseLocalName, String traceLocalName);
 	public KtbsResponse deleteTrace(String traceURI);
 }

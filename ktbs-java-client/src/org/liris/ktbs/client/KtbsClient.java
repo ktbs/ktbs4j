@@ -10,6 +10,8 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -67,14 +69,19 @@ import org.liris.ktbs.rdf.RDFResourceBuilder;
 public class KtbsClient implements KtbsClientService {
 
 	public static final String MESSAGE_DELETE_NOT_SUPPORTED = "DELETE method are not supported by the KTBS server in the current version";
-
-	
 	private static final String MESSAGE_CLIENT_NOT_STARTED = "The HTTP client is not started. Please call KtbsClient.startSession() before calling any KTBS remote service.";
+	private static final String GET_MESSAGE_NOT_THE_RIGHT_KTBSROOT_URI(String expectedURI, String actualURI) {
+		return "This KTBS client is bound to the uri \""+expectedURI+"\". Requests on \""+actualURI+"\" not allowed.";
+	}
 
 	private static Log log = LogFactory.getLog(KtbsClient.class);
 
+
+	private String ktbsRootURI;
+
 	// instanciated from KTBSClientApplication only
-	KtbsClient() {
+	KtbsClient(String ktbsRootURI) {
+		this.ktbsRootURI = ktbsRootURI;
 	}
 
 	private HttpClient httpClient;
@@ -82,7 +89,14 @@ public class KtbsClient implements KtbsClientService {
 
 	private HttpParams httpParams;
 
+
+	/**
+	 * Starts the underlying HTTP client with default parameters for caching 
+	 * and general HTTP protocol matters, and loads Jena classes.
+	 */
 	public void startSession() {
+
+		log.info("Starting KtbsClient session for the KTBS root URI \""+ktbsRootURI+"\".");
 
 		CacheConfig cacheConfig = new CacheConfig();  
 		cacheConfig.setMaxCacheEntries(1000);
@@ -97,31 +111,44 @@ public class KtbsClient implements KtbsClientService {
 		HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 
 		// determine the release version from packaged version info
-		final VersionInfo vi = VersionInfo.loadVersionInfo("org.apache.http.client", KTBSClientApplication.class.getClassLoader());
+		final VersionInfo vi = VersionInfo.loadVersionInfo("org.apache.http.client", KtbsClientApplication.class.getClassLoader());
 		final String release = (vi != null) ? vi.getRelease() : VersionInfo.UNAVAILABLE;
 		HttpProtocolParams.setUserAgent(httpParams, "KTBS Client, based on Apache-HttpClient/" + release + " (java 1.5)");
 
+		log.debug("Creating the caching HTTP client.");
 		httpClient = new CachingHttpClient(new DefaultHttpClient(httpParams), cacheConfig);
 		this.started = true;
-		
+
 		/*
 		 * Ensure that Jena classes required for model creation are loaded now, so that
 		 * there is no need to do it in a middle of a REST request (loading Jena classes
 		 * introduces a small delay of a half-second).
 		 */
+		log.debug("Loading Jena classes.");
 		KtbsResourceReader.loadJenaClasses();
+		log.info("Session started.");
 	}
 
-
+	/**
+	 * Checks if the underlying HTTP client is started.
+	 * 
+	 * @return true if started, false if never started or closed
+	 */
 	public boolean isStarted() {
 		return started;
 	}
 
+	/**
+	 * Shuts down the connection manager of the underlying HTTP client.
+	 */
 	public void closeSession() {
+		log.info("Closing KtbsClient session for the KTBS root URI \""+ktbsRootURI+"\".");
 		if(httpClient != null) 
 			httpClient.getConnectionManager().shutdown();
 		this.started = false;
+		log.info("Session closed.");
 	}
+
 	@Override
 	protected void finalize() throws Throwable {
 		closeSession();
@@ -138,16 +165,18 @@ public class KtbsClient implements KtbsClientService {
 	 */
 	@Override
 	public KtbsResponse[] addObselsToTrace(String traceURI, Collection<Obsel> obsels) {
+		String requestURI = checkAndNormalizeURI(traceURI);
+
 		log.warn("The service addObselsToTrace/2 will perform one POST request per obsel, intead of sending one single request for all obsels. To be optimized soon...");
 
 		KtbsResponse[] response = new KtbsResponse[obsels.size()];
 		int k = 0;
 		for(Obsel obsel:obsels) {
 			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-			builder.addObsels(traceURI, false, obsel);
+			builder.addObsels(requestURI, false, obsel);
 			String stringRepresentation = builder.getRDFResourceAsString();
 			log.debug("Sending the obsel \""+obsel.getTypeURI()+"\" to the KTBS.");
-			response[k] = performPostRequest(traceURI, stringRepresentation);
+			response[k] = performPostRequest(requestURI, stringRepresentation);
 			k++;
 		}
 
@@ -169,13 +198,13 @@ public class KtbsClient implements KtbsClientService {
 	}
 
 	@Override
-	public KtbsResponse getKtbsRoot(String rootURI) {
-		return performGetRequest(rootURI, KtbsRoot.class, null);
+	public KtbsResponse getKtbsRoot() {
+		return performGetRequest(ktbsRootURI, KtbsRoot.class, null);
 	}
 
 	private KtbsResponse performDeleteRequest(String ktbsResourceURI) {
 		checkStarted(); 
-		
+
 		HttpDelete delete = new HttpDelete(ktbsResourceURI);
 		HttpResponse response = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
@@ -196,11 +225,12 @@ public class KtbsClient implements KtbsClientService {
 
 	private void checkStarted() {
 		if(!isStarted()) {
-			log.error(MESSAGE_CLIENT_NOT_STARTED);
-			throw new IllegalStateException(MESSAGE_CLIENT_NOT_STARTED);
+			String message = MESSAGE_CLIENT_NOT_STARTED;
+			IllegalStateException illegalStateException = new IllegalStateException(message);
+			log.error(message, illegalStateException);
+			throw illegalStateException;
 		}
 	}
-
 
 	private KtbsResponse performGetRequest(String ktbsResourceURI, Class<?> clazz, String restAspect) {
 		checkStarted(); 
@@ -214,36 +244,37 @@ public class KtbsClient implements KtbsClientService {
 
 		try {
 			response = httpClient.execute(get);
+			HttpEntity entity;
 
 			if(response == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+ktbsResourceURI+"\".");
 				ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
-			}
+			} else {
 
-			HttpEntity entity = response.getEntity();
-			if(entity == null) {
-				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+ktbsResourceURI+"\".");
-				ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
-			} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+				entity = response.getEntity();
+				if(entity == null) {
+					log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+ktbsResourceURI+"\".");
+					ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 
-				KtbsResourceReader reader = new KtbsResourceReader();
+					KtbsResourceReader reader = new KtbsResourceReader();
 
-				if(entity.getContentLength()>0) {
-					ktbsResource = reader.deserializeFromStream(
-							ktbsResourceURI,
-							entity.getContent(), 
-							getGETSyntax(), 
-							clazz,
-							restAspect);
-				}
+					if(entity.getContentLength()>0) {
+						ktbsResource = reader.deserializeFromStream(
+								ktbsResourceURI,
+								entity.getContent(), 
+								getGETSyntax(), 
+								clazz,
+								restAspect);
+					}
 
-				// Release the memory from the entity
+					// Release the memory from the entity
+
+					ktbsResponseStatus=KtbsResponseStatus.RESOURCE_RETRIEVED;
+				} else 
+					ktbsResponseStatus=KtbsResponseStatus.SERVER_EXCEPTION;
 				EntityUtils.consume(entity);
-
-				ktbsResponseStatus=KtbsResponseStatus.RESOURCE_RETRIEVED;
-			} else 
-				ktbsResponseStatus=KtbsResponseStatus.SERVER_EXCEPTION;
-
+			}
 		} catch (ClientProtocolException e) {
 			log.warn("A HTTP exception occurred when getting the resource \""+ktbsResourceURI+"\" from the KTBS server.", e);
 
@@ -253,6 +284,8 @@ public class KtbsClient implements KtbsClientService {
 
 			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R; 
 		} 
+
+
 
 		return new KtbsResponseImpl(
 				ktbsResource, 
@@ -312,280 +345,349 @@ public class KtbsClient implements KtbsClientService {
 	}
 
 	@Override
-	public KtbsResponse createBase(String rootURI, String baseLocalName, String label) {
-		KtbsRoot createKtbsRoot = KtbsResourceFactory.createKtbsRoot(rootURI, label);
-		Base b = KtbsResourceFactory.createBase(createKtbsRoot.getURI()+baseLocalName+"/", createKtbsRoot, label);
+	public KtbsResponse createBase(String baseLocalName, String label) {
+
+		Base b = KtbsResourceFactory.createBase(baseLocalName, ktbsRootURI, label);
 
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
 		builder.addBase(b);
-		String stringRepresentation = builder.getRDFResourceAsString(rootURI);
+		
+		
+		String stringRepresentation = builder.getRDFResourceAsString(ktbsRootURI);
 
-		return performPostRequest(rootURI, stringRepresentation);
+		/*
+		 * !!! Temporary fix until the KTBS supports absolute URIs in POST request
+		 *  TODO remove the following lines when Jena supports base URIs
+		 */
+		String stringRepresentationFixed = stringRepresentation.replaceAll(ktbsRootURI, "");
+		
+		return performPostRequest(ktbsRootURI, stringRepresentationFixed);
 	}
 
 	@Override
-	public KtbsResponse getBase(String rootURI, String baseLocalName) {
-		return getBase(rootURI+baseLocalName+"/");
+	public KtbsResponse getBase(String baseLocalName) {
+		return getBaseFromURI(ktbsRootURI+baseLocalName+"/");
 	}
 
 	@Override
-	public KtbsResponse getBase(String baseURI) {
-		return performGetRequest(baseURI, Base.class, null);
+	public KtbsResponse getBaseFromURI(String baseURI) {
+		String requestURI = checkAndNormalizeURI(baseURI);
+		return performGetRequest(requestURI, Base.class, null);
 	}
 
 	@Override
 	public KtbsResponse createTrace(String baseURI, String traceLocalName, String traceModelURI, Date origin, String label) {
-		Base base = KtbsResourceFactory.createBase(baseURI, null);
-		Trace trace = KtbsResourceFactory.createTrace(base.getURI()+traceLocalName+"/", traceModelURI, label, origin, base, false);
+		String baseNormalizedURI = checkAndNormalizeURI(baseURI);
+		Base base = KtbsResourceFactory.createBase(baseNormalizedURI, null);
+		String traceURI = baseNormalizedURI+traceLocalName+"/";
+		String traceNormalizedURI = checkAndNormalizeURI(traceURI);
+		Trace trace = KtbsResourceFactory.createTrace(traceNormalizedURI, traceModelURI, label, origin, base, false);
 
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
 		builder.addTrace(trace, true, false);
 		String stringRepresentation = builder.getRDFResourceAsString();
 
-		return performPostRequest(baseURI, stringRepresentation);
+		return performPostRequest(baseNormalizedURI, stringRepresentation);
 	}
 
 	@Override
 	public KtbsResponse getTraceObsels(String traceURI) {
-		return performGetRequest(traceURI+KtbsConstants.OBSELS_ASPECT, Trace.class, KtbsConstants.OBSELS_ASPECT);
+		String normalizedURI = checkAndNormalizeURI(traceURI);
+		String uri = withResourceAspect(normalizedURI,KtbsConstants.OBSELS_ASPECT,KtbsConstants.ABOUT_ASPECT);
+
+		return performGetRequest(uri, Trace.class, KtbsConstants.OBSELS_ASPECT);
 	}
 
-	@Override
-	public KtbsResponse getTraceInfo(String traceURI) {
-		return performGetRequest(traceURI+KtbsConstants.ABOUT_ASPECT, Trace.class, KtbsConstants.ABOUT_ASPECT);
-	}
+	private String withResourceAspect(String resourceURI,
+			String aspect, String... alternatives) {
 
-	@Override
-	public KtbsResponse deleteBase(String rootURI, String baseLocalName) {
-		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
-	}
+		if(resourceURI.endsWith(aspect))
+			return resourceURI;
 
-	@Override
-	public KtbsResponse deleteBase(String baseURI) {
-		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
-	}
-
-	@Override
-	public KtbsResponse deleteTrace(String baseURI, String baseLocalName) {
-		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
-	}
-
-	@Override
-	public KtbsResponse deleteTrace(String traceURI) {
-		throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
-	}
-
-	@Override
-	public KtbsResponse getObsel(String traceURI, String obselLocalName) {
-		return getObsel(traceURI+obselLocalName+"/");
-	}
-
-	@Override
-	public KtbsResponse getObsel(String obselURI) {
-		return performGetRequest(obselURI, Obsel.class, null);
-	}
-
-	@Override
-	public KtbsResponse getTraceInfo(String baseURI, String traceLocalName) {
-		return getTraceInfo(baseURI+traceLocalName+"/");
-	}
-
-	@Override
-	public KtbsResponse getTraceInfo(String rootURI, String baseLocalName,
-			String traceLocalName) {
-		return getTraceInfo(rootURI+baseLocalName+"/", traceLocalName);
-	}
-
-	@Override
-	public KtbsResponse getTraceObsels(String baseURI, String traceLocalName) {
-		return getTraceObsels(baseURI+traceLocalName+"/");
-	}
-
-	@Override
-	public KtbsResponse getTraceObsels(String rootURI, String baseLocalName,
-			String traceLocalName) {
-		return getTraceObsels(rootURI+baseLocalName+"/", traceLocalName);
-	}
-
-	@Override
-	public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject,
-			String label, String typeURI, Date beginDT, Date endDT,
-			int begin, int end,Map<String, Serializable> attributes,
-			String... outgoingRelations) {
-
-		Obsel obsel = KtbsResourceFactory.createObsel(
-				traceURI+obselLocalName, 
-				traceURI, 
-				subject,
-				beginDT, 
-				endDT, 
-				begin, 
-				end, 
-				typeURI, 
-				attributes,
-				label);
-		if(outgoingRelations != null && outgoingRelations.length%2==0) {
-			for(int k=0; k<outgoingRelations.length;k+=2) {
-				Relation rel = KtbsResourceFactory.createRelation(
-						obsel.getURI(), 
-						outgoingRelations[k], 
-						outgoingRelations[k+1]);
-				obsel.addOutgoingRelation(
-						rel
-				);
+		for(String alt:alternatives) {
+			if(resourceURI.endsWith(alt)) {
+				String newURI = resourceURI.replaceAll(alt, aspect);
+				return newURI;
 			}
 		}
-
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addObsels(traceURI, true, obsel);
-		String stringRepresentation = builder.getRDFResourceAsString();
-		return performPostRequest(traceURI, stringRepresentation);
-	}
-
-	@Override
-	public KtbsResponse createTraceModel(String baseURI,
-			String traceModelLocalName, String label) {
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addTraceModel(baseURI, baseURI+traceModelLocalName+"/", label);
-		String stringRepresentation = builder.getRDFResourceAsString();
-		log.debug("String representation of trace model: " + stringRepresentation);
-
-		return performPostRequest(baseURI, stringRepresentation); 
-	}
-
-	private KtbsResponse performPutRequest(String parentURI,
-			String stringRepresentation, String eTag) {
-		checkStarted(); 
-
-		HttpPut put = new HttpPut(parentURI);
-		put.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
-		put.addHeader(HttpHeaders.IF_MATCH, eTag);
-
-		HttpResponse response = null;
-		KtbsResponseStatus ktbsResponseStatus = null;
-
-		try {
-			put.setEntity(new StringEntity(stringRepresentation, HTTP.UTF_8));
-		} catch (UnsupportedEncodingException e) {
-			log.warn("Cannot decode the content of the response sent by the KTBS", e);
-			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
-		}
-
-		try {
-			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
-			response = httpClient.execute(put);
-			if(response == null)
-				ktbsResponseStatus=KtbsResponseStatus.INTERNAL_ERR0R;
-			else {
-				int sc = response.getStatusLine().getStatusCode();
-				ktbsResponseStatus = sc==HttpStatus.SC_CREATED ?
-						KtbsResponseStatus.RESOURCE_CREATED:
-							((sc==HttpStatus.SC_OK ||sc==HttpStatus.SC_NO_CONTENT)?
-									KtbsResponseStatus.RESOURCE_MODIFIED:
-										KtbsResponseStatus.SERVER_EXCEPTION);
-			}
-
-			if(log.isDebugEnabled()) {
-				InputStream contentStream = response.getEntity().getContent();
-				String body = IOUtils.toString(contentStream);
-				log.debug("Response header:" + response.getStatusLine());
-				log.debug("Response body:\n" + body);
-			}
-		} catch (ClientProtocolException e) {
-			log.error("An error occured when communicating with the KTBS", e);
-			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
-		} catch (IOException e) {
-			log.error("An exception occurred when reading the content of the HTTP response", e);
-			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
-		}
-
-		return new KtbsResponseImpl(
-				null, 
-				(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED)||(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_MODIFIED), 
-				ktbsResponseStatus, 
-				response);
-	}
-
-	@Override
-	public KtbsResponse putTraceObsels(Trace trace, String traceETag) {
-		return putTraceObsels(trace.getURI(), trace.getObsels(), traceETag);
-	}
-
-	@Override
-	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels, String traceETag) {
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		String uriWithAspect = new String(traceURI);
-		String uriWithoutAspect = new String(traceURI);
-		if(traceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
-			uriWithoutAspect=uriWithoutAspect.replaceAll(KtbsConstants.OBSELS_ASPECT, "");
-		else
-			uriWithAspect+=KtbsConstants.OBSELS_ASPECT;
-
-		builder.addObsels(uriWithoutAspect, true, obsels.toArray(new Obsel[obsels.size()]));
-		String stringRepresentation = builder.getRDFResourceAsString();
-
-		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
-	}
-
-	/*
-	 * The following service needs to send the complete list of rdf statement about the trace.
-	 * This cannot be done properly without performing a GET on trace@about beforehand.
-	 * 
-	 * The service will be implemented when it is possible to amend trace informations by sending
-	 * only the RDF triple with the property to modify.
-	 * 
-	 * (non-Javadoc)
-	 * @see org.liris.ktbs.client.KtbsClientService#putTraceInfo(org.liris.ktbs.core.Trace, java.lang.String)
-	 */
-	@Override
-	public KtbsResponse putTraceInfo(Trace trace, String traceETag) {
-		throw new UnsupportedOperationException("This operation cannot be performed properly right now, due to a lack of KTBS specification on modifying trace infos.");
 		
-//		String traceURI = trace.getURI();
-//		String uriWithAspect = new String(traceURI);
-//		String uriWithoutAspect = new String(traceURI);
-//		if(traceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
-//			uriWithoutAspect=uriWithoutAspect.replaceAll(KtbsConstants.OBSELS_ASPECT, "");
-//		else
-//			uriWithAspect+=KtbsConstants.OBSELS_ASPECT;
+		return resourceURI+aspect;
+	}
+
+		/*
+		 * Checks that the parameter uri is a URI with the KTBS root of this KTBS client
+		 * and returns a normalized URI.
+		 */
+		private String checkAndNormalizeURI(String uncheckedURI) {
+			if(uncheckedURI== null || !uncheckedURI.startsWith(ktbsRootURI)) {
+				String message = GET_MESSAGE_NOT_THE_RIGHT_KTBSROOT_URI(ktbsRootURI, uncheckedURI);
+				IllegalStateException illegalStateException = new IllegalStateException(message);
+				log.error(message, illegalStateException);
+				throw illegalStateException;
+			}
+
+			try {
+				URI uri = new URI(uncheckedURI);
+				return uri.normalize().toString();
+			} catch (URISyntaxException e) {
+				log.error("Wrong URI.",e);
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public KtbsResponse getTraceInfo(String traceURI) {
+			String requestURI = checkAndNormalizeURI(traceURI);
+			String uri = withResourceAspect(requestURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
+			
+			return performGetRequest(uri, Trace.class, KtbsConstants.ABOUT_ASPECT);
+		}
+
+		@Override
+		public KtbsResponse getTraceInfo(String baseLocalName, String traceLocalName) {
+			return getTraceInfo(ktbsRootURI+baseLocalName+"/"+traceLocalName+"/");
+		}
+
+		@Override
+		public KtbsResponse deleteBase(String baseLocalName) {
+			throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
+		}
+
+		@Override
+		public KtbsResponse deleteBaseFromURI(String baseURI) {
+			String requestURI = checkAndNormalizeURI(baseURI);
+			throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
+		}
+
+		@Override
+		public KtbsResponse deleteTrace(String baseURI, String baseLocalName) {
+			String requestURI = checkAndNormalizeURI(baseURI);
+			throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
+		}
+
+		@Override
+		public KtbsResponse deleteTrace(String traceURI) {
+			String requestURI = checkAndNormalizeURI(traceURI);
+			throw new UnsupportedOperationException(MESSAGE_DELETE_NOT_SUPPORTED);
+		}
+
+		@Override
+		public KtbsResponse getObsel(String traceURI, String obselLocalName) {
+			String requestURI = checkAndNormalizeURI(traceURI+ obselLocalName);
+			return getObsel(requestURI);
+		}
+
+		@Override
+		public KtbsResponse getObsel(String baseLocalName, String traceLocalName, String obselLocalName) {
+			return getObsel(ktbsRootURI+baseLocalName+"/"+ traceLocalName+"/",obselLocalName);
+		}
+
+		@Override
+		public KtbsResponse getObsel(String obselURI) {
+			String requestURI = checkAndNormalizeURI(obselURI);
+			return performGetRequest(requestURI, Obsel.class, null);
+		}
+
+		@Override
+		public KtbsResponse getTraceObsels(String baseURI, String traceLocalName) {
+			String requestURI = checkAndNormalizeURI(baseURI+traceLocalName+"/");
+			return getTraceObsels(requestURI);
+		}
+
+		@Override
+		public KtbsResponse getTraceObsels(String rootURI, String baseLocalName,
+				String traceLocalName) {
+			String requestURI = checkAndNormalizeURI(rootURI+baseLocalName+"/");
+
+			return getTraceObsels(requestURI, traceLocalName);
+		}
+
+		@Override
+		public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject,
+				String label, String typeURI, Date beginDT, Date endDT,
+				int begin, int end,Map<String, Serializable> attributes,
+				String... outgoingRelations) {
+			String requestURI = checkAndNormalizeURI(traceURI);
+
+			Obsel obsel = KtbsResourceFactory.createObsel(
+					requestURI+obselLocalName, 
+					requestURI, 
+					subject,
+					beginDT, 
+					endDT, 
+					begin, 
+					end, 
+					typeURI, 
+					attributes,
+					label);
+			if(outgoingRelations != null && outgoingRelations.length%2==0) {
+				for(int k=0; k<outgoingRelations.length;k+=2) {
+					Relation rel = KtbsResourceFactory.createRelation(
+							obsel.getURI(), 
+							outgoingRelations[k], 
+							outgoingRelations[k+1]);
+					obsel.addOutgoingRelation(
+							rel
+					);
+				}
+			}
+
+			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+			builder.addObsels(requestURI, true, obsel);
+			String stringRepresentation = builder.getRDFResourceAsString();
+			return performPostRequest(requestURI, stringRepresentation);
+		}
+
+		@Override
+		public KtbsResponse createTraceModel(String baseURI,
+				String traceModelLocalName, String label) {
+			String baseNormalizedURI = checkAndNormalizeURI(baseURI);
+
+			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+			String traceModelNormalizedURI = checkAndNormalizeURI(baseNormalizedURI+traceModelLocalName+"/");
+			builder.addTraceModel(baseNormalizedURI, traceModelNormalizedURI, label);
+			String stringRepresentation = builder.getRDFResourceAsString();
+			log.debug("String representation of trace model: " + stringRepresentation);
+
+			return performPostRequest(baseNormalizedURI, stringRepresentation); 
+		}
+
+		private KtbsResponse performPutRequest(String parentURI,
+				String stringRepresentation, String eTag) {
+			checkStarted(); 
+
+			HttpPut put = new HttpPut(parentURI);
+			put.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
+			put.addHeader(HttpHeaders.IF_MATCH, eTag);
+
+			HttpResponse response = null;
+			KtbsResponseStatus ktbsResponseStatus = null;
+
+			try {
+				put.setEntity(new StringEntity(stringRepresentation, HTTP.UTF_8));
+			} catch (UnsupportedEncodingException e) {
+				log.warn("Cannot decode the content of the response sent by the KTBS", e);
+				ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+			}
+
+			try {
+				log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
+				response = httpClient.execute(put);
+				if(response == null)
+					ktbsResponseStatus=KtbsResponseStatus.INTERNAL_ERR0R;
+				else {
+					int sc = response.getStatusLine().getStatusCode();
+					ktbsResponseStatus = sc==HttpStatus.SC_CREATED ?
+							KtbsResponseStatus.RESOURCE_CREATED:
+								((sc==HttpStatus.SC_OK ||sc==HttpStatus.SC_NO_CONTENT)?
+										KtbsResponseStatus.RESOURCE_MODIFIED:
+											KtbsResponseStatus.SERVER_EXCEPTION);
+				}
+
+				if(log.isDebugEnabled()) {
+					InputStream contentStream = response.getEntity().getContent();
+					String body = IOUtils.toString(contentStream);
+					log.debug("Response header:" + response.getStatusLine());
+					log.debug("Response body:\n" + body);
+				}
+			} catch (ClientProtocolException e) {
+				log.error("An error occured when communicating with the KTBS", e);
+				ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+			} catch (IOException e) {
+				log.error("An exception occurred when reading the content of the HTTP response", e);
+				ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+			}
+
+			return new KtbsResponseImpl(
+					null, 
+					(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED)||(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_MODIFIED), 
+					ktbsResponseStatus, 
+					response);
+		}
+
+		@Override
+		public KtbsResponse putTraceObsels(Trace trace, String traceETag) {
+			String requestURI = checkAndNormalizeURI(trace.getURI());
+			return putTraceObsels(requestURI, trace.getObsels(), traceETag);
+		}
+
+		@Override
+		public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels, String traceETag) {
+			String requestURI = checkAndNormalizeURI(traceURI);
+			String uriWithAspect = withResourceAspect(requestURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
+
+			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+			builder.addObsels(requestURI, true, obsels.toArray(new Obsel[obsels.size()]));
+			String stringRepresentation = builder.getRDFResourceAsString();
+
+			return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
+		}
+
+		/*
+		 * The following service needs to send the complete list of rdf statement about the trace.
+		 * This cannot be done properly without performing a GET on trace@about beforehand.
+		 * 
+		 * The service will be implemented when it is possible to amend trace informations by sending
+		 * only the RDF triple with the property to modify.
+		 * 
+		 * (non-Javadoc)
+		 * @see org.liris.ktbs.client.KtbsClientService#putTraceInfo(org.liris.ktbs.core.Trace, java.lang.String)
+		 */
+		@Override
+		public KtbsResponse putTraceInfo(Trace trace, String traceETag) {
+			throw new UnsupportedOperationException("This operation cannot be performed properly right now, due to a lack of KTBS specification on modifying trace infos.");
 //
-//		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-//		builder.addTrace(trace, false, false);
-//		String stringRepresentation = builder.getRDFResourceAsString();
-//		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
-	}
-
-
-	@Override
-	public KtbsResponse createKtbsResource(String resourceURI, Reader reader) {
-		StringWriter writer = new StringWriter();
-		int c;
-		try {
-			while((c=reader.read())!=-1)
-				writer.write(c);
-		} catch (IOException e) {
-			log.warn("Cannot read in the parameter reader", e);
+//					String traceURI = trace.getURI();
+//					String uriWithAspect = new String(traceURI);
+//					String uriWithoutAspect = new String(traceURI);
+//					if(traceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
+//						uriWithoutAspect=uriWithoutAspect.replaceAll(KtbsConstants.OBSELS_ASPECT, "");
+//					else
+//						uriWithAspect+=KtbsConstants.OBSELS_ASPECT;
+//			
+//					RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+//					builder.addTrace(trace, false, false);
+//					String stringRepresentation = builder.getRDFResourceAsString();
+//					return performPutRequest(uriWithAspect, stringRepresentation, traceETag);
 		}
-		
-		String stringRepresentation = writer.getBuffer().toString();
-		return performPostRequest(resourceURI, stringRepresentation);
-	}
 
 
-	@Override
-	public KtbsResponse createKtbsResource(String resourceURI,
-			InputStream stream) {
-		return createKtbsResource(resourceURI, new InputStreamReader(stream));
-	}
+		@Override
+		public KtbsResponse createKtbsResource(String resourceURI, Reader reader) {
+			String requestURI = checkAndNormalizeURI(resourceURI);
+
+			StringWriter writer = new StringWriter();
+			int c;
+			try {
+				while((c=reader.read())!=-1)
+					writer.write(c);
+			} catch (IOException e) {
+				log.warn("Cannot read in the parameter reader", e);
+			}
+
+			String stringRepresentation = writer.getBuffer().toString();
+			return performPostRequest(requestURI, stringRepresentation);
+		}
 
 
-	@Override
-	public KtbsResponse createKtbsResource(String resourceURI, File file) {
-		try {
-			return createKtbsResource(resourceURI, new FileReader(file));
-		} catch (FileNotFoundException e) {
-			log.warn("Unable to read from the parameter file", e);
-			return new KtbsResponseImpl(null, false, null, null);
+		@Override
+		public KtbsResponse createKtbsResource(String resourceURI,
+				InputStream stream) {
+			String requestURI = checkAndNormalizeURI(resourceURI);
+
+			return createKtbsResource(requestURI, new InputStreamReader(stream));
+		}
+
+
+		@Override
+		public KtbsResponse createKtbsResource(String resourceURI, File file) {
+			String requestURI = checkAndNormalizeURI(resourceURI);
+
+			try {
+				return createKtbsResource(requestURI, new FileReader(file));
+			} catch (FileNotFoundException e) {
+				log.warn("Unable to read from the parameter file", e);
+				return new KtbsResponseImpl(null, false, null, null);
+			}
 		}
 	}
-}

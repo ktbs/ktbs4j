@@ -84,4 +84,9 @@ public class TraceImpl extends KtbsResourceImpl implements Trace {
 	public boolean isCompliantWithModel() {
 		return compliantWithModel;
 	}
+
+	@Override
+	public Obsel getObsel(String obselURI) {
+		return obsels.get(obselURI);
+	}
 }

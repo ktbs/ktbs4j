@@ -1,15 +1,16 @@
 package org.liris.ktbs.java.tests;
 
-import com.ibm.icu.util.Calendar;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class JenaTests {
 	public static void main(String[] args) {
-
-		Calendar start = Calendar.getInstance();
-//		Model model = ModelFactory.createDefaultModel(ReificationStyle);
-		Calendar end = Calendar.getInstance();
-
-		System.out.println(end.getTimeInMillis()-start.getTimeInMillis());
-
+		Model model = ModelFactory.createDefaultModel();
+		model.add(
+				model.getResource("http://mydomain/resource1/"),
+				model.getProperty("http://mydomain/property1"),
+				model.getResource("http://mydomain/resource2/")
+		);
+		model.getWriter("TURTLE").write(model, System.out, "http://mydomain/");
 	}
 }

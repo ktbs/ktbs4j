@@ -171,9 +171,9 @@ public class KtbsResourceReader {
 
 				for(Statement stmt:obselRelationStatements) {
 					KtbsResourceFactory.createRelation(
-							stmt.getSubject().getURI(),
+							trace.getObsel(stmt.getSubject().getURI()),
 							stmt.getPredicate().getURI(), 
-							stmt.getObject().asResource().getURI());
+							trace.getObsel(stmt.getObject().asResource().getURI()));
 				}
 
 			} else if(restAspect != null && restAspect.equals(KtbsConstants.ABOUT_ASPECT)) {

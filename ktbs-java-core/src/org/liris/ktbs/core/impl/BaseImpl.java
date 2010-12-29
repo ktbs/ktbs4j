@@ -39,6 +39,10 @@ public class BaseImpl extends KtbsResourceImpl implements Base {
 		this.root = root2;
 	}
 
+	public BaseImpl(String baseLocalName, String ktbsRootURI) {
+		this(ktbsRootURI+baseLocalName+"/",ktbsRootURI, new String[0], new String[0]);
+	}
+
 	@Override
 	public Collection<String> getTraceModelURIs() {
 		return Collections.unmodifiableCollection(traceModelURIs);

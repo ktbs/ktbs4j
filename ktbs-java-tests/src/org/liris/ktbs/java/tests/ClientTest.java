@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.liris.ktbs.client.KTBSClientApplication;
 import org.liris.ktbs.client.KtbsClient;
+import org.liris.ktbs.client.KtbsClientApplication;
 import org.liris.ktbs.client.KtbsResponse;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsRoot;
@@ -23,9 +23,7 @@ public class ClientTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		KTBSClientApplication app = KTBSClientApplication.getInstance();
-
-		System.out.println(Integer.MAX_VALUE);
+		KtbsClientApplication app = KtbsClientApplication.getInstance();
 
 		KtbsClient client = app.getKtbsClient("http://localhost:8001/");
 		client.startSession();

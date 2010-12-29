@@ -31,6 +31,15 @@ public class KtbsResourceFactory {
 		baseImpl.setLabel(label);
 		return baseImpl;
 	}
+	
+
+	public static Base createBase(String baseLocalName, String ktbsRootURI,
+			String label) {
+		BaseImpl baseImpl = new BaseImpl(baseLocalName, ktbsRootURI);
+		baseImpl.setLabel(label);
+		return baseImpl;
+	}
+	
 
 	public static Trace createTrace(String resourceUri, String traceModelURI, String label, Date origin, Base base, boolean compliantWithModel) {
 		TraceImpl traceImpl = new TraceImpl(resourceUri, traceModelURI, origin, base, compliantWithModel);
@@ -116,5 +125,5 @@ public class KtbsResourceFactory {
 		obselImpl.setLabel(label);
 		return obselImpl;
 	}
-	
+
 }

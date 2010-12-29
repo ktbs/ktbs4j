@@ -15,6 +15,7 @@ public interface Trace extends KtbsResource {
 	public Date getOrigin();
 	
 	public void addObsel(Obsel obsel);
+	public Obsel getObsel(String obselURI);
 	
 	public void removeObsel(String obselURI);
 

@@ -259,7 +259,7 @@ public class RDFResourceBuilder {
 
 		setType(traceModelResource, KtbsConstants.KTBS_TRACEMODEL);
 
-		setLabel(baseResource, label);
+		setLabel(traceModelResource, label);
 	}
 
 	private void setLabel(Resource rdfResource, String label) {

@@ -114,20 +114,20 @@ public class KtbsClientTestCase {
 		assertTrue(root.getBaseURIs().size()>=1);
 		assertTrue(root.getBaseURIs().contains("http://localhost:8001/base1/"));
 	}
-	
+
 	@Test
 	public void testCreateBase() {
 		KtbsResponse response1 = client.getKtbsRoot();
 		assertResponseSucceeded(response1, true);
 		KtbsRoot root1 = (KtbsRoot) response1.getBodyAsKtbsResource();
-		
-		
+
+
 		String label = "Mon label de la base créée";
-		
-		
+
+
 		int nb = new Random().nextInt();
 		while(client.getBase("base"+nb).executedWithSuccess()){nb++;}
-			
+
 		String nomBase = "base"+nb;
 		/*
 		 *  TODO KTBS Bug, the KTBS treats absolute paths as relative path 
@@ -140,7 +140,7 @@ public class KtbsClientTestCase {
 		 */
 		KtbsResponse response = client.createBase(nomBase, label);
 		assertResponseSucceeded(response, false);
-		
+
 		assertNotNull(response.getHTTPLocation());
 		String location = response.getHTTPLocation();
 		try {
@@ -154,22 +154,22 @@ public class KtbsClientTestCase {
 		} catch (URISyntaxException e) {
 			fail(e.getMessage());
 		}
-		
+
 		response = client.getBase(nomBase);
 		assertResponseSucceeded(response, true);
 		Base base2 = (Base) response.getBodyAsKtbsResource();
 		assertEquals(base2.getLabel(), label);
 		assertEquals(base2.getURI(), rootURI+nomBase+"/");
-		
-		
+
+
 		KtbsResponse response2 = client.getKtbsRoot();
 		assertResponseSucceeded(response2, true);
 		KtbsRoot root2 = (KtbsRoot) response2.getBodyAsKtbsResource();
-		
-		
+
+
 		assertEquals(root1.getBaseURIs().size()+1, root2.getBaseURIs().size());
 		assertTrue(root2.getBaseURIs().contains(rootURI+nomBase+"/"));
-		
+
 	}
 
 	@Test
@@ -401,7 +401,7 @@ public class KtbsClientTestCase {
 		fail("Not yet implemented");
 	}
 
-		@Test
+	@Test
 	public void testGetObselStringString() {
 		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/","obs1");		
 		assertResponseSucceeded(response, true);
@@ -416,7 +416,7 @@ public class KtbsClientTestCase {
 		assertResponseSucceeded(response, true);
 	}
 
-		@Test
+	@Test
 	public void testGetObselStringStringString() {
 		KtbsResponse response = client.getObsel("base1","t01","obs1");		
 		assertResponseSucceeded(response, true);
@@ -426,7 +426,7 @@ public class KtbsClientTestCase {
 
 		response = client.getObsel("base1///","t01////","obs1");		
 		assertResponseSucceeded(response, true);
-		
+
 		response = client.getObsel("http://localhost:8001/base1","t01","obs1");		
 		assertResponseFailed(response);
 
@@ -518,9 +518,42 @@ public class KtbsClientTestCase {
 		fail("Not yet implemented");
 	}
 
-	//	@Test
+		@Test
 	public void testCreateTraceModel() {
-		fail("Not yet implemented");
+
+		String label = "Mon label de modèle de trace";
+
+
+		KtbsResponse response = client.getBase("base1");
+		assertResponseSucceeded(response, true);
+		Base base = (Base) response.getBodyAsKtbsResource();
+		String tmName; 
+		do 
+			tmName = "tm" + new Random().nextInt();
+		while(base.getTraceModelURIs().contains(rootURI+"base1/"+tmName+"/")) ;
+
+		KtbsResponse responseTM = client.createTraceModel("base1", tmName, label);
+		assertResponseSucceeded(responseTM, false);
+
+		assertNotNull(responseTM.getHTTPLocation());
+		String location = responseTM.getHTTPLocation();
+		try {
+			/*
+			 * TODO KTBS bug : why does this return a double slash at the end :
+			 * "http://localhost:8001/base2//" instead of "http://localhost:8001/base2/"
+			 * 
+			 * FIXME return normalized URI in getHTTPLocation().
+			 */
+			assertEquals(rootURI+"base1/" + tmName+"/", new URI(location).normalize().toString());
+		} catch (URISyntaxException e) {
+			fail(e.getMessage());
+		}
+
+		response = client.getBase("base1");
+		assertResponseSucceeded(response, true);
+		Base base2 = (Base)response.getBodyAsKtbsResource();
+		assertEquals(base.getTraceModelURIs().size()+1,base2.getTraceModelURIs().size());
+		assertTrue(base2.getTraceModelURIs().contains(rootURI+"base1/" + tmName+"/"));
 	}
 
 	//	@Test

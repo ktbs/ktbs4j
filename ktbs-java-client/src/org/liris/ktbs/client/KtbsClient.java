@@ -539,12 +539,12 @@ public class KtbsClient implements KtbsClientService {
 		}
 
 		@Override
-		public KtbsResponse createTraceModel(String baseURI,
+		public KtbsResponse createTraceModel(String baseLocalName,
 				String traceModelLocalName, String label) {
-			String baseNormalizedURI = checkAndNormalizeURI(baseURI);
 
 			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-			String traceModelNormalizedURI = checkAndNormalizeURI(baseNormalizedURI+traceModelLocalName+"/");
+			String baseNormalizedURI = checkAndNormalizeURI(ktbsRootURI+baseLocalName+"/");
+			String traceModelNormalizedURI = checkAndNormalizeURI(baseNormalizedURI + traceModelLocalName + "/");
 			builder.addTraceModel(baseNormalizedURI, traceModelNormalizedURI, label);
 			String stringRepresentation = builder.getRDFResourceAsString();
 			log.debug("String representation of trace model: " + stringRepresentation);

@@ -47,6 +47,12 @@ public class KtbsResourceFactory {
 		return traceImpl;
 	}
 
+	public static Trace createTrace(String resourceUri, String traceModelURI, String label, Date origin, String baseURI, boolean compliantWithModel) {
+		TraceImpl traceImpl = new TraceImpl(resourceUri, traceModelURI, origin, baseURI, compliantWithModel);
+		traceImpl.setLabel(label);
+		return traceImpl;
+	}
+
 	public static Obsel createObsel(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, String typeURI, Map<String, Serializable> attributes, String label) {
 		if(parentTrace.getObselURIs().contains(resourceUri))
 			throw new IllegalStateException("There is already an obsel with the same uri \""+resourceUri+"\" in the trace \""+parentTrace.getURI()+"\".");

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -14,6 +15,7 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 
@@ -150,12 +152,16 @@ public class KtbsResourceReader {
 
 			Trace trace = null;
 
+			String baseURI = null;
+			StmtIterator it = jenaModel.listStatements(null, jenaModel.getProperty(KtbsConstants.KTBS_OWNS), thisTraceResource);
+			if(it.hasNext())
+				baseURI = it.nextStatement().getSubject().asResource().getURI();
 
 			if(restAspect != null && restAspect.equals(KtbsConstants.OBSELS_ASPECT)) {
 				// This is a @obsels trace request
 
 				StmtIterator obselResourceIt = jenaModel.listStatements(null, hasTraceProperty, thisTraceResource);
-				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null, null, false);
+				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, null, null, null, baseURI, false);
 
 				Collection<Statement> obselRelationStatements = new LinkedList<Statement>();
 
@@ -165,7 +171,7 @@ public class KtbsResourceReader {
 					String obselURI = obselResource.getURI();
 
 
-					Obsel obsel = createObselFromRDFModel(obselURI, jenaModel, obselRelationStatements);
+					Obsel obsel = createObselFromRDFModel(obselURI, jenaModel, obselRelationStatements, false);
 					trace.addObsel(obsel);
 				}
 
@@ -207,14 +213,14 @@ public class KtbsResourceReader {
 						compliantWithModel = string.equals("yes");
 					}
 				}
-				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, traceModelURI, label, origin, null, compliantWithModel);
+				trace = KtbsResourceFactory.createTrace(ktbsResourceURI, traceModelURI, label, origin, baseURI, compliantWithModel);
 
 			}
 
 			return trace;
 		} else if(Obsel.class.isAssignableFrom(ktbsResourceType)) {
 			Collection<Statement> relations = new LinkedList<Statement>();
-			Obsel obsel = createObselFromRDFModel(ktbsResourceURI, jenaModel, relations);
+			Obsel obsel = createObselFromRDFModel(ktbsResourceURI, jenaModel, relations, true);
 
 			return obsel;
 		} else {
@@ -225,16 +231,36 @@ public class KtbsResourceReader {
 
 
 	/**
-	 * Creates an instance of {@link Obsel} from a Jena model and extract suspected inter-obsels relations.
+	 * Creates an instance of {@link Obsel} from a Jena model and extract suspected 
+	 * inter-obsels relations in their weak form (if the parameter suspectedRelationStmts 
+	 * is null) or in their string form (if the suspectedRelationStmts is an empty collection).
 	 * 
 	 * @param ktbsResourceURI the uri of the obsel to extract from the model
 	 * @param jenaModel the RDF model that contains the obsel description
-	 * @param suspectedRelations the collection passed by the caller (must be modifiable !)
-	 * to collect relations between obsels
-	 * @return
+	 * @param suspectedRelationStmts the collection passed by the caller (must be modifiable !)
+	 * to collect relations between obsels.
+	 * @param buildWeakRelations true if this method should build weak relations (i.e. where source 
+	 * and target obsels in the relation are identified by their URIs only) between obsels when 
+	 * it encounters relation statements in jenaModel, false if this method should not 
+	 * build these weak relations (meaning that you may want to  collect relation statement 
+	 * with the parameter suspectedRelationStmts and build strongly inter-obsels 
+	 * relations from this collection of statements).
+	 * @return the created obsel
 	 */
-	private Obsel createObselFromRDFModel(String ktbsResourceURI, Model jenaModel, Collection<Statement> suspectedRelations) {
+	private Obsel createObselFromRDFModel(String ktbsResourceURI, 
+			Model jenaModel, 
+			Collection<Statement> suspectedRelationStmts, 
+			boolean buildWeakRelations) {
+
+		if(buildWeakRelations==false) {
+			// The caller wants to build string inter-obsel relations
+			if(suspectedRelationStmts==null)
+				throw new IllegalStateException("You cannot build an obsel from an RDF model with the parameter buildWeakRelations and the collection suspectedRelationStmts that null, or not modifiable");
+		}
+
+
 		Resource obselResource = jenaModel.getResource(ktbsResourceURI);
+
 
 		String typeURI = null;
 
@@ -260,6 +286,7 @@ public class KtbsResourceReader {
 		String subject = null;
 
 		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		List<Relation> relations = new LinkedList<Relation>();
 		while(it.hasNext()) {
 			Statement statement = (Statement) it.next();
 			obselURI = statement.getSubject().getURI();
@@ -285,7 +312,16 @@ public class KtbsResourceReader {
 					attributes.put(predicateURI, (Serializable)object.asLiteral().getValue());
 				} else if(object.isResource()) {
 					// this is a relation
-					suspectedRelations.add(statement);
+					suspectedRelationStmts.add(statement);
+
+					if(buildWeakRelations) {
+						Relation relation = KtbsResourceFactory.createRelation(
+								obselURI,
+								statement.getPredicate().getURI(), 
+								statement.getObject().asResource().getURI());
+						relations .add(relation);
+					}
+
 				} else {
 					log.warn("Unknown type of object in statement " + statement +".");
 				}
@@ -306,6 +342,10 @@ public class KtbsResourceReader {
 				attributes,
 				label);
 
+		if(buildWeakRelations) {
+			for(Relation relation:relations)
+				obsel.addOutgoingRelation(relation);
+		}
 
 		return obsel;
 	}

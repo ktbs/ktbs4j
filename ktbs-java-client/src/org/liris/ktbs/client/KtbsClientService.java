@@ -36,7 +36,6 @@ public interface KtbsClientService {
 	public KtbsResponse createTrace(String baseLocalName, String traceLocalName, String traceModelLocalName, Date origin, String label);
 	public KtbsResponse createKtbsResource(String resourceURI, Reader reader);
 	public KtbsResponse createKtbsResource(String resourceURI, InputStream stream);
-	public KtbsResponse createKtbsResource(String resourceURI, File file);
 	
 	/**
 	 * Creates a collection of obsels remotely on the KTBS server in a unique trace. The local names
@@ -89,8 +88,8 @@ public interface KtbsClientService {
 			String typeURI, 
 			Date beginDT, 
 			Date endDT, 
-			int begin, 
-			int end, 
+			long begin, 
+			long end, 
 			Map<String, Serializable> attributes, 
 			String... outgoingRelations);
 

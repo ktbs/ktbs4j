@@ -8,10 +8,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
@@ -33,6 +37,7 @@ import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import com.ibm.icu.util.Calendar;
 
 public class KtbsClientTestCase {
 	private static final String ktbsLocalPath = "bin"+File.separator+"ktbs-full";
@@ -210,14 +215,61 @@ public class KtbsClientTestCase {
 	public void testGetBaseFromURI() {
 		KtbsResponse response = client.getBaseFromURI(rootURI+"base1/");
 		assertResponseSucceeded(response, true);
-
-
-
 	}
 
-	//	@Test
+	@Test
 	public void testCreateTrace() {
-		fail("Not yet implemented");
+
+		String base1URI = "http://localhost:8001/base1/";
+		KtbsResponse response1 = client.getBaseFromURI(base1URI);
+		assertResponseSucceeded(response1, true);
+		Base base = (Base) response1.getBodyAsKtbsResource();
+
+
+		String label = "Ma trace préférée";
+
+		int nb = new Random().nextInt();
+		while(client.getTraceInfo("base1","trace"+nb).executedWithSuccess()){nb++;}
+
+		String nomTrace = "trace"+nb;
+		Date origin = new Date();
+		String traceModel1URI = "http://localhost:8001/base1/model1/";
+		KtbsResponse response = client.createTrace(base1URI, nomTrace, traceModel1URI, origin, label);
+		assertResponseSucceeded(response, false);
+
+		assertNotNull(response.getHTTPLocation());
+		String location = response.getHTTPLocation();
+		String traceURI = base1URI+nomTrace+"/";
+		try {
+			/*
+			 * TODO KTBS bug : why does this return a double slash at the end :
+			 * "http://localhost:8001/base2//" instead of "http://localhost:8001/base2/"
+			 * 
+			 * FIXME return normalized URI in getHTTPLocation().
+			 */
+			assertEquals(traceURI, new URI(location).normalize().toString());
+		} catch (URISyntaxException e) {
+			fail(e.getMessage());
+		}
+
+		response = client.getTraceInfo(traceURI);
+		assertResponseSucceeded(response, true);
+		Trace trace = (Trace) response.getBodyAsKtbsResource();
+		assertEquals(trace.getLabel(), label);
+		assertEquals(trace.getBaseURI(), base1URI);
+		assertNull(trace.getBase());
+		assertEquals(trace.getTraceModelUri(),traceModel1URI);
+		assertEquals(trace.getObsels().size(),0);
+		assertEquals(trace.getObselURIs().size(),0);
+		assertEquals(origin,trace.getOrigin());
+		assertEquals(trace.getURI(), traceURI);
+
+		KtbsResponse response2 = client.getBase("base1");
+		assertResponseSucceeded(response2, true);
+		Base base2 = (Base) response2.getBodyAsKtbsResource();
+
+		assertEquals(base.getTraceURIs().size()+1, base2.getTraceURIs().size());
+		assertTrue(base2.getTraceURIs().contains(traceURI));
 	}
 
 
@@ -249,7 +301,7 @@ public class KtbsClientTestCase {
 			assertNotNull(obsel.getEndDT());
 			if(!obsel.getTypeURI().equals("http://localhost:8001/base1/model1/OpenChat")) {
 				// Checks the relation onChannel
-				assertTrue(obsel.getOutgoingRelations().size()==1);
+				assertEquals(1,obsel.getOutgoingRelations().size());
 				Obsel targetObsel = obsel.getTargetObsel("http://localhost:8001/base1/model1/onChannel");
 				assertNotNull(targetObsel);
 				assertEquals(rootURI+"base1/t01/",targetObsel.getTraceURI());
@@ -513,12 +565,221 @@ public class KtbsClientTestCase {
 		assertResponseFailed(response);
 	}
 
-	//	@Test
+	@Test
 	public void testCreateObsel() {
-		fail("Not yet implemented");
+		String trace1URI = "http://localhost:8001/base1/t01/";
+		KtbsResponse response1 = client.getTraceObsels(trace1URI);
+		assertResponseSucceeded(response1, true);
+		Trace traceObsels1 = (Trace) response1.getBodyAsKtbsResource();
+		KtbsResponse response2 = client.getTraceInfo(trace1URI);
+		assertResponseSucceeded(response2, true);
+		Trace traceInfo1 = (Trace) response2.getBodyAsKtbsResource();
+
+
+		String label = "Mon obsel préférée";
+
+		int nb = new Random().nextInt();
+		String obselName = "obsel"+nb;
+		while(client.getObsel("base1","t01", obselName).executedWithSuccess()){obselName = "obsel"+nb++;}
+
+		String nomObsel = obselName;
+
+		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		String attributeValue = "BBC 2";
+		String attributeName = "http://localhost:8001/base1/model1/channel";
+		attributes.put(attributeName, attributeValue);
+
+		String subject = "Damien Cram";
+		String typeURI = "http://localhost:8001/base1/model1/OpenChat";
+		long relativeStart = 12000;
+		long relativeEnd = 13000;
+
+		KtbsResponse response = client.createObsel(
+				trace1URI, 
+				nomObsel, 
+				subject, 
+				label, 
+				typeURI, 
+				null, 
+				null, 
+				relativeStart, 
+				relativeEnd, 
+				attributes);
+
+		assertResponseSucceeded(response, false);
+
+		assertNotNull(response.getHTTPLocation());
+		String location = response.getHTTPLocation();
+		String obsel1URI = trace1URI+nomObsel;
+		try {
+			/*
+			 * TODO KTBS bug : why does this return a double slash at the end :
+			 * "http://localhost:8001/base2//" instead of "http://localhost:8001/base2/"
+			 * 
+			 * FIXME return normalized URI in getHTTPLocation().
+			 */
+			assertEquals(obsel1URI, new URI(location).normalize().toString());
+		} catch (URISyntaxException e) {
+			fail(e.getMessage());
+		}
+
+		response = client.getObsel(obsel1URI);
+		assertResponseSucceeded(response, true);
+		Obsel obsel = (Obsel) response.getBodyAsKtbsResource();
+		assertEquals(obsel.getLabel(), label);
+		assertEquals(obsel.getTraceURI(), trace1URI);
+		assertEquals(1, obsel.getAttributes().size());
+		assertEquals(obsel.getTypeURI(),typeURI);
+		assertEquals(obsel.getIncomingRelations().size(),0);
+		assertEquals(obsel.getOutgoingRelations().size(),0);
+		assertTrue(obsel.getBegin()!=-1l);
+		assertTrue(obsel.getEnd()!=-1l);
+		assertNotNull(obsel.getBeginDT());
+		assertEquals(traceInfo1.getOrigin().getTime()+relativeStart, obsel.getBeginDT().getTime());
+		assertEquals(traceInfo1.getOrigin().getTime()+relativeEnd, obsel.getEndDT().getTime());
+		assertNotNull(obsel.getEndDT());
+		assertEquals(attributeValue,obsel.getAttributeValue(attributeName));
+		assertEquals(obsel1URI, obsel.getURI());
+
+
+		KtbsResponse response3 = client.getTraceInfo(trace1URI);
+		assertResponseSucceeded(response3, true);
+		Trace trace2Info = (Trace) response2.getBodyAsKtbsResource();
+		KtbsResponse response4 = client.getTraceObsels(trace1URI);
+		assertResponseSucceeded(response4, true);
+		Trace trace2obsels = (Trace) response4.getBodyAsKtbsResource();
+		assertEquals(true, trace2Info.isCompliantWithModel());
+		assertEquals(traceObsels1.getObselURIs().size()+1, trace2obsels.getObselURIs().size());
+		assertEquals(traceObsels1.getObsels().size()+1, trace2obsels.getObsels().size());
+		assertTrue(trace2obsels.getObselURIs().contains(obsel1URI));
+		assertFalse(traceObsels1.getObselURIs().contains(obsel1URI));
+		assertTrue(trace2obsels.getObselURIs().containsAll(traceObsels1.getObselURIs()));
+		
+		
+		while(client.getObsel("base1","t01", obselName).executedWithSuccess()){obselName="obsel"+nb++;}
+
+		Map<String, Serializable> attributes2 = new HashMap<String, Serializable>();
+		String attMessage = "http://localhost:8001/base1/model1/message";
+		String message = "Hello Girl";
+		attributes2.put(attMessage, message);
+		String typeObs2 = "http://localhost:8001/base1/model1/SendMsg";
+		
+		
+		String relationURi = "http://localhost:8001/base1/model1/onChannel";
+		response = client.createObsel(
+				"http://localhost:8001/base1/t01/", 
+				obselName, 
+				"dam", 
+				"Mon 6ième observé", 
+				typeObs2, 
+				null, 
+				null, 
+				14000l, 
+				14000l, 
+				attributes2,
+				relationURi,
+				obsel1URI
+		);
+		
+		assertResponseSucceeded(response, false);
+		String obsel2URI = trace1URI+obselName;
+		
+		
+		response = client.getObsel(obsel2URI);
+		assertResponseSucceeded(response, true);
+		Obsel obsel2 = (Obsel) response.getBodyAsKtbsResource();
+
+		response = client.getObsel(obsel1URI);
+		assertResponseSucceeded(response, true);
+		Obsel obsel1 = (Obsel) response.getBodyAsKtbsResource();
+		
+		assertEquals(1,obsel2.getOutgoingRelations().size());
+		assertEquals(0,obsel2.getIncomingRelations().size());
+		assertEquals(0,obsel1.getOutgoingRelations().size());
+		/*
+		 * There is no simple way to retrieve incoming relations from the KTBS Server.
+		 */
+		assertEquals(0,obsel1.getIncomingRelations().size());
+
+		
+		Relation relation = obsel2.getOutgoingRelations().iterator().next();
+		assertNull(relation.getFromObsel());
+		assertNull(relation.getToObsel());
+		assertNotNull(relation.getFromObselURI());
+		assertNotNull(relation.getToObselURI());
+		assertEquals(obsel2URI, relation.getFromObselURI());
+		assertEquals(obsel1URI, relation.getToObselURI());
+		assertEquals(relationURi, relation.getRelationName());
+		
+		
+		response = client.getTraceInfo(trace1URI);
+		assertResponseSucceeded(response, true);
+		Trace trace = (Trace) response.getBodyAsKtbsResource();
+		assertEquals(true, trace.isCompliantWithModel());
+		
+		
+		//test d'ajout d'observé avec temps absolu
+		nb = new Random().nextInt();
+		obselName = "obsel"+nb;
+		while(client.getObsel("base1","t01", obselName).executedWithSuccess()){obselName = "obsel"+nb++;}
+
+		nomObsel = obselName;
+
+		attributes = new HashMap<String, Serializable>();
+		attributeValue = "BBC 3";
+		attributeName = "http://localhost:8001/base1/model1/message";
+		attributes.put(attributeName, attributeValue);
+
+		subject = "Damien Cram";
+		typeURI = "http://localhost:8001/base1/model1/OpenChat";
+		relativeStart = 20000;
+		relativeEnd = 21000;
+
+		Calendar start = Calendar.getInstance();
+		start.setTimeInMillis(traceInfo1.getOrigin().getTime()+relativeStart);
+		Calendar end = Calendar.getInstance();
+		end.setTimeInMillis(traceInfo1.getOrigin().getTime()+relativeEnd);
+		
+
+		response = client.createObsel(
+				trace1URI, 
+				nomObsel, 
+				subject, 
+				label, 
+				typeURI, 
+				start.getTime(), 
+				end.getTime(), 
+				-1, 
+				-1, 
+				attributes);
+
+		assertResponseSucceeded(response, false);
+		
+		response = client.getObsel(trace1URI+obselName);
+		
+		assertResponseSucceeded(response, true);
+		obsel = (Obsel) response.getBodyAsKtbsResource();
+		assertEquals(obsel.getLabel(), label);
+		assertEquals(obsel.getTraceURI(), trace1URI);
+		assertEquals(1, obsel.getAttributes().size());
+		assertEquals(obsel.getTypeURI(),typeURI);
+		assertEquals(obsel.getIncomingRelations().size(),0);
+		assertEquals(obsel.getOutgoingRelations().size(),0);
+		
+		
+		assertNotNull(obsel.getBeginDT());
+		assertEquals(start.getTime().getTime(), obsel.getBeginDT().getTime());
+		
+		assertNotNull(obsel.getEndDT());
+		assertEquals(relativeStart,obsel.getBegin());
+		
+		assertEquals(relativeEnd,obsel.getEnd());
+		assertEquals(end.getTime().getTime(), obsel.getEndDT().getTime());
+		
+		assertEquals(attributeValue,obsel.getAttributeValue(attributeName));
 	}
 
-		@Test
+	@Test
 	public void testCreateTraceModel() {
 
 		String label = "Mon label de modèle de trace";

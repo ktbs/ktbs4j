@@ -114,12 +114,16 @@ public class RDFResourceBuilder {
 		
 		/*
 		 * TODO Suppress the followings lines when bug #21 is fixed
+		 * 
+		 * FIXME Remove these commented lines definitely when ensured that this "compliesWithModel"
+		 * property is not postable.
+		 * 
 		 */
-		jenaModel.add(
-				traceResource, 
-				jenaModel.createProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL), 
-				trace.isCompliantWithModel()?jenaModel.createLiteral("yes"):jenaModel.createLiteral("no")
-		);
+//		jenaModel.add(
+//				traceResource, 
+//				jenaModel.createProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL), 
+//				trace.isCompliantWithModel()?jenaModel.createLiteral("yes"):jenaModel.createLiteral("no")
+//		);
 
 		// sets the trace origin
 		Calendar originCal = Calendar.getInstance();

@@ -1,6 +1,5 @@
 package org.liris.ktbs.client;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
@@ -11,6 +10,15 @@ import java.util.Map;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Trace;
 
+/**
+ * 
+ * An interface specifying all method to resources of a KTBS Server. In this interface, 
+ * one method is bound to one REST query, and thus to one underlying HTTP request (maybe 
+ * to when HTTP redirection are followed automatically).
+ * 
+ * @author Damien Cram
+ *
+ */
 public interface KtbsClientService {
 
 	/*

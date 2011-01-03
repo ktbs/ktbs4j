@@ -1,8 +1,5 @@
 package org.liris.ktbs.client;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -266,6 +263,13 @@ public class KtbsClient implements KtbsClientService {
 								getGETSyntax(), 
 								clazz,
 								restAspect);
+						
+						if(log.isDebugEnabled()) {
+							InputStream contentStream = response.getEntity().getContent();
+							String body = IOUtils.toString(contentStream);
+							log.debug("Response header:" + response.getStatusLine());
+							log.debug("Response body:\n" + body);
+						}
 					}
 
 					// Release the memory from the entity
@@ -401,6 +405,17 @@ public class KtbsClient implements KtbsClientService {
 	private String withResourceAspect(String resourceURI,
 			String aspect, String... alternatives) {
 
+		if(aspect == null) {
+			String uri = resourceURI;
+			for(String alt:alternatives) {
+				if(uri.endsWith(alt)) {
+					uri = uri.replaceAll(alt, "");
+					return uri;
+				}
+			}
+			return uri;
+		}
+		
 		if(resourceURI.endsWith(aspect))
 			return resourceURI;
 
@@ -507,11 +522,13 @@ public class KtbsClient implements KtbsClientService {
 			String label, String typeURI, Date beginDT, Date endDT,
 			long begin, long end,Map<String, Serializable> attributes,
 			String... outgoingRelations) {
-		String requestURI = checkAndNormalizeURI(traceURI);
+		String traceNormalizedURI = checkAndNormalizeURI(traceURI);
+		String traceURIWithoutAspect = withResourceAspect(traceNormalizedURI, null, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
+		String traceURIWithObselsAspect = withResourceAspect(traceNormalizedURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 
 		Obsel obsel = KtbsResourceFactory.createObsel(
-				requestURI+obselLocalName, 
-				requestURI, 
+				traceURIWithoutAspect+obselLocalName, 
+				traceURIWithoutAspect, 
 				subject,
 				beginDT, 
 				endDT, 
@@ -533,9 +550,9 @@ public class KtbsClient implements KtbsClientService {
 		}
 
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addObsels(requestURI, true, obsel);
+		builder.addObsels(traceURIWithoutAspect, true, obsel);
 		String stringRepresentation = builder.getRDFResourceAsString();
-		return performPostRequest(requestURI, stringRepresentation);
+		return performPostRequest(traceURIWithoutAspect, stringRepresentation);
 	}
 
 	@Override
@@ -583,12 +600,22 @@ public class KtbsClient implements KtbsClientService {
 									KtbsResponseStatus.RESOURCE_MODIFIED:
 										KtbsResponseStatus.SERVER_EXCEPTION);
 			}
+			
 
 			if(log.isDebugEnabled()) {
 				InputStream contentStream = response.getEntity().getContent();
 				String body = IOUtils.toString(contentStream);
 				log.debug("Response header:" + response.getStatusLine());
 				log.debug("Response body:\n" + body);
+			}
+			if(ktbsResponseStatus == KtbsResponseStatus.RESOURCE_MODIFIED) {
+				
+				/*
+				 * Cannot read the resource returned since it is written in POST syntax (i.e. turtle) and there 
+				 * is a bug reading resource in turtle send by the server.
+				 */
+//				resource = new KtbsResourceReader().deserializeFromStream(ktbsResourceURI, response.getEntity(), getPOSTSyntax(), ktbsResourceType, restAspect)
+				EntityUtils.consume(response.getEntity());
 			}
 		} catch (ClientProtocolException e) {
 			log.error("An error occured when communicating with the KTBS", e);
@@ -613,11 +640,12 @@ public class KtbsClient implements KtbsClientService {
 
 	@Override
 	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels, String traceETag) {
-		String requestURI = checkAndNormalizeURI(traceURI);
-		String uriWithAspect = withResourceAspect(requestURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
+		String normalizedURI = checkAndNormalizeURI(traceURI);
+		String uriWithAspect = withResourceAspect(normalizedURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
+		String uriWithoutAspect = withResourceAspect(normalizedURI, null, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 
 		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
-		builder.addObsels(requestURI, true, obsels.toArray(new Obsel[obsels.size()]));
+		builder.addObsels(uriWithoutAspect, true, obsels.toArray(new Obsel[obsels.size()]));
 		String stringRepresentation = builder.getRDFResourceAsString();
 
 		return performPutRequest(uriWithAspect, stringRepresentation, traceETag);

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -264,19 +263,21 @@ public class KtbsClient implements KtbsClientService {
 								clazz,
 								restAspect);
 						
-						if(log.isDebugEnabled()) {
-							InputStream contentStream = response.getEntity().getContent();
-							String body = IOUtils.toString(contentStream);
-							log.debug("Response header:" + response.getStatusLine());
-							log.debug("Response body:\n" + body);
-						}
 					}
 
-					// Release the memory from the entity
+					
+					if(log.isDebugEnabled()) {
+						InputStream contentStream = response.getEntity().getContent();
+						String body = IOUtils.toString(contentStream);
+						log.debug("Response header:" + response.getStatusLine());
+						log.debug("Response body:\n" + body);
+					}
 
 					ktbsResponseStatus=KtbsResponseStatus.RESOURCE_RETRIEVED;
 				} else 
 					ktbsResponseStatus=KtbsResponseStatus.SERVER_EXCEPTION;
+				
+				// Release the memory from the entity
 				EntityUtils.consume(entity);
 			}
 		} catch (ClientProtocolException e) {
@@ -520,7 +521,7 @@ public class KtbsClient implements KtbsClientService {
 	@Override
 	public KtbsResponse createObsel(String traceURI, String obselLocalName, String subject,
 			String label, String typeURI, Date beginDT, Date endDT,
-			long begin, long end,Map<String, Serializable> attributes,
+			long begin, long end,Map<String, Object> attributes,
 			String... outgoingRelations) {
 		String traceNormalizedURI = checkAndNormalizeURI(traceURI);
 		String traceURIWithoutAspect = withResourceAspect(traceNormalizedURI, null, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
@@ -633,12 +634,6 @@ public class KtbsClient implements KtbsClientService {
 	}
 
 	@Override
-	public KtbsResponse putTraceObsels(Trace trace, String traceETag) {
-		String requestURI = checkAndNormalizeURI(trace.getURI());
-		return putTraceObsels(requestURI, trace.getObsels(), traceETag);
-	}
-
-	@Override
 	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels, String traceETag) {
 		String normalizedURI = checkAndNormalizeURI(traceURI);
 		String uriWithAspect = withResourceAspect(normalizedURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
@@ -704,5 +699,88 @@ public class KtbsClient implements KtbsClientService {
 		String requestURI = checkAndNormalizeURI(resourceURI);
 
 		return createKtbsResource(requestURI, new InputStreamReader(stream));
+	}
+
+	@Override
+	public KtbsResponse putKtbsResource(String resourceURI, Reader reader, String etag) {
+		
+		String requestURI = checkAndNormalizeURI(resourceURI);
+
+		StringWriter writer = new StringWriter();
+		int c;
+		try {
+			while((c=reader.read())!=-1)
+				writer.write(c);
+		} catch (IOException e) {
+			log.warn("Cannot read in the parameter reader", e);
+		}
+
+		String stringRepresentation = writer.getBuffer().toString();
+		return performPutRequest(requestURI, stringRepresentation, etag);
+	}
+
+	@Override
+	public KtbsResponse putKtbsResource(String resourceURI, InputStream stream, String etag) {
+		return putKtbsResource(resourceURI, new InputStreamReader(stream), etag);
+	}
+
+	@Override
+	public KtbsResponse getKtbsResource(String resourceURI, Class<?> clazz) {
+		String requestURI = checkAndNormalizeURI(resourceURI);
+		String restAspect = null;
+		if(Trace.class.isAssignableFrom(clazz)) {
+			if(resourceURI.endsWith(KtbsConstants.ABOUT_ASPECT))
+				restAspect = KtbsConstants.ABOUT_ASPECT;
+			else if(resourceURI.endsWith(KtbsConstants.OBSELS_ASPECT))
+				restAspect = KtbsConstants.OBSELS_ASPECT;
+			else {
+				requestURI = withResourceAspect(requestURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
+				restAspect = KtbsConstants.ABOUT_ASPECT;
+			}
+		}
+		return performGetRequest(requestURI, clazz, restAspect);
+	}
+
+	@Override
+	public KtbsResponse getETag(String resourceURI) {
+		checkStarted(); 
+
+		HttpGet get = new HttpGet(resourceURI);
+
+		HttpResponse response = null;
+		KtbsResponseStatus ktbsResponseStatus = null;
+
+		try {
+			response = httpClient.execute(get);
+
+			if(response == null) {
+				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+resourceURI+"\".");
+				ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
+			} else {
+
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+
+					if(log.isDebugEnabled()) {
+						log.debug("Response header:" + response.getStatusLine());
+					}
+
+					ktbsResponseStatus=KtbsResponseStatus.RESOURCE_RETRIEVED;
+				} else 
+					ktbsResponseStatus=KtbsResponseStatus.SERVER_EXCEPTION;
+			}
+		} catch (ClientProtocolException e) {
+			log.warn("A HTTP exception occurred when getting the resource \""+resourceURI+"\" from the KTBS server.", e);
+
+			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R; 
+		} catch (IOException e) {
+			log.warn("A HTTP exception occurred when getting the resource \""+resourceURI+"\" from the KTBS server.", e);
+			ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R; 
+		}
+
+		return new KtbsResponseImpl(
+				null, 
+				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_RETRIEVED, 
+				ktbsResponseStatus, 
+				response);
 	}
 }

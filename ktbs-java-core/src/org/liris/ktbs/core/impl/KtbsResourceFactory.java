@@ -1,6 +1,5 @@
 package org.liris.ktbs.core.impl;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class KtbsResourceFactory {
 		return traceImpl;
 	}
 
-	public static Obsel createObsel(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, String typeURI, Map<String, Serializable> attributes, String label) {
+	public static Obsel createObsel(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, String typeURI, Map<String, Object> attributes, String label) {
 		if(parentTrace.getObselURIs().contains(resourceUri))
 			throw new IllegalStateException("There is already an obsel with the same uri \""+resourceUri+"\" in the trace \""+parentTrace.getURI()+"\".");
 		ObselImpl obselImpl = new ObselImpl(resourceUri, parentTrace, subject, beginDT, endDT, -1l, -1l, typeURI, attributes);
@@ -63,7 +62,7 @@ public class KtbsResourceFactory {
 
 	public static long obselID = 0;
 	
-	public static Obsel createObsel(Trace parentTrace, String subject, String label, Date beginDT, Date endDT, String typeURI, Map<String, Serializable> attributes) {
+	public static Obsel createObsel(Trace parentTrace, String subject, String label, Date beginDT, Date endDT, String typeURI, Map<String, Object> attributes) {
 		
 		Collection<String> obselURIs = parentTrace.getObselURIs();
 		while(obselURIs.contains(parentTrace.getURI()+ KtbsResourceFactory.obselID + "/"))
@@ -104,7 +103,7 @@ public class KtbsResourceFactory {
 			Date beginDT, 
 			Date endDT,
 			String typeURI,
-			Map<String, Serializable> attributes, String label) {
+			Map<String, Object> attributes, String label) {
 		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, beginDT, endDT, -1l, -1l, typeURI, attributes);
 		obselImpl.setLabel(label);
 		return obselImpl;
@@ -116,7 +115,7 @@ public class KtbsResourceFactory {
 			long begin, 
 			long end,
 			String typeURI,
-			Map<String, Serializable> attributes, String label) {
+			Map<String, Object> attributes, String label) {
 		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, beginDT, endDT, begin, end, typeURI, attributes);
 		obselImpl.setLabel(label);
 		return obselImpl;
@@ -126,7 +125,7 @@ public class KtbsResourceFactory {
 			long begin, 
 			long end,
 			String typeURI,
-			Map<String, Serializable> attributes, String label) {
+			Map<String, Object> attributes, String label) {
 		ObselImpl obselImpl = new ObselImpl(obselURI, traceURI, subject, null, null, begin, end, typeURI, attributes);
 		obselImpl.setLabel(label);
 		return obselImpl;

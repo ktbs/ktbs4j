@@ -1,7 +1,6 @@
 package org.liris.ktbs.rdf;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,8 +43,45 @@ public class KtbsResourceReader {
 
 		if(restAspect != null && !restAspect.equals(""))
 			ktbsResourceURI = ktbsResourceURI.replaceAll(restAspect, "");
+		
+		checkRDFType(jenaModel,ktbsResourceURI, ktbsResourceType, restAspect);
+		
 		KtbsResource resource = createResourceFromRDFModel(ktbsResourceURI, jenaModel, ktbsResourceType, restAspect);
 		return resource;
+	}
+
+
+	private void checkRDFType(Model jenaModel, String ktbsResourceURI,
+			Class<?> ktbsResourceType, String traceAspect) {
+		
+		String rdfTypeURI = getRDFTypeURI(jenaModel,ktbsResourceURI) ;
+		if(rdfTypeURI == null && !Trace.class.isAssignableFrom(ktbsResourceType))
+			throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, null);
+		
+		if(KtbsRoot.class.isAssignableFrom(ktbsResourceType)) {
+			if(!rdfTypeURI.equals(KtbsConstants.KTBS_KTBSROOT))
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_KTBSROOT);
+		} else if(Base.class.isAssignableFrom(ktbsResourceType)) {
+			if(!rdfTypeURI.equals(KtbsConstants.KTBS_BASE))
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_BASE);
+		} else if(Trace.class.isAssignableFrom(ktbsResourceType)) {
+			if(traceAspect == null)
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_STOREDTRACE, KtbsConstants.KTBS_COMPUTEDTRACE);
+			boolean obselsCase = traceAspect.equals(KtbsConstants.OBSELS_ASPECT) && rdfTypeURI == null;
+			boolean aboutCase = traceAspect.equals(KtbsConstants.ABOUT_ASPECT) 
+									&& rdfTypeURI != null 
+									&& (rdfTypeURI.equals(KtbsConstants.KTBS_STOREDTRACE) 
+											|| rdfTypeURI.equals(KtbsConstants.KTBS_COMPUTEDTRACE));
+			if(!obselsCase && !aboutCase)
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_STOREDTRACE, KtbsConstants.KTBS_COMPUTEDTRACE);
+		} else if(Obsel.class.isAssignableFrom(ktbsResourceType)) {
+			// Can be of any user-defined type
+		}
+	}
+
+	private String getRDFTypeURI(Model jenaModel, String ktbsResourceURI) {
+		Resource rdfType = jenaModel.getResource(ktbsResourceURI).getPropertyResourceValue(RDF.type);
+		return rdfType == null ? null : rdfType.getURI();
 	}
 
 
@@ -98,6 +134,8 @@ public class KtbsResourceReader {
 
 			return ktbsRoot;
 		} else if(Base.class.isAssignableFrom(ktbsResourceType)) {
+			
+			
 			// the RDF resource that represents this base
 			Resource ktbsRDFResource = jenaModel.getResource(ktbsResourceURI);
 			if(ktbsRDFResource== null) {
@@ -285,7 +323,7 @@ public class KtbsResourceReader {
 		String obselURI = null;
 		String subject = null;
 
-		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		Map<String, Object> attributes = new HashMap<String, Object>();
 		List<Relation> relations = new LinkedList<Relation>();
 		while(it.hasNext()) {
 			Statement statement = (Statement) it.next();
@@ -309,7 +347,7 @@ public class KtbsResourceReader {
 				RDFNode object = statement.getObject();
 				if(object.isLiteral()) {
 					// this is an attribute
-					attributes.put(predicateURI, (Serializable)object.asLiteral().getValue());
+					attributes.put(predicateURI, object.asLiteral().getValue());
 				} else if(object.isResource()) {
 					// this is a relation
 					suspectedRelationStmts.add(statement);

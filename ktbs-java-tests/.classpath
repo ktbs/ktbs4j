@@ -6,5 +6,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/KTBS Core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/KTBS RDF"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/KTBS Client"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/APACHE_HTTP_COMPONENTS_4.1-beta1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/APACHE_COMMONS_LOGGING_1.1.1"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JUNIT_4"/>
+	<classpathentry kind="lib" path="/home/dcram/lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/dcram/lib/commons-logging-1.1.1/commons-logging-adapters-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

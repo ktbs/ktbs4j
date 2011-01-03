@@ -1,0 +1,11 @@
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ktbs:    <http://liris.cnrs.fr/silex/2009/ktbs#> .
+
+<http://localhost:8001/ma-base/trace2/aliment1> a       <http://localhost:8001/ma-base/model2/Aliment> ;
+	rdfs:label "Saint-Nectaire" ;
+	ktbs:hasBegin 30000 ;
+	ktbs:hasEnd 90000 ;
+	ktbs:hasSubject "Damien" ;
+	ktbs:hasTrace <http://localhost:8001/ma-base/trace2/> ;
+	<http://localhost:8001/ma-base/model2/nom> "Saint-Nectaire";
+	<http://localhost:8001/ma-base/model2/type> "PRODUIT LAITIER".

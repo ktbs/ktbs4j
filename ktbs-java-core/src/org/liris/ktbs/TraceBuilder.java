@@ -1,6 +1,5 @@
 package org.liris.ktbs;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,13 +50,13 @@ public class TraceBuilder {
 
 			String typeUri = traceModelUri+type;
 
-			Map<String, Serializable> attributeMap = new HashMap<String, Serializable>();
+			Map<String, Object> attributeMap = new HashMap<String, Object>();
 			String attributeName = null;
 			for(int i=0;i<attributes.length;i++) {
 				if(i%2==0) {
 					attributeName = (String) attributes[i];
 				} else {
-					Serializable attributeValue = (Serializable) attributes[i];
+					Object attributeValue = attributes[i];
 					attributeMap.put(attributeName, attributeValue);
 				}
 			}

@@ -2,7 +2,6 @@ package org.liris.ktbs.client;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -20,6 +19,7 @@ import org.liris.ktbs.core.Trace;
  *
  */
 public interface KtbsClientService {
+	public KtbsResponse getETag(String resourceURI);
 
 	/*
 	 * Services bound to a GET request
@@ -35,6 +35,7 @@ public interface KtbsClientService {
 	public KtbsResponse getTraceObsels(String traceURI);
 	public KtbsResponse getTraceObsels(String baseURI, String traceLocalName);
 	public KtbsResponse getTraceObsels(String rootURI, String baseLocalName, String traceLocalName);
+	public KtbsResponse getKtbsResource(String resourceURI, Class<?> clazz);
 
 	/*
 	 * Services bound to a POST request
@@ -98,7 +99,7 @@ public interface KtbsClientService {
 			Date endDT, 
 			long begin, 
 			long end, 
-			Map<String, Serializable> attributes, 
+			Map<String, Object> attributes, 
 			String... outgoingRelations);
 
 	/*
@@ -106,17 +107,18 @@ public interface KtbsClientService {
 	 */
 
 	/**
+	 * 
 	 * Resubmit a trace and all its obsels to a KTBS server, by the mean
 	 * of an underlying  PUT request.
 	 * 
-	 * @param trace the trace to be resubmitted to the KTBS server
+	 * @param traceURI the trace URI to be resubmitted to the KTBS server
+	 * @param obsels the collection of modified obsels to send to the server
 	 * @param traceETag the ETag (the value of the etag header in the HTTP response 
 	 * sent by the KTBS server when getting the trace) of the trace resource when 
 	 * the last GET was performed.
 	 * @return the {@link KtbsResponse} object of this request
+	 * @return
 	 */
-	public KtbsResponse putTraceObsels(Trace trace, String traceETag);
-	
 	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels,String traceETag);
 
 	/**
@@ -131,6 +133,10 @@ public interface KtbsClientService {
 	 */
 	public KtbsResponse putTraceInfo(Trace trace, String traceETag);
 
+	
+	public KtbsResponse putKtbsResource(String resourceURI, Reader reader, String etag);
+	public KtbsResponse putKtbsResource(String resourceURI, InputStream stream, String etag);
+	
 	/*
 	 * Services bound to a DELETE request
 	 */

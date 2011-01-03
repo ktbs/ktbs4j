@@ -1,6 +1,5 @@
 package org.liris.ktbs.core.impl;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -25,13 +24,13 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	private Collection<Relation> incomingRelations;
 	private Collection<Relation> outgoingRelations;
 
-	private Map<String, Serializable> attributes;
+	private Map<String, Object> attributes;
 
 	private Trace parentTrace;
 	private String traceURI;
 
 	
-	ObselImpl(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, long begin, long end, String typeURI, Map<String, Serializable> attributes) {
+	ObselImpl(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, long begin, long end, String typeURI, Map<String, Object> attributes) {
 		super(resourceUri);
 
 		this.parentTrace = parentTrace;
@@ -41,7 +40,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 
 		this.subject = subject;
 		
-		this.attributes = new HashMap<String, Serializable>();
+		this.attributes = new HashMap<String, Object>();
 		if(attributes!=null) 
 			this.attributes.putAll(attributes);
 
@@ -53,7 +52,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	}
 
 	ObselImpl(String obselURI, String traceURI, String subject, Date beginDT, Date endDT, long begin, long end,
-			String typeURI2, Map<String, Serializable> attributes2) {
+			String typeURI2, Map<String, Object> attributes2) {
 		this(obselURI, (Trace)null, subject, beginDT, endDT,begin, end, typeURI2, attributes2);
 		this.traceURI = traceURI;
 	}
@@ -84,12 +83,12 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	}
 
 	@Override
-	public Map<String, Serializable> getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return Collections.unmodifiableMap(this.attributes);
 	}
 
 	@Override
-	public Serializable getAttributeValue(String attributeName) {
+	public Object getAttributeValue(String attributeName) {
 		return this.attributes.get(attributeName);
 	}
 

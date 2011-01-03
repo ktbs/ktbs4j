@@ -1,6 +1,5 @@
 package org.liris.ktbs.java.tests;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,7 +65,7 @@ public class ClientTest {
 
 	private static KtbsResponse testCreateObsel(KtbsClient client) {
 
-		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("http://localhost:8001/base1/model1/message", "Hello Girl");
 		KtbsResponse response = client.createObsel(
 				"http://localhost:8001/base1/t01/", 
@@ -111,10 +110,10 @@ public class ClientTest {
 		int cnt = 0;
 		for(Obsel obsel:traceObsels.getObsels()) {
 			String messageAtt = "http://localhost:8001/base1/model1/channel";
-			Serializable message = obsel.getAttributeValue(messageAtt);
+			Object message = obsel.getAttributeValue(messageAtt);
 			if(message!= null && cnt == 0) {
 				cnt++;
-				Map<String, Serializable> attributes  = new HashMap<String, Serializable>(obsel.getAttributes());
+				Map<String, Object> attributes  = new HashMap<String, Object>(obsel.getAttributes());
 				attributes.remove(messageAtt);
 				attributes.put(messageAtt, "#my-channel-modified23");
 
@@ -127,7 +126,7 @@ public class ClientTest {
 			}
 		}
 
-		KtbsResponse putResponse = client.putTraceObsels(traceInfo, etag);
+		KtbsResponse putResponse = client.putTraceObsels(traceInfo.getURI(), traceInfo.getObsels(), etag);
 
 		System.out.println("*********************************************************************************");
 		System.out.println("*********************************************************************************");

@@ -1,6 +1,5 @@
 package org.liris.ktbs.core;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -31,8 +30,8 @@ public interface Obsel extends KtbsResource {
 	public Collection<Relation> getIncomingRelations();
 	public Collection<Relation> getOutgoingRelations();
 
-	public Map<String,Serializable> getAttributes();
-	public Serializable getAttributeValue(String attributeName);
+	public Map<String,Object> getAttributes();
+	public Object getAttributeValue(String attributeName);
 	
 	public Trace getTrace();
 	public String getTraceURI();

@@ -8,7 +8,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.Serializable;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -22,8 +23,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpStatus;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,8 +38,8 @@ import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
+import org.liris.ktbs.rdf.InvalidDeserializationRequest;
 
-import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
 public class KtbsClientTestCase {
@@ -46,9 +47,6 @@ public class KtbsClientTestCase {
 	private static final String KTBS_PROPERTIES_FILE = "ktbs-tests.properties";
 	private static final String PROP_ROOT_URI = "ktbs.root.uri";
 	private static final String PROP_KTBS_INSTALL_PATH = "ktbs.install.path";
-
-	// TODO to be modified after chechking on the Internet for the time zone.
-	private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 
 	private static String KTBS_INSTALL_PATH;
 
@@ -75,14 +73,11 @@ public class KtbsClientTestCase {
 		obselTypes.add("http://localhost:8001/base1/model1/RecvMsg");
 	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
 	private KtbsClient client;
 
 	@Before
 	public void setUp() throws Exception {
+		
 		log.info("Populating the KTBS");
 		Process populateKTBS = new ProcessBuilder(KTBS_INSTALL_PATH+File.separator+"tests" + File.separator+"populate-ktbs").start();
 		populateKTBS.waitFor();
@@ -104,11 +99,6 @@ public class KtbsClientTestCase {
 	@After
 	public void tearDown() throws Exception {
 		client.closeSession();
-	}
-
-	//	@Test
-	public void testAddObselsToTrace() {
-		fail("Not yet implemented");
 	}
 
 	@Test
@@ -227,7 +217,6 @@ public class KtbsClientTestCase {
 		assertResponseSucceeded(response1, true);
 		Base base = (Base) response1.getBodyAsKtbsResource();
 
-
 		String label = "Ma trace préférée";
 
 		int nb = new Random().nextInt();
@@ -293,7 +282,7 @@ public class KtbsClientTestCase {
 		 * per TestCase (once for each method).
 		 */
 		assertTrue(trace.getObsels().size()==trace.getObselURIs().size());
-		assertTrue(trace.getObsels().size()>=4);
+		assertTrue("Size: " + trace.getObsels().size() + " Trace URI: " + trace.getURI(),trace.getObsels().size()>=4);
 		for(Obsel obsel:trace.getObsels()) {
 			assertTrue(obselTypes.contains(obsel.getTypeURI()));
 			assertEquals(rootURI+"base1/t01/", obsel.getTraceURI());
@@ -435,26 +424,6 @@ public class KtbsClientTestCase {
 		assertResponseFailed(response);
 	}
 
-	//	@Test
-	public void testDeleteBase() {
-		fail("Not yet implemented");
-	}
-
-	//	@Test
-	public void testDeleteBaseFromURI() {
-		fail("Not yet implemented");
-	}
-
-	//	@Test
-	public void testDeleteTraceStringString() {
-		fail("Not yet implemented");
-	}
-
-	//	@Test
-	public void testDeleteTraceString() {
-		fail("Not yet implemented");
-	}
-
 	@Test
 	public void testGetObselStringString() {
 		KtbsResponse response = client.getObsel("http://localhost:8001/base1/t01/","obs1");		
@@ -586,7 +555,7 @@ public class KtbsClientTestCase {
 
 		String nomObsel = obselName;
 
-		Map<String, Serializable> attributes = new HashMap<String, Serializable>();
+		Map<String, Object> attributes = new HashMap<String, Object>();
 		String attributeValue = "BBC 2";
 		String attributeName = "http://localhost:8001/base1/model1/channel";
 		attributes.put(attributeName, attributeValue);
@@ -643,7 +612,6 @@ public class KtbsClientTestCase {
 		assertEquals(attributeValue,obsel.getAttributeValue(attributeName));
 		assertEquals(obsel1URI, obsel.getURI());
 
-
 		KtbsResponse response3 = client.getTraceInfo(trace1URI);
 		assertResponseSucceeded(response3, true);
 		Trace trace2Info = (Trace) response2.getBodyAsKtbsResource();
@@ -656,17 +624,16 @@ public class KtbsClientTestCase {
 		assertTrue(trace2obsels.getObselURIs().contains(obsel1URI));
 		assertFalse(traceObsels1.getObselURIs().contains(obsel1URI));
 		assertTrue(trace2obsels.getObselURIs().containsAll(traceObsels1.getObselURIs()));
-		
-		
+
 		while(client.getObsel("base1","t01", obselName).executedWithSuccess()){obselName="obsel"+nb++;}
 
-		Map<String, Serializable> attributes2 = new HashMap<String, Serializable>();
+		Map<String, Object> attributes2 = new HashMap<String, Object>();
 		String attMessage = "http://localhost:8001/base1/model1/message";
 		String message = "Hello Girl";
 		attributes2.put(attMessage, message);
 		String typeObs2 = "http://localhost:8001/base1/model1/SendMsg";
-		
-		
+
+
 		String relationURi = "http://localhost:8001/base1/model1/onChannel";
 		response = client.createObsel(
 				"http://localhost:8001/base1/t01/", 
@@ -682,11 +649,11 @@ public class KtbsClientTestCase {
 				relationURi,
 				obsel1URI
 		);
-		
+
 		assertResponseSucceeded(response, false);
 		String obsel2URI = trace1URI+obselName;
-		
-		
+
+
 		response = client.getObsel(obsel2URI);
 		assertResponseSucceeded(response, true);
 		Obsel obsel2 = (Obsel) response.getBodyAsKtbsResource();
@@ -694,7 +661,7 @@ public class KtbsClientTestCase {
 		response = client.getObsel(obsel1URI);
 		assertResponseSucceeded(response, true);
 		Obsel obsel1 = (Obsel) response.getBodyAsKtbsResource();
-		
+
 		assertEquals(1,obsel2.getOutgoingRelations().size());
 		assertEquals(0,obsel2.getIncomingRelations().size());
 		assertEquals(0,obsel1.getOutgoingRelations().size());
@@ -703,7 +670,7 @@ public class KtbsClientTestCase {
 		 */
 		assertEquals(0,obsel1.getIncomingRelations().size());
 
-		
+
 		Relation relation = obsel2.getOutgoingRelations().iterator().next();
 		assertNull(relation.getFromObsel());
 		assertNull(relation.getToObsel());
@@ -712,14 +679,14 @@ public class KtbsClientTestCase {
 		assertEquals(obsel2URI, relation.getFromObselURI());
 		assertEquals(obsel1URI, relation.getToObselURI());
 		assertEquals(relationURi, relation.getRelationName());
-		
-		
+
+
 		response = client.getTraceInfo(trace1URI);
 		assertResponseSucceeded(response, true);
 		Trace trace = (Trace) response.getBodyAsKtbsResource();
 		assertEquals(true, trace.isCompliantWithModel());
-		
-		
+
+
 		//test d'ajout d'observé avec temps absolu
 		nb = new Random().nextInt();
 		obselName = "obsel"+nb;
@@ -727,7 +694,7 @@ public class KtbsClientTestCase {
 
 		nomObsel = obselName;
 
-		attributes = new HashMap<String, Serializable>();
+		attributes = new HashMap<String, Object>();
 		attributeValue = "BBC 3";
 		attributeName = "http://localhost:8001/base1/model1/message";
 		attributes.put(attributeName, attributeValue);
@@ -741,7 +708,7 @@ public class KtbsClientTestCase {
 		start.setTimeInMillis(traceInfo1.getOrigin().getTime()+relativeStart);
 		Calendar end = Calendar.getInstance();
 		end.setTimeInMillis(traceInfo1.getOrigin().getTime()+relativeEnd);
-		
+
 
 		response = client.createObsel(
 				trace1URI, 
@@ -756,9 +723,9 @@ public class KtbsClientTestCase {
 				attributes);
 
 		assertResponseSucceeded(response, false);
-		
+
 		response = client.getObsel(trace1URI+obselName);
-		
+
 		assertResponseSucceeded(response, true);
 		obsel = (Obsel) response.getBodyAsKtbsResource();
 		assertEquals(obsel.getLabel(), label);
@@ -767,18 +734,125 @@ public class KtbsClientTestCase {
 		assertEquals(obsel.getTypeURI(),typeURI);
 		assertEquals(obsel.getIncomingRelations().size(),0);
 		assertEquals(obsel.getOutgoingRelations().size(),0);
-		
-		
+
+
 		assertNotNull(obsel.getBeginDT());
 		assertEquals(start.getTime().getTime(), obsel.getBeginDT().getTime());
-		
+
 		assertNotNull(obsel.getEndDT());
 		assertEquals(relativeStart,obsel.getBegin());
-		
+
 		assertEquals(relativeEnd,obsel.getEnd());
 		assertEquals(end.getTime().getTime(), obsel.getEndDT().getTime());
-		
+
 		assertEquals(attributeValue,obsel.getAttributeValue(attributeName));
+	}
+
+	@Test
+	public void testGetKtbsResource() {
+		KtbsResponse response;
+		response = client.getKtbsResource("http://localhost:8001/", KtbsRoot.class);
+		assertResponseSucceeded(response, true);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/", Base.class);
+		assertResponseSucceeded(response, true);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01/", Trace.class);
+		assertResponseSucceeded(response, true);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01/@obsels", Trace.class);
+		assertResponseSucceeded(response, true);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01/@about", Trace.class);
+		assertResponseSucceeded(response, true);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01/obs1", Obsel.class);
+		assertResponseSucceeded(response, true);
+
+		try {
+			response = client.getKtbsResource("http://localhozsst:8001/", KtbsRoot.class);
+			fail("Should raise an illegal state exception because the root uri is invalid");
+		} catch(IllegalStateException e){}
+
+		response = client.getKtbsResource("http://localhost:8001/basse1/", Base.class);
+		assertResponseFailed(response);
+
+		response = client.getKtbsResource("http://localhost:8001/base1", Base.class);
+		assertResponseFailed(response);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/tde01/", Trace.class);
+		assertResponseFailed(response);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01", Trace.class);
+		assertResponseFailed(response);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01/obs1/", Obsel.class);
+		assertResponseFailed(response);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01/obs290970", Obsel.class);
+		assertResponseFailed(response);
+
+		response = client.getKtbsResource("http://localhost:8001/base1/t01/obs1", Trace.class);
+		assertResponseFailed(response);
+		assertEquals(HttpStatus.SC_NOT_FOUND,response.getHTTPResponse().getStatusLine().getStatusCode());
+
+		try {
+			response = client.getKtbsResource("http://localhost:8001/base1/t01/obs1", Base.class);
+			fail("Should have failed");
+		} catch(InvalidDeserializationRequest e) {}
+
+		try {
+			response = client.getKtbsResource("http://localhost:8001/base1/t01/obs1", KtbsRoot.class);
+			fail("Should have failed");
+		} catch(InvalidDeserializationRequest e) {}
+
+		try {
+			response = client.getKtbsResource("http://localhost:8001/base1/t01/", Obsel.class);
+		} catch(InvalidDeserializationRequest e) {
+			fail("Should not fail with Obsel");
+		}
+
+		try {
+			response = client.getKtbsResource("http://localhost:8001/base1/t01/", Base.class);
+			fail("Should have failed");
+		} catch(InvalidDeserializationRequest e) {}
+
+		try {
+			response = client.getKtbsResource("http://localhost:8001/base1/t01/", KtbsRoot.class);
+			fail("Should have failed");
+		} catch(InvalidDeserializationRequest e) {}
+
+		response = client.getKtbsResource("http://localhost:8001/base1/", Trace.class);
+		// The server cannot even find the resource http://localhost:8001/base1/@obsels
+		assertResponseFailed(response);
+		assertEquals(HttpStatus.SC_NOT_FOUND, response.getHTTPResponse().getStatusLine().getStatusCode());
+
+
+		try {
+			response = client.getKtbsResource("http://localhost:8001/base1/", Obsel.class);
+		} catch(InvalidDeserializationRequest e) {
+			fail("Should not fail with Obsel");
+		}
+		try {
+			response = client.getKtbsResource("http://localhost:8001/base1/", KtbsRoot.class);
+			fail("Should have failed");
+		} catch(InvalidDeserializationRequest e) {}
+
+		response = client.getKtbsResource("http://localhost:8001/", Trace.class);
+		// The server cannot even find the resource http://localhost:8001/@obsels
+		assertResponseFailed(response);
+		assertEquals(HttpStatus.SC_NOT_FOUND, response.getHTTPResponse().getStatusLine().getStatusCode());
+
+		try {
+			response = client.getKtbsResource("http://localhost:8001/", Obsel.class);
+		} catch(InvalidDeserializationRequest e) {
+			fail("Should not fail with Obsel");
+		}
+		try {
+			response = client.getKtbsResource("http://localhost:8001/", Base.class);
+			fail("Should have failed");
+		} catch(InvalidDeserializationRequest e) {}
+
 	}
 
 	@Test
@@ -819,7 +893,7 @@ public class KtbsClientTestCase {
 		assertTrue(base2.getTraceModelURIs().contains(rootURI+"base1/" + tmName+"/"));
 	}
 
-	
+
 	@Test
 	public void testPutTraceObsels() {
 		KtbsResponse responseGet = client.getTraceObsels("http://localhost:8001/base1/t01/");
@@ -827,15 +901,15 @@ public class KtbsClientTestCase {
 		String etagObsels = responseGet.getHTTPETag();
 		assertNotNull(etagObsels);
 		Trace traceObsels = (Trace) responseGet.getBodyAsKtbsResource();
-		
+
 		responseGet = client.getTraceInfo("http://localhost:8001/base1/t01/");
 		assertResponseSucceeded(responseGet, true);
 		String etagInfo = responseGet.getHTTPETag();
 		assertNotNull(etagInfo);
-		
+
 		assertFalse(etagObsels.equals(etagInfo));
 
-		
+
 		Collection<Obsel> obsels = new LinkedList<Obsel>();
 		String messageAtt = "http://localhost:8001/base1/model1/channel";
 		String newSubject = "Nouveau sujet";
@@ -853,19 +927,19 @@ public class KtbsClientTestCase {
 		int cnt = 0;
 		String modifiedObselURI = "";
 		Map<String, String> etagsByObselURI = new TreeMap<String, String>();
-		
+
 		for(Obsel obsel:traceObsels.getObsels()) {
 			KtbsResponse response = client.getObsel(obsel.getURI());
 			assertResponseSucceeded(response,true);
 			assertNotNull(response.getHTTPETag());
 			etagsByObselURI.put(obsel.getURI(), response.getHTTPETag());
 
-			
-			Serializable message = obsel.getAttributeValue(messageAtt);
+
+			Object message = obsel.getAttributeValue(messageAtt);
 			if(message!= null && cnt == 0) {
 				modifiedObselURI = obsel.getURI();
 				cnt++;
-				Map<String, Serializable> attributes  = new HashMap<String, Serializable>(obsel.getAttributes());
+				Map<String, Object> attributes  = new HashMap<String, Object>(obsel.getAttributes());
 				attributes.remove(messageAtt);
 				attributes.put(messageAtt, newMessageAttValue);
 				attributes.put(newAttribute, newAttributeValue);
@@ -881,7 +955,7 @@ public class KtbsClientTestCase {
 						obsel.getTypeURI(), 
 						attributes, 
 						newLabel
-						);
+				);
 				obsels.add(newObsel);
 			} else {
 				obsels.add(obsel);
@@ -893,45 +967,45 @@ public class KtbsClientTestCase {
 
 		putResponse = client.putTraceObsels("http://localhost:8001/base1/t01/@obsels", obsels, etagObsels);
 		assertResponseSucceeded(putResponse, false);
-		
+
 		responseGet = client.getTraceObsels("http://localhost:8001/base1/t01/");
 		assertResponseSucceeded(responseGet, true);
 		String etagObsels2 = responseGet.getHTTPETag();
 		assertNotNull(etagObsels2);
 		Trace traceObsel2 = (Trace)responseGet.getBodyAsKtbsResource();
-		
+
 		responseGet = client.getTraceInfo("http://localhost:8001/base1/t01/");
 		assertResponseSucceeded(responseGet, true);
 		String etagInfo2 = responseGet.getHTTPETag();
 		assertNotNull(etagInfo2);
-		
+
 		assertTrue(etagObsels2!=etagObsels);
-		
-/*
- * 		Would sometimes fail when the whole test case is executed due to side effect of creating obsels
- *  	that are not compliant with the model. 
- *  	TODO Ktbs bug : the KTBS seems to recaulcate the etag of a trace@obsels after a put, but not 
- *  	after a POST with a new obsel...
- */
-//		assertEquals(etagInfo2, etagInfo);
-		
+
+		/*
+		 * 		Would sometimes fail when the whole test case is executed due to side effect of creating obsels
+		 *  	that are not compliant with the model. 
+		 *  	TODO Ktbs bug : the KTBS seems to recaulcate the etag of a trace@obsels after a put, but not 
+		 *  	after a POST with a new obsel...
+		 */
+		//		assertEquals(etagInfo2, etagInfo);
+
 		for(Obsel o:traceObsel2.getObsels()) {
 			String uri = o.getURI();
 			KtbsResponse response = client.getObsel(uri);
 			assertResponseSucceeded(response, true);
 			String etag = response.getHTTPETag();
-			
+
 			assertNotNull(etag);
 			/*
 			 * TODO Ktbs Bug : the KTBS assigns the same etag to all the obsels of a same trace.
 			 */
 			assertEquals(etagObsels2, etag);
-//			String oldEtag = etagsByObselURI.get(uri);
-//			if(uri.equals(modifiedObselURI))
-//				assertTrue(etag!=oldEtag);
-//			else
-//				assertEquals(oldEtag, etag);
-				
+			//			String oldEtag = etagsByObselURI.get(uri);
+			//			if(uri.equals(modifiedObselURI))
+			//				assertTrue(etag!=oldEtag);
+			//			else
+			//				assertEquals(oldEtag, etag);
+
 			if(uri.equals(modifiedObselURI)) {
 				Obsel obsel = (Obsel)response.getBodyAsKtbsResource();
 				assertNotNull(obsel.getAttributeValue(newAttribute));
@@ -946,9 +1020,206 @@ public class KtbsClientTestCase {
 		}
 	}
 
-	//	@Test
-	public void testCreateKtbsResourceStringReader() {
-		fail("Not yet implemented");
+	@Test
+	public void testCreateAndPutKtbsResourceStringReader() {
+		try {
+			FileReader reader;
+			File file;
+			KtbsResponse response;
+
+			// gets the initial state of the root before creating new resources
+			response = client.getKtbsRoot();
+			assertResponseSucceeded(response, true);
+			KtbsRoot root = (KtbsRoot)response.getBodyAsKtbsResource();
+			int initialBaseNumber = root.getBaseURIs().size();
+
+			// create ma-base
+			file = new File("turtle/ma-base.ttl");
+			assertTrue(file.exists());
+			reader = new FileReader(file);
+			response = client.createKtbsResource("http://localhost:8001/", reader);
+			assertResponseSucceeded(response, false);
+			assertEquals("http://localhost:8001/ma-base/", new URI(response.getHTTPLocation()).normalize().toString());
+
+			response = client.getKtbsRoot();
+			assertResponseSucceeded(response, true);
+			assertEquals(initialBaseNumber+1,((KtbsRoot)response.getBodyAsKtbsResource()).getBaseURIs().size());
+			assertTrue(((KtbsRoot)response.getBodyAsKtbsResource()).getBaseURIs().contains("http://localhost:8001/base1/"));
+			assertTrue(((KtbsRoot)response.getBodyAsKtbsResource()).getBaseURIs().contains("http://localhost:8001/ma-base/"));
+			response = client.getBase("ma-base");
+			assertResponseSucceeded(response, true);
+			assertEquals("Ma base n°2 que j'ai créée",response.getBodyAsKtbsResource().getLabel());
+
+
+			// create model2
+			file = new File("turtle/model2.ttl");
+			assertTrue(file.exists());
+			reader = new FileReader(file);
+			response = client.createKtbsResource("http://localhost:8001/ma-base/", reader);
+			assertResponseSucceeded(response, false);
+			assertEquals("http://localhost:8001/ma-base/model2/", new URI(response.getHTTPLocation()).normalize().toString());
+
+			response = client.getBase("ma-base");
+			assertResponseSucceeded(response, true);
+			assertEquals(1,((Base)response.getBodyAsKtbsResource()).getTraceModelURIs().size());
+			assertTrue(((Base)response.getBodyAsKtbsResource()).getTraceModelURIs().contains("http://localhost:8001/ma-base/model2/"));
+
+			assertResponseSucceeded(response, true);
+			// populate model2, needs the etag
+			response = client.getETag("http://localhost:8001/ma-base/model2/");
+			assertResponseSucceeded(response, false);
+			assertNotNull(response.getHTTPETag());
+			String etag = response.getHTTPETag();
+			
+			file = new File("turtle/populate_model2.ttl");
+			assertTrue(file.exists());
+			reader = new FileReader(file);
+			response = client.putKtbsResource("http://localhost:8001/ma-base/model2/", reader, etag);
+			assertResponseSucceeded(response, false);
+
+			// create trace2
+			file = new File("turtle/trace2.ttl");
+			assertTrue(file.exists());
+			reader = new FileReader(file);
+			response = client.createKtbsResource("http://localhost:8001/ma-base/", reader);
+			assertResponseSucceeded(response, false);
+
+			response = client.getBase("ma-base");
+			assertResponseSucceeded(response, true);
+			assertEquals(1,((Base)response.getBodyAsKtbsResource()).getTraceURIs().size());
+			assertTrue(((Base)response.getBodyAsKtbsResource()).getTraceURIs().contains("http://localhost:8001/ma-base/trace2/"));
+			response = client.getTraceInfo("ma-base", "trace2");
+			assertResponseSucceeded(response, true);
+			assertEquals("La trace de la base n°2",response.getBodyAsKtbsResource().getLabel());
+
+			// populate trace2
+			// observe2
+			file = new File("turtle/observe2.ttl");
+			assertTrue(file.exists());
+			reader = new FileReader(file);
+			response = client.createKtbsResource("http://localhost:8001/ma-base/trace2/", reader);
+			assertResponseSucceeded(response, false);
+			assertEquals("http://localhost:8001/ma-base/trace2/aliment2", new URI(response.getHTTPLocation()).normalize().toString());
+
+			response = client.getTraceObsels("http://localhost:8001/ma-base/trace2/");
+			assertResponseSucceeded(response, true);
+			Trace traceObsels = (Trace) response.getBodyAsKtbsResource();
+			response = client.getTraceInfo("http://localhost:8001/ma-base/trace2/");
+			assertResponseSucceeded(response, true);
+			Trace traceInfo = (Trace) response.getBodyAsKtbsResource();
+			assertEquals(1, traceObsels.getObsels().size());
+			response = client.getObsel("http://localhost:8001/ma-base/trace2/aliment2");
+			assertResponseSucceeded(response, true);
+			Obsel obsel = (Obsel) response.getBodyAsKtbsResource();
+			assertEquals("http://localhost:8001/ma-base/model2/Aliment", obsel.getTypeURI());
+			assertEquals("Les tomates du marché", obsel.getLabel());
+			assertEquals("Damien", obsel.getSubject());
+			assertEquals("http://localhost:8001/ma-base/trace2/", obsel.getTraceURI());
+			assertEquals(2, obsel.getAttributes().size());
+			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
+			assertEquals("Tomates",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
+			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/type"));
+			assertEquals("FRUIT",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/type"));
+			assertEquals(1000, obsel.getBegin());
+			assertEquals(25000, obsel.getEnd());
+			Date origin = traceInfo.getOrigin();
+			assertEquals(new Date(origin.getTime()+1000), obsel.getBeginDT());
+			assertEquals(new Date(origin.getTime()+25000), obsel.getEndDT());
+			assertEquals(0, obsel.getIncomingRelations().size());
+			assertEquals(0, obsel.getOutgoingRelations().size());
+
+
+			// observe3
+			file = new File("turtle/observe3.ttl");
+			assertTrue(file.exists());
+			reader = new FileReader(file);
+			response = client.createKtbsResource("http://localhost:8001/ma-base/trace2/", reader);
+			assertResponseSucceeded(response, false);
+			assertEquals("http://localhost:8001/ma-base/trace2/aliment1", new URI(response.getHTTPLocation()).normalize().toString());
+
+			response = client.getTraceObsels("http://localhost:8001/ma-base/trace2/");
+			assertResponseSucceeded(response, true);
+			traceObsels = (Trace) response.getBodyAsKtbsResource();
+			assertEquals(2, traceObsels.getObsels().size());
+			response = client.getObsel("http://localhost:8001/ma-base/trace2/aliment1");
+			assertResponseSucceeded(response, true);
+			obsel = (Obsel) response.getBodyAsKtbsResource();
+			assertEquals("http://localhost:8001/ma-base/model2/Aliment", obsel.getTypeURI());
+			assertEquals("Saint-Nectaire", obsel.getLabel());
+			assertEquals("Damien", obsel.getSubject());
+			assertEquals("http://localhost:8001/ma-base/trace2/", obsel.getTraceURI());
+			assertEquals(2, obsel.getAttributes().size());
+			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
+			assertEquals("Saint-Nectaire",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
+			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/type"));
+			assertEquals("PRODUIT LAITIER",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/type"));
+			assertEquals(30000, obsel.getBegin());
+			assertEquals(90000, obsel.getEnd());
+			assertEquals(new Date(origin.getTime()+30000), obsel.getBeginDT());
+			assertEquals(new Date(origin.getTime()+90000), obsel.getEndDT());
+			assertEquals(0, obsel.getIncomingRelations().size());
+			assertEquals(0, obsel.getOutgoingRelations().size());
+
+
+			// observe4
+			file = new File("turtle/observe4.ttl");
+			assertTrue(file.exists());
+			reader = new FileReader(file);
+			response = client.createKtbsResource("http://localhost:8001/ma-base/trace2/", reader);
+			assertResponseSucceeded(response, false);
+			String uri = new URI(response.getHTTPLocation()).normalize().toString();
+
+			response = client.getTraceObsels("http://localhost:8001/ma-base/trace2/");
+			assertResponseSucceeded(response, true);
+			traceObsels = (Trace) response.getBodyAsKtbsResource();
+			assertEquals(3, traceObsels.getObsels().size());
+			response = client.getObsel(uri);
+			assertResponseSucceeded(response, true);
+			obsel = (Obsel) response.getBodyAsKtbsResource();
+			assertEquals("http://localhost:8001/ma-base/model2/Manger", obsel.getTypeURI());
+			assertEquals("Je mange", obsel.getLabel());
+			assertEquals("Damien", obsel.getSubject());
+			assertEquals("http://localhost:8001/ma-base/trace2/", obsel.getTraceURI());
+			assertEquals(1, obsel.getAttributes().size());
+			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/vitesse"));
+			assertEquals("très rapidement",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/vitesse"));
+			assertEquals(1000, obsel.getBegin());
+			assertEquals(100000, obsel.getEnd());
+			assertEquals(new Date(origin.getTime()+1000), obsel.getBeginDT());
+			assertEquals(new Date(origin.getTime()+100000), obsel.getEndDT());
+			assertEquals(0, obsel.getIncomingRelations().size());
+			assertEquals(2, obsel.getOutgoingRelations().size());
+
+			Collection<String> expectedRelationTargets = new LinkedList<String>();
+			expectedRelationTargets.add("http://localhost:8001/ma-base/trace2/aliment1");
+			expectedRelationTargets.add("http://localhost:8001/ma-base/trace2/aliment2");
+			for(Relation relation:obsel.getOutgoingRelations()) {
+				assertNull(relation.getToObsel());
+				assertNull(relation.getFromObsel());
+				assertNotNull(relation.getToObselURI());
+				assertNotNull(relation.getFromObselURI());
+				assertEquals("http://localhost:8001/ma-base/model2/plat", relation.getRelationName());
+				assertEquals(uri, relation.getFromObselURI());
+				expectedRelationTargets.remove(relation.getToObselURI());
+			}
+
+			assertEquals(0, expectedRelationTargets.size());
+
+
+
+			response = client.getTraceInfo("http://localhost:8001/ma-base/trace2/");
+			assertResponseSucceeded(response, true);
+			traceObsels = (Trace)response.getBodyAsKtbsResource();
+			assertTrue(traceObsels.isCompliantWithModel());
+			assertEquals("http://localhost:8001/ma-base/model2/",traceObsels.getTraceModelUri());
+
+		} catch (FileNotFoundException e) {
+			fail(e.getMessage());
+		} catch (URISyntaxException e) {
+			fail(e.getMessage());
+		}
+
+
 	}
 
 	//	@Test

@@ -47,8 +47,8 @@ import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 import org.liris.ktbs.rdf.JenaConstants;
 import org.liris.ktbs.rdf.KtbsConstants;
-import org.liris.ktbs.rdf.KtbsResourceReader;
-import org.liris.ktbs.rdf.RDFResourceBuilder;
+import org.liris.ktbs.rdf.KtbsResourceDeserializer;
+import org.liris.ktbs.rdf.RDFResourceSerializer;
 
 
 /**
@@ -121,7 +121,7 @@ public class KtbsClient implements KtbsClientService {
 		 * introduces a small delay of a half-second).
 		 */
 		log.debug("Loading Jena classes.");
-		KtbsResourceReader.loadJenaClasses();
+		KtbsResourceDeserializer.loadJenaClasses();
 		log.info("Session started.");
 	}
 
@@ -168,7 +168,7 @@ public class KtbsClient implements KtbsClientService {
 		KtbsResponse[] response = new KtbsResponse[obsels.size()];
 		int k = 0;
 		for(Obsel obsel:obsels) {
-			RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+			RDFResourceSerializer builder = RDFResourceSerializer.newBuilder(getPOSTSyntax());
 			builder.addObsels(requestURI, false, obsel);
 			String stringRepresentation = builder.getRDFResourceAsString();
 			log.debug("Sending the obsel \""+obsel.getTypeURI()+"\" to the KTBS.");
@@ -253,7 +253,7 @@ public class KtbsClient implements KtbsClientService {
 					ktbsResponseStatus = KtbsResponseStatus.INTERNAL_ERR0R;
 				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 
-					KtbsResourceReader reader = new KtbsResourceReader();
+					KtbsResourceDeserializer reader = new KtbsResourceDeserializer();
 
 					if(entity.getContentLength()>0) {
 						ktbsResource = reader.deserializeFromStream(
@@ -354,7 +354,7 @@ public class KtbsClient implements KtbsClientService {
 
 		Base b = KtbsResourceFactory.createBase(baseLocalName, ktbsRootURI, label);
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		RDFResourceSerializer builder = RDFResourceSerializer.newBuilder(getPOSTSyntax());
 		builder.addBase(b);
 
 
@@ -388,7 +388,7 @@ public class KtbsClient implements KtbsClientService {
 		String traceNormalizedURI = checkAndNormalizeURI(traceURI);
 		Trace trace = KtbsResourceFactory.createTrace(traceNormalizedURI, traceModelURI, label, origin, base, false);
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		RDFResourceSerializer builder = RDFResourceSerializer.newBuilder(getPOSTSyntax());
 		builder.addTrace(trace, true, false);
 		String stringRepresentation = builder.getRDFResourceAsString();
 
@@ -550,7 +550,7 @@ public class KtbsClient implements KtbsClientService {
 			}
 		}
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		RDFResourceSerializer builder = RDFResourceSerializer.newBuilder(getPOSTSyntax());
 		builder.addObsels(traceURIWithoutAspect, true, obsel);
 		String stringRepresentation = builder.getRDFResourceAsString();
 		return performPostRequest(traceURIWithoutAspect, stringRepresentation);
@@ -560,7 +560,7 @@ public class KtbsClient implements KtbsClientService {
 	public KtbsResponse createTraceModel(String baseLocalName,
 			String traceModelLocalName, String label) {
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		RDFResourceSerializer builder = RDFResourceSerializer.newBuilder(getPOSTSyntax());
 		String baseNormalizedURI = checkAndNormalizeURI(ktbsRootURI+baseLocalName+"/");
 		String traceModelNormalizedURI = checkAndNormalizeURI(baseNormalizedURI + traceModelLocalName + "/");
 		builder.addTraceModel(baseNormalizedURI, traceModelNormalizedURI, label);
@@ -639,7 +639,7 @@ public class KtbsClient implements KtbsClientService {
 		String uriWithAspect = withResourceAspect(normalizedURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 		String uriWithoutAspect = withResourceAspect(normalizedURI, null, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 
-		RDFResourceBuilder builder = RDFResourceBuilder.newBuilder(getPOSTSyntax());
+		RDFResourceSerializer builder = RDFResourceSerializer.newBuilder(getPOSTSyntax());
 		builder.addObsels(uriWithoutAspect, true, obsels.toArray(new Obsel[obsels.size()]));
 		String stringRepresentation = builder.getRDFResourceAsString();
 

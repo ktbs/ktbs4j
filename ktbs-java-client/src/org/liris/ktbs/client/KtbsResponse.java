@@ -40,7 +40,7 @@ public interface KtbsResponse {
 	
 	/**
 	 * 
-	 * @return the underlying {@link HttpResponse} object from the Apache 
+	 * @return the underlying {@link org.apache.http.HttpResponse} object from the Apache 
 	 * HttpClient API that has been used to interprete the response of the KTBS server.
 	 */
 	public HttpResponse getHTTPResponse();

@@ -1,4 +1,4 @@
-package org.liris.ktbs;
+package org.liris.ktbs.core;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -6,9 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
-import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 
 public class TraceBuilder {

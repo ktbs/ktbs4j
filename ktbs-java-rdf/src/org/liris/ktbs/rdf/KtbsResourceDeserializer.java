@@ -30,10 +30,37 @@ import com.hp.hpl.jena.shared.BadBooleanException;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class KtbsResourceReader {
+/**
+ * Translate a KTBS resource represented in RDF triples into a {@link KtbsResource}.
+ * 
+ * @author Damien Cram
+ * @see RDFResourceSerializer
+ */
+public class KtbsResourceDeserializer {
 
-	private static Log log = LogFactory.getLog(KtbsResourceReader.class);
+	private static Log log = LogFactory.getLog(KtbsResourceDeserializer.class);
 
+	/**
+	 * 
+	 * Builds a KTBS resource object in the form of a {@link KtbsResource} from its representation
+	 * in RDF triples.
+	 * 
+	 * <p>
+	 * The RDF triples are passed to the method as an input stream.
+	 * </p>
+	 * 
+	 * @param ktbsResourceURI the URI of the KTBS resource represented by RDF triples
+	 * @param stream the input stream containing the RDF triples of the KTBS resource
+	 * @param jenaSyntax the RDF Syntax used in the input stream to represent the KTBS 
+	 * resource (see <a href="http://jena.sourceforge.net/IO/iohowto.html">Jena documentation 
+	 * about RDF IO</a> and {@link JenaConstants} for possible values of this parameter)
+	 * @param ktbsResourceType the Java class of the {@link KtbsResource} instance to return
+	 * @param restAspect the aspect of the KTBS resource (e.g. &#64;obsels 
+	 * and &#64;about for KTBS traces)
+	 * @return the KTBS resource object that has been built from the RDF input stream
+	 * @throws InvalidDeserializationRequest when there is in the RDF model no <code>rdf:type</code>
+	 * that corresponds to the parameters ktbsResourceType and restAspect.
+	 */
 	public KtbsResource deserializeFromStream(String ktbsResourceURI, InputStream stream, String jenaSyntax, Class<?> ktbsResourceType, String restAspect) {
 
 		Model jenaModel = ModelFactory.createDefaultModel();

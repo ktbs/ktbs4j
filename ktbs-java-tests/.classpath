@@ -9,7 +9,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/APACHE_HTTP_COMPONENTS_4.1-beta1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/APACHE_COMMONS_LOGGING_1.1.1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JUNIT_4"/>
-	<classpathentry kind="lib" path="/home/dcram/lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/lib/commons-logging-1.1.1/commons-logging-adapters-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/dcram/lib/Jena-2.6.3/lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="/home/dcram/lib/Jena-2.6.3/lib/slf4j-api-1.5.8.jar"/>
+	<classpathentry kind="lib" path="/home/dcram/lib/Jena-2.6.3/lib/slf4j-log4j12-1.5.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

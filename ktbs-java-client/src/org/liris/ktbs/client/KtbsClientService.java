@@ -87,7 +87,6 @@ public interface KtbsClientService {
 	 * otherwise this parameter is ignored. This array is interpreted according to this scheme: 
 	 * ["relationURI_1", "targetObselURI_1", "relationURI_2", "targetObselURI_2", etc].
 	 * @return the {@link KtbsResponse} object of this request
-	 * @see method addObselsToTrace()
 	 */
 	public KtbsResponse createObsel(
 			String traceURI, 
@@ -117,7 +116,6 @@ public interface KtbsClientService {
 	 * sent by the KTBS server when getting the trace) of the trace resource when 
 	 * the last GET was performed.
 	 * @return the {@link KtbsResponse} object of this request
-	 * @return
 	 */
 	public KtbsResponse putTraceObsels(String traceURI, Collection<Obsel> obsels,String traceETag);
 

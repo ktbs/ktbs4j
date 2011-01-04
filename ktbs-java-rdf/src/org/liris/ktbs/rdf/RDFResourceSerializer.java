@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.util.Calendar;
 
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
@@ -18,11 +19,12 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
+ * Translates a {@link KtbsResource} into RDF triples.
  * 
  * @author Damien Cram
- *
+ * @see KtbsResourceDeserializer
  */
-public class RDFResourceBuilder {
+public class RDFResourceSerializer {
 
 	private Model jenaModel;
 	private String jenaSyntax;
@@ -36,11 +38,11 @@ public class RDFResourceBuilder {
 	 * are given by the class {@link JenaConstants}. 
 	 * @return the created KTBS resource builder
 	 */
-	public static RDFResourceBuilder newBuilder(String jenaSyntax) {
-		return new RDFResourceBuilder(jenaSyntax);
+	public static RDFResourceSerializer newBuilder(String jenaSyntax) {
+		return new RDFResourceSerializer(jenaSyntax);
 	}
 
-	private RDFResourceBuilder(String jenaSyntax) {
+	private RDFResourceSerializer(String jenaSyntax) {
 		super();
 		/*
 		 * TODO the following model creation may be a bit long when executed the first time. Investigate why.
@@ -60,14 +62,13 @@ public class RDFResourceBuilder {
 	 * would reference parent traces that are different to each other, which is not supposed 
 	 * to be allowed. The parameter traceURI will override the uris of each parent trace that are
 	 * obtained by obsel.getTraceURI().
-	 * 
 	 * </p>
-	 * the parent trace
-	 * @param withObselURI true if the URIs of obsels returned by the method Obsel.getURI() should be put
-	 * in the RDF representation of each obsel, null if no obsel URI needs to be specified in the RDF model
+	 * 
 	 * @param traceURI The URI of the parent trace that will contain all the parameter obsels. 
 	 * Can be null, in which case the parent trace URI for each obsel is obtained by calling 
 	 * obsel.getTraceURI().
+	 * @param withObselURI true if the URIs of obsels returned by the method Obsel.getURI() should be put
+	 * in the RDF representation of each obsel, null if no obsel URI needs to be specified in the RDF model
 	 * @param obsels the obsels to be added in the model
 	 */
 	public void addObsels(String traceURI, boolean withObselURI, Obsel... obsels) {
@@ -76,18 +77,44 @@ public class RDFResourceBuilder {
 			createRDFObsel(traceURI, obsel, withObselURI);
 	}
 
+	/**
+	 * Produces a string representation, in the syntax jenaSyntax (passed as parameter of 
+	 * the constructor), of the serialized KTBS resource.
+	 * 
+	 * @return the string representation od the KTBS resource
+	 */
 	public String getRDFResourceAsString() {
 		StringWriter writer = new StringWriter();
 		jenaModel.write(writer, jenaSyntax);
 		return writer.toString();
 	}
 
+	/**
+	 * Produces a string representation, in the syntax jenaSyntax (passed as parameter of 
+	 * the constructor), of the serialized KTBS resource, where resource URIs are relative 
+	 * to a base.
+	 * 
+	 * <p>
+	 * In Jena 2.6.3, relative URIs are not implemented. This method produces absolute URIs, exactly 
+	 * as getRDFResourceAsString() does.
+	 * </p>
+	 * 
+	 * @param base the base URI used to produce relative URIs in the string 
+	 * representation
+	 * @return the string representation od the KTBS resource
+	 */
 	public String getRDFResourceAsString(String base) {
 		StringWriter writer = new StringWriter();
 		jenaModel.write(writer, jenaSyntax, base);
 		return writer.toString();
 	}
 
+	/**
+	 * 
+	 * @param trace
+	 * @param withParent
+	 * @param withObsels
+	 */
 	public void addTrace(Trace trace, boolean withParent, boolean withObsels) {
 
 		if(jenaModel.containsResource(jenaModel.getResource(trace.getURI())))
@@ -251,6 +278,12 @@ public class RDFResourceBuilder {
 		setLabel(obselResource, obsel.getLabel());
 	}
 
+	/**
+	 * 
+	 * @param baseURI
+	 * @param traceModelURI
+	 * @param label
+	 */
 	public void addTraceModel(String baseURI, String traceModelURI, String label) {
 
 		Resource traceModelResource = jenaModel.createResource(traceModelURI);
@@ -276,16 +309,10 @@ public class RDFResourceBuilder {
 	}
 
 
-	public void addRelation(String fromObselURI,
-			String relationName, String toObselURI) {
-
-		jenaModel.add(
-				jenaModel.createResource(fromObselURI),
-				jenaModel.createProperty(relationName),
-				jenaModel.createResource(toObselURI)
-		);
-	}
-
+	/**
+	 * 
+	 * @param base
+	 */
 	public void addBase(Base base) {
 		if(jenaModel.containsResource(jenaModel.getResource(base.getURI())))
 			return;
@@ -302,7 +329,7 @@ public class RDFResourceBuilder {
 		setLabel(baseResource, base.getLabel());
 	}
 
-	public void setType(Resource rdfResource, String typeURI) {
+	private void setType(Resource rdfResource, String typeURI) {
 		rdfResource.addProperty(
 				RDF.type, 
 				jenaModel.getResource(typeURI));

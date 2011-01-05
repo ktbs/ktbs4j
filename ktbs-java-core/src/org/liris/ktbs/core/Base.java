@@ -14,7 +14,9 @@ public interface Base extends KtbsResource, ResourceContainer {
 	public Iterator<KtbsResource> listResources();
 	
 	public void addStoredTrace(Trace trace);
-	public Trace getStoredTrace(String uri);
+	public StoredTrace getStoredTrace(String uri);
+	public ComputedTrace getComputedTrace(String uri);
+	public Trace getTrace(String uri);
 
 	public void addTraceModel(TraceModel traceModel);
 	public TraceModel getTraceModel(String uri);

@@ -32,8 +32,12 @@ public class EmptyResourceFactory {
 
 	@SuppressWarnings("unchecked")
 	public <T extends KtbsResource> T createEmptyResource(String uri, Class<T> clazz) {
-		if(StoredTrace.class.equals(clazz) || Trace.class.equals(clazz))
+		if(KtbsResource.class.equals(clazz))
+			return (T) createResource(uri);
+		else if(StoredTrace.class.equals(clazz))
 			return (T) createStoredTrace(uri);
+			else if(Trace.class.equals(clazz))
+				return (T) createTrace(uri);
 		else if(ComputedTrace.class.equals(clazz))
 			return (T) createComputedTrace(uri);
 		else if(Obsel.class.equals(clazz))
@@ -56,6 +60,9 @@ public class EmptyResourceFactory {
 			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\"");
 	}
 	
+	public KtbsResource createResource(String uri) {
+		return new EmptyResource(uri);
+	}
 	public KtbsRoot createKtbsRoot(String uri) {
 		return new EmptyKtbsRoot(uri);
 	}

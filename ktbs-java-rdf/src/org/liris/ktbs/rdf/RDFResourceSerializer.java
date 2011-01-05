@@ -122,7 +122,7 @@ public class RDFResourceSerializer {
 
 		Resource traceResource = jenaModel.createResource(trace.getURI());
 
-		setType(traceResource, KtbsConstants.KTBS_STOREDTRACE);
+		setType(traceResource, KtbsConstants.STORED_TRACE);
 
 		jenaModel.add(
 				traceResource, 
@@ -169,7 +169,7 @@ public class RDFResourceSerializer {
 
 		if(withParent) {
 			Resource baseResource = jenaModel.createResource(trace.getBaseURI());
-			baseResource.addProperty(jenaModel.createProperty(KtbsConstants.KTBS_OWNS), traceResource);
+			baseResource.addProperty(jenaModel.createProperty(KtbsConstants.P_OWNS), traceResource);
 		}
 
 		setLabel(traceResource, trace.getLabel());
@@ -290,11 +290,11 @@ public class RDFResourceSerializer {
 		Resource baseResource = jenaModel.createResource(baseURI);
 		jenaModel.add(
 				baseResource,
-				jenaModel.createProperty(KtbsConstants.KTBS_OWNS),
+				jenaModel.createProperty(KtbsConstants.P_OWNS),
 				traceModelResource
 		);
 
-		setType(traceModelResource, KtbsConstants.KTBS_TRACEMODEL);
+		setType(traceModelResource, KtbsConstants.TRACE_MODEL);
 
 		setLabel(traceModelResource, label);
 	}
@@ -323,7 +323,7 @@ public class RDFResourceSerializer {
 
 		jenaModel.add(
 				jenaModel.createResource(base.getKtbsRootURI()),
-				jenaModel.createProperty(KtbsConstants.KTBS_HASBASE),
+				jenaModel.createProperty(KtbsConstants.P_HAS_BASE),
 				baseResource);
 
 		setLabel(baseResource, base.getLabel());

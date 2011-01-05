@@ -29,7 +29,7 @@ public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 	public Iterator<Base> listBases() {
 		StmtIterator stmtIt = rdfModel.listStatements(
 				rdfModel.getResource(uri), 
-				rdfModel.getProperty(KtbsConstants.KTBS_HASBASE),
+				rdfModel.getProperty(KtbsConstants.P_HAS_BASE),
 				(RDFNode)null);
 		return new RdfKtbsObjectIterator<Base>(stmtIt, Base.class);
 	}
@@ -43,7 +43,7 @@ public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 	public Base getBase(String baseURI) {
 		NodeIterator it = rdfModel.listObjectsOfProperty(
 				rdfModel.getResource(uri),
-				rdfModel.getProperty(KtbsConstants.KTBS_HASBASE)
+				rdfModel.getProperty(KtbsConstants.P_HAS_BASE)
 				);
 		while(it.hasNext()) {
 			RDFNode node = it.next();

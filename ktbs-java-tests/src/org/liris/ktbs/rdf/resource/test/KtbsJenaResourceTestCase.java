@@ -47,7 +47,7 @@ public class KtbsJenaResourceTestCase extends TestCase {
 		));
 		assertEquals(3,KtbsUtils.countProperty(
 				resource.listAllProperties(), 
-				KtbsConstants.KTBS_HASBASE
+				KtbsConstants.P_HAS_BASE
 		));
 		assertEquals(2,KtbsUtils.countSubjectPropertyNS(
 				resource.listAllProperties(), 
@@ -68,12 +68,12 @@ public class KtbsJenaResourceTestCase extends TestCase {
 		assertEquals(5,KtbsUtils.count(resource.listKtbsProperties()));
 		assertEquals(3,KtbsUtils.countProperty(
 				resource.listKtbsProperties(), 
-				KtbsConstants.KTBS_HASBASE
+				KtbsConstants.P_HAS_BASE
 		));
 		assertEquals(3,KtbsUtils.countSubjectProperty(
 				resource.listKtbsProperties(), 
 				"http://localhost:8001/",
-				KtbsConstants.KTBS_HASBASE
+				KtbsConstants.P_HAS_BASE
 		));
 		assertEquals(0,KtbsUtils.countSubjectPropertyNS(
 				resource.listKtbsProperties(), 
@@ -102,12 +102,12 @@ public class KtbsJenaResourceTestCase extends TestCase {
 		assertEquals(2,KtbsUtils.count(resource.listNonKtbsProperties()));
 		assertEquals(0,KtbsUtils.countProperty(
 				resource.listNonKtbsProperties(), 
-				KtbsConstants.KTBS_HASBASE
+				KtbsConstants.P_HAS_BASE
 		));
 		assertEquals(0,KtbsUtils.countSubjectProperty(
 				resource.listNonKtbsProperties(), 
 				"http://localhost:8001/",
-				KtbsConstants.KTBS_HASBASE
+				KtbsConstants.P_HAS_BASE
 		));
 		assertEquals(2,KtbsUtils.countSubjectPropertyNS(
 				resource.listNonKtbsProperties(), 
@@ -146,7 +146,7 @@ public class KtbsJenaResourceTestCase extends TestCase {
 		assertEquals(1, values.length);
 		assertTrue(Arrays.asList(values).contains("My kernel for Trace Based Systems"));
 		
-		values = resource.getPropertyValues(KtbsConstants.KTBS_HASBASE);
+		values = resource.getPropertyValues(KtbsConstants.P_HAS_BASE);
 		assertNotNull(values);
 		assertEquals(3, values.length);
 		assertTrue(Arrays.asList(values).contains("http://localhost:8001/base1/"));

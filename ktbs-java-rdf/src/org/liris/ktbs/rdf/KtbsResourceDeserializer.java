@@ -93,14 +93,14 @@ public class KtbsResourceDeserializer {
 				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_BASE);
 		} else if(Trace.class.isAssignableFrom(ktbsResourceType)) {
 			if(traceAspect == null)
-				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_STOREDTRACE, KtbsConstants.KTBS_COMPUTEDTRACE);
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.STORED_TRACE, KtbsConstants.COMPUTED_TRACE);
 			boolean obselsCase = traceAspect.equals(KtbsConstants.OBSELS_ASPECT) && rdfTypeURI == null;
 			boolean aboutCase = traceAspect.equals(KtbsConstants.ABOUT_ASPECT) 
 									&& rdfTypeURI != null 
-									&& (rdfTypeURI.equals(KtbsConstants.KTBS_STOREDTRACE) 
-											|| rdfTypeURI.equals(KtbsConstants.KTBS_COMPUTEDTRACE));
+									&& (rdfTypeURI.equals(KtbsConstants.STORED_TRACE) 
+											|| rdfTypeURI.equals(KtbsConstants.COMPUTED_TRACE));
 			if(!obselsCase && !aboutCase)
-				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_STOREDTRACE, KtbsConstants.KTBS_COMPUTEDTRACE);
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.STORED_TRACE, KtbsConstants.COMPUTED_TRACE);
 		} else if(Obsel.class.isAssignableFrom(ktbsResourceType)) {
 			// Can be of any user-defined type
 		}
@@ -144,7 +144,7 @@ public class KtbsResourceDeserializer {
 
 			Resource ktbsRDFResource = it.nextStatement().getSubject();
 
-			Property hasBaseProperty = jenaModel.getProperty(KtbsConstants.KTBS_HASBASE);
+			Property hasBaseProperty = jenaModel.getProperty(KtbsConstants.P_HAS_BASE);
 			it = jenaModel.listStatements(ktbsRDFResource, hasBaseProperty, (RDFNode)null);
 			Collection<String> baseURIs = new LinkedList<String>();
 			while (it.hasNext()) {
@@ -190,9 +190,9 @@ public class KtbsResourceDeserializer {
 
 				String objectURI = s.getObject().asResource().getURI();
 				String resourceURI = s.getSubject().getURI();
-				if(objectURI.equals(KtbsConstants.KTBS_STOREDTRACE) || objectURI.equals(KtbsConstants.KTBS_COMPUTEDTRACE)) {
+				if(objectURI.equals(KtbsConstants.STORED_TRACE) || objectURI.equals(KtbsConstants.COMPUTED_TRACE)) {
 					traceURIs.add(resourceURI);
-				} else if(objectURI.equals(KtbsConstants.KTBS_TRACEMODEL)) {
+				} else if(objectURI.equals(KtbsConstants.TRACE_MODEL)) {
 					traceModelURIs.add(resourceURI);
 				}
 			}
@@ -218,7 +218,7 @@ public class KtbsResourceDeserializer {
 			Trace trace = null;
 
 			String baseURI = null;
-			StmtIterator it = jenaModel.listStatements(null, jenaModel.getProperty(KtbsConstants.KTBS_OWNS), thisTraceResource);
+			StmtIterator it = jenaModel.listStatements(null, jenaModel.getProperty(KtbsConstants.P_OWNS), thisTraceResource);
 			if(it.hasNext())
 				baseURI = it.nextStatement().getSubject().asResource().getURI();
 

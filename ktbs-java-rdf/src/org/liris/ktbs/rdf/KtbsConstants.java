@@ -17,13 +17,13 @@ public interface KtbsConstants {
 	// KTBS vocabulary
 	public static final String KTBS_NAMESPACE = "http://liris.cnrs.fr/silex/2009/ktbs#";
 	public static final String KTBS_KTBSROOT = KTBS_NAMESPACE + "KtbsRoot";
-	public static final String KTBS_HASBASE = KTBS_NAMESPACE + "hasBase";
+	public static final String P_HAS_BASE = KTBS_NAMESPACE + "hasBase";
 	public static final String KTBS_BASE = KTBS_NAMESPACE + "Base";
-	public static final String KTBS_OWNS = KTBS_NAMESPACE + "owns";
-	public static final String KTBS_STOREDTRACE = KTBS_NAMESPACE + "StoredTrace";
-	public static final String KTBS_COMPUTEDTRACE = KTBS_NAMESPACE + "ComputedTrace";
-	public static final String KTBS_TRACEMODEL = KTBS_NAMESPACE + "TraceModel";
-	public static final String KTBS_METHOD = KTBS_NAMESPACE + "Method";
+	public static final String P_OWNS = KTBS_NAMESPACE + "owns";
+	public static final String STORED_TRACE = KTBS_NAMESPACE + "StoredTrace";
+	public static final String COMPUTED_TRACE = KTBS_NAMESPACE + "ComputedTrace";
+	public static final String TRACE_MODEL = KTBS_NAMESPACE + "TraceModel";
+	public static final String METHOD = KTBS_NAMESPACE + "Method";
 	public static final String KTBS_HASBEGIN = KTBS_NAMESPACE + "hasBegin";
 	public static final String KTBS_HASEND = KTBS_NAMESPACE + "hasEnd";
 	public static final String KTBS_HASBEGIN_DT = KTBS_NAMESPACE + "hasBeginDT";

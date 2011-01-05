@@ -162,7 +162,7 @@ public class RDFResourceSerializer {
 		);
 
 		if(withObsels) {
-			for(Obsel obsel:trace.getObsels()) {
+			for(Obsel obsel:trace.listObsels()) {
 				addObsels(trace.getURI(), false, obsel);
 			}
 		}
@@ -198,7 +198,7 @@ public class RDFResourceSerializer {
 		else
 			obselResource = jenaModel.createResource();
 
-		setType(obselResource, obsel.getTypeURI());
+		setType(obselResource, obsel.getObselType());
 
 		jenaModel.add(
 				obselResource, 
@@ -249,7 +249,7 @@ public class RDFResourceSerializer {
 		}
 		
 		// add attributes to the Jena model
-		for(String att:obsel.getAttributes().keySet()) {
+		for(String att:obsel.listAttributes().keySet()) {
 			jenaModel.add(
 					obselResource, 
 					jenaModel.createProperty(att), 
@@ -258,7 +258,7 @@ public class RDFResourceSerializer {
 		}
 
 		// add relation to the Jena model
-		for(Relation rel:obsel.getOutgoingRelations()) {
+		for(Relation rel:obsel.listOutgoingRelations()) {
 			Resource targetResource = null;
 			if(rel.getToObselURI()!=null)
 				targetResource = jenaModel.createResource(rel.getToObselURI());

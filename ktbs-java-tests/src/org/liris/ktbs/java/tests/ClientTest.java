@@ -108,17 +108,17 @@ public class ClientTest {
 		Trace traceInfo = (Trace) responseGet.getBodyAsKtbsResource();
 
 		int cnt = 0;
-		for(Obsel obsel:traceObsels.getObsels()) {
+		for(Obsel obsel:traceObsels.listObsels()) {
 			String messageAtt = "http://localhost:8001/base1/model1/channel";
 			Object message = obsel.getAttributeValue(messageAtt);
 			if(message!= null && cnt == 0) {
 				cnt++;
-				Map<String, Object> attributes  = new HashMap<String, Object>(obsel.getAttributes());
+				Map<String, Object> attributes  = new HashMap<String, Object>(obsel.listAttributes());
 				attributes.remove(messageAtt);
 				attributes.put(messageAtt, "#my-channel-modified23");
 
 
-				Obsel newObsel = KtbsResourceFactory.createObsel(obsel.getURI(), obsel.getTraceURI(), "fion du bois", obsel.getBeginDT(), obsel.getEndDT(), 900, obsel.getEnd(), obsel.getTypeURI(), attributes, obsel.getLabel());
+				Obsel newObsel = KtbsResourceFactory.createObsel(obsel.getURI(), obsel.getTraceURI(), "fion du bois", obsel.getBeginDT(), obsel.getEndDT(), 900, obsel.getEnd(), obsel.getObselType(), attributes, obsel.getLabel());
 				newObsel.setLabel("Mon étiquette");
 				traceInfo.addObsel(newObsel);
 			} else {
@@ -126,7 +126,7 @@ public class ClientTest {
 			}
 		}
 
-		KtbsResponse putResponse = client.putTraceObsels(traceInfo.getURI(), traceInfo.getObsels(), etag);
+		KtbsResponse putResponse = client.putTraceObsels(traceInfo.getURI(), traceInfo.listObsels(), etag);
 
 		System.out.println("*********************************************************************************");
 		System.out.println("*********************************************************************************");
@@ -168,7 +168,7 @@ public class ClientTest {
 		System.out.println("Trace Model URI: " + trace.getTraceModelUri());
 		System.out.println("Complies with model: " + trace.isCompliantWithModel());
 
-		for(Obsel obsel:trace.getObsels()) {
+		for(Obsel obsel:trace.listObsels()) {
 			displayObsel(obsel);
 		}
 	}
@@ -177,16 +177,16 @@ public class ClientTest {
 		System.out.println("-------------------------------");
 		System.out.println("** OBSEL **");
 		System.out.println("URI: " + obsel.getURI());
-		System.out.println("Type: " + obsel.getTypeURI());
+		System.out.println("Type: " + obsel.getObselType());
 		if(obsel.getLabel()!=null) System.out.println("Label: " + obsel.getLabel());
 		if(obsel.getSubject()!=null) System.out.println("Subject: " + obsel.getSubject());
 		System.out.println("Begin DT: " + obsel.getBeginDT());
 		System.out.println("End DT: " + obsel.getEndDT());
 		System.out.println("Begin: " + obsel.getBegin());
 		System.out.println("End: " + obsel.getEnd());
-		for(String att:obsel.getAttributes().keySet())
+		for(String att:obsel.listAttributes().keySet())
 			System.out.println("\t#att# " + att + ":\t" + obsel.getAttributeValue(att));
-		for(Relation rel:obsel.getOutgoingRelations())
+		for(Relation rel:obsel.listOutgoingRelations())
 			System.out.println("\t#rel# ---[" + rel.getRelationName() + "]--->  " + obsel.getTargetObsel(rel.getRelationName()));
 	}
 

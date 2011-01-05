@@ -1,14 +1,26 @@
 package org.liris.ktbs.core;
 
-import java.util.Collection;
+import java.util.Iterator;
 
-public interface Base extends KtbsResource {
+public interface Base extends KtbsResource, ResourceContainer {
 	
-	public Collection<String> getTraceModelURIs();
-	public Collection<Trace> getTraces();
-	public void addTrace(Trace trace);
-	public Collection<String> getTraceURIs();
-	public Trace getTrace(String uri);
 	public KtbsRoot getKtbsRoot();
-	public String getKtbsRootURI();
+
+	public Iterator<TraceModel> listTraceModels();
+	public Iterator<StoredTrace> listStoredTraces();
+	public Iterator<ComputedTrace> listComputedTraces();
+	public Iterator<Method> listMethods();
+	public Iterator<Trace> listTraces();
+	public Iterator<KtbsResource> listResources();
+	
+	public void addStoredTrace(Trace trace);
+	public Trace getStoredTrace(String uri);
+
+	public void addTraceModel(TraceModel traceModel);
+	public TraceModel getTraceModel(String uri);
+	
+	public void addMethod(Method method);
+	public Method getMethod(String uri);
+	
+	
 }

@@ -4,10 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Trace;
 
@@ -49,8 +51,8 @@ public class BaseImpl extends KtbsResourceImpl implements Base {
 	}
 
 	@Override
-	public Collection<Trace> getTraces() {
-		return traces.values();
+	public Iterator<Trace> listTraces() {
+		return traces.values().iterator();
 	}
 
 	@Override
@@ -81,6 +83,11 @@ public class BaseImpl extends KtbsResourceImpl implements Base {
 		if(root!=null)
 			rootURI = getKtbsRoot().getURI();
 		return rootURI;
+	}
+
+	@Override
+	public KtbsResource get(String resourceURI) {
+		return null;
 	}
 	
 	

@@ -1,28 +1,30 @@
 package org.liris.ktbs.core;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
-public interface Trace extends KtbsResource {
+public interface Trace extends KtbsResource, ResourceContainer {
+	
+	public Iterator<Obsel> listObsels();
+	public Iterator<Obsel> listObsels(long begin, long end);
+	
+	public Iterator<Trace> listSources();
+	public Iterator<Trace> listTransformedTraces();
+	
+	public String getOrigin();
 	
 	/**
 	 * 
-	 * @return the unmodifiable collection of all obsels contained in this trace.
+	 * @return
+	 * @throws TemporalDomainException
 	 */
-	public Collection<Obsel> getObsels();
-	public Collection<String> getObselURIs();
+	public Date getOriginAsDate();
 	
-	public Date getOrigin();
-	
-	public void addObsel(Obsel obsel);
 	public Obsel getObsel(String obselURI);
 	
 	public void removeObsel(String obselURI);
 
-	public String getTraceModelUri();
-
 	public Base getBase();
-	public String getBaseURI();
-
+	public TraceModel getTraceModel();
 	public boolean isCompliantWithModel();
 }

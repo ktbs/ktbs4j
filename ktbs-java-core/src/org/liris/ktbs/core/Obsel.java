@@ -1,10 +1,11 @@
 package org.liris.ktbs.core;
 
-import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 
 public interface Obsel extends KtbsResource {
+	public Trace getTrace();
 	
 	/**
 	 * 
@@ -21,21 +22,25 @@ public interface Obsel extends KtbsResource {
 	public Date getBeginDT();
 	public Date getEndDT();
 
-	public String getTypeURI();
+	public ObselType getObselType();
 
 	public String getSubject();
 	
+
+	/*
+	 * Methods related to obsel attribute
+	 */
+	public Map<AttributeType,Object> listAttributes();
+	public Object getAttributeValue(AttributeType attribute);
+	
+
+	/*
+	 * Methods related to inter-obsel relations
+	 */
 	public void addOutgoingRelation(Relation relation);
 	public void addIncomingRelation(Relation relation);
-	public Collection<Relation> getIncomingRelations();
-	public Collection<Relation> getOutgoingRelations();
-
-	public Map<String,Object> getAttributes();
-	public Object getAttributeValue(String attributeName);
-	
-	public Trace getTrace();
-	public String getTraceURI();
-	
+	public Iterator<Relation> listIncomingRelations();
+	public Iterator<Relation> listOutgoingRelations();
 	public Obsel getTargetObsel(String relationName);
 	public Obsel getSourceObsel(String relationName);
 }

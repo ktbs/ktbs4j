@@ -10,7 +10,6 @@ import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Relation;
 import org.liris.ktbs.core.Trace;
 
-
 public class KtbsResourceFactory {
 
 	public static KtbsRoot createKtbsRoot(String resourceUri, String label, String... baseURIs) {
@@ -53,7 +52,7 @@ public class KtbsResourceFactory {
 	}
 
 	public static Obsel createObsel(String resourceUri, Trace parentTrace, String subject, Date beginDT, Date endDT, String typeURI, Map<String, Object> attributes, String label) {
-		if(parentTrace.getObselURIs().contains(resourceUri))
+		if(parentTrace.listObselURIs().contains(resourceUri))
 			throw new IllegalStateException("There is already an obsel with the same uri \""+resourceUri+"\" in the trace \""+parentTrace.getURI()+"\".");
 		ObselImpl obselImpl = new ObselImpl(resourceUri, parentTrace, subject, beginDT, endDT, -1l, -1l, typeURI, attributes);
 		obselImpl.setLabel(label);
@@ -64,7 +63,7 @@ public class KtbsResourceFactory {
 	
 	public static Obsel createObsel(Trace parentTrace, String subject, String label, Date beginDT, Date endDT, String typeURI, Map<String, Object> attributes) {
 		
-		Collection<String> obselURIs = parentTrace.getObselURIs();
+		Collection<String> obselURIs = parentTrace.listObselURIs();
 		while(obselURIs.contains(parentTrace.getURI()+ KtbsResourceFactory.obselID + "/"))
 			KtbsResourceFactory.obselID++;
 		String resourceUri = parentTrace.getURI()+ KtbsResourceFactory.obselID + "/";

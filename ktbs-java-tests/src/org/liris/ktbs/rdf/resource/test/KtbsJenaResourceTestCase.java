@@ -1,0 +1,167 @@
+package org.liris.ktbs.rdf.resource.test;
+
+import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.Map;
+
+import junit.framework.TestCase;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.rdf.JenaConstants;
+import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
+import org.liris.ktbs.utils.KtbsUtils;
+
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+
+public class KtbsJenaResourceTestCase extends TestCase {
+	
+	private KtbsResource resource;
+
+	@Before
+	public void setUp() throws Exception {
+		FileInputStream fis = new FileInputStream("turtle/ktbs-jena-resource.ttl");
+		resource = KtbsJenaResourceFactory.getInstance().createKtbsRoot(
+				"http://localhost:8001/", 
+				fis, 
+				JenaConstants.JENA_SYNTAX_TURTLE);
+		fis.close();
+	}
+
+	@Test
+	public void testListAllProperties() {
+		assertEquals(7,KtbsUtils.count(resource.listAllProperties()));
+		assertEquals(7,KtbsUtils.countSubject(resource.listAllProperties(), "http://localhost:8001/"));
+		assertEquals(1,KtbsUtils.countSubjectProperty(
+				resource.listAllProperties(), 
+				"http://localhost:8001/",
+				RDF.type.getURI()
+		));
+		assertEquals(1,KtbsUtils.countSubjectProperty(
+				resource.listAllProperties(), 
+				"http://localhost:8001/",
+				RDFS.label.getURI()
+		));
+		assertEquals(3,KtbsUtils.countProperty(
+				resource.listAllProperties(), 
+				KtbsConstants.KTBS_HASBASE
+		));
+		assertEquals(2,KtbsUtils.countSubjectPropertyNS(
+				resource.listAllProperties(), 
+				"http://localhost:8001/",
+				"http://mondomaine/monnamespace#"
+		));
+
+		Map<String, String> properties = KtbsUtils.toMap(resource.listAllProperties());
+		
+		assertTrue(properties.containsKey("http://mondomaine/monnamespace#prop1"));
+		assertTrue(properties.containsKey("http://mondomaine/monnamespace#prop2"));
+		assertTrue(properties.containsValue("http://mondomaine/monnamespace#concept1"));
+		assertTrue(properties.containsValue("http://mondomaine/monnamespace#concept2"));
+	}
+
+	@Test
+	public void testListKtbsProperties() {
+		assertEquals(5,KtbsUtils.count(resource.listKtbsProperties()));
+		assertEquals(3,KtbsUtils.countProperty(
+				resource.listKtbsProperties(), 
+				KtbsConstants.KTBS_HASBASE
+		));
+		assertEquals(3,KtbsUtils.countSubjectProperty(
+				resource.listKtbsProperties(), 
+				"http://localhost:8001/",
+				KtbsConstants.KTBS_HASBASE
+		));
+		assertEquals(0,KtbsUtils.countSubjectPropertyNS(
+				resource.listKtbsProperties(), 
+				"http://localhost:8001/",
+				"http://mondomaine/monnamespace#"
+		));
+		assertEquals(1,KtbsUtils.countSubjectProperty(
+				resource.listKtbsProperties(), 
+				"http://localhost:8001/",
+				RDF.type.getURI()
+		));
+		assertEquals(1,KtbsUtils.countSubjectProperty(
+				resource.listKtbsProperties(), 
+				"http://localhost:8001/",
+				RDFS.label.getURI()
+		));
+		Map<String, String> properties = KtbsUtils.toMap(resource.listKtbsProperties());
+		assertFalse(properties.containsKey("http://mondomaine/monnamespace#prop1"));
+		assertFalse(properties.containsKey("http://mondomaine/monnamespace#prop2"));
+		assertFalse(properties.containsValue("http://mondomaine/monnamespace#concept1"));
+		assertFalse(properties.containsValue("http://mondomaine/monnamespace#concept2"));
+	}
+
+	@Test
+	public void testListNonKtbsProperties() {
+		assertEquals(2,KtbsUtils.count(resource.listNonKtbsProperties()));
+		assertEquals(0,KtbsUtils.countProperty(
+				resource.listNonKtbsProperties(), 
+				KtbsConstants.KTBS_HASBASE
+		));
+		assertEquals(0,KtbsUtils.countSubjectProperty(
+				resource.listNonKtbsProperties(), 
+				"http://localhost:8001/",
+				KtbsConstants.KTBS_HASBASE
+		));
+		assertEquals(2,KtbsUtils.countSubjectPropertyNS(
+				resource.listNonKtbsProperties(), 
+				"http://localhost:8001/",
+				"http://mondomaine/monnamespace#"
+		));
+		assertEquals(0,KtbsUtils.countSubjectProperty(
+				resource.listNonKtbsProperties(), 
+				"http://localhost:8001/",
+				RDF.type.getURI()
+		));
+		assertEquals(0,KtbsUtils.countSubjectProperty(
+				resource.listNonKtbsProperties(), 
+				"http://localhost:8001/",
+				RDFS.label.getURI()
+		));
+		Map<String, String> properties = KtbsUtils.toMap(resource.listNonKtbsProperties());
+		assertEquals(2, properties.size());
+		assertTrue(properties.containsKey("http://mondomaine/monnamespace#prop1"));
+		assertTrue(properties.containsKey("http://mondomaine/monnamespace#prop2"));
+		assertTrue(properties.containsValue("http://mondomaine/monnamespace#concept1"));
+		assertTrue(properties.containsValue("http://mondomaine/monnamespace#concept2"));
+	}
+
+	@Test
+	public void testGetPropertyValues() {
+		String[] values;
+		
+		values = resource.getPropertyValues(RDF.type.getURI());
+		assertNotNull(values);
+		assertEquals(1, values.length);
+		assertTrue(Arrays.asList(values).contains("http://liris.cnrs.fr/silex/2009/ktbs#KtbsRoot"));
+		
+		values = resource.getPropertyValues(RDFS.label.getURI());
+		assertNotNull(values);
+		assertEquals(1, values.length);
+		assertTrue(Arrays.asList(values).contains("My kernel for Trace Based Systems"));
+		
+		values = resource.getPropertyValues(KtbsConstants.KTBS_HASBASE);
+		assertNotNull(values);
+		assertEquals(3, values.length);
+		assertTrue(Arrays.asList(values).contains("http://localhost:8001/base1/"));
+		assertTrue(Arrays.asList(values).contains("http://localhost:8001/base2/"));
+		assertTrue(Arrays.asList(values).contains("http://localhost:8001/base3/"));
+		
+		values = resource.getPropertyValues("http://mondomaine/monnamespace#prop1");
+		assertNotNull(values);
+		assertEquals(1, values.length);
+		assertTrue(Arrays.asList(values).contains("http://mondomaine/monnamespace#concept1"));
+
+		values = resource.getPropertyValues("http://mondomaine/monnamespace#prop2");
+		assertNotNull(values);
+		assertEquals(1, values.length);
+		assertTrue(Arrays.asList(values).contains("http://mondomaine/monnamespace#concept2"));
+	}
+
+}

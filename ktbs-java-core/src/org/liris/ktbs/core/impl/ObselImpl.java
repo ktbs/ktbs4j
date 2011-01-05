@@ -68,22 +68,22 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	}
 
 	@Override
-	public String getTypeURI() {
+	public String getObselType() {
 		return typeURI;
 	}
 
 	@Override
-	public Collection<Relation> getIncomingRelations() {
+	public Collection<Relation> listIncomingRelations() {
 		return Collections.unmodifiableCollection(incomingRelations);
 	}
 
 	@Override
-	public Collection<Relation> getOutgoingRelations() {
+	public Collection<Relation> listOutgoingRelations() {
 		return Collections.unmodifiableCollection(outgoingRelations);
 	}
 
 	@Override
-	public Map<String, Object> getAttributes() {
+	public Map<String, Object> listAttributes() {
 		return Collections.unmodifiableMap(this.attributes);
 	}
 

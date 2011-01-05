@@ -250,8 +250,8 @@ public class KtbsClientTestCase {
 		assertEquals(trace.getBaseURI(), base1URI);
 		assertNull(trace.getBase());
 		assertEquals(trace.getTraceModelUri(),traceModel1URI);
-		assertEquals(trace.getObsels().size(),0);
-		assertEquals(trace.getObselURIs().size(),0);
+		assertEquals(trace.listObsels().size(),0);
+		assertEquals(trace.listObselURIs().size(),0);
 		assertEquals(origin,trace.getOrigin());
 		assertEquals(trace.getURI(), traceURI);
 
@@ -281,18 +281,18 @@ public class KtbsClientTestCase {
 		 * since the population of the KTBS is performed multiple times 
 		 * per TestCase (once for each method).
 		 */
-		assertTrue(trace.getObsels().size()==trace.getObselURIs().size());
-		assertTrue("Size: " + trace.getObsels().size() + " Trace URI: " + trace.getURI(),trace.getObsels().size()>=4);
-		for(Obsel obsel:trace.getObsels()) {
-			assertTrue(obselTypes.contains(obsel.getTypeURI()));
+		assertTrue(trace.listObsels().size()==trace.listObselURIs().size());
+		assertTrue("Size: " + trace.listObsels().size() + " Trace URI: " + trace.getURI(),trace.listObsels().size()>=4);
+		for(Obsel obsel:trace.listObsels()) {
+			assertTrue(obselTypes.contains(obsel.getObselType()));
 			assertEquals(rootURI+"base1/t01/", obsel.getTraceURI());
 			assertNotNull(obsel.getBegin());
 			assertNotNull(obsel.getBeginDT());
 			assertNotNull(obsel.getEnd());
 			assertNotNull(obsel.getEndDT());
-			if(!obsel.getTypeURI().equals("http://localhost:8001/base1/model1/OpenChat")) {
+			if(!obsel.getObselType().equals("http://localhost:8001/base1/model1/OpenChat")) {
 				// Checks the relation onChannel
-				assertEquals(1,obsel.getOutgoingRelations().size());
+				assertEquals(1,obsel.listOutgoingRelations().size());
 				Obsel targetObsel = obsel.getTargetObsel("http://localhost:8001/base1/model1/onChannel");
 				assertNotNull(targetObsel);
 				assertEquals(rootURI+"base1/t01/",targetObsel.getTraceURI());
@@ -344,8 +344,8 @@ public class KtbsClientTestCase {
 		assertResponseSucceeded(response, true);
 		assertNotNull(response.getHTTPETag());
 		Trace trace = (Trace)response.getBodyAsKtbsResource();
-		assertEquals(0,trace.getObsels().size());
-		assertEquals(0,trace.getObselURIs().size());
+		assertEquals(0,trace.listObsels().size());
+		assertEquals(0,trace.listObselURIs().size());
 		assertEquals(rootURI+"base1/t01/",trace.getURI());
 
 		response = client.getTraceInfo(rootURI+"base1/t01/@obsels");
@@ -467,7 +467,7 @@ public class KtbsClientTestCase {
 	public void testGetObselString() {
 		KtbsResponse response = client.getTraceObsels("http://localhost:8001/base1/", "t01");		
 		Trace trace = (Trace) response.getBodyAsKtbsResource();
-		for(String obselURI:trace.getObselURIs()) {
+		for(String obselURI:trace.listObselURIs()) {
 			response = client.getObsel(obselURI);
 			assertResponseSucceeded(response, true);
 			assertNotNull(response.getHTTPETag());
@@ -479,16 +479,16 @@ public class KtbsClientTestCase {
 			assertNotNull(obsel.getBeginDT());
 			assertNotNull(obsel.getEndDT());
 			assertNotNull(obsel.getSubject());
-			for(Relation relation:obsel.getOutgoingRelations()){
+			for(Relation relation:obsel.listOutgoingRelations()){
 				assertNotNull(relation.getToObselURI());
 				assertNull(relation.getToObsel());
 			}
-			for(Relation relation:obsel.getIncomingRelations()) {
+			for(Relation relation:obsel.listIncomingRelations()) {
 				assertNotNull(relation.getFromObselURI());
 				assertNull(relation.getFromObsel());
 			}
 		}
-		for(String obselURI:trace.getObselURIs()) {
+		for(String obselURI:trace.listObselURIs()) {
 			response = client.getObsel(obselURI+"/");
 			assertResponseFailed(response);
 
@@ -599,10 +599,10 @@ public class KtbsClientTestCase {
 		Obsel obsel = (Obsel) response.getBodyAsKtbsResource();
 		assertEquals(obsel.getLabel(), label);
 		assertEquals(obsel.getTraceURI(), trace1URI);
-		assertEquals(1, obsel.getAttributes().size());
-		assertEquals(obsel.getTypeURI(),typeURI);
-		assertEquals(obsel.getIncomingRelations().size(),0);
-		assertEquals(obsel.getOutgoingRelations().size(),0);
+		assertEquals(1, obsel.listAttributes().size());
+		assertEquals(obsel.getObselType(),typeURI);
+		assertEquals(obsel.listIncomingRelations().size(),0);
+		assertEquals(obsel.listOutgoingRelations().size(),0);
 		assertTrue(obsel.getBegin()!=-1l);
 		assertTrue(obsel.getEnd()!=-1l);
 		assertNotNull(obsel.getBeginDT());
@@ -619,11 +619,11 @@ public class KtbsClientTestCase {
 		assertResponseSucceeded(response4, true);
 		Trace trace2obsels = (Trace) response4.getBodyAsKtbsResource();
 		assertEquals(true, trace2Info.isCompliantWithModel());
-		assertEquals(traceObsels1.getObselURIs().size()+1, trace2obsels.getObselURIs().size());
-		assertEquals(traceObsels1.getObsels().size()+1, trace2obsels.getObsels().size());
-		assertTrue(trace2obsels.getObselURIs().contains(obsel1URI));
-		assertFalse(traceObsels1.getObselURIs().contains(obsel1URI));
-		assertTrue(trace2obsels.getObselURIs().containsAll(traceObsels1.getObselURIs()));
+		assertEquals(traceObsels1.listObselURIs().size()+1, trace2obsels.listObselURIs().size());
+		assertEquals(traceObsels1.listObsels().size()+1, trace2obsels.listObsels().size());
+		assertTrue(trace2obsels.listObselURIs().contains(obsel1URI));
+		assertFalse(traceObsels1.listObselURIs().contains(obsel1URI));
+		assertTrue(trace2obsels.listObselURIs().containsAll(traceObsels1.listObselURIs()));
 
 		while(client.getObsel("base1","t01", obselName).executedWithSuccess()){obselName="obsel"+nb++;}
 
@@ -662,16 +662,16 @@ public class KtbsClientTestCase {
 		assertResponseSucceeded(response, true);
 		Obsel obsel1 = (Obsel) response.getBodyAsKtbsResource();
 
-		assertEquals(1,obsel2.getOutgoingRelations().size());
-		assertEquals(0,obsel2.getIncomingRelations().size());
-		assertEquals(0,obsel1.getOutgoingRelations().size());
+		assertEquals(1,obsel2.listOutgoingRelations().size());
+		assertEquals(0,obsel2.listIncomingRelations().size());
+		assertEquals(0,obsel1.listOutgoingRelations().size());
 		/*
 		 * There is no simple way to retrieve incoming relations from the KTBS Server.
 		 */
-		assertEquals(0,obsel1.getIncomingRelations().size());
+		assertEquals(0,obsel1.listIncomingRelations().size());
 
 
-		Relation relation = obsel2.getOutgoingRelations().iterator().next();
+		Relation relation = obsel2.listOutgoingRelations().iterator().next();
 		assertNull(relation.getFromObsel());
 		assertNull(relation.getToObsel());
 		assertNotNull(relation.getFromObselURI());
@@ -730,10 +730,10 @@ public class KtbsClientTestCase {
 		obsel = (Obsel) response.getBodyAsKtbsResource();
 		assertEquals(obsel.getLabel(), label);
 		assertEquals(obsel.getTraceURI(), trace1URI);
-		assertEquals(1, obsel.getAttributes().size());
-		assertEquals(obsel.getTypeURI(),typeURI);
-		assertEquals(obsel.getIncomingRelations().size(),0);
-		assertEquals(obsel.getOutgoingRelations().size(),0);
+		assertEquals(1, obsel.listAttributes().size());
+		assertEquals(obsel.getObselType(),typeURI);
+		assertEquals(obsel.listIncomingRelations().size(),0);
+		assertEquals(obsel.listOutgoingRelations().size(),0);
 
 
 		assertNotNull(obsel.getBeginDT());
@@ -928,7 +928,7 @@ public class KtbsClientTestCase {
 		String modifiedObselURI = "";
 		Map<String, String> etagsByObselURI = new TreeMap<String, String>();
 
-		for(Obsel obsel:traceObsels.getObsels()) {
+		for(Obsel obsel:traceObsels.listObsels()) {
 			KtbsResponse response = client.getObsel(obsel.getURI());
 			assertResponseSucceeded(response,true);
 			assertNotNull(response.getHTTPETag());
@@ -939,7 +939,7 @@ public class KtbsClientTestCase {
 			if(message!= null && cnt == 0) {
 				modifiedObselURI = obsel.getURI();
 				cnt++;
-				Map<String, Object> attributes  = new HashMap<String, Object>(obsel.getAttributes());
+				Map<String, Object> attributes  = new HashMap<String, Object>(obsel.listAttributes());
 				attributes.remove(messageAtt);
 				attributes.put(messageAtt, newMessageAttValue);
 				attributes.put(newAttribute, newAttributeValue);
@@ -952,7 +952,7 @@ public class KtbsClientTestCase {
 						obsel.getEndDT(), 
 						obsel.getBegin(), 
 						obsel.getEnd(), 
-						obsel.getTypeURI(), 
+						obsel.getObselType(), 
 						attributes, 
 						newLabel
 				);
@@ -989,7 +989,7 @@ public class KtbsClientTestCase {
 		 */
 		//		assertEquals(etagInfo2, etagInfo);
 
-		for(Obsel o:traceObsel2.getObsels()) {
+		for(Obsel o:traceObsel2.listObsels()) {
 			String uri = o.getURI();
 			KtbsResponse response = client.getObsel(uri);
 			assertResponseSucceeded(response, true);
@@ -1107,15 +1107,15 @@ public class KtbsClientTestCase {
 			response = client.getTraceInfo("http://localhost:8001/ma-base/trace2/");
 			assertResponseSucceeded(response, true);
 			Trace traceInfo = (Trace) response.getBodyAsKtbsResource();
-			assertEquals(1, traceObsels.getObsels().size());
+			assertEquals(1, traceObsels.listObsels().size());
 			response = client.getObsel("http://localhost:8001/ma-base/trace2/aliment2");
 			assertResponseSucceeded(response, true);
 			Obsel obsel = (Obsel) response.getBodyAsKtbsResource();
-			assertEquals("http://localhost:8001/ma-base/model2/Aliment", obsel.getTypeURI());
+			assertEquals("http://localhost:8001/ma-base/model2/Aliment", obsel.getObselType());
 			assertEquals("Les tomates du marché", obsel.getLabel());
 			assertEquals("Damien", obsel.getSubject());
 			assertEquals("http://localhost:8001/ma-base/trace2/", obsel.getTraceURI());
-			assertEquals(2, obsel.getAttributes().size());
+			assertEquals(2, obsel.listAttributes().size());
 			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
 			assertEquals("Tomates",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
 			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/type"));
@@ -1125,8 +1125,8 @@ public class KtbsClientTestCase {
 			Date origin = traceInfo.getOrigin();
 			assertEquals(new Date(origin.getTime()+1000), obsel.getBeginDT());
 			assertEquals(new Date(origin.getTime()+25000), obsel.getEndDT());
-			assertEquals(0, obsel.getIncomingRelations().size());
-			assertEquals(0, obsel.getOutgoingRelations().size());
+			assertEquals(0, obsel.listIncomingRelations().size());
+			assertEquals(0, obsel.listOutgoingRelations().size());
 
 
 			// observe3
@@ -1140,15 +1140,15 @@ public class KtbsClientTestCase {
 			response = client.getTraceObsels("http://localhost:8001/ma-base/trace2/");
 			assertResponseSucceeded(response, true);
 			traceObsels = (Trace) response.getBodyAsKtbsResource();
-			assertEquals(2, traceObsels.getObsels().size());
+			assertEquals(2, traceObsels.listObsels().size());
 			response = client.getObsel("http://localhost:8001/ma-base/trace2/aliment1");
 			assertResponseSucceeded(response, true);
 			obsel = (Obsel) response.getBodyAsKtbsResource();
-			assertEquals("http://localhost:8001/ma-base/model2/Aliment", obsel.getTypeURI());
+			assertEquals("http://localhost:8001/ma-base/model2/Aliment", obsel.getObselType());
 			assertEquals("Saint-Nectaire", obsel.getLabel());
 			assertEquals("Damien", obsel.getSubject());
 			assertEquals("http://localhost:8001/ma-base/trace2/", obsel.getTraceURI());
-			assertEquals(2, obsel.getAttributes().size());
+			assertEquals(2, obsel.listAttributes().size());
 			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
 			assertEquals("Saint-Nectaire",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/nom"));
 			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/type"));
@@ -1157,8 +1157,8 @@ public class KtbsClientTestCase {
 			assertEquals(90000, obsel.getEnd());
 			assertEquals(new Date(origin.getTime()+30000), obsel.getBeginDT());
 			assertEquals(new Date(origin.getTime()+90000), obsel.getEndDT());
-			assertEquals(0, obsel.getIncomingRelations().size());
-			assertEquals(0, obsel.getOutgoingRelations().size());
+			assertEquals(0, obsel.listIncomingRelations().size());
+			assertEquals(0, obsel.listOutgoingRelations().size());
 
 
 			// observe4
@@ -1172,28 +1172,28 @@ public class KtbsClientTestCase {
 			response = client.getTraceObsels("http://localhost:8001/ma-base/trace2/");
 			assertResponseSucceeded(response, true);
 			traceObsels = (Trace) response.getBodyAsKtbsResource();
-			assertEquals(3, traceObsels.getObsels().size());
+			assertEquals(3, traceObsels.listObsels().size());
 			response = client.getObsel(uri);
 			assertResponseSucceeded(response, true);
 			obsel = (Obsel) response.getBodyAsKtbsResource();
-			assertEquals("http://localhost:8001/ma-base/model2/Manger", obsel.getTypeURI());
+			assertEquals("http://localhost:8001/ma-base/model2/Manger", obsel.getObselType());
 			assertEquals("Je mange", obsel.getLabel());
 			assertEquals("Damien", obsel.getSubject());
 			assertEquals("http://localhost:8001/ma-base/trace2/", obsel.getTraceURI());
-			assertEquals(1, obsel.getAttributes().size());
+			assertEquals(1, obsel.listAttributes().size());
 			assertNotNull(obsel.getAttributeValue("http://localhost:8001/ma-base/model2/vitesse"));
 			assertEquals("très rapidement",obsel.getAttributeValue("http://localhost:8001/ma-base/model2/vitesse"));
 			assertEquals(1000, obsel.getBegin());
 			assertEquals(100000, obsel.getEnd());
 			assertEquals(new Date(origin.getTime()+1000), obsel.getBeginDT());
 			assertEquals(new Date(origin.getTime()+100000), obsel.getEndDT());
-			assertEquals(0, obsel.getIncomingRelations().size());
-			assertEquals(2, obsel.getOutgoingRelations().size());
+			assertEquals(0, obsel.listIncomingRelations().size());
+			assertEquals(2, obsel.listOutgoingRelations().size());
 
 			Collection<String> expectedRelationTargets = new LinkedList<String>();
 			expectedRelationTargets.add("http://localhost:8001/ma-base/trace2/aliment1");
 			expectedRelationTargets.add("http://localhost:8001/ma-base/trace2/aliment2");
-			for(Relation relation:obsel.getOutgoingRelations()) {
+			for(Relation relation:obsel.listOutgoingRelations()) {
 				assertNull(relation.getToObsel());
 				assertNull(relation.getFromObsel());
 				assertNotNull(relation.getToObselURI());

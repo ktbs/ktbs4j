@@ -1,11 +1,10 @@
 package org.liris.ktbs.core;
 
-import java.util.Collection;
+import java.util.Iterator;
 
-public interface KtbsRoot extends KtbsResource {
+public interface KtbsRoot extends KtbsResource, ResourceContainer {
 	
-	public Collection<String> getBaseURIs();
-	public Collection<Base> getBases();
-	public void addBase(Base base);
+	public Iterator<Base> listBases();
+	public void addBase(Base base, String owner);
 	public Base getBase(String baseURI);
 }

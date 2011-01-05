@@ -171,7 +171,7 @@ public class KtbsClient implements KtbsClientService {
 			RDFResourceSerializer builder = RDFResourceSerializer.newBuilder(getPOSTSyntax());
 			builder.addObsels(requestURI, false, obsel);
 			String stringRepresentation = builder.getRDFResourceAsString();
-			log.debug("Sending the obsel \""+obsel.getTypeURI()+"\" to the KTBS.");
+			log.debug("Sending the obsel \""+obsel.getObselType()+"\" to the KTBS.");
 			response[k] = performPostRequest(requestURI, stringRepresentation);
 			k++;
 		}

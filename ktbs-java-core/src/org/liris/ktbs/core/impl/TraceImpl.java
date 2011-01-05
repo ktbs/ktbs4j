@@ -38,7 +38,7 @@ public class TraceImpl extends KtbsResourceImpl implements Trace {
 	}
 
 	@Override
-	public Collection<Obsel> getObsels() {
+	public Collection<Obsel> listObsels() {
 		return obsels.values();
 	}
 
@@ -58,7 +58,7 @@ public class TraceImpl extends KtbsResourceImpl implements Trace {
 	}
 
 	@Override
-	public Collection<String> getObselURIs() {
+	public Collection<String> listObselURIs() {
 		return obsels.keySet();
 	}
 

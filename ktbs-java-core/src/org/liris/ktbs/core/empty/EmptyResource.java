@@ -2,21 +2,15 @@ package org.liris.ktbs.core.empty;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.core.AbstractKtbsResource;
+import org.liris.ktbs.core.KtbsStatement;
 
-public class EmptyResource implements KtbsResource {
+public class EmptyResource extends AbstractKtbsResource {
 
-	private String uri;
 	protected final String MESSAGE = "This method is not supported (Empty KtbsResource)";
 	
 	EmptyResource(String uri) {
-		super();
-		this.uri = uri;
-	}
-
-	@Override
-	public String getURI() {
-		return uri;
+		super(uri);
 	}
 
 	@Override
@@ -30,22 +24,22 @@ public class EmptyResource implements KtbsResource {
 	}
 
 	@Override
-	public Iterator<String> listAllProperties() {
+	public Iterator<KtbsStatement> listAllProperties() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public Iterator<String> listKtbsProperties() {
+	public Iterator<KtbsStatement> listKtbsProperties() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public Iterator<String> listNonKtbsProperties() {
+	public Iterator<KtbsStatement> listNonKtbsProperties() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public String getPropertyValue(String propertyName) {
+	public String[] getPropertyValues(String propertyName) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

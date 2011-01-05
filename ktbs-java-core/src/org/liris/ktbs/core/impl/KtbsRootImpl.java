@@ -26,7 +26,7 @@ public class KtbsRootImpl extends KtbsResourceImpl implements KtbsRoot {
 	}
 
 	@Override
-	public Collection<Base> getBases() {
+	public Collection<Base> listBases() {
 		Collection<Base> c = new LinkedList<Base>();
 		for(Base b:bases.values()) {
 			if(b!=null)

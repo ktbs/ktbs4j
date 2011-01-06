@@ -48,4 +48,9 @@ public abstract class AbstractKtbsResource implements KtbsResource {
 	public int hashCode() {
 		return uri.hashCode();
 	}
+	
+	@Override
+	public String toString() {
+		return getURI() + " ("+getClass().getCanonicalName()+")";
+	}
 }

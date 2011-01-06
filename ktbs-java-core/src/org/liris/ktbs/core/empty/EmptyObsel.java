@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
+import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.Relation;
@@ -27,12 +29,12 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 	}
 
 	@Override
-	public Date getBeginDT() {
+	public String getBeginDT() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public Date getEndDT() {
+	public String getEndDT() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
@@ -62,7 +64,7 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 	}
 
 	@Override
-	public Map<AttributeType, Object> listAttributes() {
+	public Iterator<AttributeStatement> listAttributes() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
@@ -88,6 +90,16 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 
 	@Override
 	public Obsel getSourceObsel(String relationName) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public Date getBeginDTAsDate() {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public Date getEndDTAsDate() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

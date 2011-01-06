@@ -5,13 +5,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.AbstractKtbsResource;
+import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.rdf.KtbsConstants;
 
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -93,4 +96,29 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 		|| predicate.equals(RDF.type)
 		|| predicate.equals(RDFS.label);
 	}
+	
+	
+	protected Literal getObjectOfPropertyAsLiteral(String pName) {
+		Statement stmt = getStatement(pName);
+		if(stmt==null || !stmt.getObject().isLiteral())
+			return null;
+		else
+			return stmt.getObject().asLiteral();
+	}
+	
+	protected Resource getObjectOfPropertyAsResource(String pName) {
+		Statement stmt = getStatement(pName);
+		if(stmt==null || !stmt.getObject().isResource())
+			return null;
+		else
+			return stmt.getObject().asResource();
+		
+	}
+
+	private Statement getStatement(String pName) {
+		return rdfModel.getProperty(
+				rdfModel.getResource(uri), 
+				rdfModel.getProperty(pName));
+	}
+
 }

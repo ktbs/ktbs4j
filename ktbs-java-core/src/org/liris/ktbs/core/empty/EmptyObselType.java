@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
+import org.liris.ktbs.core.TraceModel;
 
 public class EmptyObselType extends EmptyResource implements ObselType {
 
@@ -19,6 +20,11 @@ public class EmptyObselType extends EmptyResource implements ObselType {
 
 	@Override
 	public Iterator<RelationType> listIncomingRelations() {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public TraceModel getTraceModel() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

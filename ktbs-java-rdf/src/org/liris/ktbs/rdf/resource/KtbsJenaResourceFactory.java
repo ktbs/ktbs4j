@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.liris.ktbs.core.AttributeType;
@@ -12,7 +13,6 @@ import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.StoredTrace;
-import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -39,12 +39,12 @@ public class KtbsJenaResourceFactory {
 	}
 
 	public <T extends KtbsResource> T createResource(String uri, InputStream stream, String lang, Class<T> clazz) {
-		if(StoredTrace.class.equals(clazz) || Trace.class.equals(clazz))
-			throw new UnsupportedOperationException();
+		if(StoredTrace.class.equals(clazz))
+			return clazz.cast(createStoredTrace(uri, stream, lang));
 		else if(ComputedTrace.class.equals(clazz))
-			throw new UnsupportedOperationException();
+			return clazz.cast(createStoredTrace(uri, stream, lang));
 		else if(Obsel.class.equals(clazz))
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\" from an input stream.");
 		else if(Method.class.equals(clazz))
 			throw new UnsupportedOperationException();
 		else if(Base.class.equals(clazz))
@@ -67,7 +67,7 @@ public class KtbsJenaResourceFactory {
 		Model rdfModel = createRdfModel(stream, lang);
 		return new KtbsJenaRoot(uri, rdfModel);
 	}
-	
+
 	private Model createRdfModel(InputStream stream, String lang) {
 		Model rdfModel = ModelFactory.createDefaultModel();
 		rdfModel.read(stream, null, lang);
@@ -77,5 +77,26 @@ public class KtbsJenaResourceFactory {
 	public Base createBase(String uri, InputStream stream, String lang) {
 		Model rdfModel = createRdfModel(stream, lang);
 		return new KtbsJenaBase(uri, rdfModel);
+	}
+	
+	public Obsel createObsel(String uri, Model rdfModel) {
+		return new KtbsJenaObsel(uri,rdfModel);
+	}
+	
+	public StoredTrace createStoredTrace(String uri, InputStream stream,
+			String lang) {
+		Model rdfModel = createRdfModel(stream, lang);
+		return new KtbsJenaStoredTrace(uri, rdfModel);
+	}
+	
+	public ComputedTrace createComputedTrace(String uri, InputStream stream,
+			String lang) {
+		Model rdfModel = createRdfModel(stream, lang);
+		return new KtbsJenaComputedTrace(uri, rdfModel);
+	}
+	public Obsel createObsel(String string, FileInputStream fis,
+			String jenaSyntaxTurtle) {
+		Model rdfModel = createRdfModel(fis, jenaSyntaxTurtle);
+		return new KtbsJenaObsel(string, rdfModel);
 	}
 }

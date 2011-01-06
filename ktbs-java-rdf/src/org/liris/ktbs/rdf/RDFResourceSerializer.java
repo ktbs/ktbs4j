@@ -126,7 +126,7 @@ public class RDFResourceSerializer {
 
 		jenaModel.add(
 				traceResource, 
-				jenaModel.createProperty(KtbsConstants.KTBS_HASMODEL), 
+				jenaModel.createProperty(KtbsConstants.P_HAS_MODEL), 
 				jenaModel.createResource(trace.getTraceModelUri())
 		);
 
@@ -202,13 +202,13 @@ public class RDFResourceSerializer {
 
 		jenaModel.add(
 				obselResource, 
-				jenaModel.createProperty(KtbsConstants.KTBS_HASTRACE), 
+				jenaModel.createProperty(KtbsConstants.P_HAS_TRACE), 
 				jenaModel.createResource(traceURI!=null?traceURI:obsel.getTraceURI())
 		);
 
 		jenaModel.add(
 				obselResource, 
-				jenaModel.createProperty(KtbsConstants.KTBS_HASSUBJECT), 
+				jenaModel.createProperty(KtbsConstants.P_HAS_SUBJECT), 
 				jenaModel.createLiteral(obsel.getSubject())
 		);
 
@@ -218,7 +218,7 @@ public class RDFResourceSerializer {
 			beginCal.setTime(obsel.getBeginDT());
 			jenaModel.add(
 					obselResource, 
-					jenaModel.createProperty(KtbsConstants.KTBS_HASBEGIN_DT), 
+					jenaModel.createProperty(KtbsConstants.P_HAS_BEGIN_DT), 
 					jenaModel.createTypedLiteral(new XSDDateTime(beginCal)));
 		}
 
@@ -228,7 +228,7 @@ public class RDFResourceSerializer {
 			endCal.setTime(obsel.getEndDT());
 			jenaModel.add(
 					obselResource, 
-					jenaModel.createProperty(KtbsConstants.KTBS_HASEND_DT), 
+					jenaModel.createProperty(KtbsConstants.P_HAS_END_DT), 
 					jenaModel.createTypedLiteral(new XSDDateTime(endCal)));
 		}
 		
@@ -236,7 +236,7 @@ public class RDFResourceSerializer {
 		if(obsel.getBegin() != -1) {
 			jenaModel.add(
 					obselResource, 
-					jenaModel.createProperty(KtbsConstants.KTBS_HASBEGIN), 
+					jenaModel.createProperty(KtbsConstants.P_HAS_BEGIN), 
 					jenaModel.createTypedLiteral(obsel.getBegin(), XSD.integer.getURI()));
 		}
 		
@@ -244,7 +244,7 @@ public class RDFResourceSerializer {
 		if(obsel.getEnd() != -1) {
 			jenaModel.add(
 					obselResource, 
-					jenaModel.createProperty(KtbsConstants.KTBS_HASEND), 
+					jenaModel.createProperty(KtbsConstants.P_HAS_END), 
 					jenaModel.createTypedLiteral(obsel.getEnd(), XSD.integer.getURI()));
 		}
 		

@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.StoredTrace;
@@ -86,8 +85,8 @@ public class KtbsJenaBaseTestCase extends TestCase {
 	@Test
 	public void testGetKtbsRoot() {
 		try {
-			KtbsRoot root = base.getKtbsRoot();
-			fail("Should fail, feature not supported by KTBS right now");
+			base.getKtbsRoot();
+			fail("Should fail, feature not supported by the KTBS server at the moment");
 		} catch(UnsupportedOperationException e) {
 
 		}

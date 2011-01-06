@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.Method;
+import org.liris.ktbs.core.ReadOnlyObjectException;
 
 public class EmptyComputedTrace extends EmptyTrace implements ComputedTrace {
 

@@ -15,7 +15,7 @@ public class EmptyStoredTrace extends EmptyTrace implements StoredTrace {
 	}
 
 	@Override
-	public void getDefaultSubject(String subject) {
+	public String getDefaultSubject() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 

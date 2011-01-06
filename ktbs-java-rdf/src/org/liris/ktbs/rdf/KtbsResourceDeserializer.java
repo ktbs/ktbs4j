@@ -213,7 +213,7 @@ public class KtbsResourceDeserializer {
 
 		} else if(Trace.class.isAssignableFrom(ktbsResourceType)) {
 			Resource thisTraceResource = jenaModel.getResource(ktbsResourceURI);
-			Property hasTraceProperty = jenaModel.getProperty(KtbsConstants.KTBS_HASTRACE);
+			Property hasTraceProperty = jenaModel.getProperty(KtbsConstants.P_HAS_TRACE);
 
 			Trace trace = null;
 
@@ -249,10 +249,10 @@ public class KtbsResourceDeserializer {
 
 			} else if(restAspect != null && restAspect.equals(KtbsConstants.ABOUT_ASPECT)) {
 				// This is a @about trace request
-				Property hasTraceModelProperty = jenaModel.getProperty(KtbsConstants.KTBS_HASMODEL);
+				Property hasTraceModelProperty = jenaModel.getProperty(KtbsConstants.P_HAS_MODEL);
 				String traceModelURI = null;
 				if(hasTraceProperty==null || thisTraceResource.getProperty(hasTraceModelProperty) == null) {
-					log.warn("There is no \""+KtbsConstants.KTBS_HASMODEL+"\" property for the trace "+ktbsResourceURI+".");
+					log.warn("There is no \""+KtbsConstants.P_HAS_MODEL+"\" property for the trace "+ktbsResourceURI+".");
 				} else {
 					traceModelURI = thisTraceResource.getProperty(hasTraceModelProperty).getObject().asResource().getURI();
 				}
@@ -356,19 +356,19 @@ public class KtbsResourceDeserializer {
 			Statement statement = (Statement) it.next();
 			obselURI = statement.getSubject().getURI();
 			String predicateURI = statement.getPredicate().getURI();
-			if(predicateURI.equals(KtbsConstants.KTBS_HASBEGIN_DT)) {
+			if(predicateURI.equals(KtbsConstants.P_HAS_BEGIN_DT)) {
 				XSDDateTime beginXSD = (XSDDateTime) statement.getObject().asLiteral().getValue();
 				beginDT = beginXSD.asCalendar().getTime();
-			} else if(predicateURI.equals(KtbsConstants.KTBS_HASEND_DT)) {
+			} else if(predicateURI.equals(KtbsConstants.P_HAS_END_DT)) {
 				XSDDateTime endXSD = (XSDDateTime) statement.getObject().asLiteral().getValue();
 				endDT = endXSD.asCalendar().getTime();
-			} else if(predicateURI.equals(KtbsConstants.KTBS_HASBEGIN)) {
+			} else if(predicateURI.equals(KtbsConstants.P_HAS_BEGIN)) {
 				begin = statement.getObject().asLiteral().getLong();
-			} else if(predicateURI.equals(KtbsConstants.KTBS_HASEND)) {
+			} else if(predicateURI.equals(KtbsConstants.P_HAS_END)) {
 				end = statement.getObject().asLiteral().getLong();
-			} else if(predicateURI.equals(KtbsConstants.KTBS_HASTRACE))
+			} else if(predicateURI.equals(KtbsConstants.P_HAS_TRACE))
 				traceURI = statement.getObject().asResource().getURI();
-			else if(predicateURI.equals(KtbsConstants.KTBS_HASSUBJECT))
+			else if(predicateURI.equals(KtbsConstants.P_HAS_SUBJECT))
 				subject = statement.getObject().asLiteral().toString();
 			else if (traceModelURI != null && predicateURI.startsWith(traceModelURI)) {
 				RDFNode object = statement.getObject();

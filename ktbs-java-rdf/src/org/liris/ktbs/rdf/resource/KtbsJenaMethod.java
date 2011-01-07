@@ -6,6 +6,7 @@ import org.liris.ktbs.rdf.RDFRestConstants;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 public class KtbsJenaMethod extends KtbsJenaResourceWithParameter implements Method {
 
@@ -15,10 +16,10 @@ public class KtbsJenaMethod extends KtbsJenaResourceWithParameter implements Met
 
 	@Override
 	public String getInherits() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_INHERITS);
-		if(l==null)
+		Resource r = getObjectOfPropertyAsResource(KtbsConstants.P_INHERITS);
+		if(r==null)
 			return null;
-		return l.getString();
+		return r.getURI();
 	}
 
 	@Override

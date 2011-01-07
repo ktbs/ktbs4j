@@ -5,7 +5,7 @@ import org.liris.ktbs.core.KtbsResource;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-class SubjectWithRdfModelIterator<T extends KtbsResource> extends JenaSubjectAsKtbsResourceIterator<T> {
+class SubjectWithRdfModelIterator<T extends KtbsResource> extends KtbsResourceSubjectIterator<T> {
 
 	private Model rdfModel;
 

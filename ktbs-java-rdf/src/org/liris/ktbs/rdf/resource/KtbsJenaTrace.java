@@ -19,6 +19,7 @@ import com.hp.hpl.jena.datatypes.xsd.IllegalDateTimeFieldException;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -69,12 +70,25 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
 	@Override
 	public Iterator<Trace> listSources() {
-		throw new UnsupportedOperationException("Not implemented yet.");
+		StmtIterator it = rdfModel.listStatements(
+				rdfModel.getResource(uri), 
+				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
+				(RDFNode)null);
+		
+		return new KtbsResourceObjectIterator<Trace>(
+				it, 
+				Trace.class);
 	}
 
 	@Override
 	public Iterator<Trace> listTransformedTraces() {
-		throw new UnsupportedOperationException("Not implemented yet.");
+		StmtIterator it = rdfModel.listStatements(
+				null,
+				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
+				rdfModel.getResource(uri));
+		return new KtbsResourceSubjectIterator<Trace>(
+				it, 
+				Trace.class);
 	}
 
 	@Override

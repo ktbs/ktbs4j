@@ -34,6 +34,7 @@ public interface KtbsConstants {
 	public static final String P_DESCRIPTION_OF = NAMESPACE + "descriptionOf";
 	public static final String P_COMPLIES_WITH_MODEL = NAMESPACE + "compliesWithModel";
 	public static final String P_HAS_MODEL = NAMESPACE + "hasModel";
+	public static final String P_HAS_SOURCE = NAMESPACE + "hasSource";
 
 	// Trace model concepts and properties
 	public static final String RELATION_TYPE = NAMESPACE + "RelationType";

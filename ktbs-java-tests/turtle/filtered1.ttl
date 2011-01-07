@@ -16,4 +16,4 @@
      ktbs:hasOrigin "2010-04-28T18:09:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasParameter "start=2000";
      ktbs:hasParameter "end=42000";
-     ktbs:hasSource <http://localhost:8001/base1/filtered1/>.
+     ktbs:hasSource <http://localhost:8001/base1/filtered2/>.

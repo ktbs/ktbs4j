@@ -24,12 +24,12 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 
 	private Trace traceObsels;
 	private Trace traceInfo;
-	
+	private Trace filtered1;
+
 	private EmptyResourceFactory emptyFac = EmptyResourceFactory.getInstance();
-	
+
 	@Before
 	public void setUp() throws Exception {
-		
 		FileInputStream fis = new FileInputStream("turtle/t01.ttl");
 		traceObsels = KtbsJenaResourceFactory.getInstance().createStoredTrace(
 				"http://localhost:8001/base1/t01/", 
@@ -43,7 +43,12 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 				fis, 
 				JenaConstants.JENA_SYNTAX_TURTLE);
 		fis.close();
-		
+		fis = new FileInputStream("turtle/filtered1.ttl");
+		filtered1 = KtbsJenaResourceFactory.getInstance().createStoredTrace(
+				"http://localhost:8001/base1/filtered1/", 
+				fis, 
+				JenaConstants.JENA_SYNTAX_TURTLE);
+		fis.close();
 	}
 
 	@Test
@@ -104,7 +109,7 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
-		
+
 		assertEquals(2,KtbsUtils.count(traceObsels.listObsels(2000,5000)));
 		obsels = KtbsUtils.toLinkedList(traceObsels.listObsels(2000,5000));
 		assertEquals(2,obsels.size());
@@ -112,7 +117,7 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
-		
+
 		assertEquals(2,KtbsUtils.count(traceObsels.listObsels(2001,7000)));
 		obsels = KtbsUtils.toLinkedList(traceObsels.listObsels(2001,7000));
 		assertEquals(2,obsels.size());
@@ -129,7 +134,7 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		
+
 		assertEquals(0,KtbsUtils.count(traceObsels.listObsels(7001,Long.MAX_VALUE)));
 		obsels = KtbsUtils.toLinkedList(traceObsels.listObsels(7001,Long.MAX_VALUE));
 		assertEquals(0,obsels.size());
@@ -157,26 +162,27 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 
 	@Test
 	public void testListSources() {
-		try {
-			traceObsels.listSources();
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-			
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		assertEquals(0,KtbsUtils.count(traceObsels.listSources()));
+		assertEquals(0,KtbsUtils.count(traceInfo.listSources()));
+		assertEquals(1,KtbsUtils.count(filtered1.listSources()));
+		assertEquals(
+				emptyFac.createRelationType("http://localhost:8001/base1/filtered2/"),
+				filtered1.listSources().next());
+
 	}
 
 	@Test
 	public void testListTransformedTraces() {
-		try {
-			traceObsels.listTransformedTraces();
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-			
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		assertEquals(0,KtbsUtils.count(traceObsels.listTransformedTraces()));
+		assertEquals(3,KtbsUtils.count(traceInfo.listTransformedTraces()));
+
+		Collection<Trace> c = KtbsUtils.toLinkedList(traceInfo.listTransformedTraces());
+		assertTrue(c.contains(emptyFac.createResource("http://localhost:8001/base1/filtered1/")));
+		assertTrue(c.contains(emptyFac.createResource("http://localhost:8001/base1/fusioned1/")));
+		assertTrue(c.contains(emptyFac.createResource("http://localhost:8001/base1/count2/")));
+		
+		assertEquals(0,KtbsUtils.count(filtered1.listTransformedTraces()));
+
 	}
 
 	@Test
@@ -194,7 +200,7 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 			assertEquals(
 					new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").parse("2010-04-28 20:09:00"),
 					origin
-					);
+			);
 		} catch (ParseException e) {
 			fail(e.getMessage());
 		}
@@ -212,14 +218,7 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 
 	@Test
 	public void testRemoveObsel() {
-		try {
-			traceObsels.listTransformedTraces();
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-			
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		fail("Not yet implemented");
 	}
 
 	@Test

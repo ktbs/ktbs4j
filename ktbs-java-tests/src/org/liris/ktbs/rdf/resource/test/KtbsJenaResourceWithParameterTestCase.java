@@ -45,6 +45,10 @@ public class KtbsJenaResourceWithParameterTestCase {
 		assertEquals(2,c.size());
 		assertTrue(c.contains(new SimpleKtbsParameter("start", "2000")));
 		assertTrue(c.contains(new SimpleKtbsParameter("end", "42000")));
+		
+		assertEquals(1,KtbsUtils.count(method.listParameters()));
+		assertEquals("script",method.listParameters().next().getName());
+		System.out.println(method.listParameters().next().getValue());
 	}
 
 	@Test

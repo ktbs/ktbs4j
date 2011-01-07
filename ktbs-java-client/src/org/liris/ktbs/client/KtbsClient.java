@@ -42,7 +42,7 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 import org.liris.ktbs.rdf.JenaConstants;
@@ -540,7 +540,7 @@ public class KtbsClient implements KtbsClientService {
 				label);
 		if(outgoingRelations != null && outgoingRelations.length%2==0) {
 			for(int k=0; k<outgoingRelations.length;k+=2) {
-				Relation rel = KtbsResourceFactory.createRelation(
+				RelationStatement rel = KtbsResourceFactory.createRelation(
 						obsel.getURI(), 
 						outgoingRelations[k], 
 						outgoingRelations[k+1]);

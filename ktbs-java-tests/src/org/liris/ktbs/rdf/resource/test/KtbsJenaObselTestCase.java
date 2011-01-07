@@ -159,17 +159,7 @@ public class KtbsJenaObselTestCase  extends TestCase {
 
 	@Test
 	public void testListAttributes() {
-		/*
-		 * TODO Test that method when a trace model is accessible
-		 */
-		try {
-			KtbsUtils.count(obsel1.listAttributes());
-			fail("Should have failed.");
-		} catch(KtbsResourceNotFoundException e) {
-
-		} catch(Exception e) {
-			fail("Unexpected exception.");
-		}
+		fail("Cannot be tested before the resource holder is created");
 	}
 
 	private String attType(String string) {
@@ -178,13 +168,15 @@ public class KtbsJenaObselTestCase  extends TestCase {
 
 	@Test
 	public void testGetAttributeValue() {
-		assertEquals("#my-channel", obsel1.getAttributeValue(emptyFac.createAttributeType(attType("channel"))));
-		assertEquals(null, obsel1.getAttributeValue(emptyFac.createAttributeType(attType("channl"))));
-		assertEquals("hello world", obsel2.getAttributeValue(emptyFac.createAttributeType(attType("message"))));
-		assertEquals("world", obsel3.getAttributeValue(emptyFac.createAttributeType(attType("from"))));
-		assertEquals("hello yourself", obsel3.getAttributeValue(emptyFac.createAttributeType(attType("message"))));
-		assertEquals("Valeur Perso", obsel5.getAttributeValue(emptyFac.createAttributeType(attType("attperso"))));
-		assertEquals("Ceci n'est pas un attribut", obsel5.getAttributeValue(emptyFac.createAttributeType("http://www.example.com/prop")));
+		fail("Cannot be tested before the resource holder is created");
+
+//		assertEquals("#my-channel", obsel1.getAttributeValue(emptyFac.createAttributeType(attType("channel"))));
+//		assertEquals(null, obsel1.getAttributeValue(emptyFac.createAttributeType(attType("channl"))));
+//		assertEquals("hello world", obsel2.getAttributeValue(emptyFac.createAttributeType(attType("message"))));
+//		assertEquals("world", obsel3.getAttributeValue(emptyFac.createAttributeType(attType("from"))));
+//		assertEquals("hello yourself", obsel3.getAttributeValue(emptyFac.createAttributeType(attType("message"))));
+//		assertEquals("Valeur Perso", obsel5.getAttributeValue(emptyFac.createAttributeType(attType("attperso"))));
+//		assertEquals("Ceci n'est pas un attribut", obsel5.getAttributeValue(emptyFac.createAttributeType("http://www.example.com/prop")));
 	}
 
 	@Test
@@ -213,50 +205,22 @@ public class KtbsJenaObselTestCase  extends TestCase {
 
 	@Test
 	public void testListIncomingRelations() {
-		try {
-			obsel1.listIncomingRelations();
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		fail("Cannot be tested before the resource holder is created");
 	}
 
 	@Test
 	public void testListOutgoingRelations() {
-		try {
-			obsel1.listOutgoingRelations();
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		fail("Cannot be tested before the resource holder is created");
 	}
 
 	@Test
 	public void testGetTargetObsel() {
-		try {
-			obsel1.getTargetObsel(null);
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		fail("Cannot be tested before the resource holder is created");
 	}
 
 	@Test
 	public void testGetSourceObsel() {
-		try {
-			obsel1.getSourceObsel(null);
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		fail("Cannot be tested before the resource holder is created");
 	}
 
 	@Test

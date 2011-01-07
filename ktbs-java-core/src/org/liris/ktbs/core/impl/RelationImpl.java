@@ -3,9 +3,9 @@ package org.liris.ktbs.core.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 
-public class RelationImpl implements Relation {
+public class RelationImpl implements RelationStatement {
 
 	private static final Log log = LogFactory.getLog(RelationImpl.class);
 	

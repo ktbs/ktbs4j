@@ -35,7 +35,7 @@ import org.liris.ktbs.client.KtbsResponseStatus;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 import org.liris.ktbs.rdf.InvalidDeserializationRequest;
@@ -479,11 +479,11 @@ public class KtbsClientTestCase {
 			assertNotNull(obsel.getBeginDT());
 			assertNotNull(obsel.getEndDT());
 			assertNotNull(obsel.getSubject());
-			for(Relation relation:obsel.listOutgoingRelations()){
+			for(RelationStatement relation:obsel.listOutgoingRelations()){
 				assertNotNull(relation.getToObselURI());
 				assertNull(relation.getToObsel());
 			}
-			for(Relation relation:obsel.listIncomingRelations()) {
+			for(RelationStatement relation:obsel.listIncomingRelations()) {
 				assertNotNull(relation.getFromObselURI());
 				assertNull(relation.getFromObsel());
 			}
@@ -671,7 +671,7 @@ public class KtbsClientTestCase {
 		assertEquals(0,obsel1.listIncomingRelations().size());
 
 
-		Relation relation = obsel2.listOutgoingRelations().iterator().next();
+		RelationStatement relation = obsel2.listOutgoingRelations().iterator().next();
 		assertNull(relation.getFromObsel());
 		assertNull(relation.getToObsel());
 		assertNotNull(relation.getFromObselURI());
@@ -1193,7 +1193,7 @@ public class KtbsClientTestCase {
 			Collection<String> expectedRelationTargets = new LinkedList<String>();
 			expectedRelationTargets.add("http://localhost:8001/ma-base/trace2/aliment1");
 			expectedRelationTargets.add("http://localhost:8001/ma-base/trace2/aliment2");
-			for(Relation relation:obsel.listOutgoingRelations()) {
+			for(RelationStatement relation:obsel.listOutgoingRelations()) {
 				assertNull(relation.getToObsel());
 				assertNull(relation.getFromObsel());
 				assertNotNull(relation.getToObselURI());

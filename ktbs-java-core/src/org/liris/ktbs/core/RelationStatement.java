@@ -5,10 +5,8 @@ package org.liris.ktbs.core;
  * @author dcram
  *
  */
-public interface Relation {
+public interface RelationStatement {
 	public Obsel getFromObsel();
-	public String getFromObselURI();
-	public String getRelationName();
+	public String getRelationURI();
 	public Obsel getToObsel();
-	public String getToObselURI();
 }

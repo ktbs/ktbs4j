@@ -55,5 +55,11 @@ public interface KtbsConstants {
 	public static final String P_HAS_TRACE = NAMESPACE + "hasTrace";
 	public static final String P_HAS_METHOD = NAMESPACE + "hasMethod";
 	
+	// Method Properties
+	public static final String P_HAS_PARAMETER = NAMESPACE + "hasParameter";
+	public static final String P_INHERITS = NAMESPACE + "inherits";
+	public static final String SCRIPT_PYTHON = NAMESPACE + "script-python";
+	public static final String P_HAS_SOURCE_OBSEL =  NAMESPACE + "hasSourceObsel";
+	
 	
 }

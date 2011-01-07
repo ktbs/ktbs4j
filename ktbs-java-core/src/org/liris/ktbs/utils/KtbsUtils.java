@@ -10,7 +10,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.KtbsStatement;
+import org.liris.ktbs.core.SimpleKtbsParameter;
 
 public class KtbsUtils {
 
@@ -140,6 +142,13 @@ public class KtbsUtils {
 	    matcher.appendReplacement(sb, replacement);
 	    matcher.appendTail(sb);
 	    return sb.toString();
+	}
+
+	public static KtbsParameter parseParameter(String string) {
+		int index = string.indexOf("=");
+		String key = string.substring(0, index);
+		String value = string.substring(index+1, string.length());
+		return new SimpleKtbsParameter(key, value);
 	}
 
 }

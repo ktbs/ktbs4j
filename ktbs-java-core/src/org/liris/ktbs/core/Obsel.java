@@ -27,6 +27,8 @@ public interface Obsel extends KtbsResource {
 
 	public ObselType getObselType();
 
+	public Obsel getSourceObsel();
+
 	public String getSubject();
 	
 
@@ -54,10 +56,10 @@ public interface Obsel extends KtbsResource {
 	/*
 	 * Methods related to inter-obsel relations
 	 */
-	public void addOutgoingRelation(Relation relation);
-	public void addIncomingRelation(Relation relation);
-	public Iterator<Relation> listIncomingRelations();
-	public Iterator<Relation> listOutgoingRelations();
+	public void addOutgoingRelation(RelationStatement relation);
+	public void addIncomingRelation(RelationStatement relation);
+	public Iterator<RelationStatement> listIncomingRelations();
+	public Iterator<RelationStatement> listOutgoingRelations();
 	public Obsel getTargetObsel(String relationName);
 	public Obsel getSourceObsel(String relationName);
 }

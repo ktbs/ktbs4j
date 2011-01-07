@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
 
 public class ObselImpl extends KtbsResourceImpl implements Obsel {
@@ -21,8 +21,8 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	private String typeURI;
 	private String subject;
 
-	private Collection<Relation> incomingRelations;
-	private Collection<Relation> outgoingRelations;
+	private Collection<RelationStatement> incomingRelations;
+	private Collection<RelationStatement> outgoingRelations;
 
 	private Map<String, Object> attributes;
 
@@ -47,8 +47,8 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 		this.begin = begin;
 		this.end = end;
 		
-		this.incomingRelations = new LinkedList<Relation>();
-		this.outgoingRelations = new LinkedList<Relation>();
+		this.incomingRelations = new LinkedList<RelationStatement>();
+		this.outgoingRelations = new LinkedList<RelationStatement>();
 	}
 
 	ObselImpl(String obselURI, String traceURI, String subject, Date beginDT, Date endDT, long begin, long end,
@@ -73,12 +73,12 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	}
 
 	@Override
-	public Collection<Relation> listIncomingRelations() {
+	public Collection<RelationStatement> listIncomingRelations() {
 		return Collections.unmodifiableCollection(incomingRelations);
 	}
 
 	@Override
-	public Collection<Relation> listOutgoingRelations() {
+	public Collection<RelationStatement> listOutgoingRelations() {
 		return Collections.unmodifiableCollection(outgoingRelations);
 	}
 
@@ -99,7 +99,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 
 	@Override
 	public Obsel getTargetObsel(String relationName) {
-		for(Relation rel:outgoingRelations) {
+		for(RelationStatement rel:outgoingRelations) {
 			if(rel.getRelationName().equals(relationName))
 				return rel.getToObsel();
 		}
@@ -108,7 +108,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 
 	@Override
 	public Obsel getSourceObsel(String relationName) {
-		for(Relation rel:incomingRelations) {
+		for(RelationStatement rel:incomingRelations) {
 			if(rel.getRelationName().equals(relationName))
 				return rel.getFromObsel();
 		}
@@ -116,7 +116,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	}
 
 	@Override
-	public void addOutgoingRelation(Relation relation) {
+	public void addOutgoingRelation(RelationStatement relation) {
 		if(relation == null || (relation.getFromObsel() == null  && relation.getFromObselURI()==null)) 
 			throw new IllegalStateException("Invalid source obsel for the relation \"" + relation + "\".");
 		this.outgoingRelations.add(relation);
@@ -124,7 +124,7 @@ public class ObselImpl extends KtbsResourceImpl implements Obsel {
 	}
 
 	@Override
-	public void addIncomingRelation(Relation relation) {
+	public void addIncomingRelation(RelationStatement relation) {
 		if(relation == null || (relation.getToObsel() == null  && relation.getToObselURI()==null)) 
 			throw new IllegalStateException("Invalid target obsel for the relation \"" + relation + "\".");
 		this.incomingRelations.add(relation);

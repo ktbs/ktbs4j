@@ -6,7 +6,7 @@ import java.util.Calendar;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
@@ -258,7 +258,7 @@ public class RDFResourceSerializer {
 		}
 
 		// add relation to the Jena model
-		for(Relation rel:obsel.listOutgoingRelations()) {
+		for(RelationStatement rel:obsel.listOutgoingRelations()) {
 			Resource targetResource = null;
 			if(rel.getToObselURI()!=null)
 				targetResource = jenaModel.createResource(rel.getToObselURI());

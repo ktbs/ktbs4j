@@ -7,7 +7,7 @@ import java.util.Map;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
 
 public class KtbsResourceFactory {
@@ -71,9 +71,9 @@ public class KtbsResourceFactory {
 		return createObsel(resourceUri, parentTrace, subject, beginDT, endDT, typeURI, attributes, label);
 	}
 
-	public static Relation createRelation(Obsel from, String relationName, Obsel to) {
+	public static RelationStatement createRelation(Obsel from, String relationName, Obsel to) {
 		
-		Relation relation = new RelationImpl(from, to, relationName);
+		RelationStatement relation = new RelationImpl(from, to, relationName);
 		from.addOutgoingRelation(relation);
 		to.addIncomingRelation(relation);
 		
@@ -89,8 +89,8 @@ public class KtbsResourceFactory {
 	 * @param toObselURI the URI of the target obsel of this relation
 	 * @return the created relation
 	 */
-	public static Relation createRelation(String fromObselURI, String relationName, String toObselURI) {
-		Relation relation = new RelationImpl(fromObselURI, toObselURI, relationName);
+	public static RelationStatement createRelation(String fromObselURI, String relationName, String toObselURI) {
+		RelationStatement relation = new RelationImpl(fromObselURI, toObselURI, relationName);
 		return relation;
 	}
 

@@ -9,7 +9,7 @@ import org.liris.ktbs.client.KtbsResponse;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 
@@ -186,7 +186,7 @@ public class ClientTest {
 		System.out.println("End: " + obsel.getEnd());
 		for(String att:obsel.listAttributes().keySet())
 			System.out.println("\t#att# " + att + ":\t" + obsel.getAttributeValue(att));
-		for(Relation rel:obsel.listOutgoingRelations())
+		for(RelationStatement rel:obsel.listOutgoingRelations())
 			System.out.println("\t#rel# ---[" + rel.getRelationName() + "]--->  " + obsel.getTargetObsel(rel.getRelationName()));
 	}
 

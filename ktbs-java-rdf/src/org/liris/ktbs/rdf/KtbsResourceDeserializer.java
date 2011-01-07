@@ -14,7 +14,7 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Relation;
+import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.impl.KtbsResourceFactory;
 
@@ -351,7 +351,7 @@ public class KtbsResourceDeserializer {
 		String subject = null;
 
 		Map<String, Object> attributes = new HashMap<String, Object>();
-		List<Relation> relations = new LinkedList<Relation>();
+		List<RelationStatement> relations = new LinkedList<RelationStatement>();
 		while(it.hasNext()) {
 			Statement statement = (Statement) it.next();
 			obselURI = statement.getSubject().getURI();
@@ -380,7 +380,7 @@ public class KtbsResourceDeserializer {
 					suspectedRelationStmts.add(statement);
 
 					if(buildWeakRelations) {
-						Relation relation = KtbsResourceFactory.createRelation(
+						RelationStatement relation = KtbsResourceFactory.createRelation(
 								obselURI,
 								statement.getPredicate().getURI(), 
 								statement.getObject().asResource().getURI());
@@ -408,7 +408,7 @@ public class KtbsResourceDeserializer {
 				label);
 
 		if(buildWeakRelations) {
-			for(Relation relation:relations)
+			for(RelationStatement relation:relations)
 				obsel.addOutgoingRelation(relation);
 		}
 

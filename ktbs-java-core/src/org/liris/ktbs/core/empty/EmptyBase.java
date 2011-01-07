@@ -57,13 +57,6 @@ public class EmptyBase extends EmptyResourceContainer implements Base {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
-
-	@Override
-	public void addStoredTrace(Trace trace) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-
 	@Override
 	public StoredTrace getStoredTrace(String uri) {
 		throw new UnsupportedOperationException(MESSAGE);
@@ -100,6 +93,16 @@ public class EmptyBase extends EmptyResourceContainer implements Base {
 
 	@Override
 	public Method getMethod(String uri) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void addStoredTrace(StoredTrace trace) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void addComputedTrace(ComputedTrace trace) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 

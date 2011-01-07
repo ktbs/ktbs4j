@@ -7,19 +7,18 @@ import java.util.Map;
 
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.TemporalDomainException;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.rdf.KtbsConstants;
 
 import com.hp.hpl.jena.datatypes.xsd.IllegalDateTimeFieldException;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -27,8 +26,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
-	KtbsJenaTrace(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaTrace(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 
 	@Override
@@ -68,17 +67,7 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 				});
 	}
 
-	@Override
-	public Iterator<Trace> listSources() {
-		StmtIterator it = rdfModel.listStatements(
-				rdfModel.getResource(uri), 
-				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
-				(RDFNode)null);
-		
-		return new KtbsResourceObjectIterator<Trace>(
-				it, 
-				Trace.class);
-	}
+
 
 	@Override
 	public Iterator<Trace> listTransformedTraces() {
@@ -88,7 +77,8 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 				rdfModel.getResource(uri));
 		return new KtbsResourceSubjectIterator<Trace>(
 				it, 
-				Trace.class);
+				Trace.class,
+				holder);
 	}
 
 	@Override
@@ -127,7 +117,8 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 					rdfModel.getProperty(KtbsConstants.P_HAS_TRACE), 
 					rdfModel.getResource(uri));
 			if(it.hasNext()) {
-				Obsel obsel = KtbsJenaResourceFactory.getInstance().createObsel(obselURI, rdfModel);
+				
+				Obsel obsel = holder.getResourceAlreadyInModel(obselURI, Obsel.class, rdfModel);
 				traceObselCache.put(obselURI, obsel);
 				return obsel;
 			} else
@@ -135,10 +126,6 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 		}
 	}
 
-	@Override
-	public void removeObsel(String obselURI) {
-		throw new ReadOnlyObjectException(this);
-	}
 
 	@Override
 	public Base getBase() {
@@ -148,7 +135,7 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 				rdfModel.getResource(uri));
 		if(it.hasNext()) {
 			String baseURI = it.nextStatement().getSubject().asResource().getURI();
-			return EmptyResourceFactory.getInstance().createBase(baseURI);
+			return holder.getResource(baseURI, Base.class);
 		} else
 			return null;
 	}
@@ -159,7 +146,7 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 		if(r==null)
 			return null;
 		else
-			return EmptyResourceFactory.getInstance().createTraceModel(r.getURI());
+			return holder.getResource(r.getURI(), TraceModel.class);
 	}
 
 
@@ -201,8 +188,9 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 			while(resIt.hasNext() && !foundNext) {
 				Resource res = resIt.next();
 				String obselURI = res.getURI();
-				next = KtbsJenaResourceFactory.getInstance().createObsel(
-						obselURI,
+				next = KtbsJenaTrace.this.holder.getResourceAlreadyInModel(
+						obselURI, 
+						Obsel.class, 
 						KtbsJenaTrace.this.rdfModel);
 				if(temporalCondition.accept(
 						next.getBeginDT(), 

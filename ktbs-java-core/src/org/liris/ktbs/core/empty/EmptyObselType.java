@@ -37,4 +37,9 @@ public class EmptyObselType extends EmptyResource implements ObselType {
 	public Iterator<RelationType> listIncomingRelations() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
+
+	@Override
+	public void setSuperObselType(ObselType type) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }

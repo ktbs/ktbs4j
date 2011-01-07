@@ -12,24 +12,31 @@ public interface Obsel extends KtbsResource {
 	 * @return the relative begin date in milliseconds, -1 if unset
 	 */
 	public long getBegin();
+	public void setBegin(long begin);
 
 	/**
 	 * 
 	 * @return the relative end date in milliseconds, -1 if unset
 	 */
 	public long getEnd();
+	public void setEnd(long end);
 
 	public String getBeginDT();
 	public String getEndDT();
+	public void setBeginDT(String beginDT);
+	public void setEndDT(String endDT);
 
 	public Date getBeginDTAsDate();
 	public Date getEndDTAsDate();
 
 	public ObselType getObselType();
+	public void setObselType(ObselType type);
 
 	public Obsel getSourceObsel();
+	public void setSourceObsel(Obsel obsel);
 
 	public String getSubject();
+	public void setSubject(String subject);
 	
 
 	/*
@@ -51,13 +58,14 @@ public interface Obsel extends KtbsResource {
 	 */
 	public Iterator<AttributeStatement> listAttributes();
 	public Object getAttributeValue(AttributeType attribute);
+	public void addAttribute(AttributeType attribute, Object value);
 	
 
 	/*
 	 * Methods related to inter-obsel relations
 	 */
-	public void addOutgoingRelation(RelationStatement relation);
-	public void addIncomingRelation(RelationStatement relation);
+	public void addOutgoingRelation(RelationType relationType, Obsel target);
+	public void addIncomingRelation(Obsel source, RelationType relationType);
 	public Iterator<RelationStatement> listIncomingRelations();
 	public Iterator<RelationStatement> listOutgoingRelations();
 	public Obsel getTargetObsel(String relationName);

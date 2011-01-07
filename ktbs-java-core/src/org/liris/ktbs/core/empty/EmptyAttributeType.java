@@ -12,4 +12,9 @@ public class EmptyAttributeType extends EmptyResource implements AttributeType {
 	public ObselType getDomain() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
+
+	@Override
+	public void setDomain(ObselType domain) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }

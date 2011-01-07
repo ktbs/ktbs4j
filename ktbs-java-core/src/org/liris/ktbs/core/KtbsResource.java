@@ -7,6 +7,9 @@ public interface KtbsResource extends Comparable<KtbsResource> {
 	public String getURI();
 	public String getLabel();
 	public void setLabel(String label);
+
+	public String getType();
+	public void setType(String type);
 	
 	public Iterator<KtbsStatement> listAllProperties();
 	

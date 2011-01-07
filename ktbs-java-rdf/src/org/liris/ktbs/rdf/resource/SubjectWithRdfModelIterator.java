@@ -1,6 +1,7 @@
 package org.liris.ktbs.rdf.resource;
 
 import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -10,16 +11,16 @@ class SubjectWithRdfModelIterator<T extends KtbsResource> extends KtbsResourceSu
 	private Model rdfModel;
 
 	SubjectWithRdfModelIterator(Model rdfModel,
-			StmtIterator stmtIterator, Class<T> clazz) {
-		super(null, stmtIterator, clazz);
+			StmtIterator stmtIterator, Class<T> clazz, KtbsJenaResourceHolder holder) {
+		super(stmtIterator, clazz, holder);
 		this.rdfModel = rdfModel;
 	}
 
 	@Override
 	public T next() {
-		return KtbsJenaResourceFactory.getInstance().createResource(
+		return holder.getResourceAlreadyInModel(
 				stmtIterator.next().getSubject().getURI(), 
-				this.rdfModel, 
-				clazz);
+				clazz,
+				this.rdfModel); 
 	}
 }

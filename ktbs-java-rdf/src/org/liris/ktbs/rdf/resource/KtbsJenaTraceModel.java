@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.TraceModel;
@@ -15,8 +16,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 
-	KtbsJenaTraceModel(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaTraceModel(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.ATTRIBUTE_TYPE)
 				);
-		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class);
+		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, holder);
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.RELATION_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class);
+		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder);
 	}
 
 	@Override
@@ -64,14 +65,14 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.OBSEL_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<ObselType>(rdfModel, it, ObselType.class);
+		return new SubjectWithRdfModelIterator<ObselType>(rdfModel, it, ObselType.class, holder);
 	}
 
 	@Override
 	public ObselType getObselType(String obselTypeUri) {
 		StmtIterator stmt = getTypeStatements(obselTypeUri, KtbsConstants.OBSEL_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaResourceFactory.getInstance().createObselType(obselTypeUri, rdfModel);
+			return KtbsJenaTraceModel.this.holder.getResourceAlreadyInModel(obselTypeUri, ObselType.class, rdfModel);
 		else
 			return null;
 	}
@@ -80,7 +81,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public RelationType getRelationType(String relationTypeUri) {
 		StmtIterator stmt = getTypeStatements(relationTypeUri, KtbsConstants.RELATION_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaResourceFactory.getInstance().createRelationType(relationTypeUri, rdfModel);
+			return KtbsJenaTraceModel.this.holder.getResourceAlreadyInModel(relationTypeUri, RelationType.class, rdfModel);
 		else
 			return null;
 	}
@@ -89,7 +90,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public AttributeType getAttributeType(String attributeTypeUri) {
 		StmtIterator stmt = getTypeStatements(attributeTypeUri, KtbsConstants.ATTRIBUTE_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaResourceFactory.getInstance().createAttributeType(attributeTypeUri, rdfModel);
+			return KtbsJenaTraceModel.this.holder.getResourceAlreadyInModel(attributeTypeUri, AttributeType.class, rdfModel);
 		else
 			return null;
 	}
@@ -101,5 +102,19 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				rdfModel.getResource(requestedTypeUri)
 				);
 	}
-	
+
+	@Override
+	public void addObselType(ObselType obselType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void addRelationType(RelationType obselType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void addAttributeType(AttributeType obselType) {
+		throw new UnsupportedOperationException();
+	}
 }

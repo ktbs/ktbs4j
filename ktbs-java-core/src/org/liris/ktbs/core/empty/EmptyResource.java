@@ -42,5 +42,15 @@ public class EmptyResource extends AbstractKtbsResource {
 	public String[] getPropertyValues(String propertyName) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
+
+	@Override
+	public String getType() {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setType(String type) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }
 

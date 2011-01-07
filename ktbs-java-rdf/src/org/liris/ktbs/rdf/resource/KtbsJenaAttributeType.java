@@ -1,8 +1,8 @@
 package org.liris.ktbs.rdf.resource;
 
 import org.liris.ktbs.core.AttributeType;
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.rdf.KtbsConstants;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -11,8 +11,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class KtbsJenaAttributeType extends KtbsJenaResource implements
 AttributeType {
 
-	KtbsJenaAttributeType(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaAttributeType(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 
 	@Override
@@ -21,7 +21,12 @@ AttributeType {
 		if(domain == null)
 			return null;
 		else
-			return KtbsJenaResourceFactory.getInstance().createObselType(domain.getURI(), rdfModel);
+			return holder.getResource(domain.getURI(), ObselType.class);
+	}
+
+	@Override
+	public void setDomain(ObselType domain) {
+		throw new UnsupportedOperationException();
 	}
 
 }

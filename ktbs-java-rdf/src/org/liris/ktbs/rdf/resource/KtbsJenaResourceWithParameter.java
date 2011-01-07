@@ -3,6 +3,7 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.KtbsParameter;
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.ResourceWithParameters;
 import org.liris.ktbs.rdf.KtbsConstants;
@@ -16,8 +17,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaResourceWithParameter extends KtbsJenaResource implements ResourceWithParameters {
 
-	KtbsJenaResourceWithParameter(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaResourceWithParameter(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 	
 	@Override

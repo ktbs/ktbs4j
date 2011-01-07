@@ -6,6 +6,7 @@ public interface Base extends KtbsResource, ResourceContainer {
 	
 	public KtbsRoot getKtbsRoot();
 
+	
 	public Iterator<TraceModel> listTraceModels();
 	public Iterator<StoredTrace> listStoredTraces();
 	public Iterator<ComputedTrace> listComputedTraces();
@@ -13,8 +14,10 @@ public interface Base extends KtbsResource, ResourceContainer {
 	public Iterator<Trace> listTraces();
 	public Iterator<KtbsResource> listResources();
 	
-	public void addStoredTrace(Trace trace);
+	public void addStoredTrace(StoredTrace trace);
 	public StoredTrace getStoredTrace(String uri);
+
+	public void addComputedTrace(ComputedTrace trace);
 	public ComputedTrace getComputedTrace(String uri);
 	public Trace getTrace(String uri);
 
@@ -23,6 +26,5 @@ public interface Base extends KtbsResource, ResourceContainer {
 	
 	public void addMethod(Method method);
 	public Method getMethod(String uri);
-	
 	
 }

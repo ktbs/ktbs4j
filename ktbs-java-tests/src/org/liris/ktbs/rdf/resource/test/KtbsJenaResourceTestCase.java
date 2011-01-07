@@ -32,6 +32,26 @@ public class KtbsJenaResourceTestCase extends TestCase {
 	}
 
 	@Test
+	public void testSetLabel() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testGetLabel() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testSetType() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testGetType() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
 	public void testListAllProperties() {
 		assertEquals(7,KtbsUtils.count(resource.listAllProperties()));
 		assertEquals(7,KtbsUtils.countSubject(resource.listAllProperties(), "http://localhost:8001/"));

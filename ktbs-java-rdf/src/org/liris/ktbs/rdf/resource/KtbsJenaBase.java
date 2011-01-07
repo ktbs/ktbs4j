@@ -7,13 +7,13 @@ import java.util.Iterator;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.rdf.KtbsConstants;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -26,8 +26,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
-	KtbsJenaBase(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaBase(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 	}
 
 	@Override
-	public void addStoredTrace(Trace trace) {
+	public void addStoredTrace(StoredTrace trace) {
 		throw new ReadOnlyObjectException(this);
 	}
 
@@ -107,6 +107,11 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		return returnOwnedResource(stUri, KtbsConstants.STORED_TRACE, StoredTrace.class);
 	}
 
+	@Override
+	public void addComputedTrace(ComputedTrace trace) {
+		throw new ReadOnlyObjectException(this);
+	}
+	
 	@Override
 	public ComputedTrace getComputedTrace(String ctUri) {
 		return returnOwnedResource(ctUri, KtbsConstants.COMPUTED_TRACE, ComputedTrace.class);
@@ -149,7 +154,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		if(methodResource == null)
 			return null;
 		else
-			return EmptyResourceFactory.getInstance().createEmptyResource(resourceUri, resourceClass);
+			return holder.getResource(resourceUri, resourceClass);
 	}
 
 	/**
@@ -223,7 +228,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 				if(it2.hasNext() && isAcceptedType(it2.next().asResource())) {
 					foundNext = true;
-					next = EmptyResourceFactory.getInstance().createEmptyResource(
+					next = holder.getResource(
 							candidateResource.getURI(), 
 							resourceClass);
 				} 
@@ -259,7 +264,5 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	}
 
-
-
-
+	
 }

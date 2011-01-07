@@ -35,11 +35,6 @@ public class EmptyTrace extends EmptyResourceContainer implements Trace {
 	}
 
 	@Override
-	public void removeObsel(String obselURI) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-	@Override
 	public Base getBase() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
@@ -56,12 +51,6 @@ public class EmptyTrace extends EmptyResourceContainer implements Trace {
 	}
 
 	@Override
-	public Iterator<Trace> listSources() {
-		throw new UnsupportedOperationException(MESSAGE);
-		
-	}
-
-	@Override
 	public Iterator<Trace> listTransformedTraces() {
 		throw new UnsupportedOperationException(MESSAGE);
 		
@@ -73,5 +62,8 @@ public class EmptyTrace extends EmptyResourceContainer implements Trace {
 		
 	}
 
-	
+	@Override
+	public void setTraceModel(TraceModel traceModel) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }

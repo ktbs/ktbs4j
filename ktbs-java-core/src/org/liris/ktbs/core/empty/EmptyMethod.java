@@ -41,4 +41,9 @@ public class EmptyMethod extends EmptyResource implements Method {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
+	@Override
+	public String setInherits(String methodURI) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
 }

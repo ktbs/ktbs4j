@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.AbstractKtbsResource;
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -21,9 +23,10 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class KtbsJenaResource extends AbstractKtbsResource {
 
+	protected KtbsJenaResourceHolder holder;
 	protected Model rdfModel;
 
-	KtbsJenaResource(String uri, Model rdfModel) {
+	KtbsJenaResource(String uri, Model rdfModel, KtbsResourceHolder holder) {
 		super(uri);
 		this.rdfModel = rdfModel;
 	}
@@ -118,6 +121,23 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 		return rdfModel.getProperty(
 				rdfModel.getResource(uri), 
 				rdfModel.getProperty(pName));
+	}
+
+	@Override
+	public String getType() {
+		Statement typeProperty = rdfModel.getProperty(
+				rdfModel.getResource(this.getURI()),
+				RDF.type);
+		if(typeProperty!=null)
+			return typeProperty.getObject().asLiteral().getString();
+		else
+			return null;
+		
+	}
+
+	@Override
+	public void setType(String type) {
+		throw new UnsupportedOperationException();
 	}
 
 }

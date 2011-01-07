@@ -2,25 +2,25 @@ package org.liris.ktbs.rdf.resource;
 
 import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 
-import com.hp.hpl.jena.rdf.model.Statement;
-
-class AttributStatementImpl implements AttributeStatement {
-	private final Statement next;
-
-	AttributStatementImpl(Statement next) {
-		this.next = next;
+class SimpleAttributStatement implements AttributeStatement {
+	private AttributeType type;
+	private Object value;
+	
+	public SimpleAttributStatement(AttributeType type, Object value) {
+		super();
+		this.type = type;
+		this.value = value;
 	}
 
 	@Override
 	public Object getValue() {
-		return next.getObject().asLiteral().getValue();
+		return value;
 	}
 
 	@Override
 	public AttributeType getAttributeType() {
-		return EmptyResourceFactory.getInstance().createAttributeType(next.getPredicate().getURI());
+		return type;
 	}
 
 	@Override
@@ -30,6 +30,6 @@ class AttributStatementImpl implements AttributeStatement {
 			return as.getAttributeType().equals(this.getAttributeType())
 						&& as.getValue().equals(this.getValue());
 		}
-		return super.equals(obj);
+		return false;
 	}
 }

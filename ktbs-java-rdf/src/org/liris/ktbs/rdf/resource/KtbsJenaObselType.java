@@ -3,10 +3,10 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.AttributeType;
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.rdf.KtbsConstants;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -16,13 +16,13 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 	
-	KtbsJenaObselType(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaObselType(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 
 	@Override
 	public TraceModel getTraceModel() {
-		return EmptyResourceFactory.getInstance().createTraceModel(KtbsUtils.resolveParentURI(uri));
+		return holder.getResource(KtbsUtils.resolveParentURI(uri), TraceModel.class);
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN),
 				rdfModel.getResource(uri)
 				);
-		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class);
+		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, holder);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_DOMAIN),
 				rdfModel.getResource(uri)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class);
+		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_RANGE),
 				rdfModel.getResource(uri)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class);
+		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder);
 	}
 
 	@Override
@@ -63,7 +63,12 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				(RDFNode)null
 		);
 		return it.hasNext()?
-				EmptyResourceFactory.getInstance().createObselType(it.next().getObject().asResource().getURI()):
+				holder.getResource(it.next().getObject().asResource().getURI(), ObselType.class):
 					null;
+	}
+
+	@Override
+	public void setSuperObselType(ObselType type) {
+		throw new UnsupportedOperationException();
 	}
 }

@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.rdf.KtbsConstants;
 import org.liris.ktbs.rdf.RDFRestConstants;
@@ -10,8 +11,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 public class KtbsJenaMethod extends KtbsJenaResourceWithParameter implements Method {
 
-	KtbsJenaMethod(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaMethod(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 
 	@Override
@@ -30,6 +31,8 @@ public class KtbsJenaMethod extends KtbsJenaResourceWithParameter implements Met
 		return l.getString();
 	}
 
-
-	
+	@Override
+	public String setInherits(String methodURI) {
+		throw new UnsupportedOperationException();
+	}
 }

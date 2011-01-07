@@ -1,8 +1,8 @@
 package org.liris.ktbs.rdf.resource;
 
+import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.rdf.KtbsConstants;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -11,8 +11,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class KtbsJenaRelationType extends KtbsJenaResource implements
 		RelationType {
 
-	KtbsJenaRelationType(String uri, Model rdfModel) {
-		super(uri, rdfModel);
+	KtbsJenaRelationType(String uri, Model rdfModel, KtbsResourceHolder holder) {
+		super(uri, rdfModel, holder);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class KtbsJenaRelationType extends KtbsJenaResource implements
 		if(res == null)
 			return null;
 		else
-			return KtbsJenaResourceFactory.getInstance().createObselType(res.getURI(), rdfModel);
+			return holder.getResourceAlreadyInModel(res.getURI(), ObselType.class, rdfModel);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class KtbsJenaRelationType extends KtbsJenaResource implements
 		if(res == null)
 			return null;
 		else
-			return KtbsJenaResourceFactory.getInstance().createObselType(res.getURI(), rdfModel);
+			return holder.getResourceAlreadyInModel(res.getURI(), ObselType.class, rdfModel);
 	}
 
 	@Override
@@ -39,6 +39,22 @@ public class KtbsJenaRelationType extends KtbsJenaResource implements
 		if(res == null)
 			return null;
 		else
-			return KtbsJenaResourceFactory.getInstance().createRelationType(res.getURI(), rdfModel);
+			return holder.getResourceAlreadyInModel(res.getURI(), RelationType.class, rdfModel);
+	}
+
+	@Override
+	public void setRange(ObselType range) {
+		throw new UnsupportedOperationException();
+		
+	}
+
+	@Override
+	public void setDomain(ObselType domain) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setSuperRelationType(RelationType superRelationType) {
+		throw new UnsupportedOperationException();
 	}
 }

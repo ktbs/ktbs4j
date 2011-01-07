@@ -44,4 +44,18 @@ TraceModel {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
+	@Override
+	public void addObselType(ObselType obselType) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void addRelationType(RelationType obselType) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void addAttributeType(AttributeType obselType) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }

@@ -8,6 +8,7 @@ import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationStatement;
+import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.Trace;
 
 public class EmptyObsel extends EmptyResource implements Obsel {
@@ -43,16 +44,6 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 
 	@Override
 	public String getSubject() {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-	@Override
-	public void addOutgoingRelation(RelationStatement relation) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-	@Override
-	public void addIncomingRelation(RelationStatement relation) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
@@ -105,4 +96,55 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 	public Obsel getSourceObsel() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
+
+	@Override
+	public void setBegin(long begin) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setEnd(long end) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setBeginDT(String beginDT) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setEndDT(String endDT) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setObselType(ObselType type) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setSourceObsel(Obsel obsel) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setSubject(String subject) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void addAttribute(AttributeType attribute, Object value) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void addOutgoingRelation(RelationType relationType, Obsel target) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void addIncomingRelation(Obsel source, RelationType relationType) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }
+

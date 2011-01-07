@@ -8,7 +8,7 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	public Iterator<Obsel> listObsels();
 	public Iterator<Obsel> listObsels(long begin, long end);
 	
-	public Iterator<Trace> listSources();
+	
 	public Iterator<Trace> listTransformedTraces();
 	
 	public String getOrigin();
@@ -22,9 +22,9 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	
 	public Obsel getObsel(String obselURI);
 	
-	public void removeObsel(String obselURI);
 
 	public Base getBase();
 	public TraceModel getTraceModel();
+	public void setTraceModel(TraceModel traceModel);
 	public boolean isCompliantWithModel();
 }

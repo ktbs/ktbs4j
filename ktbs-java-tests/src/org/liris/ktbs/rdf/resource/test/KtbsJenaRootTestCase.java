@@ -13,20 +13,25 @@ import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.rdf.JenaConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolderImpl;
 import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class KtbsJenaRootTestCase extends TestCase {
 
 	private KtbsRoot ktbsJenaRoot;
+	private KtbsJenaResourceHolder holder;
 	
 	@Before
 	public void setUp() throws Exception {
 		FileInputStream fis = new FileInputStream("turtle/ktbsroot.ttl");
-		ktbsJenaRoot = KtbsJenaResourceFactory.getInstance().createKtbsRoot(
+		holder = new KtbsJenaResourceHolderImpl();
+		ktbsJenaRoot = holder.loadResourceFromStream(
 				"http://localhost:8001/", 
 				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
+				JenaConstants.JENA_SYNTAX_TURTLE,
+				KtbsRoot.class);
 		fis.close();
 	}
 
@@ -55,7 +60,7 @@ public class KtbsJenaRootTestCase extends TestCase {
 	public void testAddBase() {
 		try {
 			ktbsJenaRoot.addBase(
-					EmptyResourceFactory.getInstance().createBase("http://localhost:8001/base1/"),
+					holder.getResource("http://localhost:8001/base1/", Base.class),
 					"Damien");
 			fail("Should fail with a read-only exception.");
 		} catch(ReadOnlyObjectException e) {

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.AbstractKtbsResource;
-import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.rdf.KtbsConstants;
@@ -92,7 +91,7 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	private boolean isKtbsProperty(Statement s) {
 		Property predicate = s.getPredicate();
 		String nameSpace = predicate.getNameSpace();
-		return nameSpace.equals(KtbsConstants.KTBS_NAMESPACE) 
+		return nameSpace.equals(KtbsConstants.NAMESPACE) 
 		|| predicate.equals(RDF.type)
 		|| predicate.equals(RDFS.label);
 	}

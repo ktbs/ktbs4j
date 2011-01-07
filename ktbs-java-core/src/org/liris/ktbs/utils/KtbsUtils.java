@@ -1,9 +1,14 @@
 package org.liris.ktbs.utils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.liris.ktbs.core.KtbsStatement;
 
@@ -92,6 +97,49 @@ public class KtbsUtils {
 				cnt++;
 		}
 		return cnt;
+	}
+
+	public static String resolveLocalName(String uri) {
+		String path;
+		try {
+			path = new URI(uri).normalize().getPath();
+			StringTokenizer st = new StringTokenizer(path, "/");
+			String lastToken = null;
+			while(st.hasMoreTokens())
+				lastToken = st.nextToken();
+			return lastToken;
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Invalid URI syntax: \""+uri+"\".",e);
+		}
+	}
+
+	public static String resolveParentURI(String uri) {
+		try {
+			String localName = resolveLocalName(uri);
+			String normalized = new URI(uri).normalize().getPath();
+			String suffix = normalized.endsWith("/")?"/":"";
+			return replaceLast(uri, localName+suffix, "");
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Invalid URI syntax: \""+uri+"\".",e);
+		}
+		
+	}
+
+	public static String replaceLast(String input, String regex, String replacement) {
+	    Pattern pattern = Pattern.compile(regex);
+	    Matcher matcher = pattern.matcher(input);
+	    if (!matcher.find()) {
+	       return input;
+	    }
+	    int lastMatchStart=0;
+	    do {
+	      lastMatchStart=matcher.start();
+	    } while (matcher.find());
+	    matcher.find(lastMatchStart);
+	    StringBuffer sb = new StringBuffer(input.length());
+	    matcher.appendReplacement(sb, replacement);
+	    matcher.appendTail(sb);
+	    return sb.toString();
 	}
 
 }

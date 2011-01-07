@@ -79,7 +79,7 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
 	@Override
 	public String getOrigin() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.KTBS_HASORIGIN);
+		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_HAS_ORIGIN);
 		if(l==null)
 			return null;
 		else
@@ -89,7 +89,7 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
 	@Override
 	public Date getOriginAsDate() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.KTBS_HASORIGIN);
+		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_HAS_ORIGIN);
 		if(l == null)
 			throw new TemporalDomainException("No origin defined");
 		try {
@@ -153,7 +153,7 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 	public boolean isCompliantWithModel() {
 		Statement stmt = rdfModel.getProperty(
 				rdfModel.getResource(uri),
-				rdfModel.getProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL));
+				rdfModel.getProperty(KtbsConstants.P_COMPLIES_WITH_MODEL));
 
 		if(stmt == null || stmt.getObject()==null)
 			return false;

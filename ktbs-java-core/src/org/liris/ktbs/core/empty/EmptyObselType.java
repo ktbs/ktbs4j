@@ -19,12 +19,22 @@ public class EmptyObselType extends EmptyResource implements ObselType {
 	}
 
 	@Override
-	public Iterator<RelationType> listIncomingRelations() {
+	public Iterator<RelationType> listOutgoingRelations() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
 	public TraceModel getTraceModel() {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public ObselType getSuperObselType() {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public Iterator<RelationType> listIncomingRelations() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

@@ -58,7 +58,7 @@ public class KtbsJenaResourceFactory {
 		else if(ObselType.class.equals(clazz))
 			throw new UnsupportedOperationException();
 		else if(TraceModel.class.equals(clazz))
-			throw new UnsupportedOperationException();
+			return clazz.cast(createTraceModel(uri, stream, lang));
 		else
 			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\"");
 	}
@@ -79,9 +79,6 @@ public class KtbsJenaResourceFactory {
 		return new KtbsJenaBase(uri, rdfModel);
 	}
 	
-	public Obsel createObsel(String uri, Model rdfModel) {
-		return new KtbsJenaObsel(uri,rdfModel);
-	}
 	
 	public StoredTrace createStoredTrace(String uri, InputStream stream,
 			String lang) {
@@ -98,5 +95,39 @@ public class KtbsJenaResourceFactory {
 			String jenaSyntaxTurtle) {
 		Model rdfModel = createRdfModel(fis, jenaSyntaxTurtle);
 		return new KtbsJenaObsel(string, rdfModel);
+	}
+
+	public Obsel createObsel(String uri, Model rdfModel) {
+		return new KtbsJenaObsel(uri,rdfModel);
+	}
+	
+	public RelationType createRelationType(String relationTypeUri, Model rdfModel) {
+		return new KtbsJenaRelationType(relationTypeUri, rdfModel);
+	}
+
+	public AttributeType createAttributeType(String attTypeUri, Model rdfModel) {
+		return new KtbsJenaAttributeType(attTypeUri, rdfModel);
+	}
+
+	public ObselType createObselType(String obsTypeUri, Model rdfModel) {
+		return new KtbsJenaObselType(obsTypeUri, rdfModel);
+	}
+
+	public <T extends KtbsResource> T createResource(String obsTypeUri, Model rdfModel, Class<T> clazz) {
+		if(ObselType.class.equals(clazz))
+			return clazz.cast(createObselType(obsTypeUri, rdfModel));
+		else if(RelationType.class.equals(clazz))
+			return clazz.cast(createRelationType(obsTypeUri, rdfModel));
+		else if(AttributeType.class.equals(clazz))
+			return clazz.cast(createAttributeType(obsTypeUri, rdfModel));
+		else if(Obsel.class.equals(clazz))
+			return clazz.cast(createObsel(obsTypeUri, rdfModel));
+		else
+			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\"");
+	}
+	public TraceModel createTraceModel(String uri, InputStream stream,
+			String lang) {
+		Model rdfModel = createRdfModel(stream, lang);
+		return new KtbsJenaTraceModel(uri, rdfModel);
 	}
 }

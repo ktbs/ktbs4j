@@ -86,11 +86,11 @@ public class KtbsResourceDeserializer {
 			throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, null);
 		
 		if(KtbsRoot.class.isAssignableFrom(ktbsResourceType)) {
-			if(!rdfTypeURI.equals(KtbsConstants.KTBS_KTBSROOT))
-				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_KTBSROOT);
+			if(!rdfTypeURI.equals(KtbsConstants.KTBS_ROOT))
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_ROOT);
 		} else if(Base.class.isAssignableFrom(ktbsResourceType)) {
-			if(!rdfTypeURI.equals(KtbsConstants.KTBS_BASE))
-				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.KTBS_BASE);
+			if(!rdfTypeURI.equals(KtbsConstants.BASE))
+				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.BASE);
 		} else if(Trace.class.isAssignableFrom(ktbsResourceType)) {
 			if(traceAspect == null)
 				throw new InvalidDeserializationRequest(ktbsResourceType, traceAspect, rdfTypeURI, KtbsConstants.STORED_TRACE, KtbsConstants.COMPUTED_TRACE);
@@ -119,7 +119,7 @@ public class KtbsResourceDeserializer {
 
 		Statement stmt = jenaModel.getProperty(
 				jenaModel.getResource(traceURI),
-				jenaModel.getProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL));
+				jenaModel.getProperty(KtbsConstants.P_COMPLIES_WITH_MODEL));
 
 		if(stmt == null || stmt.getObject()==null)
 			return false;
@@ -135,7 +135,7 @@ public class KtbsResourceDeserializer {
 			Class<?> ktbsResourceType, String restAspect) {
 		if(KtbsRoot.class.isAssignableFrom(ktbsResourceType)) {
 
-			Resource ktbsRootType = jenaModel.getResource(KtbsConstants.KTBS_KTBSROOT);
+			Resource ktbsRootType = jenaModel.getResource(KtbsConstants.KTBS_ROOT);
 			StmtIterator it = jenaModel.listStatements(null, RDF.type, ktbsRootType);
 			if(ktbsRootType == null || !it.hasNext()) {
 				log.warn("There is no statement such as \"? rdf:type ktbs:Ktbs\" in the model.");
@@ -256,16 +256,16 @@ public class KtbsResourceDeserializer {
 				} else {
 					traceModelURI = thisTraceResource.getProperty(hasTraceModelProperty).getObject().asResource().getURI();
 				}
-				Property hasOrigin = jenaModel.getProperty(KtbsConstants.KTBS_HASORIGIN);
+				Property hasOrigin = jenaModel.getProperty(KtbsConstants.P_HAS_ORIGIN);
 				Date origin = null;
 				if(hasOrigin == null || thisTraceResource.getProperty(hasOrigin) == null) {
-					log.warn("There is no \""+KtbsConstants.KTBS_HASORIGIN+"\" property for the trace "+ktbsResourceURI+".");
+					log.warn("There is no \""+KtbsConstants.P_HAS_ORIGIN+"\" property for the trace "+ktbsResourceURI+".");
 				} else {
 					origin = ((XSDDateTime)thisTraceResource.getProperty(hasOrigin).getObject().asLiteral().getValue()).asCalendar().getTime();
 				}
 				String label = getKtbsResourceLabel(thisTraceResource);
 				boolean compliantWithModel = false;
-				Property isCompliantProperty = jenaModel.getProperty(KtbsConstants.KTBS_COMPLIES_WITH_MODEL);
+				Property isCompliantProperty = jenaModel.getProperty(KtbsConstants.P_COMPLIES_WITH_MODEL);
 				if(isCompliantProperty != null && thisTraceResource.getProperty(isCompliantProperty) != null) {
 					try {
 						compliantWithModel = thisTraceResource.getProperty(isCompliantProperty).getObject().asLiteral().getBoolean();

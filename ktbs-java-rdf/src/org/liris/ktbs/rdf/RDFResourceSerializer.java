@@ -48,7 +48,7 @@ public class RDFResourceSerializer {
 		 * TODO the following model creation may be a bit long when executed the first time. Investigate why.
 		 */
 		this.jenaModel = ModelFactory.createDefaultModel();
-		this.jenaModel.setNsPrefix("ktbs", KtbsConstants.KTBS_NAMESPACE);
+		this.jenaModel.setNsPrefix("ktbs", KtbsConstants.NAMESPACE);
 		this.jenaModel.setNsPrefix("rdfs", RDFS.getURI());
 		this.jenaSyntax = jenaSyntax;
 	}
@@ -157,7 +157,7 @@ public class RDFResourceSerializer {
 		originCal.setTime(trace.getOrigin());
 		jenaModel.addLiteral(
 				traceResource, 
-				jenaModel.createProperty(KtbsConstants.KTBS_HASORIGIN), 
+				jenaModel.createProperty(KtbsConstants.P_HAS_ORIGIN), 
 				jenaModel.createTypedLiteral(new XSDDateTime(originCal))
 		);
 
@@ -319,7 +319,7 @@ public class RDFResourceSerializer {
 
 		Resource baseResource = jenaModel.createResource(base.getURI());
 
-		setType(baseResource,KtbsConstants.KTBS_BASE);
+		setType(baseResource,KtbsConstants.BASE);
 
 		jenaModel.add(
 				jenaModel.createResource(base.getKtbsRootURI()),

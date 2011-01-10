@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;

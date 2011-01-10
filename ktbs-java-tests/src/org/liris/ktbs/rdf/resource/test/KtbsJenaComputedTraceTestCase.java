@@ -1,32 +1,51 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import java.io.FileInputStream;
-
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.ComputedTrace;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
+import org.liris.ktbs.core.KtbsConstants;
+import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaComputedTraceTestCase extends TestCase {
+public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
 
-	private ComputedTrace trace;
+	private ComputedTrace count1;
+	private ComputedTrace filtered1;
 	
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/count1.ttl");
-		trace = KtbsJenaResourceFactory.getInstance().createComputedTrace(
-				"http://localhost:8001/base1/count1/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		super.setUp();
+		
+		count1 = loadInHolder(
+				"base1/count1/", 
+				"count1.ttl", 
+				ComputedTrace.class);
+		filtered1 = loadInHolder(
+				"base1/filtered1/", 
+				"filtered1.ttl", 
+				ComputedTrace.class);
 	}
+	
+	@Test
+	public void testListSources() {
+		assertEquals(1,KtbsUtils.count(count1.listSources()));
+		assertEquals(1,KtbsUtils.count(filtered1.listSources()));
+
+		assertEquals(
+				emptyFac.createTrace("http://localhost:8001/base1/fusioned1/"),
+				count1.listSources().next());
+		assertEquals(
+				emptyFac.createTrace("http://localhost:8001/base1/filtered2/"),
+				filtered1.listSources().next());
+	}
+
 
 	@Test
 	public void testGetMethod() {
-		assertEquals(EmptyResourceFactory.getInstance().createMethod("http://localhost:8001/base1/count/"), trace.getMethod());
+		assertEquals(
+				emptyFac.createMethod("http://localhost:8001/base1/count/"), 
+				count1.getMethod());
+		assertEquals(
+				emptyFac.createMethod(KtbsConstants.FILTER), 
+				filtered1.getMethod());
 	}
 }

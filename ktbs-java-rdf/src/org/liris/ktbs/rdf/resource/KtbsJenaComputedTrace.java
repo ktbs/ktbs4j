@@ -3,12 +3,12 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.ComputedTrace;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsParameter;
-import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ResourceWithParameters;
 import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -17,7 +17,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrace {
 
-	KtbsJenaComputedTrace(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaComputedTrace(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 		resourceWithParameterAspect = new KtbsJenaResourceWithParameter(uri, rdfModel, holder);
 	}

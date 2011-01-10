@@ -1,10 +1,7 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.HashSet;
-
-import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,28 +9,25 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.Method;
-import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaBaseTestCase extends TestCase {
+public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 
 	private Base base;
 	private EmptyResourceFactory emptyFac = EmptyResourceFactory.getInstance();
 
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/base1.ttl");
-		base = KtbsJenaResourceFactory.getInstance().createBase(
-				"http://localhost:8001/base1/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		super.setUp();
+
+		base = loadInHolder(
+				"base1/", 
+				"base1.ttl", 
+				Base.class);
 	}
 
 	@Test
@@ -143,7 +137,9 @@ public class KtbsJenaBaseTestCase extends TestCase {
 		assertTrue(c.contains(emptyFac.createComputedTrace(uri("fusioned1"))));
 		assertTrue(c.contains(emptyFac.createComputedTrace(uri("helloworld1"))));
 	}
-
+	
+	
+	
 	@Test
 	public void testListResources() {
 		assertEquals(12,KtbsUtils.count(base.listResources()));
@@ -164,12 +160,7 @@ public class KtbsJenaBaseTestCase extends TestCase {
 
 	@Test
 	public void testAddStoredTrace() {
-		try {
-			base.addStoredTrace(emptyFac.createStoredTrace(uri("t02")));
-			fail("Should fail with a ReadOnlyObjectException. Not implemented yet.");
-		} catch(ReadOnlyObjectException e) {
-			
-		}
+		fail("Not yet implemented");
 	}
 
 	@Test
@@ -296,12 +287,8 @@ public class KtbsJenaBaseTestCase extends TestCase {
 
 	@Test
 	public void testAddTraceModel() {
-		try {
-			base.addTraceModel(emptyFac.createTraceModel(uri("model2")));
-			fail("Should fail with a ReadOnlyObjectException. Not implemented yet.");
-		} catch(ReadOnlyObjectException e) {
-			
-		}
+		fail("Not yet implemented.");
+
 	}
 
 	@Test
@@ -343,13 +330,8 @@ public class KtbsJenaBaseTestCase extends TestCase {
 
 	@Test
 	public void testAddMethod() {
-		try {
-			base.addMethod(emptyFac.createMethod(uri("method2")));
-			fail("Should fail with a ReadOnlyObjectException. Not implemented yet.");
-		} catch(ReadOnlyObjectException e) {
-			
-		}	
-		}
+		fail("Not yet implemented.");
+	}
 
 	@Test
 	public void testGetMethod() {

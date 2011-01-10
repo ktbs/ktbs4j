@@ -1,8 +1,8 @@
 package org.liris.ktbs.rdf.resource;
 
-import org.liris.ktbs.core.KtbsResourceHolder;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.Method;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 import org.liris.ktbs.rdf.RDFRestConstants;
 
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -11,7 +11,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 public class KtbsJenaMethod extends KtbsJenaResourceWithParameter implements Method {
 
-	KtbsJenaMethod(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaMethod(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 

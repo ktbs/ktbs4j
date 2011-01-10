@@ -3,10 +3,10 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.KtbsRoot;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -15,7 +15,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 
-	KtbsJenaRoot(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaRoot(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 

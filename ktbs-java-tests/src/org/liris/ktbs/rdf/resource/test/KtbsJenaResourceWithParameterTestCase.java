@@ -1,8 +1,5 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import static org.junit.Assert.*;
-
-import java.io.FileInputStream;
 import java.util.Collection;
 
 import org.junit.Before;
@@ -11,30 +8,26 @@ import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.SimpleKtbsParameter;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaResourceWithParameterTestCase {
+public class KtbsJenaResourceWithParameterTestCase extends AbstractKtbsJenaTestCase {
 
 	private Method method;
 	private ComputedTrace trace;
 	
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/filtered1.ttl");
-		trace = KtbsJenaResourceFactory.getInstance().createComputedTrace(
-				"http://localhost:8001/base1/filtered1/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		super.setUp();
+		
+		trace = loadInHolder(
+				"base1/filtered1/", 
+				"filtered1.ttl", 
+				ComputedTrace.class);
 
-		fis = new FileInputStream("turtle/helloworld.ttl");
-		method = KtbsJenaResourceFactory.getInstance().createMethod(
-				"http://localhost:8001/base1/helloworld/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		method = loadInHolder(
+				"base1/helloworld/", 
+				"helloworld.ttl", 
+				Method.class);
 	}
 
 	@Test

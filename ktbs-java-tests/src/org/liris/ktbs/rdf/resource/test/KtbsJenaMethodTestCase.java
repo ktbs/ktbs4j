@@ -1,14 +1,14 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.FileInputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.KtbsConstants;
 import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 
 public class KtbsJenaMethodTestCase {

@@ -11,11 +11,9 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.ReadOnlyObjectException;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.rdf.JenaConstants;
 import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 import org.liris.ktbs.rdf.KtbsJenaResourceHolderImpl;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class KtbsJenaRootTestCase extends TestCase {

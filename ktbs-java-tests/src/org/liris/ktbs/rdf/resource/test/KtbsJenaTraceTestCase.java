@@ -10,7 +10,9 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
@@ -20,35 +22,31 @@ import org.liris.ktbs.utils.KtbsUtils;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class KtbsJenaTraceTestCase  extends TestCase {
+public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 
 	private Trace traceObsels;
 	private Trace traceInfo;
 	private Trace filtered1;
 
-	private EmptyResourceFactory emptyFac = EmptyResourceFactory.getInstance();
 
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/t01.ttl");
-		traceObsels = KtbsJenaResourceFactory.getInstance().createStoredTrace(
-				"http://localhost:8001/base1/t01/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		super.setUp();
+		
+		traceObsels = loadInHolder(
+				"base1/t01/", 
+				"t01.ttl", 
+				StoredTrace.class);
 
-		fis = new FileInputStream("turtle/t01-info.ttl");
-		traceInfo = KtbsJenaResourceFactory.getInstance().createStoredTrace(
-				"http://localhost:8001/base1/t01/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
-		fis = new FileInputStream("turtle/filtered1.ttl");
-		filtered1 = KtbsJenaResourceFactory.getInstance().createStoredTrace(
-				"http://localhost:8001/base1/filtered1/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		traceInfo = loadInHolder(
+				"base1/t01/", 
+				"t01-info.ttl", 
+				StoredTrace.class);
+		
+		filtered1 = loadInHolder(
+				"base1/filtered1/", 
+				"filtered1.ttl", 
+				ComputedTrace.class);
 	}
 
 	@Test
@@ -160,16 +158,6 @@ public class KtbsJenaTraceTestCase  extends TestCase {
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 	}
 
-	@Test
-	public void testListSources() {
-		assertEquals(0,KtbsUtils.count(traceObsels.listSources()));
-		assertEquals(0,KtbsUtils.count(traceInfo.listSources()));
-		assertEquals(1,KtbsUtils.count(filtered1.listSources()));
-		assertEquals(
-				emptyFac.createRelationType("http://localhost:8001/base1/filtered2/"),
-				filtered1.listSources().next());
-
-	}
 
 	@Test
 	public void testListTransformedTraces() {

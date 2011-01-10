@@ -6,7 +6,6 @@ import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.Obsel;
@@ -15,8 +14,9 @@ import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 import org.liris.ktbs.rdf.KtbsResourceInstanciationException;
+import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -30,9 +30,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  */
 public class KtbsJenaResourceFactory {
 
-	private KtbsResourceHolder holder;
+	private KtbsJenaResourceHolder holder;
 
-	public	KtbsJenaResourceFactory(KtbsResourceHolder holder) {
+	public	KtbsJenaResourceFactory(KtbsJenaResourceHolder holder) {
 		super();
 		this.holder = holder;
 	}
@@ -41,7 +41,7 @@ public class KtbsJenaResourceFactory {
 		if(StoredTrace.class.equals(clazz))
 			return clazz.cast(createStoredTrace(uri, stream, lang));
 		else if(ComputedTrace.class.equals(clazz))
-			return clazz.cast(createStoredTrace(uri, stream, lang));
+			return clazz.cast(createComputedTrace(uri, stream, lang));
 		else if(Obsel.class.equals(clazz))
 			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\" from an input stream.");
 		else if(Method.class.equals(clazz))
@@ -62,11 +62,19 @@ public class KtbsJenaResourceFactory {
 			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\"");
 	}
 
+
+
 	public <T extends KtbsResource> T createResource(String uri, Class<T> clazz) {
-		String rdfType = getRDFType(clazz);
+		String rdfType = KtbsUtils.getRDFType(clazz);
+		if(rdfType == null && !clazz.equals(Trace.class)) 
+			throw new KtbsResourceInstanciationException(clazz, "Cannot create a KTBS resource from the type " + clazz.getCanonicalName()+". No RDF type matching.");
+
 		KtbsResource resource;
 		Model model = ModelFactory.createDefaultModel();
-
+		if(clazz.equals(Trace.class))
+			return clazz.cast(new KtbsJenaTrace(uri, model, holder));
+		else if(clazz.equals(KtbsResource.class)) 
+			resource = new KtbsJenaResource(uri, model, holder);
 		if(clazz.equals(KtbsRoot.class)) 
 			resource = new KtbsJenaRoot(uri, model, holder);
 		else if(clazz.equals(Base.class)) 
@@ -76,7 +84,7 @@ public class KtbsJenaResourceFactory {
 		else if(clazz.equals(ComputedTrace.class)) 
 			resource = new KtbsJenaComputedTrace(uri, model, holder);
 		else if(clazz.equals(ObselType.class)) 
-		resource = new KtbsJenaObselType(uri, model, holder);
+			resource = new KtbsJenaObselType(uri, model, holder);
 		else if(clazz.equals(AttributeType.class)) 
 			resource = new KtbsJenaAttributeType(uri, model, holder);
 		else if(clazz.equals(RelationType.class)) 
@@ -87,39 +95,13 @@ public class KtbsJenaResourceFactory {
 			resource = new KtbsJenaMethod(uri, model, holder);
 		else
 			throw new KtbsResourceInstanciationException(clazz, "Unkown class");
-		
-		resource.setType(rdfType);
-		
+
+		((KtbsJenaResource)resource).setType(rdfType);
+
 		return clazz.cast(resource);
 	}
 
-	private String getRDFType(Class<?> clazz) {
-		if(clazz.equals(KtbsRoot.class)) 
-			return KtbsConstants.KTBS_ROOT;
-		else if(clazz.equals(Base.class)) 
-			return KtbsConstants.BASE;
-		else if(clazz.equals(StoredTrace.class)) 
-			return KtbsConstants.STORED_TRACE;
-		else if(clazz.equals(ComputedTrace.class)) 
-			return KtbsConstants.COMPUTED_TRACE;
-		else if(clazz.equals(Obsel.class)) 
-			throw new KtbsResourceInstanciationException(clazz, "Cannot create an empty obsel. Need an RDF type. ");
-		else if(clazz.equals(ObselType.class)) 
-			return KtbsConstants.OBSEL_TYPE;
-		else if(clazz.equals(AttributeType.class)) 
-			return KtbsConstants.ATTRIBUTE_TYPE;
-		else if(clazz.equals(RelationType.class)) 
-			return KtbsConstants.RELATION_TYPE;
-		else if(clazz.equals(TraceModel.class)) 
-			return KtbsConstants.TRACE_MODEL;
-		else if(clazz.equals(Method.class)) 
-			return KtbsConstants.METHOD;
-		else if(clazz.equals(Trace.class)) 
-			throw new KtbsResourceInstanciationException(clazz, "Abstract class.");
-		else
-			throw new KtbsResourceInstanciationException(clazz, "Unkown class");
 
-	}
 	private KtbsRoot createKtbsRoot(String uri, InputStream stream, String lang) {
 		Model rdfModel = createRdfModel(stream, lang);
 		return new KtbsJenaRoot(uri, rdfModel, holder);
@@ -140,6 +122,12 @@ public class KtbsJenaResourceFactory {
 			String lang) {
 		Model rdfModel = createRdfModel(stream, lang);
 		return new KtbsJenaStoredTrace(uri, rdfModel, holder);
+	}
+
+	private ComputedTrace createComputedTrace(String uri, InputStream stream,
+			String lang) {
+		Model rdfModel = createRdfModel(stream, lang);
+		return new KtbsJenaComputedTrace(uri, rdfModel, holder);
 	}
 
 	private Obsel createObsel(String uri, Model rdfModel) {

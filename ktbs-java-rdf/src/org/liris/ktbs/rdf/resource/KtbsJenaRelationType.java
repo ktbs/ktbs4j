@@ -1,9 +1,9 @@
 package org.liris.ktbs.rdf.resource;
 
-import org.liris.ktbs.core.KtbsResourceHolder;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -11,7 +11,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class KtbsJenaRelationType extends KtbsJenaResource implements
 		RelationType {
 
-	KtbsJenaRelationType(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaRelationType(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 

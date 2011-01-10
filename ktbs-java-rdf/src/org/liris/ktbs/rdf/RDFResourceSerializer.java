@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.util.Calendar;
 
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RelationStatement;

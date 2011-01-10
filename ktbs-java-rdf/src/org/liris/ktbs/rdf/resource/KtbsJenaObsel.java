@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
-import org.liris.ktbs.core.KtbsResourceHolder;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
@@ -14,7 +14,7 @@ import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.SimpleRelationStatement;
 import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
@@ -28,7 +28,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 
-	KtbsJenaObsel(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaObsel(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 

@@ -1,6 +1,7 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.FileInputStream;
 

@@ -6,15 +6,16 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
+import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -26,7 +27,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
-	KtbsJenaBase(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaBase(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -53,44 +54,45 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		 * TODO KTBS BUG : the triple "root ktbs:hasBase base" is not returned by the KTBS
 		 */
 		throw new UnsupportedOperationException("The KTBS server does not provide the root uri at the moment.");
-//		ResIterator it = rdfModel.listResourcesWithProperty(
-//				rdfModel.getProperty(KtbsConstants.P_OWNS), 
-//				rdfModel.getResource(uri));
-//		if(it.hasNext())
-//			return EmptyResourceFactory.getInstance().createKtbsRoot(it.next().getURI());
-//		return null;
+		//		ResIterator it = rdfModel.listResourcesWithProperty(
+		//				rdfModel.getProperty(KtbsConstants.P_OWNS), 
+		//				rdfModel.getResource(uri));
+		//		if(it.hasNext())
+		//			return EmptyResourceFactory.getInstance().createKtbsRoot(it.next().getURI());
+		//		return null;
 	}
 
 	@Override
 	public Iterator<TraceModel> listTraceModels() {
-		return new OwnedResourceIterator<TraceModel>(KtbsConstants.TRACE_MODEL, TraceModel.class);
+		return new OwnedResourceIterator<TraceModel>(KtbsConstants.TRACE_MODEL);
 	}
 
 	@Override
 	public Iterator<StoredTrace> listStoredTraces() {
-		return new OwnedResourceIterator<StoredTrace>(KtbsConstants.STORED_TRACE, StoredTrace.class);
+		return new OwnedResourceIterator<StoredTrace>(KtbsConstants.STORED_TRACE);
 	}
 
 	@Override
 	public Iterator<ComputedTrace> listComputedTraces() {
-		return new OwnedResourceIterator<ComputedTrace>(KtbsConstants.COMPUTED_TRACE, ComputedTrace.class);
+		return new OwnedResourceIterator<ComputedTrace>(KtbsConstants.COMPUTED_TRACE);
 	}
 
 	@Override
 	public Iterator<Method> listMethods() {
-		return new OwnedResourceIterator<Method>(KtbsConstants.METHOD, Method.class);
+		return new OwnedResourceIterator<Method>(KtbsConstants.METHOD);
 	}
 
 	@Override
 	public Iterator<Trace> listTraces() {
-		return new OwnedResourceIterator<Trace>(KtbsConstants.STORED_TRACE, Trace.class, KtbsConstants.COMPUTED_TRACE);
+		return new OwnedResourceIterator<Trace>(
+				KtbsConstants.STORED_TRACE, 
+				KtbsConstants.COMPUTED_TRACE);
 	}
 
 	@Override
 	public Iterator<KtbsResource> listResources() {
 		return new OwnedResourceIterator<KtbsResource>(
 				KtbsConstants.STORED_TRACE, 
-				KtbsResource.class, 
 				KtbsConstants.COMPUTED_TRACE,
 				KtbsConstants.METHOD,
 				KtbsConstants.TRACE_MODEL
@@ -105,22 +107,22 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	@Override
 	public StoredTrace getStoredTrace(String stUri) {
-		return returnOwnedResource(stUri, KtbsConstants.STORED_TRACE, StoredTrace.class);
+		return returnOwnedResource(stUri, KtbsConstants.STORED_TRACE);
 	}
 
 	@Override
 	public void addComputedTrace(ComputedTrace trace) {
 		createParentConnection(this, trace);
 	}
-	
+
 	@Override
 	public ComputedTrace getComputedTrace(String ctUri) {
-		return returnOwnedResource(ctUri, KtbsConstants.COMPUTED_TRACE, ComputedTrace.class);
+		return returnOwnedResource(ctUri, KtbsConstants.COMPUTED_TRACE);
 	}
 
 	@Override
 	public Trace getTrace(String tUri) {
-		return returnOwnedResource(tUri, KtbsConstants.COMPUTED_TRACE, Trace.class, KtbsConstants.STORED_TRACE);
+		return returnOwnedResource(tUri, KtbsConstants.COMPUTED_TRACE, KtbsConstants.STORED_TRACE);
 	}
 
 	@Override
@@ -130,7 +132,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	@Override
 	public TraceModel getTraceModel(String tmUri) {
-		return returnOwnedResource(tmUri, KtbsConstants.TRACE_MODEL, TraceModel.class);
+		return returnOwnedResource(tmUri, KtbsConstants.TRACE_MODEL);
 	}
 
 	@Override
@@ -140,10 +142,10 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	@Override
 	public Method getMethod(String methodUri) {
-		return returnOwnedResource(methodUri, KtbsConstants.METHOD, Method.class);
+		return returnOwnedResource(methodUri, KtbsConstants.METHOD);
 	}
 
-	private <T extends KtbsResource> T returnOwnedResource(String resourceUri, String resourceType, Class<T> resourceClass, String... altAcceptedTypes) {
+	private <T extends KtbsResource> T returnOwnedResource(String resourceUri, String resourceType, String... altAcceptedTypes) {
 		Resource methodResource = requestRDFResource(
 				resourceUri,
 				uri,
@@ -154,8 +156,11 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		);
 		if(methodResource == null)
 			return null;
-		else
-			return holder.getResource(resourceUri, resourceClass);
+		else {
+			Resource rdfType = rdfModel.getResource(resourceUri).getPropertyResourceValue(RDF.type);
+			Class<? extends KtbsResource> javaClass = KtbsUtils.getJavaClass(rdfType.getURI());
+			return (T) holder.getResource(resourceUri, javaClass);
+		}
 	}
 
 	/**
@@ -196,17 +201,15 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	private class OwnedResourceIterator<T extends KtbsResource> implements Iterator<T> {
 
-		private Class<T> resourceClass;
 		private Collection<String> acceptedTypeUris;
 
 		private NodeIterator ownedResourceIt;
 
-		private T next;
+		private KtbsResource next;
 
 
-		OwnedResourceIterator(String resourceTypeURI, Class<T> resourceClass, String... otherAcceptedTypeURI) {
+		OwnedResourceIterator(String resourceTypeURI, String... otherAcceptedTypeURI) {
 			super();
-			this.resourceClass = resourceClass;
 			ownedResourceIt = KtbsJenaBase.this.rdfModel.listObjectsOfProperty(
 					KtbsJenaBase.this.rdfModel.getResource(KtbsJenaBase.this.uri), 
 					KtbsJenaBase.this.rdfModel.getProperty(KtbsConstants.P_OWNS));
@@ -229,9 +232,13 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 				if(it2.hasNext() && isAcceptedType(it2.next().asResource())) {
 					foundNext = true;
+
+					Resource r = KtbsJenaBase.this.getObjectOfPropertyAsResource(RDF.type.getURI());
+					Class<? extends KtbsResource> javaClass = KtbsUtils.getJavaClass(r.getURI());
+
 					next = holder.getResource(
 							candidateResource.getURI(), 
-							resourceClass);
+							javaClass);
 				} 
 			} 
 			if(!foundNext)
@@ -253,7 +260,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 		@Override
 		public T next() {
-			T toBeReturned = next;
+			T toBeReturned = (T) next;
 			doNext();
 			return toBeReturned;
 		}

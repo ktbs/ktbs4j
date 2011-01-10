@@ -1,4 +1,4 @@
-package org.liris.ktbs.rdf;
+package org.liris.ktbs.core;
 
 public interface KtbsConstants {
 
@@ -61,6 +61,7 @@ public interface KtbsConstants {
 	public static final String P_INHERITS = NAMESPACE + "inherits";
 	public static final String SCRIPT_PYTHON = NAMESPACE + "script-python";
 	public static final String P_HAS_SOURCE_OBSEL =  NAMESPACE + "hasSourceObsel";
+	public static final String FILTER = NAMESPACE + "filter";
 	
 	
 }

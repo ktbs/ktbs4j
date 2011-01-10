@@ -24,11 +24,11 @@ import org.liris.ktbs.core.TraceModel;
 public class EmptyResourceFactory {
 	private static EmptyResourceFactory  instance;
 	private EmptyResourceFactory(){};
-//	public static EmptyResourceFactory getInstance() {
-//		if(instance == null)
-//			instance = new EmptyResourceFactory();
-//		return instance;
-//	}
+	public static EmptyResourceFactory getInstance() {
+		if(instance == null)
+			instance = new EmptyResourceFactory();
+		return instance;
+	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends KtbsResource> T createEmptyResource(String uri, Class<T> clazz) {

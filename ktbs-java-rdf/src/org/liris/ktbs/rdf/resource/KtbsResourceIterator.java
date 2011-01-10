@@ -30,8 +30,9 @@ public abstract class KtbsResourceIterator<T extends KtbsResource> implements It
 
 	@Override
 	public T next() {
+		Statement next = stmtIterator.next();
 		return holder.getResource(
-				getResourceFromStatement(stmtIterator.next()).getURI(),
+				getResourceFromStatement(next).getURI(),
 				clazz
 		);
 	}

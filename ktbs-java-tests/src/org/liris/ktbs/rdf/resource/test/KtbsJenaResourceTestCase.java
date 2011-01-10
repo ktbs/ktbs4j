@@ -1,34 +1,30 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.KtbsConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
+import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class KtbsJenaResourceTestCase extends TestCase {
+public class KtbsJenaResourceTestCase extends AbstractKtbsJenaTestCase {
 	
 	private KtbsResource resource;
 
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/ktbs-jena-resource.ttl");
-		resource = KtbsJenaResourceFactory.getInstance().createKtbsRoot(
-				"http://localhost:8001/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		super.setUp();
+		
+		resource = loadInHolder(
+				"", 
+				"ktbs-jena-resource.ttl", 
+				KtbsRoot.class);
 	}
 
 	@Test
@@ -38,11 +34,6 @@ public class KtbsJenaResourceTestCase extends TestCase {
 	
 	@Test
 	public void testGetLabel() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testSetType() {
 		fail("Not yet implemented");
 	}
 	

@@ -7,13 +7,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.TemporalDomainException;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.datatypes.xsd.IllegalDateTimeFieldException;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
@@ -24,9 +24,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
+public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
-	KtbsJenaTrace(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaTrace(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 

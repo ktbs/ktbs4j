@@ -6,12 +6,11 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.AbstractKtbsResource;
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.rdf.KtbsConstants;
 import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -30,9 +29,10 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	protected KtbsJenaResourceHolder holder;
 	protected Model rdfModel;
 
-	KtbsJenaResource(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaResource(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri);
 		this.rdfModel = rdfModel;
+		this.holder = holder;
 	}
 
 	@Override
@@ -153,8 +153,7 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 			it.removeNext();
 	}
 	
-	@Override
-	public void setType(String typeURI) {
+	void setType(String typeURI) {
 		removeAllAndAddResource(RDF.type.getURI(), typeURI);
 	}
 

@@ -17,9 +17,10 @@ public class KtbsJenaResourceHolderImpl implements KtbsJenaResourceHolder {
 	private Map<String, KtbsResource> resources;
 
 	public KtbsJenaResourceHolderImpl() {
-		factory = new KtbsJenaResourceFactory(this);
 		resources = new HashMap<String, KtbsResource>();
+		factory = new KtbsJenaResourceFactory(this);
 	}
+
 
 	@Override
 	public boolean exists(String uri) {

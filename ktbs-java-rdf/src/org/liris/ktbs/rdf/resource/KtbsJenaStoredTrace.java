@@ -1,9 +1,9 @@
 package org.liris.ktbs.rdf.resource;
 
-import org.liris.ktbs.core.KtbsResourceHolder;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.StoredTrace;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -11,7 +11,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class KtbsJenaStoredTrace extends KtbsJenaTrace implements StoredTrace {
 
-	KtbsJenaStoredTrace(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaStoredTrace(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 

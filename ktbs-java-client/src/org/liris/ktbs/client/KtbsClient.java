@@ -39,14 +39,13 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.core.impl.KtbsResourceFactory;
 import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.KtbsConstants;
 import org.liris.ktbs.rdf.KtbsResourceDeserializer;
 import org.liris.ktbs.rdf.RDFResourceSerializer;
 

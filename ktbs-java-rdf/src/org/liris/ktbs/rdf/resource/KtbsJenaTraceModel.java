@@ -3,12 +3,12 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.AttributeType;
+import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsConstants;
+import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -16,7 +16,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 
-	KtbsJenaTraceModel(String uri, Model rdfModel, KtbsResourceHolder holder) {
+	KtbsJenaTraceModel(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
 		super(uri, rdfModel, holder);
 	}
 

@@ -48,9 +48,5 @@ public class EmptyResource extends AbstractKtbsResource {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
-	@Override
-	public void setType(String type) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
 }
 

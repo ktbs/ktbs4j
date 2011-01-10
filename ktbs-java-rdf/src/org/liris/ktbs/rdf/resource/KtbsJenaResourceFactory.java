@@ -43,7 +43,7 @@ public class KtbsJenaResourceFactory {
 		else if(ComputedTrace.class.equals(clazz))
 			return clazz.cast(createComputedTrace(uri, stream, lang));
 		else if(Obsel.class.equals(clazz))
-			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\" from an input stream.");
+			return clazz.cast(createObsel(uri, stream, lang));
 		else if(Method.class.equals(clazz))
 			return clazz.cast(createMethod(uri, stream, lang));
 		else if(Base.class.equals(clazz))
@@ -62,7 +62,10 @@ public class KtbsJenaResourceFactory {
 			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\"");
 	}
 
-
+	private Object createObsel(String uri, InputStream stream, String lang) {
+		Model rdfModel = createRdfModel(stream, lang);
+		return new KtbsJenaObsel(uri, rdfModel, holder);
+	}
 
 	public <T extends KtbsResource> T createResource(String uri, Class<T> clazz) {
 		String rdfType = KtbsUtils.getRDFType(clazz);

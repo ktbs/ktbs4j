@@ -3,21 +3,18 @@ package org.liris.ktbs.rdf.resource.test;
 import java.io.FileInputStream;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class KtbsJenaObselTestCase  extends TestCase {
+public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	private final class SimpleAttributeStatement implements AttributeStatement {
 		private AttributeType type;
@@ -54,31 +51,27 @@ public class KtbsJenaObselTestCase  extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
+		
 		FileInputStream fis = new FileInputStream("turtle/t01.ttl");
-		Trace trace = KtbsJenaResourceFactory.getInstance().createStoredTrace(
-				"http://localhost:8001/base1/t01/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		Trace trace = loadInHolder(
+				"base1/t01/", 
+				"t01.ttl", 
+				StoredTrace.class);
 
 		obsel1 = trace.getObsel("http://localhost:8001/base1/t01/obs1");
 		obsel2 = trace.getObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f");
 		obsel3 = trace.getObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
 		obsel4 = trace.getObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
 
-		fis = new FileInputStream("turtle/obsel5.ttl");
-		obsel5 = KtbsJenaResourceFactory.getInstance().createObsel(
-				"http://localhost:8001/base1/t01/obs5", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
-
-		fis = new FileInputStream("turtle/obsel6.ttl");
-		obsel6 = KtbsJenaResourceFactory.getInstance().createObsel(
-				"http://localhost:8001/base1/t01/obs6", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		obsel5 = loadInHolder(
+				"base1/t01/obs5", 
+				"obsel5.ttl", 
+				Obsel.class);
+		obsel6 = loadInHolder(
+				"base1/t01/obs6", 
+				"obsel6.ttl", 
+				Obsel.class);
 	}
 
 	@Test
@@ -179,46 +172,32 @@ public class KtbsJenaObselTestCase  extends TestCase {
 
 	@Test
 	public void testAddOutgoingRelation() {
-		try {
-			obsel1.addOutgoingRelation(null);
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+			fail("Not yet implemented");
 	}
 
 	@Test
 	public void testAddIncomingRelation() {
-		try {
-			obsel1.addIncomingRelation(null);
-			fail("Should have failed");
-		} catch(UnsupportedOperationException e) {
-
-		} catch(Exception e) {
-			fail("Unexcepted exception");
-		}
+		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testListIncomingRelations() {
-		fail("Cannot be tested before the resource holder is created");
+		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testListOutgoingRelations() {
-		fail("Cannot be tested before the resource holder is created");
+		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testGetTargetObsel() {
-		fail("Cannot be tested before the resource holder is created");
+		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testGetSourceObsel() {
-		fail("Cannot be tested before the resource holder is created");
+		fail("Not yet implemented");
 	}
 
 	@Test
@@ -252,3 +231,4 @@ public class KtbsJenaObselTestCase  extends TestCase {
 	}
 
 }
+

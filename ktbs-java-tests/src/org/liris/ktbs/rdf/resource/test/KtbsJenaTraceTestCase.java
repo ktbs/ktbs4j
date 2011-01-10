@@ -1,11 +1,8 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
-
-import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,9 +12,6 @@ import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.ibm.icu.text.SimpleDateFormat;

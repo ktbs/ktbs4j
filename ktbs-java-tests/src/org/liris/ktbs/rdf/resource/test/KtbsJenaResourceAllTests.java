@@ -16,6 +16,12 @@ public class KtbsJenaResourceAllTests {
 		suite.addTestSuite(KtbsJenaStoredTraceTestCase.class);
 		suite.addTestSuite(KtbsJenaComputedTraceTestCase.class);
 		suite.addTestSuite(KtbsJenaObselTestCase.class);
+		suite.addTestSuite(KtbsJenaObselTypeTestCase.class);
+		suite.addTestSuite(KtbsJenaAttributeTypeTestCase.class);
+		suite.addTestSuite(KtbsJenaRelationTypeTestCase.class);
+		suite.addTestSuite(KtbsJenaTraceModelTestCase.class);
+		suite.addTestSuite(KtbsJenaMethodTestCase.class);
+		suite.addTestSuite(KtbsJenaObselTestCase.class);
 		//$JUnit-END$
 		return suite;
 	}

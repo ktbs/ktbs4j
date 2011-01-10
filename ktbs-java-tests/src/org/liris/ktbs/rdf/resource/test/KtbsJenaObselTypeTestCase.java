@@ -1,21 +1,14 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.io.FileInputStream;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaObselTypeTestCase {
+public class KtbsJenaObselTypeTestCase extends AbstractKtbsJenaTestCase {
 
 	private TraceModel traceModel;
 
@@ -28,12 +21,11 @@ public class KtbsJenaObselTypeTestCase {
 	
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/model1.ttl");
-		traceModel = KtbsJenaResourceFactory.getInstance().createTraceModel(
-				"http://localhost:8001/base1/model1/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		super.setUp();
+		traceModel = loadInHolder(
+				"base1/model1/", 
+				"model1.ttl", 
+				TraceModel.class);
 		
 		sendMsg = traceModel.getObselType("http://localhost:8001/base1/model1/SendMsg");
 		abstractMsg = traceModel.getObselType("http://localhost:8001/base1/model1/AbstractMsg");

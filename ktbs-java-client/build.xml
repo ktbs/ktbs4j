@@ -56,7 +56,7 @@
 		           use="true"
 		           windowtitle="KTBS Client for Java">
 
-			<fileset dir="src"/>
+			<!--<fileset dir="src"/>-->
 			<fileset dir="${rdfproject.path}/src"/>
 			<fileset dir="${coreproject.path}/src"/>
 

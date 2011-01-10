@@ -1,36 +1,27 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.FileInputStream;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.Method;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 
-public class KtbsJenaMethodTestCase {
+public class KtbsJenaMethodTestCase extends AbstractKtbsJenaTestCase {
 
 	private Method helloworld;
 	private Method count;
 
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/helloworld.ttl");
-		helloworld = KtbsJenaResourceFactory.getInstance().createMethod(
-				"http://localhost:8001/base1/helloworld/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
-
-		fis = new FileInputStream("turtle/count.ttl");
-		count = KtbsJenaResourceFactory.getInstance().createMethod(
-				"http://localhost:8001/base1/count/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE);
-		fis.close();
+		super.setUp();
+		
+		helloworld = loadInHolder(
+				"base1/helloworld/", 
+				"helloworld.ttl", 
+				Method.class);
+		count = loadInHolder(
+				"base1/count/", 
+				"count.ttl", 
+				Method.class);
 	}
 
 	@Test

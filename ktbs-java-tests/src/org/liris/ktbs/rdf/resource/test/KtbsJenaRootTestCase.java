@@ -1,36 +1,26 @@
 package org.liris.ktbs.rdf.resource.test;
 
-import java.io.FileInputStream;
 import java.util.Iterator;
-
-import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
-import org.liris.ktbs.core.ReadOnlyObjectException;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolderImpl;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaRootTestCase extends TestCase {
+public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 
 	private KtbsRoot ktbsJenaRoot;
-	private KtbsJenaResourceHolder holder;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		FileInputStream fis = new FileInputStream("turtle/ktbsroot.ttl");
-		holder = new KtbsJenaResourceHolderImpl();
-		ktbsJenaRoot = holder.loadResourceFromStream(
-				"http://localhost:8001/", 
-				fis, 
-				JenaConstants.JENA_SYNTAX_TURTLE,
+		super.setUp();
+
+		ktbsJenaRoot = loadInHolder(
+				"", 
+				"ktbsroot.ttl", 
 				KtbsRoot.class);
-		fis.close();
 	}
 
 	@Test
@@ -56,16 +46,7 @@ public class KtbsJenaRootTestCase extends TestCase {
 
 	@Test
 	public void testAddBase() {
-		try {
-			ktbsJenaRoot.addBase(
-					holder.getResource("http://localhost:8001/base1/", Base.class),
-					"Damien");
-			fail("Should fail with a read-only exception.");
-		} catch(ReadOnlyObjectException e) {
-			
-		} catch(Exception e) {
-			fail("Unexpected exception");
-		}
+		fail("Not yet implemented");
 	}
 
 	@Test

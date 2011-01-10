@@ -12,6 +12,8 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	public Iterator<Trace> listTransformedTraces();
 	
 	public String getOrigin();
+	public void setOrigin(String origin);
+	public void setOriginAsDate(Date origin);
 	
 	/**
 	 * 
@@ -27,4 +29,5 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	public TraceModel getTraceModel();
 	public void setTraceModel(TraceModel traceModel);
 	public boolean isCompliantWithModel();
+	public void setCompliantWithModel(boolean compliant);
 }

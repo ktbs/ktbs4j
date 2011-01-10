@@ -26,7 +26,6 @@ AttributeType {
 
 	@Override
 	public void setDomain(ObselType domain) {
-		throw new UnsupportedOperationException();
+		checkExitsenceAndAddResource(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, domain);
 	}
-
 }

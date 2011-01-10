@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsResourceHolder;
+import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.SimpleRelationStatement;
@@ -264,12 +264,12 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 			return new SimpleAttributStatement(
 					KtbsJenaObsel.this.holder.getResource(next.getPredicate().asResource().getURI(), AttributeType.class),
 					next.getObject().asLiteral().getValue()
-					);
+			);
 		}
 
 		@Override
 		public void remove() {
-			throw new ReadOnlyObjectException(KtbsJenaObsel.this);
+			stmtIt.remove();
 		}
 	}
 
@@ -314,7 +314,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 
 		@Override
 		public void remove() {
-			throw new ReadOnlyObjectException(KtbsJenaObsel.this);
+			stmtIt.remove();
 		}
 	}
 
@@ -328,51 +328,63 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 
 	@Override
 	public void setBegin(long begin) {
-		throw new UnsupportedOperationException();
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_BEGIN, begin);
 	}
 
 	@Override
 	public void setEnd(long end) {
-		throw new UnsupportedOperationException();
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_END, end);
 	}
 
 	@Override
 	public void setBeginDT(String beginDT) {
-		throw new UnsupportedOperationException();
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_BEGIN_DT, beginDT);
 	}
 
 	@Override
 	public void setEndDT(String endDT) {
-		throw new UnsupportedOperationException();
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_END_DT, endDT);
 	}
 
 	@Override
 	public void setObselType(ObselType type) {
-		throw new UnsupportedOperationException();
+		checkExitsenceAndAddResource(RDF.type.getURI(), type);
 	}
 
 	@Override
 	public void setSourceObsel(Obsel obsel) {
-		throw new UnsupportedOperationException();
+		if(!holder.exists(obsel.getURI()))
+			throw new KtbsResourceNotFoundException(obsel.getURI());
+		removeAllAndAddResource(KtbsConstants.P_HAS_SOURCE_OBSEL, obsel.getURI());
 	}
 
 	@Override
 	public void setSubject(String subject) {
-		throw new UnsupportedOperationException();
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_SUBJECT, subject);
 	}
 
 	@Override
 	public void addAttribute(AttributeType attribute, Object value) {
-		throw new UnsupportedOperationException();
+		if(!holder.exists(attribute.getURI()))
+			throw new KtbsResourceNotFoundException(attribute.getURI());
+		addLiteral(attribute.getURI(), value);
 	}
 
 	@Override
 	public void addOutgoingRelation(RelationType relationType, Obsel target) {
-		throw new UnsupportedOperationException();
+		if(!holder.exists(relationType.getURI()))
+			throw new KtbsResourceNotFoundException(relationType.getURI());
+		if(!holder.exists(target.getURI()))
+			throw new KtbsResourceNotFoundException(target.getURI());
+		addResource(relationType.getURI(), target.getURI());
 	}
 
 	@Override
 	public void addIncomingRelation(Obsel source, RelationType relationType) {
-		throw new UnsupportedOperationException();
+		if(!holder.exists(source.getURI()))
+			throw new KtbsResourceNotFoundException(source.getURI());
+		else
+			source.addOutgoingRelation(relationType, source);
 	}
 }
+

@@ -104,17 +104,17 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	}
 
 	@Override
-	public void addObselType(ObselType obselType) {
-		throw new UnsupportedOperationException();
+	public void addObselType(ObselType type) {
+		holder.addResourceAsPartOfExistingModel(type, rdfModel);
 	}
 
 	@Override
-	public void addRelationType(RelationType obselType) {
-		throw new UnsupportedOperationException();
+	public void addRelationType(RelationType type) {
+		holder.addResourceAsPartOfExistingModel(type, rdfModel);
 	}
 
 	@Override
-	public void addAttributeType(AttributeType obselType) {
-		throw new UnsupportedOperationException();
+	public void addAttributeType(AttributeType type) {
+		holder.addResourceAsPartOfExistingModel(type, rdfModel);
 	}
 }

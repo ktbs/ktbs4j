@@ -66,4 +66,19 @@ public class EmptyTrace extends EmptyResourceContainer implements Trace {
 	public void setTraceModel(TraceModel traceModel) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
+
+	@Override
+	public void setOrigin(String origin) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setOriginAsDate(Date origin) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setCompliantWithModel(boolean compliant) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }

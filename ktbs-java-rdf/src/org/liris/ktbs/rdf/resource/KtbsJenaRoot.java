@@ -34,8 +34,9 @@ public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 	}
 
 	@Override
-	public void addBase(Base base, String owner) {
-		throw new UnsupportedOperationException();
+	public void addBase(Base base) {
+		holder.putResource(base);
+		createParentConnection(this, base);
 	}
 
 	@Override

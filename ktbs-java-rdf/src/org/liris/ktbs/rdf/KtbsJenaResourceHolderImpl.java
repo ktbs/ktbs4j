@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.rdf.resource.KtbsJenaResource;
 import org.liris.ktbs.rdf.resource.KtbsJenaResourceFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -14,12 +15,12 @@ public class KtbsJenaResourceHolderImpl implements KtbsJenaResourceHolder {
 	private KtbsJenaResourceFactory factory;
 
 	private Map<String, KtbsResource> resources;
-	
+
 	public KtbsJenaResourceHolderImpl() {
 		factory = new KtbsJenaResourceFactory(this);
 		resources = new HashMap<String, KtbsResource>();
 	}
-	
+
 	@Override
 	public boolean exists(String uri) {
 		return resources.containsKey(uri);
@@ -48,4 +49,29 @@ public class KtbsJenaResourceHolderImpl implements KtbsJenaResourceHolder {
 		return clazz.cast(resources.get(uri));
 	}
 
+	@Override
+	public <T extends KtbsResource> T putResource(T resource) {
+		if(resource.getURI() != null) {
+			resources.put(resource.getURI(), resource);
+			return resource;
+		}
+		else 
+			throw new IllegalStateException("uri must not be null");
+	}
+
+	@Override
+	public void removeResource(String uri) {
+		resources.remove(uri);
+	}
+
+	@Override
+	public void addResourceAsPartOfExistingModel(KtbsResource resource, Model rdfModel) {
+		if (rdfModel instanceof KtbsJenaResource) {
+			KtbsJenaResource kjResource = (KtbsJenaResource) rdfModel;
+			rdfModel.add(kjResource.getJenaModel());
+			KtbsResource newResource = factory.createResource(resource.getURI(), resource.getClass(), rdfModel);
+			resources.put(newResource.getURI(), newResource);
+		} else
+			throw new UnsupportedOperationException("Must be a KTBS jena obsel");
+	}
 }

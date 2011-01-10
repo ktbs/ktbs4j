@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,6 +50,14 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 						return true;
 					}
 				});
+	}
+	
+	@Override
+	public void setTraceModel(TraceModel traceModel) {
+		TraceModel tm = holder.putResource(traceModel);
+		
+		removeAllProperties(KtbsConstants.P_HAS_MODEL);
+		rdfModel.getResource(uri).addProperty(rdfModel.getProperty(KtbsConstants.P_HAS_MODEL), rdfModel.getResource(tm.getURI()));
 	}
 
 	@Override
@@ -222,5 +231,24 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 		public void remove() {
 			throw new ReadOnlyObjectException(KtbsJenaTrace.this);
 		}
+	}
+	
+	
+	@Override
+	public void setOrigin(String origin) {
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_ORIGIN, origin);
+	}
+	
+	@Override
+	public void setOriginAsDate(Date origin) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(origin);
+		
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_ORIGIN, new XSDDateTime(cal));
+	}
+	
+	@Override
+	public void setCompliantWithModel(boolean compliant) {
+		removeAllAndAddLiteral(KtbsConstants.P_COMPLIES_WITH_MODEL, compliant);
 	}
 }

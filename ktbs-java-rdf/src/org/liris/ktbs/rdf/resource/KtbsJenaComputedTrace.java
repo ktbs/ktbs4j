@@ -8,7 +8,6 @@ import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ResourceWithParameters;
 import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.rdf.KtbsConstants;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -16,8 +15,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class KtbsJenaComputedTrace extends KtbsJenaTrace implements
-ComputedTrace {
+public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrace {
 
 	KtbsJenaComputedTrace(String uri, Model rdfModel, KtbsResourceHolder holder) {
 		super(uri, rdfModel, holder);
@@ -67,17 +65,19 @@ ComputedTrace {
 	}
 
 	@Override
-	public void setTraceModel(TraceModel traceModel) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Method setMethod() {
-		throw new UnsupportedOperationException();
+	public void setMethod(Method method) {
+		Method m = holder.putResource(method);
+		removeAllProperties(KtbsConstants.P_HAS_METHOD);
+		rdfModel.getResource(uri).addProperty(
+				rdfModel.getProperty(KtbsConstants.P_HAS_METHOD), 
+				rdfModel.getResource(m.getURI()));
 	}
 
 	@Override
 	public void addSourceTrace(Trace sourceTrace) {
-		throw new UnsupportedOperationException();
+		Trace t = holder.putResource(sourceTrace);
+		rdfModel.getResource(uri).addProperty(
+				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
+				rdfModel.getResource(t.getURI()));
 	}
 }

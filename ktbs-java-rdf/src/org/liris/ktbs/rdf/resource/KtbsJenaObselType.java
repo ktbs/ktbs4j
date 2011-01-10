@@ -69,6 +69,6 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 
 	@Override
 	public void setSuperObselType(ObselType type) {
-		throw new UnsupportedOperationException();
+		checkExitsenceAndAddResource(KtbsConstants.P_HAS_SUPER_OBSEL_TYPE, type);
 	}
 }

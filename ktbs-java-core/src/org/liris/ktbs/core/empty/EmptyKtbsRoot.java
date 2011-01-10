@@ -23,7 +23,7 @@ public class EmptyKtbsRoot extends EmptyResourceContainer implements KtbsRoot {
 	}
 
 	@Override
-	public void addBase(Base base, String owner) {
+	public void addBase(Base base) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 

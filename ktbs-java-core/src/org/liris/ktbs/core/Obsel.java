@@ -2,7 +2,6 @@ package org.liris.ktbs.core;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Map;
 
 public interface Obsel extends KtbsResource {
 	public Trace getTrace();

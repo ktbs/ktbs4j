@@ -42,7 +42,7 @@ public class EmptyMethod extends EmptyResource implements Method {
 	}
 
 	@Override
-	public String setInherits(String methodURI) {
+	public void setInherits(String methodURI) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 

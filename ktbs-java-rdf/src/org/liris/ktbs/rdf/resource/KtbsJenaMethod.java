@@ -32,7 +32,7 @@ public class KtbsJenaMethod extends KtbsJenaResourceWithParameter implements Met
 	}
 
 	@Override
-	public String setInherits(String methodURI) {
-		throw new UnsupportedOperationException();
+	public void setInherits(String methodURI) {
+		removeAllAndAddLiteral(KtbsConstants.P_INHERITS, methodURI);
 	}
 }

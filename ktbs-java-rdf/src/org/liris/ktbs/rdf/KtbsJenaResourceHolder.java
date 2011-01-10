@@ -11,4 +11,6 @@ public interface KtbsJenaResourceHolder extends KtbsResourceHolder {
 	
 	public <T extends KtbsResource> T loadResourceFromStream(String uri, InputStream stream, String lang, Class<T> clazz);
 	public <T extends KtbsResource> T getResourceAlreadyInModel(String uri, Class<T> clazz, Model rdfModel);
+	public void addResourceAsPartOfExistingModel(KtbsResource resource, Model rdfModel);
+	
 }

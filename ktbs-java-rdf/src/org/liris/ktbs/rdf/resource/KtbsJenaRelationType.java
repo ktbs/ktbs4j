@@ -44,17 +44,16 @@ public class KtbsJenaRelationType extends KtbsJenaResource implements
 
 	@Override
 	public void setRange(ObselType range) {
-		throw new UnsupportedOperationException();
-		
+		checkExitsenceAndAddResource(KtbsConstants.P_HAS_RELATION_RANGE, range);
 	}
 
 	@Override
 	public void setDomain(ObselType domain) {
-		throw new UnsupportedOperationException();
+		checkExitsenceAndAddResource(KtbsConstants.P_HAS_RELATION_DOMAIN, domain);
 	}
 
 	@Override
 	public void setSuperRelationType(RelationType superRelationType) {
-		throw new UnsupportedOperationException();
+		checkExitsenceAndAddResource(KtbsConstants.P_HAS_SUPER_RELATION_TYPE, superRelationType);
 	}
 }

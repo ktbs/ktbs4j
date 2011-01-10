@@ -99,6 +99,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	@Override
 	public void addStoredTrace(StoredTrace trace) {
+		createParentConnection(this, trace);
 		throw new ReadOnlyObjectException(this);
 	}
 
@@ -109,7 +110,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	@Override
 	public void addComputedTrace(ComputedTrace trace) {
-		throw new ReadOnlyObjectException(this);
+		createParentConnection(this, trace);
 	}
 	
 	@Override
@@ -124,7 +125,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	@Override
 	public void addTraceModel(TraceModel traceModel) {
-		throw new ReadOnlyObjectException(this);
+		createParentConnection(this, traceModel);
 	}
 
 	@Override
@@ -134,7 +135,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 	@Override
 	public void addMethod(Method method) {
-		throw new ReadOnlyObjectException(this);
+		createParentConnection(this, method);
 	}
 
 	@Override

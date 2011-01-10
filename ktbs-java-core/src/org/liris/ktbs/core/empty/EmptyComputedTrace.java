@@ -45,7 +45,7 @@ public class EmptyComputedTrace extends EmptyTrace implements ComputedTrace {
 	}
 
 	@Override
-	public Method setMethod() {
+	public void setMethod(Method method) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 

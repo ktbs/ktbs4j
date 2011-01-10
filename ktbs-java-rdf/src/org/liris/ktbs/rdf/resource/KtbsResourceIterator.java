@@ -3,7 +3,6 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -37,7 +36,7 @@ public abstract class KtbsResourceIterator<T extends KtbsResource> implements It
 
 	@Override
 	public void remove() {
-		throw new ReadOnlyObjectException(null);
+		stmtIterator.remove();
 	}
 
 	protected abstract Resource getResourceFromStatement(Statement s);

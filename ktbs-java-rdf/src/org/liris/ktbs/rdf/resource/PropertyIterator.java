@@ -29,6 +29,6 @@ public class PropertyIterator implements Iterator<KtbsStatement> {
 
 	@Override
 	public void remove() {
-		throw new UnsupportedOperationException("Read-only access to KTBS resource properties");
+		stmtIterator.remove();
 	}
 }

@@ -10,7 +10,6 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsResourceHolder;
 import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.TemporalDomainException;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
@@ -229,7 +228,7 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
 		@Override
 		public void remove() {
-			throw new ReadOnlyObjectException(KtbsJenaTrace.this);
+			throw new UnsupportedOperationException("Cannot use iterator to remove obsels from a trace.");
 		}
 	}
 	

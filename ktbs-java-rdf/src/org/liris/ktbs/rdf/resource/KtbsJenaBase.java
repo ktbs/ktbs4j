@@ -260,10 +260,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 		@Override
 		public void remove() {
-			throw new ReadOnlyObjectException(KtbsJenaBase.this);
+			throw new UnsupportedOperationException("Cannot use iterator to remove resources from a base.");
 		}
-
 	}
-
-	
 }

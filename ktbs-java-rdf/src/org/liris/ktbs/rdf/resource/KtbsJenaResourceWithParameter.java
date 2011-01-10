@@ -55,7 +55,7 @@ public class KtbsJenaResourceWithParameter extends KtbsJenaResource implements R
 
 		@Override
 		public void remove() {
-			throw new ReadOnlyObjectException(KtbsJenaResourceWithParameter.this);
+			stmtIt.remove();
 		}
 	}
 

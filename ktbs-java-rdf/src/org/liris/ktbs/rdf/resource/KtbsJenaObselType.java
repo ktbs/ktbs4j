@@ -32,7 +32,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN),
 				rdfModel.getResource(uri)
 				);
-		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, holder);
+		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, holder, false);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_DOMAIN),
 				rdfModel.getResource(uri)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder);
+		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder, false);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_RANGE),
 				rdfModel.getResource(uri)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder);
+		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder, false);
 	}
 
 	@Override

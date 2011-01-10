@@ -53,7 +53,7 @@ public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrac
 		return new KtbsResourceObjectIterator<Trace>(
 				it, 
 				Trace.class,
-				holder);
+				holder, true);
 	}
 	@Override
 	public Method getMethod() {

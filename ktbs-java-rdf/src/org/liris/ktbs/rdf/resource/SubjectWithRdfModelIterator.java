@@ -11,8 +11,8 @@ class SubjectWithRdfModelIterator<T extends KtbsResource> extends KtbsResourceSu
 	private Model rdfModel;
 
 	SubjectWithRdfModelIterator(Model rdfModel,
-			StmtIterator stmtIterator, Class<T> clazz, KtbsJenaResourceHolder holder) {
-		super(stmtIterator, clazz, holder);
+			StmtIterator stmtIterator, Class<T> clazz, KtbsJenaResourceHolder holder, boolean removeSupported) {
+		super(stmtIterator, clazz, holder, removeSupported);
 		this.rdfModel = rdfModel;
 	}
 

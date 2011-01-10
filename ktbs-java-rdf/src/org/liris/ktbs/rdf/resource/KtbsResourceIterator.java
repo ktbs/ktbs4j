@@ -13,12 +13,14 @@ public abstract class KtbsResourceIterator<T extends KtbsResource> implements It
 	protected KtbsJenaResourceHolder holder;
 	protected StmtIterator stmtIterator;
 	protected Class<T> clazz;
-	
-	KtbsResourceIterator(StmtIterator stmtIterator, Class<T> clazz, KtbsJenaResourceHolder holder) {
+	protected boolean removeSupported;
+
+	KtbsResourceIterator(StmtIterator stmtIterator, Class<T> clazz, KtbsJenaResourceHolder holder, boolean removeSupported) {
 		super();
 		this.stmtIterator = stmtIterator;
 		this.clazz = clazz;
 		this.holder = holder;
+		this.removeSupported = removeSupported;
 	}
 
 	@Override
@@ -31,12 +33,15 @@ public abstract class KtbsResourceIterator<T extends KtbsResource> implements It
 		return holder.getResource(
 				getResourceFromStatement(stmtIterator.next()).getURI(),
 				clazz
-				);
+		);
 	}
 
 	@Override
 	public void remove() {
-		stmtIterator.remove();
+		if(removeSupported)
+			stmtIterator.remove();
+		else
+			throw new UnsupportedOperationException("Cannot use an iterator to remove such KTBS resource.");
 	}
 
 	protected abstract Resource getResourceFromStatement(Statement s);

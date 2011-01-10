@@ -11,8 +11,8 @@ class KtbsResourceSubjectIterator<T extends KtbsResource> extends KtbsResourceIt
 
 	
 	
-	KtbsResourceSubjectIterator(StmtIterator stmtIterator, Class<T> clazz, KtbsJenaResourceHolder holder) {
-		super(stmtIterator, clazz, holder);
+	KtbsResourceSubjectIterator(StmtIterator stmtIterator, Class<T> clazz, KtbsJenaResourceHolder holder, boolean removeSupported) {
+		super(stmtIterator, clazz, holder, removeSupported);
 	}
 
 	@Override

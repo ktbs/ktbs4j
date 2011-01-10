@@ -45,7 +45,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.ATTRIBUTE_TYPE)
 				);
-		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, holder);
+		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, holder, false);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.RELATION_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder);
+		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder, false);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.OBSEL_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<ObselType>(rdfModel, it, ObselType.class, holder);
+		return new SubjectWithRdfModelIterator<ObselType>(rdfModel, it, ObselType.class, holder, false);
 	}
 
 	@Override

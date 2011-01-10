@@ -30,7 +30,7 @@ public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 				rdfModel.getResource(uri), 
 				rdfModel.getProperty(KtbsConstants.P_HAS_BASE),
 				(RDFNode)null);
-		return new KtbsResourceObjectIterator<Base>(stmtIt, Base.class, holder);
+		return new KtbsResourceObjectIterator<Base>(stmtIt, Base.class, holder, false);
 	}
 
 	@Override

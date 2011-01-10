@@ -86,7 +86,8 @@ public abstract class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 		return new KtbsResourceSubjectIterator<Trace>(
 				it, 
 				Trace.class,
-				holder);
+				holder, 
+				false);
 	}
 
 	@Override

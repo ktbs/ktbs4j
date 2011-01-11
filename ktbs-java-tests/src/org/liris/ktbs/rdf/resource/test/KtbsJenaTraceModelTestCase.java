@@ -155,19 +155,28 @@ public class KtbsJenaTraceModelTestCase extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddAttributeType() {
-		fail("Not yet implemented");
+		AttributeType type = holder.getResource("http://localhost:8001/base1/model1/att1", AttributeType.class);
+		assertFalse(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
+		traceModel.addAttributeType(type);
+		assertTrue(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
 	}
 	
 	
 	@Test
 	public void testAddObselType() {
-		fail("Not yet implemented");
+		ObselType type = holder.getResource("http://localhost:8001/base1/model1/Type1", ObselType.class);
+		assertFalse(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
+		traceModel.addObselType(type);
+		assertTrue(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
 	}
 	
 	
 	@Test
 	public void testAddRelationType() {
-		fail("Not yet implemented");
+		RelationType type = holder.getResource("http://localhost:8001/base1/model1/Relation1", RelationType.class);
+		assertFalse(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
+		traceModel.addRelationType(type);
+		assertTrue(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
 	}
 	
 	@Test
@@ -193,5 +202,4 @@ public class KtbsJenaTraceModelTestCase extends AbstractKtbsJenaTestCase {
 		assertNull(traceModel.getAttributeType("http://localhost:8001/base1/model1/from/"));
 		assertNull(traceModel.getAttributeType("http://localhost:8001/base1/model1/message/"));
 	}
-
 }

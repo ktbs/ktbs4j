@@ -1,9 +1,13 @@
 package org.liris.ktbs.rdf.resource.test;
 
+import java.util.LinkedList;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
+import org.liris.ktbs.core.Method;
+import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
@@ -49,15 +53,26 @@ public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
 				filtered1.getMethod());
 	}
 	
-
-
 	@Test
 	public void testSetMethod() {
-		fail("Not yet implemented");
+		Method count = loadInHolder("base1/count1/", "count.ttl", Method.class);
+		Method hello = loadInHolder("base1/count1/", "helloworld.ttl", Method.class);
+		
+		count1.setMethod(count);
+		assertEquals(count, count1.getMethod());
+		count1.setMethod(hello);
+		assertEquals(hello, count1.getMethod());
 	}
 
 	@Test
 	public void testAddSourceTrace() {
-		fail("Not yet implemented");
+		LinkedList<Trace> c = KtbsUtils.toLinkedList(count1.listSources());
+		assertEquals(1,c.size());
+		
+		count1.addSourceTrace(filtered1);
+		c = KtbsUtils.toLinkedList(count1.listSources());
+		assertEquals(2,c.size());
+		assertTrue(c.contains(filtered1));
+		
 	}
 }

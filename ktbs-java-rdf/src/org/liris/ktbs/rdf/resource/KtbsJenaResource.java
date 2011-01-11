@@ -115,6 +115,13 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 			return stmt.getObject().asLiteral();
 	}
 
+	protected String getObjectResourceURIOrNull(String pName) {
+		Resource r = getObjectOfPropertyAsResource(pName);
+		if(r==null)
+			return null;
+		return r.getURI();
+	}
+	
 	protected Resource getObjectOfPropertyAsResource(String pName) {
 		Statement stmt = getStatement(pName);
 		if(stmt==null || !stmt.getObject().isResource())

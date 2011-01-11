@@ -383,16 +383,17 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		return emptyFac.createObsel("http://localhost:8001/base1/t01/"+string);
 	}
 	
+	
 	private RelationType newRelType(String string) {
 		return emptyFac.createRelationType("http://localhost:8001/base1/model1/"+string);
 	}
 
+	
 	@Test
 	public void testGetTargetObsel() {
 		RelationType onChannel = holder.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
 		RelationType closes = holder.getResource("http://localhost:8001/base1/model1/closes", RelationType.class);
 
-		
 		assertNull(obsel1.getTargetObsel(onChannel));
 		assertNull(obsel1.getTargetObsel(closes));
 		assertEquals(obsel1, obsel2.getTargetObsel(onChannel));
@@ -400,6 +401,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		assertEquals(obsel1, obsel4.getTargetObsel(onChannel));
 	}
 
+	
 	@Test
 	public void testSetSourceObsel() {
 		RelationType onChannel = holder.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);

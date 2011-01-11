@@ -226,7 +226,8 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 	@Test
 	public void testSetTraceModel() {
 		TraceModel tm1 = emptyFac.createTraceModel("http://localhost:8001/base1/model1/");
-		TraceModel tm2 = emptyFac.createTraceModel("http://localhost:8001/base1/model-test/");
+		TraceModel tm2 = loadInHolder("ma-base/model2/","model2.ttl", TraceModel.class);
+		
 		assertEquals(tm1, traceInfo.getTraceModel());
 		traceInfo.setTraceModel(tm2);
 		assertEquals(tm2, traceInfo.getTraceModel());

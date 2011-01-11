@@ -405,7 +405,6 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 	@Test
 	public void testSetSourceObsel() {
 		RelationType onChannel = holder.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
-		RelationType closes = holder.getResource("http://localhost:8001/base1/model1/closes", RelationType.class);
 		
 		Collection<Obsel> sourceObsels = new LinkedList<Obsel>();
 		sourceObsels.add(obsel2);

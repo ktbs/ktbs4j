@@ -5,12 +5,18 @@ import java.util.Iterator;
 
 public interface KtbsResource extends Comparable<KtbsResource> {
 	public String getURI();
+	
 	public String getLabel();
 	public void setLabel(String label);
 
-	public String getType();
 	
-	public Iterator<KtbsStatement> listAllProperties();
+	/**
+	 * Get the value of the rdf:type property
+	 * @return the rdf:type value as a string, null if none
+	 */
+	public String getResourceType();
+	
+	public Iterator<KtbsStatement> listAllStatements();
 	
 	/**
 	 * List all properties that are semantically significant for the KTBS, 
@@ -18,11 +24,11 @@ public interface KtbsResource extends Comparable<KtbsResource> {
 	 * 
 	 * @return the list of names of all properties in namespaces ktbs, rdf, and rdfs
 	 */
-	public Iterator<KtbsStatement> listKtbsProperties();
+	public Iterator<KtbsStatement> listKtbsStatements();
 	
-	public Iterator<KtbsStatement> listNonKtbsProperties();
+	public Iterator<KtbsStatement> listNonKtbsStatements();
 	
-	public String[] getPropertyValues(String propertyName);
+	public Object[] getPropertyValues(String propertyName);
 	public void addProperty(String propertyName, Object value);
 	public void removeProperty(String propertyName);
 }

@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.TraceModel;
 
 public class KtbsJenaAttributeTypeTestCase extends AbstractKtbsJenaTestCase {
@@ -18,7 +17,6 @@ public class KtbsJenaAttributeTypeTestCase extends AbstractKtbsJenaTestCase {
 	private ObselType rcvMsg;
 	private ObselType abstractMsg;
 	private ObselType openChat;
-	private ObselType closeChat;
 	private ObselType channelEvent;
 	
 	@Before
@@ -30,7 +28,6 @@ public class KtbsJenaAttributeTypeTestCase extends AbstractKtbsJenaTestCase {
 				TraceModel.class);
 		abstractMsg = traceModel.getObselType("http://localhost:8001/base1/model1/AbstractMsg");
 		openChat = traceModel.getObselType("http://localhost:8001/base1/model1/OpenChat");
-		closeChat = traceModel.getObselType("http://localhost:8001/base1/model1/CloseChat");
 		channelEvent = traceModel.getObselType("http://localhost:8001/base1/model1/ChannelEvent");
 		rcvMsg = traceModel.getObselType("http://localhost:8001/base1/model1/RecvMsg");
 		

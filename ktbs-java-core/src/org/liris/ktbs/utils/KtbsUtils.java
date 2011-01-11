@@ -96,8 +96,8 @@ public class KtbsUtils {
 		return iterable;
 	}
 
-	public static Map<String,String> toMap(Iterator<KtbsStatement> it) {
-		Map<String,String> map = new HashMap<String, String>();
+	public static Map<String,Object> toMap(Iterator<KtbsStatement> it) {
+		Map<String,Object> map = new HashMap<String, Object>();
 		while (it.hasNext()) {
 			KtbsStatement ktbsStatement = it.next();
 			map.put(ktbsStatement.getProperty(), ktbsStatement.getObject());

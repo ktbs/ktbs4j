@@ -17,6 +17,7 @@ public class EmptyResource extends AbstractKtbsResource {
 	public String getLabel() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
+	
 
 	@Override
 	public void setLabel(String label) {
@@ -24,27 +25,27 @@ public class EmptyResource extends AbstractKtbsResource {
 	}
 
 	@Override
-	public Iterator<KtbsStatement> listAllProperties() {
+	public Iterator<KtbsStatement> listAllStatements() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public Iterator<KtbsStatement> listKtbsProperties() {
+	public Iterator<KtbsStatement> listKtbsStatements() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public Iterator<KtbsStatement> listNonKtbsProperties() {
+	public Iterator<KtbsStatement> listNonKtbsStatements() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public String[] getPropertyValues(String propertyName) {
+	public Object[] getPropertyValues(String propertyName) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public String getType() {
+	public String getResourceType() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 

@@ -37,7 +37,6 @@ import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.rdf.InvalidDeserializationRequest;
 
 import com.ibm.icu.util.Calendar;
 

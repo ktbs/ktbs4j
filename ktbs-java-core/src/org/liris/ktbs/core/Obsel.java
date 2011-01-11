@@ -55,7 +55,7 @@ public interface Obsel extends KtbsResource {
 	 * </p>
 	 * <p>
 	 * Attributes defined on this obsel with no associated attribute type defined in the trace model
-	 * are still accessible via the raw triple access method {@link KtbsResource#listNonKtbsProperties()}.
+	 * are still accessible via the raw triple access method {@link KtbsResource#listNonKtbsStatements()}.
 	 * </p>
 	 * 
 	 * @throws KtbsResourceNotFoundException when the obsel cannot access

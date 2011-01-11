@@ -55,12 +55,12 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	}
 
 	@Override
-	public Iterator<KtbsStatement> listAllProperties() {
+	public Iterator<KtbsStatement> listAllStatements() {
 		return new PropertyIterator(rdfModel.listStatements());
 	}
 
 	@Override
-	public Iterator<KtbsStatement> listKtbsProperties() {
+	public Iterator<KtbsStatement> listKtbsStatements() {
 		SimpleSelector selector = new SimpleSelector(
 				rdfModel.getResource(this.getURI()), 
 				null, 
@@ -73,7 +73,7 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	}
 
 	@Override
-	public Iterator<KtbsStatement> listNonKtbsProperties() {
+	public Iterator<KtbsStatement> listNonKtbsStatements() {
 		SimpleSelector selector = new SimpleSelector(
 				rdfModel.getResource(this.getURI()), 
 				null, 
@@ -86,24 +86,28 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	}
 
 	@Override
-	public String[] getPropertyValues(String propertyName) {
+	public Object[] getPropertyValues(String propertyName) {
 		SimpleSelector selector = new SimpleSelector(
 				rdfModel.getResource(this.getURI()), 
 				rdfModel.getProperty(propertyName), 
 				(RDFNode)null);
 		Iterator<KtbsStatement> it = new PropertyIterator(rdfModel.listStatements(selector));
-		Collection<String> c = new HashSet<String>();
+		Collection<Object> c = new HashSet<Object>();
 		while(it.hasNext())
 			c.add(it.next().getObject());
 		return c.toArray(new String[c.size()]);
 	}
+	
+
+	private boolean isKtbsProperty(String pName) {
+		return pName != null &&
+				(pName.startsWith(KtbsConstants.NAMESPACE)
+				|| pName.equals(RDF.type.getURI())
+				|| pName.equals(RDFS.label.getURI()));
+	}
 
 	private boolean isKtbsProperty(Statement s) {
-		Property predicate = s.getPredicate();
-		String nameSpace = predicate.getNameSpace();
-		return nameSpace.equals(KtbsConstants.NAMESPACE) 
-		|| predicate.equals(RDF.type)
-		|| predicate.equals(RDFS.label);
+		return isKtbsProperty(s.getPredicate().getURI());
 	}
 
 
@@ -138,12 +142,12 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	}
 
 	@Override
-	public String getType() {
+	public String getResourceType() {
 		Statement typeProperty = rdfModel.getProperty(
 				rdfModel.getResource(this.getURI()),
 				RDF.type);
 		if(typeProperty!=null)
-			return typeProperty.getObject().asLiteral().getString();
+			return typeProperty.getObject().asResource().getURI();
 		else
 			return null;
 
@@ -298,12 +302,24 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 
 	@Override
 	public void addProperty(String propertyName, Object value) {
-		throw new UnsupportedOperationException();
+		rdfModel.getResource(uri).addLiteral(
+				rdfModel.getProperty(propertyName), 
+				value);
 	}
 
 	@Override
-	public void removeProperty(String propertyName) {
-		throw new UnsupportedOperationException();
+	public void removeProperty(String pName) {
+		if(isKtbsProperty(pName))
+			throw new IllegalStateException("Properties with KTBS's namespace are not allowed to be modified from this method.");
+		
+		Property property = rdfModel.getProperty(pName);
+		StmtIterator stmt = rdfModel.listStatements(
+				rdfModel.getResource(uri), 
+				property, 
+				(RDFNode)null
+				);
+		while (stmt.hasNext()) 
+			stmt.removeNext();
 	}
 	
 	protected <T extends KtbsResource> T getObjectOfPropertyAsKtbsResourceIfExists(String pName, Class<T> clazz, boolean createEmptyIfAbsent) {

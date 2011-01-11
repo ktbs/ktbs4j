@@ -2,6 +2,7 @@ package org.liris.ktbs.rdf.resource;
 
 import org.liris.ktbs.core.KtbsStatement;
 
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 /**
@@ -33,8 +34,16 @@ public class KtbsStatementImpl implements KtbsStatement{
 	}
 
 	@Override
-	public String getObject() {
-		return jenaStatement.getObject().toString();
+	public Object getObject() {
+		RDFNode object = jenaStatement.getObject();
+		if(object.isAnon())
+			return "";
+		else if(object.isLiteral())
+			return object.asLiteral().getValue();
+		else if(object.isResource())
+			return object.asResource().getURI();
+		else
+			throw new IllegalStateException("Unkown type of object in the statement " + jenaStatement.toString());
 	}
 	
 	@Override

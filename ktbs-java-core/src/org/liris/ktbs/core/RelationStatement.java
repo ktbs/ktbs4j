@@ -7,6 +7,6 @@ package org.liris.ktbs.core;
  */
 public interface RelationStatement {
 	public Obsel getFromObsel();
-	public String getRelationURI();
+	public RelationType getRelation();
 	public Obsel getToObsel();
 }

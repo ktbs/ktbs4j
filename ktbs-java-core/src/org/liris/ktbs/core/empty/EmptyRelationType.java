@@ -38,5 +38,15 @@ public class EmptyRelationType extends EmptyResource implements RelationType {
 	public void setSuperRelationType(RelationType superRelationType) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
+
+	@Override
+	public ObselType[] getDomainsInferred() {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public ObselType[] getRangesInferred() {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }
 

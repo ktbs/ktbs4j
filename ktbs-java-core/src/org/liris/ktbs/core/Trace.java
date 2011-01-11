@@ -29,5 +29,5 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	public TraceModel getTraceModel();
 	public void setTraceModel(TraceModel traceModel);
 	public boolean isCompliantWithModel();
-	public void setCompliantWithModel(boolean compliant);
+//	public void setCompliantWithModel(boolean compliant);
 }

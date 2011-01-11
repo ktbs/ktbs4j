@@ -73,12 +73,12 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 	}
 
 	@Override
-	public Obsel getTargetObsel(String relationName) {
+	public Obsel getTargetObsel(RelationType relationName) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public Obsel getSourceObsel(String relationName) {
+	public Obsel getSourceObsel(RelationType relationName) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
@@ -123,11 +123,6 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 	}
 
 	@Override
-	public void setSourceObsel(Obsel obsel) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-	@Override
 	public void setSubject(String subject) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
@@ -144,6 +139,16 @@ public class EmptyObsel extends EmptyResource implements Obsel {
 
 	@Override
 	public void addIncomingRelation(Obsel source, RelationType relationType) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setBeginDTAsDate(Date date) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public void setEndDTAsDate(Date date) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

@@ -56,7 +56,6 @@ public class KtbsClientTestCase {
 
 	private static Collection<String> obselTypes = new LinkedList<String>();
 
-
 	private static Log log = LogFactory.getLog(KtbsClientTestCase.class);
 
 	@BeforeClass

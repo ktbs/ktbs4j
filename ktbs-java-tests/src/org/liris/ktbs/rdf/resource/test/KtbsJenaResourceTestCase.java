@@ -144,6 +144,16 @@ public class KtbsJenaResourceTestCase extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
+	public void testAddProperty() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testremoveProperty() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
 	public void testGetPropertyValues() {
 		String[] values;
 		

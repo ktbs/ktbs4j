@@ -25,6 +25,11 @@ public class KtbsJenaMethodTestCase extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
+	public void testSetInherits() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
 	public void testGetInherits() {
 		assertEquals(KtbsConstants.SCRIPT_PYTHON, helloworld.getInherits());
 		assertEquals(KtbsConstants.SCRIPT_PYTHON, count.getInherits());

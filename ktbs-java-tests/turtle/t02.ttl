@@ -2,42 +2,49 @@
 @prefix ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
- <http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f> a :SendMsg;
+ <http://localhost:8001/base1/t02/017885b093580cee5e01573953fbd26f> a :SendMsg;
      ktbs:hasBegin "2000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasBeginDT "2010-04-28T18:09:02+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasEnd "4000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasEndDT "2010-04-28T18:09:04+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasSubject "béa";
-     ktbs:hasTrace <http://localhost:8001/base1/t01/>;
+     ktbs:hasTrace <http://localhost:8001/base1/t02/>;
      :message "hello world";
-     :onChannel <http://localhost:8001/base1/t01/obs1>. 
+     :onChannel <http://localhost:8001/base1/t02/obs1>. 
 
- <http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139> a :RecvMsg;
+ <http://localhost:8001/base1/t02/91eda250f267fa93e4ece8f3ed659139> a :RecvMsg;
      ktbs:hasBegin "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasBeginDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasEnd "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasEndDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasSubject "béa";
-     ktbs:hasTrace <http://localhost:8001/base1/t01/>;
+     ktbs:hasTrace <http://localhost:8001/base1/t02/>;
      :from "world";
      :message "hello yourself";
-     :onChannel <http://localhost:8001/base1/t01/obs1>. 
+     :onChannel <http://localhost:8001/base1/t02/obs1>. 
 
- <http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575> a :CloseChat;
+ <http://localhost:8001/base1/t02/a08667b20cfe4079d02f2f5ad9239575> a :CloseChat;
      ktbs:hasBegin "7000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasBeginDT "2010-04-28T18:09:07+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasEnd "7000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasEndDT "2010-04-28T18:09:07Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasSubject "béa";
-     ktbs:hasTrace <http://localhost:8001/base1/t01/>;
-     :onChannel <http://localhost:8001/base1/t01/obs1>. 
+     ktbs:hasTrace <http://localhost:8001/base1/t02/>;
+     :onChannel <http://localhost:8001/base1/t02/obs1>. 
 
- <http://localhost:8001/base1/t01/obs1> a :OpenChat;
+
+ <http://localhost:8001/base1/t02/obs8> a :SendMsg;
+     ktbs:hasBegin "12000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEnd "14000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasSubject "Tonton Nestor 2";
+     ktbs:hasTrace <http://localhost:8001/base1/t02/>;
+     :message "Salut les vieux".
+     
+ <http://localhost:8001/base1/t02/obs1> a :OpenChat;
      ktbs:hasBegin "1000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasBeginDT "2010-04-28T18:09:01+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasEnd "1000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasEndDT "2010-04-28T18:09:01+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
      ktbs:hasSubject "béa";
-     ktbs:hasTrace <http://localhost:8001/base1/t01/>;
+     ktbs:hasTrace <http://localhost:8001/base1/t02/>;
      :channel "#my-channel".
-     

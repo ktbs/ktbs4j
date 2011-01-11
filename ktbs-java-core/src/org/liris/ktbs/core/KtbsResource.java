@@ -21,5 +21,8 @@ public interface KtbsResource extends Comparable<KtbsResource> {
 	public Iterator<KtbsStatement> listKtbsProperties();
 	
 	public Iterator<KtbsStatement> listNonKtbsProperties();
+	
 	public String[] getPropertyValues(String propertyName);
+	public void addProperty(String propertyName, Object value);
+	public void removeProperty(String propertyName);
 }

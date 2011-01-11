@@ -154,6 +154,23 @@ public class KtbsJenaTraceModelTestCase extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
+	public void testAddAttributeType() {
+		fail("Not yet implemented");
+	}
+	
+	
+	@Test
+	public void testAddObselType() {
+		fail("Not yet implemented");
+	}
+	
+	
+	@Test
+	public void testAddRelationType() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
 	public void testGetAttributeType() {
 		AttributeType channel = traceModel.getAttributeType("http://localhost:8001/base1/model1/channel");
 		AttributeType from = traceModel.getAttributeType("http://localhost:8001/base1/model1/from");

@@ -12,5 +12,7 @@ public class JenaTests {
 				model.getResource("http://mydomain/resource2/")
 		);
 		model.getWriter("TURTLE").write(model, System.out, "http://mydomain/");
+		
+		
 	}
 }

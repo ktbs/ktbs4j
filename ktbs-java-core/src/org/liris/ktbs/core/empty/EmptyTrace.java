@@ -77,8 +77,4 @@ public class EmptyTrace extends EmptyResourceContainer implements Trace {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
-	@Override
-	public void setCompliantWithModel(boolean compliant) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
 }

@@ -168,12 +168,28 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
+	public void testSetOrigin() {
+		
+		traceInfo.setOrigin("toto");
+		assertNotNull(traceInfo.getOrigin());
+		assertEquals("toto", traceInfo.getOrigin());
+	}
+	
+	@Test
 	public void testGetOrigin() {
 		String string = traceInfo.getOrigin();
 		assertNotNull(string);
 		assertEquals("2010-04-28T18:09:00Z", string);
 	}
 
+	@Test
+	public void testSetOriginAsDate() {
+		Date d = new Date();
+		traceInfo.setOriginAsDate(d);
+		assertNotNull(traceInfo.getOriginAsDate());
+		assertEquals(d, traceInfo.getOriginAsDate());
+		
+	}
 	@Test
 	public void testGetOriginAsDate() {
 		Date origin = traceInfo.getOriginAsDate();
@@ -198,10 +214,7 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertNull(traceObsels.getObsel(uri("obs2")));
 	}
 
-	@Test
-	public void testRemoveObsel() {
-		fail("Not yet implemented");
-	}
+	
 
 	@Test
 	public void testGetBase() {
@@ -211,12 +224,31 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
+	public void testSetTraceModel() {
+		TraceModel tm1 = emptyFac.createTraceModel("http://localhost:8001/base1/model1/");
+		TraceModel tm2 = emptyFac.createTraceModel("http://localhost:8001/base1/model-test/");
+		assertEquals(tm1, traceInfo.getTraceModel());
+		traceInfo.setTraceModel(tm2);
+		assertEquals(tm2, traceInfo.getTraceModel());
+	}
+	
+	@Test
 	public void testGetTraceModel() {
 		TraceModel tm = traceInfo.getTraceModel();
 		assertNotNull(tm);
 		assertEquals("http://localhost:8001/base1/model1/",tm.getURI());
 	}
 
+//	@Test
+//	public void testSetCompliantWithModel() {
+//		assertTrue(traceInfo.isCompliantWithModel());
+//		traceInfo.setCompliantWithModel(false);
+//		assertFalse(traceInfo.isCompliantWithModel());
+//
+//		traceInfo.setCompliantWithModel(true);
+//		assertFalse(traceInfo.isCompliantWithModel());
+//	}
+	
 	@Test
 	public void testIsCompliantWithModel() {
 		assertTrue(traceInfo.isCompliantWithModel());

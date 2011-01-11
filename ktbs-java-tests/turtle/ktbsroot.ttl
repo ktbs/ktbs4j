@@ -3,5 +3,5 @@
 
  <http://localhost:8001/> a ktbs:KtbsRoot;
      rdfs:label "My kernel for Trace Based Systems";
-     ktbs:hasBase <http://localhost:8001/base1/>.
+     ktbs:hasBase <http://localhost:8001/base2/>.
      

@@ -53,27 +53,27 @@ public class KtbsUtils {
 	}
 
 	public static String getRDFType(Class<?> clazz) {
-		if(clazz.equals(KtbsRoot.class)) 
+		if(KtbsRoot.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.KTBS_ROOT;
-		else if(clazz.equals(Base.class)) 
+		else if(Base.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.BASE;
-		else if(clazz.equals(StoredTrace.class)) 
+		else if(StoredTrace.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.STORED_TRACE;
-		else if(clazz.equals(ComputedTrace.class)) 
+		else if(ComputedTrace.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.COMPUTED_TRACE;
-		else if(clazz.equals(Obsel.class)) 
+		else if(Obsel.class.isAssignableFrom(clazz)) 
 			return null;
-		else if(clazz.equals(ObselType.class)) 
+		else if(ObselType.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.OBSEL_TYPE;
-		else if(clazz.equals(AttributeType.class)) 
+		else if(AttributeType.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.ATTRIBUTE_TYPE;
-		else if(clazz.equals(RelationType.class)) 
+		else if(RelationType.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.RELATION_TYPE;
-		else if(clazz.equals(TraceModel.class)) 
+		else if(TraceModel.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.TRACE_MODEL;
-		else if(clazz.equals(Method.class)) 
+		else if(Method.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.METHOD;
-		else if(clazz.equals(Trace.class)) 
+		else if(Trace.class.isAssignableFrom(clazz)) 
 			return null;
 		else
 			return null;

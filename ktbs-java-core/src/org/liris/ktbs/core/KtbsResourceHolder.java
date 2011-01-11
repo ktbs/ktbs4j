@@ -4,8 +4,10 @@ package org.liris.ktbs.core;
 public interface KtbsResourceHolder {
 	
 	public boolean exists(String uri);
+	public <T extends KtbsResource> T getAfterCheck(String uri, Class<T> clazz);
 	public <T extends KtbsResource> T getResource(String uri, Class<T> clazz);
-
+	public  <T extends KtbsResource> boolean existsOfType(String uri, Class<T> class1);
+	
 	/**
 	 * Registers a Ktbs resource to this holder and removes any resource
 	 * with the same uri if any.

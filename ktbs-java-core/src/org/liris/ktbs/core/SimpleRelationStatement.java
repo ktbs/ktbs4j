@@ -3,14 +3,14 @@ package org.liris.ktbs.core;
 public class SimpleRelationStatement implements RelationStatement {
 
 	private Obsel from;
-	private String relationURI;
+	private RelationType relation;
 	private Obsel to;
 	
 	
-	public SimpleRelationStatement(Obsel from, String relationURI, Obsel to) {
+	public SimpleRelationStatement(Obsel from, RelationType relation, Obsel to) {
 		super();
 		this.from = from;
-		this.relationURI = relationURI;
+		this.relation = relation;
 		this.to = to;
 	}
 
@@ -20,8 +20,8 @@ public class SimpleRelationStatement implements RelationStatement {
 	}
 
 	@Override
-	public String getRelationURI() {
-		return relationURI;
+	public RelationType getRelation() {
+		return relation;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class SimpleRelationStatement implements RelationStatement {
 	public boolean equals(Object obj) {
 		if (obj instanceof RelationStatement) {
 			RelationStatement rs = (RelationStatement) obj;
-			return getRelationURI().equals(((RelationStatement) obj).getRelationURI())
+			return getRelation().equals(((RelationStatement) obj).getRelation())
 						&& getFromObsel().equals(rs.getFromObsel())
 						&& getToObsel().equals(rs.getToObsel());
 		}

@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,7 +12,9 @@ import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ObselType;
+import org.liris.ktbs.rdf.JenaConstants;
 import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
+import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -194,19 +197,24 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 			itChild.removeNext();
 
 	}
-
+	
 	protected void createParentConnection(KtbsJenaResource parent, KtbsResource childKtbsResource) {
 		if (childKtbsResource instanceof KtbsJenaResource) {
 			KtbsJenaResource child = (KtbsJenaResource) childKtbsResource;
 
-			if(parent.getClass().equals(KtbsJenaRoot.class) && child.getClass().equals(Base.class)) 
+			if(parent.getClass().equals(KtbsJenaRoot.class) && child.getClass().equals(KtbsJenaBase.class)) 
 				connect(parent, child,KtbsConstants.P_HAS_BASE,KtbsConstants.P_HAS_BASE,true,true);
-			else if(parent.getClass().equals(KtbsJenaBase.class) && child.getClass().equals(KtbsJenaTrace.class)) 
+			else if(parent.getClass().equals(KtbsJenaBase.class) && 
+					(child.getClass().equals(KtbsJenaComputedTrace.class)
+					|| child.getClass().equals(KtbsJenaTrace.class)
+					|| child.getClass().equals(KtbsJenaStoredTrace.class)
+					|| child.getClass().equals(KtbsJenaMethod.class)
+					|| child.getClass().equals(KtbsJenaTraceModel.class))
+					)  {
 				connect(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS,true,true);
-			else if(parent.getClass().equals(KtbsJenaBase.class) && child.getClass().equals(KtbsJenaMethod.class)) 
-				connect(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS,true,true);
-			else if(parent.getClass().equals(KtbsJenaBase.class) && child.getClass().equals(KtbsJenaTraceModel.class)) 
-				connect(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS,true,true);
+				parent.rdfModel.getResource(child.getURI()).addProperty(RDF.type, parent.rdfModel.getResource(KtbsUtils.getRDFType(child.getClass())));
+				child.rdfModel.getResource(child.getURI()).addProperty(RDF.type, child.rdfModel.getResource(KtbsUtils.getRDFType(child.getClass())));
+			}
 			else
 				throw new UnsupportedOperationException("Cannot create a parent connection between an instance of class \""+parent.getClass()+"\" and an instance of class \""+child.getClass()+"\".");
 		} else 
@@ -272,5 +280,44 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	
 	public Model getJenaModel() {
 		return rdfModel;
+	}
+	
+	@Override
+	public String toString() {
+		StringWriter writer = new StringWriter();
+		rdfModel.write(writer, JenaConstants.JENA_SYNTAX_TURTLE);
+		return writer.toString();
+	}
+
+	@Override
+	public void addProperty(String propertyName, Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void removeProperty(String propertyName) {
+		throw new UnsupportedOperationException();
+	}
+	
+	protected <T extends KtbsResource> T getObjectOfPropertyAsKtbsResourceIfExists(String pName, Class<T> clazz, boolean createEmptyIfAbsent) {
+		Resource r = getObjectOfPropertyAsResource(pName);
+		if(r==null)
+			return null;
+		else {
+			if(!holder.exists(r.getURI()) && !createEmptyIfAbsent)
+				throw new KtbsResourceNotFoundException(r.getURI());
+			else {
+				T resource = holder.getResource(r.getURI(), clazz);
+				return resource;
+			}
+		}
+	}
+	
+	protected String getObjectStringOrNull(String pName) {
+		Literal l = getObjectOfPropertyAsLiteral(pName);
+		if(l==null)
+			return null;
+		else
+			return l.getString();
 	}
 }

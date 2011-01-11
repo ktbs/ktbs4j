@@ -27,12 +27,16 @@ public interface Obsel extends KtbsResource {
 
 	public Date getBeginDTAsDate();
 	public Date getEndDTAsDate();
+	public void setBeginDTAsDate(Date date);
+	public void setEndDTAsDate(Date date);
 
 	public ObselType getObselType();
 	public void setObselType(ObselType type);
 
 	public Obsel getSourceObsel();
-	public void setSourceObsel(Obsel obsel);
+	
+//	Only for a KTBS server purpose
+//	public void setSourceObsel(Obsel obsel);
 
 	public String getSubject();
 	public void setSubject(String subject);
@@ -42,21 +46,25 @@ public interface Obsel extends KtbsResource {
 	 * Methods related to obsel attribute
 	 */
 	/**
-	 * Returns all attributes of this obsel in the form of {@link AttributeStatement}. The 
-	 * attribute statement returned are the RDF triples whose predicates take their name in the 
-	 * namespace defined by the trace model of this obsel type, and whose object are literals.
-	 * 
+	 * Returns all attributes of this obsel in the form of an iterator over a collection of {@link AttributeStatement}.
 	 * <p>
-	 * The URI of the trace model is required to interprete the RDF predicate URIs as 
-	 * attributes. This method fails with {@link KtbsResourceNotFoundException} when it 
-	 * cannot access the trace model URI.
+	 *  The attribute statements returned are the RDF triples whose predicates are defined
+	 *  as attribute types in the trace model. If the trace model resource returned by
+	 *  {@link #getObselType().getTraceModel()} is not accessible, the method fails with 
+	 *  a {@link KtbsResourceNotFoundException}.
+	 * </p>
+	 * <p>
+	 * Attributes defined on this obsel with no associated attribute type defined in the trace model
+	 * are still accessible via the raw triple access method {@link KtbsResource#listNonKtbsProperties()}.
 	 * </p>
 	 * 
 	 * @throws KtbsResourceNotFoundException when the obsel cannot access
 	 * the {@link TraceModel} whose obsel type belongs to.
 	 */
 	public Iterator<AttributeStatement> listAttributes();
+
 	public Object getAttributeValue(AttributeType attribute);
+	
 	public void addAttribute(AttributeType attribute, Object value);
 	
 
@@ -67,6 +75,21 @@ public interface Obsel extends KtbsResource {
 	public void addIncomingRelation(Obsel source, RelationType relationType);
 	public Iterator<RelationStatement> listIncomingRelations();
 	public Iterator<RelationStatement> listOutgoingRelations();
-	public Obsel getTargetObsel(String relationName);
-	public Obsel getSourceObsel(String relationName);
+	
+	/**
+	 * Get the first obsel encountered that is the target of a relation
+	 * 
+	 * @param relationType the relation type of the relation
+	 * @return the first target obsel encountered for that relation, null if none
+	 */
+	public Obsel getTargetObsel(RelationType relationType);
+	
+	/**
+	 * Get the first obsel encountered that has an outgoing relation
+	 * pointing to this obsel
+	 * 
+	 * @param relationType the relation type of the relation
+	 * @return the first source obsel encountered for that relation, null if none
+	 */
+	public Obsel getSourceObsel(RelationType relationType);
 }

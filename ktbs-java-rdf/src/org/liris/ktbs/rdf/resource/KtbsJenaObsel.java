@@ -1,15 +1,20 @@
 package org.liris.ktbs.rdf.resource;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
+import org.liris.ktbs.core.DomainException;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResourceNotFoundException;
+import org.liris.ktbs.core.Mode;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
+import org.liris.ktbs.core.RangeException;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.SimpleRelationStatement;
@@ -34,11 +39,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 
 	@Override
 	public Trace getTrace() {
-		Resource r = getObjectOfPropertyAsResource(KtbsConstants.P_HAS_TRACE);
-		if(r==null)
-			return null;
-		else
-			return holder.getResource(r.getURI(), Trace.class);
+		return getObjectOfPropertyAsKtbsResourceIfExists(KtbsConstants.P_HAS_TRACE, Trace.class, false);
 	}
 
 	@Override
@@ -61,55 +62,44 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 
 	@Override
 	public String getBeginDT() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_HAS_BEGIN_DT);
-		if(l==null)
-			return null;
-		else
-			return l.getString();
+		return getObjectStringOrNull(KtbsConstants.P_HAS_BEGIN_DT);
 	}
 
 	@Override
 	public String getEndDT() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_HAS_END_DT);
-		if(l==null)
-			return null;
-		else
-			return l.getString();
+		return getObjectStringOrNull(KtbsConstants.P_HAS_END_DT);
 	}
 
 	@Override
 	public ObselType getObselType() {
-		Resource r = getObjectOfPropertyAsResource(RDF.type.getURI());
-		if(r==null)
-			return null;
-		else {
-			return holder.getResource(r.getURI(), ObselType.class);
-		}
+		return getObjectOfPropertyAsKtbsResourceIfExists(RDF.type.getURI(), ObselType.class, false);
 	}
+
 
 	@Override
 	public String getSubject() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_HAS_SUBJECT);
-		if(l==null)
-			return null;
-		else
-			return l.getString();
+		return getObjectStringOrNull(KtbsConstants.P_HAS_SUBJECT);
 	}
 
 	@Override
 	public Iterator<AttributeStatement> listAttributes() {
 		StmtIterator stmtIt = rdfModel.listStatements(new AttributeSelector(null));
-
 		return new AttributeStatementIt(stmtIt);
 	}
 
 	@Override
 	public Object getAttributeValue(AttributeType attribute) {
 		StmtIterator it = rdfModel.listStatements(new AttributeSelector(attribute.getURI()));
-		if(!it.hasNext())
+		try  {
+
+			if(!it.hasNext())
+				return null;
+			else
+				return new AttributeStatementIt(it).next().getValue();
+		} catch(KtbsResourceNotFoundException e) {
+			// the obsel type could not be retrieved
 			return null;
-		else
-			return new AttributeStatementIt(it).next().getValue();
+		}
 
 	}
 
@@ -126,8 +116,8 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 	}
 
 	@Override
-	public Obsel getTargetObsel(String relationName) {
-		StmtIterator it = rdfModel.listStatements(new OutgoingRelationSelector(relationName));
+	public Obsel getTargetObsel(RelationType relationType) {
+		StmtIterator it = rdfModel.listStatements(new OutgoingRelationSelector(relationType.getURI()));
 		if(!it.hasNext())
 			return null;
 		else
@@ -135,8 +125,8 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 	}
 
 	@Override
-	public Obsel getSourceObsel(String relationName) {
-		StmtIterator it = rdfModel.listStatements(new IncomingRelationSelector(relationName));
+	public Obsel getSourceObsel(RelationType relationType) {
+		StmtIterator it = rdfModel.listStatements(new IncomingRelationSelector(relationType.getURI()));
 		if(!it.hasNext())
 			return null;
 		else
@@ -171,30 +161,19 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 			if(!super.selects(s))
 				return false;
 
-			AttributeType asAttributeType = holder.getResource(s.getPredicate().getURI(), AttributeType.class);
-			LinkedList<AttributeType> c = KtbsUtils.toLinkedList(KtbsJenaObsel.this.getObselType().listAttributes());
+			if(!holder.existsOfType(s.getPredicate().getURI(), AttributeType.class))
+				// This is a relation
+				return false;
+
+			AttributeType asAttributeType = holder.getAfterCheck(s.getPredicate().getURI(), AttributeType.class);
+			ObselType obselType = KtbsJenaObsel.this.getObselType();
+			LinkedList<AttributeType> c = KtbsUtils.toLinkedList(obselType.listAttributes(Mode.INFERRED));
 			boolean isAttribute = c.contains(asAttributeType);
 			return isAttribute;
 		}
 	}
 
-	private final class OutgoingRelationSelector extends RelationOrAttributeSelector {
-		public OutgoingRelationSelector(String relationName) {
-			super(relationName, true);
-		}
-
-		@Override
-		public boolean selects(Statement s) {
-			if(!super.selects(s))
-				return false;
-
-			RelationType asRelationType = holder.getResource(s.getPredicate().getURI(), RelationType.class);
-			LinkedList<RelationType> c = KtbsUtils.toLinkedList(KtbsJenaObsel.this.getObselType().listOutgoingRelations());
-			boolean isOutgoingRelation = c.contains(asRelationType);
-			return isOutgoingRelation;
-
-		}
-	}
+	
 
 	private abstract class RelationOrAttributeSelector extends SimpleSelector {
 		/*
@@ -216,16 +195,43 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 			/*
 			 *  relationName is null, WILDCARD
 			 */
-			Resource thisAsResource = outGoing?
-					s.getSubject():
-						s.getObject().asResource();
-					boolean sameURI = thisAsResource.getURI().equals(KtbsJenaObsel.this.uri);
-					if(!sameURI)
-						return false;
-					return true;
+			Resource thisAsResource;
+			if(outGoing)
+				thisAsResource = s.getSubject();
+			else {
+				if(!s.getObject().isResource())
+					return false;
+				else 
+					thisAsResource = s.getObject().asResource();
+			}
+			boolean sameURI = thisAsResource.getURI().equals(KtbsJenaObsel.this.uri);
+			if(!sameURI)
+				return false;
+			return true;
+		}
+	}
+
+	private final class OutgoingRelationSelector extends RelationOrAttributeSelector {
+		public OutgoingRelationSelector(String relationName) {
+			super(relationName, true);
 		}
 
+		@Override
+		public boolean selects(Statement s) {
+			if(!super.selects(s))
+				return false;
+
+			if(!holder.existsOfType(s.getPredicate().getURI(), RelationType.class))
+				// This is an attribute
+				return false;
+
+			RelationType asRelationType = holder.getAfterCheck(s.getPredicate().getURI(), RelationType.class);
+			LinkedList<RelationType> c = KtbsUtils.toLinkedList(KtbsJenaObsel.this.getObselType().listOutgoingRelations(Mode.INFERRED));
+			boolean isOutgoingRelation = c.contains(asRelationType);
+			return isOutgoingRelation;
+		}
 	}
+	
 	private final class IncomingRelationSelector extends RelationOrAttributeSelector {
 		public IncomingRelationSelector(String relationName) {
 			super(relationName, false);
@@ -236,8 +242,12 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 			if(!super.selects(s))
 				return false;
 
-			RelationType asRelationType = holder.getResource(s.getPredicate().getURI(), RelationType.class);
-			LinkedList<RelationType> c = KtbsUtils.toLinkedList(KtbsJenaObsel.this.getObselType().listIncomingRelations());
+			if(!holder.existsOfType(s.getPredicate().getURI(), RelationType.class))
+				// This is an attribute
+				return false;
+
+			RelationType asRelationType = holder.getAfterCheck(s.getPredicate().getURI(), RelationType.class);
+			LinkedList<RelationType> c = KtbsUtils.toLinkedList(KtbsJenaObsel.this.getObselType().listIncomingRelations(Mode.INFERRED));
 			boolean isIncomingRelation = c.contains(asRelationType);
 			return isIncomingRelation;
 		}
@@ -306,7 +316,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 
 			return new SimpleRelationStatement(
 					isOutgoing?thisObsel:otherObsel, 
-							next.getPredicate().getURI(), 
+							KtbsJenaObsel.this.holder.getAfterCheck(next.getPredicate().getURI(),RelationType.class), 
 							isOutgoing?otherObsel:thisObsel
 			);
 
@@ -323,7 +333,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 		Resource res = getObjectOfPropertyAsResource(KtbsConstants.P_HAS_SOURCE_OBSEL);
 		if(res==null)
 			return null;
-		return holder.getResource(res.getURI(), Obsel.class);
+		return holder.getAfterCheck(res.getURI(), Obsel.class);
 	}
 
 	@Override
@@ -352,22 +362,32 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 	}
 
 	@Override
-	public void setSourceObsel(Obsel obsel) {
-		if(!holder.exists(obsel.getURI()))
-			throw new KtbsResourceNotFoundException(obsel.getURI());
-		removeAllAndAddResource(KtbsConstants.P_HAS_SOURCE_OBSEL, obsel.getURI());
-	}
-
-	@Override
 	public void setSubject(String subject) {
 		removeAllAndAddLiteral(KtbsConstants.P_HAS_SUBJECT, subject);
 	}
 
 	@Override
 	public void addAttribute(AttributeType attribute, Object value) {
+
 		if(!holder.exists(attribute.getURI()))
 			throw new KtbsResourceNotFoundException(attribute.getURI());
-		addLiteral(attribute.getURI(), value);
+		else {
+			AttributeType attType = holder.getResource(attribute.getURI(), AttributeType.class);
+			ObselType obselType = getObselType();
+			ObselType attDomain = attType.getDomain();
+			checkDomainOrRange(obselType, attDomain, true);
+			addLiteral(attribute.getURI(), value);
+		}
+	}
+
+	private void checkDomainOrRange(ObselType obselType, ObselType attDomain, boolean domain) {
+		if(!(obselType.equals(attDomain) || obselType.hasSuperType(attDomain, Mode.INFERRED))) {
+			if(domain)
+				throw new DomainException(attDomain, obselType);
+			else
+				throw new RangeException(attDomain, obselType);
+
+		}
 	}
 
 	@Override
@@ -376,15 +396,48 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 			throw new KtbsResourceNotFoundException(relationType.getURI());
 		if(!holder.exists(target.getURI()))
 			throw new KtbsResourceNotFoundException(target.getURI());
+
+		ObselType obselType = getObselType();
+		ObselType relDomain = relationType.getDomain();
+		checkDomainOrRange(obselType, relDomain, true);
 		addResource(relationType.getURI(), target.getURI());
 	}
 
 	@Override
 	public void addIncomingRelation(Obsel source, RelationType relationType) {
+		if(!holder.exists(relationType.getURI()))
+			throw new KtbsResourceNotFoundException(relationType.getURI());
 		if(!holder.exists(source.getURI()))
 			throw new KtbsResourceNotFoundException(source.getURI());
-		else
-			source.addOutgoingRelation(relationType, source);
+
+		ObselType obselType = getObselType();
+		ObselType relrange = relationType.getRange();
+		checkDomainOrRange(obselType, relrange, false);
+		
+		rdfModel.getResource(source.getURI()).addProperty(
+				rdfModel.getProperty(relationType.getURI()),
+				rdfModel.getResource(uri));
+	}
+
+	@Override
+	public void setBeginDTAsDate(Date date) {
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		XSDDateTime x = new XSDDateTime(cal);
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_BEGIN_DT, x);
+	}
+
+	@Override
+	public void setEndDTAsDate(Date date) {
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(date);
+		XSDDateTime x = new XSDDateTime(cal);
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_END_DT, x);
+	}
+	
+	@Override
+	public String toString() {
+		return getURI();
 	}
 }
 

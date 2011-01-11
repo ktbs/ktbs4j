@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 public abstract class AbstractKtbsResource implements KtbsResource {
 
+
 	protected final String uri;
 	
 	/**

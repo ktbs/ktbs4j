@@ -12,13 +12,12 @@ import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 
 	private Base base;
-	private EmptyResourceFactory emptyFac = EmptyResourceFactory.getInstance();
+	private Base emptyBase;
 
 	@Before
 	public void setUp() throws Exception {
@@ -27,6 +26,10 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 		base = loadInHolder(
 				"base1/", 
 				"base1.ttl", 
+				Base.class);
+		emptyBase = loadInHolder(
+				"empty-base/", 
+				"empty-base.ttl", 
 				Base.class);
 	}
 
@@ -137,9 +140,9 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 		assertTrue(c.contains(emptyFac.createComputedTrace(uri("fusioned1"))));
 		assertTrue(c.contains(emptyFac.createComputedTrace(uri("helloworld1"))));
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void testListResources() {
 		assertEquals(12,KtbsUtils.count(base.listResources()));
@@ -160,7 +163,49 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddStoredTrace() {
-		fail("Not yet implemented");
+		assertEquals(0, KtbsUtils.count(emptyBase.listStoredTraces()));
+
+		StoredTrace t01 = loadInHolder(
+				"base1/t01/", 
+				"t01.ttl", 
+				StoredTrace.class);
+
+		emptyBase.addStoredTrace(t01);
+		assertEquals(1, KtbsUtils.count(emptyBase.listStoredTraces()));
+
+		assertTrue(KtbsUtils.toLinkedList(emptyBase.listStoredTraces()).contains(t01));
+
+		assertEquals(emptyBase,t01.getBase());
+	}
+
+	@Test
+	public void testAddComputedTrace() {
+		assertEquals(0, KtbsUtils.count(emptyBase.listComputedTraces()));
+
+		ComputedTrace count1 = loadInHolder(
+				"base1/count1/", 
+				"count1.ttl", 
+				ComputedTrace.class);
+
+		ComputedTrace filtered1 = loadInHolder(
+				"base1/filtered1/", 
+				"filtered1.ttl", 
+				ComputedTrace.class);
+		assertFalse(emptyBase.equals(count1.getBase()));
+		assertFalse(emptyBase.equals(filtered1.getBase()));
+
+		emptyBase.addComputedTrace(count1);
+		assertEquals(1, KtbsUtils.count(emptyBase.listComputedTraces()));
+
+		emptyBase.addComputedTrace(filtered1);
+		assertEquals(2, KtbsUtils.count(emptyBase.listComputedTraces()));
+
+		assertTrue(KtbsUtils.toLinkedList(emptyBase.listComputedTraces()).contains(count1));
+		assertTrue(KtbsUtils.toLinkedList(emptyBase.listComputedTraces()).contains(filtered1));
+
+		assertEquals(emptyBase,count1.getBase());
+		assertEquals(emptyBase,filtered1.getBase());
+
 	}
 
 	@Test
@@ -287,8 +332,17 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddTraceModel() {
-		fail("Not yet implemented.");
+		assertEquals(0, KtbsUtils.count(emptyBase.listTraceModels()));
 
+		TraceModel tm = loadInHolder(
+				"base1/model1/", 
+				"model1.ttl", 
+				TraceModel.class);
+
+		emptyBase.addTraceModel(tm);
+		assertEquals(1, KtbsUtils.count(emptyBase.listTraceModels()));
+
+		assertTrue(KtbsUtils.toLinkedList(emptyBase.listTraceModels()).contains(tm));
 	}
 
 	@Test
@@ -330,7 +384,26 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddMethod() {
-		fail("Not yet implemented.");
+		assertEquals(0, KtbsUtils.count(emptyBase.listMethods()));
+
+		Method method1 = loadInHolder(
+				"base1/count/", 
+				"count.ttl", 
+				Method.class);
+
+		Method method2 = loadInHolder(
+				"base1/helloworld/", 
+				"helloworld.ttl", 
+				Method.class);
+
+		emptyBase.addMethod(method1);
+		assertEquals(1, KtbsUtils.count(emptyBase.listMethods()));
+		
+		emptyBase.addMethod(method2);
+		assertEquals(2, KtbsUtils.count(emptyBase.listMethods()));
+
+		assertTrue(KtbsUtils.toLinkedList(emptyBase.listMethods()).contains(method1));
+		assertTrue(KtbsUtils.toLinkedList(emptyBase.listMethods()).contains(method2));
 	}
 
 	@Test

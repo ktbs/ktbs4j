@@ -23,5 +23,9 @@ public class KtbsJenaAttributeTypeTestCase extends AbstractKtbsJenaTestCase {
 	public void testGetDomain() {
 		fail("Not yet implemented");
 	}
+	@Test
+	public void testSetDomain() {
+		fail("Not yet implemented");
+	}
 
 }

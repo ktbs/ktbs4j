@@ -38,6 +38,8 @@ public class KtbsJenaResourceFactory {
 	}
 
 	public <T extends KtbsResource> T createResource(String uri, InputStream stream, String lang, Class<T> clazz) {
+		// TODO checks that the model contains the uri
+		
 		if(StoredTrace.class.equals(clazz))
 			return clazz.cast(createStoredTrace(uri, stream, lang));
 		else if(ComputedTrace.class.equals(clazz))
@@ -150,13 +152,13 @@ public class KtbsJenaResourceFactory {
 	}
 
 	public <T extends KtbsResource> T createResource(String obsTypeUri, Class<T> clazz, Model rdfModel) {
-		if(ObselType.class.equals(clazz))
+		if(ObselType.class.isAssignableFrom(clazz))
 			return clazz.cast(createObselType(obsTypeUri, rdfModel));
-		else if(RelationType.class.equals(clazz))
+		else if(RelationType.class.isAssignableFrom(clazz))
 			return clazz.cast(createRelationType(obsTypeUri, rdfModel));
-		else if(AttributeType.class.equals(clazz))
+		else if(AttributeType.class.isAssignableFrom(clazz))
 			return clazz.cast(createAttributeType(obsTypeUri, rdfModel));
-		else if(Obsel.class.equals(clazz))
+		else if(Obsel.class.isAssignableFrom(clazz))
 			return clazz.cast(createObsel(obsTypeUri, rdfModel));
 		else
 			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\"");

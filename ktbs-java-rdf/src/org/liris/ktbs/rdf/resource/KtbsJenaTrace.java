@@ -2,6 +2,7 @@ package org.liris.ktbs.rdf.resource;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -241,14 +242,9 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 	
 	@Override
 	public void setOriginAsDate(Date origin) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = new GregorianCalendar();
 		cal.setTime(origin);
-		
-		removeAllAndAddLiteral(KtbsConstants.P_HAS_ORIGIN, new XSDDateTime(cal));
-	}
-	
-	@Override
-	public void setCompliantWithModel(boolean compliant) {
-		removeAllAndAddLiteral(KtbsConstants.P_COMPLIES_WITH_MODEL, compliant);
+		XSDDateTime x = new XSDDateTime(cal);
+		removeAllAndAddLiteral(KtbsConstants.P_HAS_ORIGIN, x);
 	}
 }

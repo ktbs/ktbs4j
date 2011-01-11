@@ -10,7 +10,6 @@ import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Method;
-import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
@@ -102,7 +101,6 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 	@Override
 	public void addStoredTrace(StoredTrace trace) {
 		createParentConnection(this, trace);
-		throw new ReadOnlyObjectException(this);
 	}
 
 	@Override
@@ -233,7 +231,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 				if(it2.hasNext() && isAcceptedType(it2.next().asResource())) {
 					foundNext = true;
 
-					Resource r = KtbsJenaBase.this.getObjectOfPropertyAsResource(RDF.type.getURI());
+					Resource r = candidateResource.getPropertyResourceValue(RDF.type);
 					Class<? extends KtbsResource> javaClass = KtbsUtils.getJavaClass(r.getURI());
 
 					next = holder.getResource(

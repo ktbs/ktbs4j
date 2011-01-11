@@ -18,7 +18,9 @@ public class KtbsJenaStoredTrace extends KtbsJenaTrace implements StoredTrace {
 	@Override
 	public void addObsel(Obsel obsel) {
 		holder.addResourceAsPartOfExistingModel(obsel, rdfModel);
-		((KtbsJenaObsel)obsel).removeAllAndAddResource(KtbsConstants.P_HAS_TRACE,this.uri);
+		KtbsJenaObsel kjObsel = (KtbsJenaObsel)holder.getResource(obsel.getURI(), Obsel.class);
+		kjObsel.rdfModel = this.rdfModel;
+		kjObsel.removeAllAndAddResource(KtbsConstants.P_HAS_TRACE,this.uri);
 	}
 
 	@Override

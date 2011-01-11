@@ -48,4 +48,16 @@ public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
 				emptyFac.createMethod(KtbsConstants.FILTER), 
 				filtered1.getMethod());
 	}
+	
+
+
+	@Test
+	public void testSetMethod() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testAddSourceTrace() {
+		fail("Not yet implemented");
+	}
 }

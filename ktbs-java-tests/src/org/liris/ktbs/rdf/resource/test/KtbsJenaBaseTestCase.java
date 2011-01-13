@@ -23,12 +23,10 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		base = loadInHolder(
-				"base1/", 
+		base = loadInRepo(
 				"base1.ttl", 
 				Base.class);
-		emptyBase = loadInHolder(
-				"empty-base/", 
+		emptyBase = loadInRepo(
 				"empty-base.ttl", 
 				Base.class);
 	}
@@ -77,19 +75,6 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 
 		KtbsResource bidon = base.get(uri("bidon"));
 		assertNull(bidon);
-	}
-
-	@Test
-	public void testGetKtbsRoot() {
-		try {
-			base.getKtbsRoot();
-			fail("Should fail, feature not supported by the KTBS server at the moment");
-		} catch(UnsupportedOperationException e) {
-
-		}
-		//		assertNotNull(root);
-		//		assertEquals("http://localhost:8001/",root.getURI());
-
 	}
 
 	@Test
@@ -162,49 +147,53 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
-	public void testAddStoredTrace() {
-		assertEquals(0, KtbsUtils.count(emptyBase.listStoredTraces()));
+	public void testNewStoredTrace() {
+		fail("Not yet tested since modified");
 
-		StoredTrace t01 = loadInHolder(
-				"base1/t01/", 
-				"t01.ttl", 
-				StoredTrace.class);
-
-		emptyBase.addStoredTrace(t01);
-		assertEquals(1, KtbsUtils.count(emptyBase.listStoredTraces()));
-
-		assertTrue(KtbsUtils.toLinkedList(emptyBase.listStoredTraces()).contains(t01));
-
-		assertEquals(emptyBase,t01.getBase());
+//		
+//		assertEquals(0, KtbsUtils.count(emptyBase.listStoredTraces()));
+//
+//		StoredTrace t01 = loadInHolder(
+//				"base1/t01/", 
+//				"t01.ttl", 
+//				StoredTrace.class);
+//
+//		emptyBase.addStoredTrace(t01);
+//		assertEquals(1, KtbsUtils.count(emptyBase.listStoredTraces()));
+//
+//		assertTrue(KtbsUtils.toLinkedList(emptyBase.listStoredTraces()).contains(t01));
+//
+//		assertEquals(emptyBase,t01.getBase());
 	}
 
 	@Test
-	public void testAddComputedTrace() {
-		assertEquals(0, KtbsUtils.count(emptyBase.listComputedTraces()));
-
-		ComputedTrace count1 = loadInHolder(
-				"base1/count1/", 
-				"count1.ttl", 
-				ComputedTrace.class);
-
-		ComputedTrace filtered1 = loadInHolder(
-				"base1/filtered1/", 
-				"filtered1.ttl", 
-				ComputedTrace.class);
-		assertFalse(emptyBase.equals(count1.getBase()));
-		assertFalse(emptyBase.equals(filtered1.getBase()));
-
-		emptyBase.addComputedTrace(count1);
-		assertEquals(1, KtbsUtils.count(emptyBase.listComputedTraces()));
-
-		emptyBase.addComputedTrace(filtered1);
-		assertEquals(2, KtbsUtils.count(emptyBase.listComputedTraces()));
-
-		assertTrue(KtbsUtils.toLinkedList(emptyBase.listComputedTraces()).contains(count1));
-		assertTrue(KtbsUtils.toLinkedList(emptyBase.listComputedTraces()).contains(filtered1));
-
-		assertEquals(emptyBase,count1.getBase());
-		assertEquals(emptyBase,filtered1.getBase());
+	public void testNewComputedTrace() {
+		fail("Not yet tested since modified");
+//		assertEquals(0, KtbsUtils.count(emptyBase.listComputedTraces()));
+//
+//		ComputedTrace count1 = loadInHolder(
+//				"base1/count1/", 
+//				"count1.ttl", 
+//				ComputedTrace.class);
+//
+//		ComputedTrace filtered1 = loadInHolder(
+//				"base1/filtered1/", 
+//				"filtered1.ttl", 
+//				ComputedTrace.class);
+//		assertFalse(emptyBase.equals(count1.getBase()));
+//		assertFalse(emptyBase.equals(filtered1.getBase()));
+//
+//		emptyBase.addComputedTrace(count1);
+//		assertEquals(1, KtbsUtils.count(emptyBase.listComputedTraces()));
+//
+//		emptyBase.addComputedTrace(filtered1);
+//		assertEquals(2, KtbsUtils.count(emptyBase.listComputedTraces()));
+//
+//		assertTrue(KtbsUtils.toLinkedList(emptyBase.listComputedTraces()).contains(count1));
+//		assertTrue(KtbsUtils.toLinkedList(emptyBase.listComputedTraces()).contains(filtered1));
+//
+//		assertEquals(emptyBase,count1.getBase());
+//		assertEquals(emptyBase,filtered1.getBase());
 
 	}
 
@@ -331,18 +320,19 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
-	public void testAddTraceModel() {
-		assertEquals(0, KtbsUtils.count(emptyBase.listTraceModels()));
-
-		TraceModel tm = loadInHolder(
-				"base1/model1/", 
-				"model1.ttl", 
-				TraceModel.class);
-
-		emptyBase.addTraceModel(tm);
-		assertEquals(1, KtbsUtils.count(emptyBase.listTraceModels()));
-
-		assertTrue(KtbsUtils.toLinkedList(emptyBase.listTraceModels()).contains(tm));
+	public void testNewTraceModel() {
+		fail("Not yet tested since modified");
+//		assertEquals(0, KtbsUtils.count(emptyBase.listTraceModels()));
+//
+//		TraceModel tm = loadInHolder(
+//				"base1/model1/", 
+//				"model1.ttl", 
+//				TraceModel.class);
+//
+//		emptyBase.addTraceModel(tm);
+//		assertEquals(1, KtbsUtils.count(emptyBase.listTraceModels()));
+//
+//		assertTrue(KtbsUtils.toLinkedList(emptyBase.listTraceModels()).contains(tm));
 	}
 
 	@Test
@@ -383,27 +373,29 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
-	public void testAddMethod() {
-		assertEquals(0, KtbsUtils.count(emptyBase.listMethods()));
+	public void testNewMethod() {
+		fail("Not yet tested since modified");
 
-		Method method1 = loadInHolder(
-				"base1/count/", 
-				"count.ttl", 
-				Method.class);
-
-		Method method2 = loadInHolder(
-				"base1/helloworld/", 
-				"helloworld.ttl", 
-				Method.class);
-
-		emptyBase.addMethod(method1);
-		assertEquals(1, KtbsUtils.count(emptyBase.listMethods()));
-		
-		emptyBase.addMethod(method2);
-		assertEquals(2, KtbsUtils.count(emptyBase.listMethods()));
-
-		assertTrue(KtbsUtils.toLinkedList(emptyBase.listMethods()).contains(method1));
-		assertTrue(KtbsUtils.toLinkedList(emptyBase.listMethods()).contains(method2));
+//		assertEquals(0, KtbsUtils.count(emptyBase.listMethods()));
+//
+//		Method method1 = loadInHolder(
+//				"base1/count/", 
+//				"count.ttl", 
+//				Method.class);
+//
+//		Method method2 = loadInHolder(
+//				"base1/helloworld/", 
+//				"helloworld.ttl", 
+//				Method.class);
+//
+//		emptyBase.addMethod(method1);
+//		assertEquals(1, KtbsUtils.count(emptyBase.listMethods()));
+//		
+//		emptyBase.addMethod(method2);
+//		assertEquals(2, KtbsUtils.count(emptyBase.listMethods()));
+//
+//		assertTrue(KtbsUtils.toLinkedList(emptyBase.listMethods()).contains(method1));
+//		assertTrue(KtbsUtils.toLinkedList(emptyBase.listMethods()).contains(method2));
 	}
 
 	@Test

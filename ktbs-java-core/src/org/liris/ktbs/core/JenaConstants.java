@@ -1,4 +1,4 @@
-package org.liris.ktbs.rdf;
+package org.liris.ktbs.core;
 
 public interface JenaConstants {
 	public static final String JENA_SYNTAX_TURTLE = "TURTLE";

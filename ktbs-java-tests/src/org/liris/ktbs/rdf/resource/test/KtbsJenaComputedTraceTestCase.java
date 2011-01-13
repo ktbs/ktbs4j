@@ -19,12 +19,10 @@ public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		count1 = loadInHolder(
-				"base1/count1/", 
+		count1 = loadInRepo(
 				"count1.ttl", 
 				ComputedTrace.class);
-		filtered1 = loadInHolder(
-				"base1/filtered1/", 
+		filtered1 = loadInRepo(
 				"filtered1.ttl", 
 				ComputedTrace.class);
 	}
@@ -55,8 +53,8 @@ public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
 	
 	@Test
 	public void testSetMethod() {
-		Method count = loadInHolder("base1/count1/", "count.ttl", Method.class);
-		Method hello = loadInHolder("base1/count1/", "helloworld.ttl", Method.class);
+		Method count = loadInRepo( "count.ttl", Method.class);
+		Method hello = loadInRepo("helloworld.ttl", Method.class);
 		
 		count1.setMethod(count);
 		assertEquals(count, count1.getMethod());

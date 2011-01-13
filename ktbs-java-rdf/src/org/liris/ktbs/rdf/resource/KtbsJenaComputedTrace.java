@@ -8,7 +8,6 @@ import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ResourceWithParameters;
 import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -17,7 +16,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrace {
 
-	KtbsJenaComputedTrace(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
+	KtbsJenaComputedTrace(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
 		super(uri, rdfModel, holder);
 		resourceWithParameterAspect = new KtbsJenaResourceWithParameter(uri, rdfModel, holder);
 	}
@@ -53,31 +52,34 @@ public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrac
 		return new KtbsResourceObjectIterator<Trace>(
 				it, 
 				Trace.class,
-				holder, true);
+				repository, true);
 	}
+	
 	@Override
 	public Method getMethod() {
 		Resource r = getObjectOfPropertyAsResource(KtbsConstants.P_HAS_METHOD);
 		if(r==null)
 			return null;
 		else
-			return holder.getResource(r.getURI(), Method.class);
+			return repository.getResource(r.getURI(), Method.class);
 	}
 
 	@Override
 	public void setMethod(Method method) {
-		Method m = holder.putResource(method);
+		repository.checkExistency(method);
+		
 		removeAllProperties(KtbsConstants.P_HAS_METHOD);
 		rdfModel.getResource(uri).addProperty(
 				rdfModel.getProperty(KtbsConstants.P_HAS_METHOD), 
-				rdfModel.getResource(m.getURI()));
+				rdfModel.getResource(method.getURI()));
 	}
 
 	@Override
 	public void addSourceTrace(Trace sourceTrace) {
-		Trace t = holder.putResource(sourceTrace);
+		repository.checkExistency(sourceTrace);
+		
 		rdfModel.getResource(uri).addProperty(
 				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
-				rdfModel.getResource(t.getURI()));
+				rdfModel.getResource(sourceTrace.getURI()));
 	}
 }

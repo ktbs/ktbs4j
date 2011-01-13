@@ -38,8 +38,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		trace = loadInHolder(
-				"base1/t01/", 
+		trace = loadInRepo(
 				"t01.ttl", 
 				StoredTrace.class);
 
@@ -48,14 +47,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		obsel3 = trace.getObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
 		obsel4 = trace.getObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
 
-		obsel5 = loadInHolder(
-				"base1/t01/obs5", 
-				"obsel5.ttl", 
-				Obsel.class);
-		obsel6 = loadInHolder(
-				"base1/t01/obs6", 
-				"obsel6.ttl", 
-				Obsel.class);
+		
 	}
 
 	@Test
@@ -193,11 +185,15 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testListAttributes() {
-		trace.addObsel(obsel5);
-		trace.addObsel(obsel6);
+		obsel5 = loadInRepo(
+				"obsel5.ttl", 
+				Obsel.class);
+		obsel6 = loadInRepo(
+				"obsel6.ttl", 
+				Obsel.class);
 		
 		// needs the model to be loaded in order to know if it is an attribute
-		loadInHolder("base1/model1/", "model1.ttl", TraceModel.class);
+		loadInRepo("model1.ttl", TraceModel.class);
 		
 		assertEquals(1,KtbsUtils.count(obsel1.listAttributes()));
 		testAttributeStatement(obsel1.listAttributes().next(), newAttType("channel"), "#my-channel");
@@ -255,7 +251,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddAttribute() {
-		Obsel obsel7 = loadInHolder("base1/t01/obs7", "obsel7.ttl", Obsel.class);
+		Obsel obsel7 = loadInRepo("obsel7.ttl", Obsel.class);
 		
 		assertEquals(0, KtbsUtils.count(obsel7.listAttributes()));
 		
@@ -287,11 +283,11 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddOutgoingRelation() {
-		Obsel obsel8 = loadInHolder("base1/t01/obs8", "obsel8.ttl", Obsel.class);
+		Obsel obsel8 = loadInRepo( "obsel8.ttl", Obsel.class);
 		
 		assertEquals(0, KtbsUtils.count(obsel8.listOutgoingRelations()));
 		
-		RelationType relation = holder.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
+		RelationType relation = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
 		Obsel obsel = trace.getObsel("http://localhost:8001/base1/t01/obs1");
 		obsel8.addOutgoingRelation(relation, obsel);
 		
@@ -299,7 +295,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		assertEquals(obsel8.getTargetObsel(relation),obsel);
 		
 		try {
-			obsel1.addOutgoingRelation(holder.getResource("http://localhost:8001/base1/model1/closes", RelationType.class), obsel);
+			obsel1.addOutgoingRelation(repository.getResource("http://localhost:8001/base1/model1/closes", RelationType.class), obsel);
 			fail("Should fail");
 		} catch(DomainException e) {
 			
@@ -308,10 +304,10 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddIncomingRelation() {
-		Trace t02 = loadInHolder("base1/t02/", "t02.ttl", StoredTrace.class);
+		Trace t02 = loadInRepo("t02.ttl", StoredTrace.class);
 		Obsel openChat = t02.getObsel("http://localhost:8001/base1/t02/obs1");
 		Obsel obsel8 = t02.getObsel("http://localhost:8001/base1/t02/obs8");
-		RelationType relation = holder.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
+		RelationType relation = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
 		
 		assertEquals(3, KtbsUtils.count(openChat.listIncomingRelations()));
 		openChat.addIncomingRelation(obsel8, relation);
@@ -327,8 +323,9 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testListIncomingRelations() {
-		trace.addObsel(obsel6);
-		
+		obsel6 = loadInRepo(
+				"obsel6.ttl", 
+				Obsel.class);		
 		assertEquals(4,KtbsUtils.count(obsel1.listIncomingRelations()));
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("91eda250f267fa93e4ece8f3ed659139"),false);
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("a08667b20cfe4079d02f2f5ad9239575"),false);
@@ -352,8 +349,12 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testListOutgoingRelations() {
-		trace.addObsel(obsel5);
-		trace.addObsel(obsel6);
+		obsel5 = loadInRepo(
+				"obsel5.ttl", 
+				Obsel.class);
+		obsel6 = loadInRepo(
+				"obsel6.ttl", 
+				Obsel.class);
 		
 		assertEquals(0,KtbsUtils.count(obsel1.listOutgoingRelations()));
 		
@@ -378,21 +379,18 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		}
 	}
 
-
 	private Obsel newObsel(String string) {
 		return emptyFac.createObsel("http://localhost:8001/base1/t01/"+string);
 	}
 	
-	
 	private RelationType newRelType(String string) {
 		return emptyFac.createRelationType("http://localhost:8001/base1/model1/"+string);
 	}
-
 	
 	@Test
 	public void testGetTargetObsel() {
-		RelationType onChannel = holder.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
-		RelationType closes = holder.getResource("http://localhost:8001/base1/model1/closes", RelationType.class);
+		RelationType onChannel = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
+		RelationType closes = repository.getResource("http://localhost:8001/base1/model1/closes", RelationType.class);
 
 		assertNull(obsel1.getTargetObsel(onChannel));
 		assertNull(obsel1.getTargetObsel(closes));
@@ -400,11 +398,10 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		assertEquals(obsel1, obsel3.getTargetObsel(onChannel));
 		assertEquals(obsel1, obsel4.getTargetObsel(onChannel));
 	}
-
 	
 	@Test
 	public void testSetSourceObsel() {
-		RelationType onChannel = holder.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
+		RelationType onChannel = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
 		
 		Collection<Obsel> sourceObsels = new LinkedList<Obsel>();
 		sourceObsels.add(obsel2);
@@ -415,7 +412,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 	
 	@Test
 	public void testGetSourceObsel() {
-		Trace filtered1 = loadInHolder("base1/filtered1/", "filtered1-obsels.ttl", ComputedTrace.class);
+		Trace filtered1 = loadInRepo("filtered1-obsels.ttl", ComputedTrace.class);
 		Obsel o = filtered1.getObsel("http://localhost:8001/base1/filtered1/obs1");
 		Obsel source = o.getSourceObsel();
 		assertEquals("http://localhost:8001/base1/t01/obs1", source.getURI());

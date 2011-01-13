@@ -25,7 +25,6 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	public Obsel getObsel(String obselURI);
 	
 
-	public Base getBase();
 	public TraceModel getTraceModel();
 	public void setTraceModel(TraceModel traceModel);
 	public boolean isCompliantWithModel();

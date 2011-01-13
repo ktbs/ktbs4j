@@ -10,12 +10,12 @@ public interface TraceModel extends KtbsResource, ResourceContainer {
 	public Iterator<RelationType> listRelationTypes();
 	public Iterator<ObselType> listObselTypes();
 	
-	public void addObselType(ObselType obselType);
+	public void newObselType(String localName);
 	public ObselType getObselType(String obselTypeUri);
 
-	public void addRelationType(RelationType obselType);
+	public void newRelationType(String localName, ObselType domain, ObselType range);
 	public RelationType getRelationType(String relationTypeUri);
 	
-	public void addAttributeType(AttributeType obselType);
+	public void newAttributeType(String localName, ObselType domain);
 	public AttributeType getAttributeType(String attributeTypeUri);
 }

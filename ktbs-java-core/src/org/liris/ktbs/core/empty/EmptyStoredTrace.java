@@ -1,6 +1,10 @@
 package org.liris.ktbs.core.empty;
 
+import java.util.Map;
+
+import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.TraceModel;
 
@@ -8,11 +12,6 @@ public class EmptyStoredTrace extends EmptyTrace implements StoredTrace {
 
 	EmptyStoredTrace(String uri) {
 		super(uri);
-	}
-
-	@Override
-	public void addObsel(Obsel obsel) {
-		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
@@ -32,6 +31,12 @@ public class EmptyStoredTrace extends EmptyTrace implements StoredTrace {
 
 	@Override
 	public void removeObsel(String obselURI) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
+
+	@Override
+	public Obsel newObsel(String obselURI, StoredTrace hasTrace, ObselType type,
+			Map<AttributeType, Object> attributes) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

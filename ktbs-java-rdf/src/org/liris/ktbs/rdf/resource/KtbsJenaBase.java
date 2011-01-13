@@ -8,12 +8,10 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -26,7 +24,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
-	KtbsJenaBase(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
+	KtbsJenaBase(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -45,20 +43,6 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		if(resource != null)
 			return resource;
 		return getTrace(resourceURI);
-	}
-
-	@Override
-	public KtbsRoot getKtbsRoot() {
-		/*
-		 * TODO KTBS BUG : the triple "root ktbs:hasBase base" is not returned by the KTBS
-		 */
-		throw new UnsupportedOperationException("The KTBS server does not provide the root uri at the moment.");
-		//		ResIterator it = rdfModel.listResourcesWithProperty(
-		//				rdfModel.getProperty(KtbsConstants.P_OWNS), 
-		//				rdfModel.getResource(uri));
-		//		if(it.hasNext())
-		//			return EmptyResourceFactory.getInstance().createKtbsRoot(it.next().getURI());
-		//		return null;
 	}
 
 	@Override
@@ -98,20 +82,20 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		);
 	}
 
-	@Override
-	public void addStoredTrace(StoredTrace trace) {
-		createParentConnection(this, trace);
-	}
+//	@Override
+//	public void addStoredTrace(StoredTrace trace) {
+//		createParentConnection(this, trace);
+//	}
 
 	@Override
 	public StoredTrace getStoredTrace(String stUri) {
 		return returnOwnedResource(stUri, KtbsConstants.STORED_TRACE);
 	}
 
-	@Override
-	public void addComputedTrace(ComputedTrace trace) {
-		createParentConnection(this, trace);
-	}
+//	@Override
+//	public void addComputedTrace(ComputedTrace trace) {
+//		createParentConnection(this, trace);
+//	}
 
 	@Override
 	public ComputedTrace getComputedTrace(String ctUri) {
@@ -123,20 +107,20 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		return returnOwnedResource(tUri, KtbsConstants.COMPUTED_TRACE, KtbsConstants.STORED_TRACE);
 	}
 
-	@Override
-	public void addTraceModel(TraceModel traceModel) {
-		createParentConnection(this, traceModel);
-	}
+//	@Override
+//	public void addTraceModel(TraceModel traceModel) {
+//		createParentConnection(this, traceModel);
+//	}
 
 	@Override
 	public TraceModel getTraceModel(String tmUri) {
 		return returnOwnedResource(tmUri, KtbsConstants.TRACE_MODEL);
 	}
 
-	@Override
-	public void addMethod(Method method) {
-		createParentConnection(this, method);
-	}
+//	@Override
+//	public void addMethod(Method method) {
+//		createParentConnection(this, method);
+//	}
 
 	@Override
 	public Method getMethod(String methodUri) {
@@ -157,7 +141,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		else {
 			Resource rdfType = rdfModel.getResource(resourceUri).getPropertyResourceValue(RDF.type);
 			Class<? extends KtbsResource> javaClass = KtbsUtils.getJavaClass(rdfType.getURI());
-			return (T) holder.getResource(resourceUri, javaClass);
+			return (T) repository.getResource(resourceUri, javaClass);
 		}
 	}
 
@@ -234,7 +218,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 					Resource r = candidateResource.getPropertyResourceValue(RDF.type);
 					Class<? extends KtbsResource> javaClass = KtbsUtils.getJavaClass(r.getURI());
 
-					next = holder.getResource(
+					next = repository.getResource(
 							candidateResource.getURI(), 
 							javaClass);
 				} 
@@ -258,7 +242,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 		@Override
 		public T next() {
-			T toBeReturned = (T) next;
+			T toBeReturned = (T)next;
 			doNext();
 			return toBeReturned;
 		}
@@ -267,5 +251,26 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 		public void remove() {
 			throw new UnsupportedOperationException("Cannot use iterator to remove resources from a base.");
 		}
+	}
+
+	@Override
+	public StoredTrace createStoredTrace(String traceURI, TraceModel model) {
+		return repository.createStoredTrace(this, traceURI, model);
+	}
+
+	@Override
+	public ComputedTrace createComputedTrace(String traceURI, TraceModel model,
+			Method method, Collection<Trace> sources) {
+		return repository.createComputedTrace(this, traceURI, model, method, sources);
+	}
+
+	@Override
+	public Method createMethod(String methodURI, String inheritedMethod) {
+		return repository.createMethod(this, methodURI, inheritedMethod);
+	}
+
+	@Override
+	public TraceModel createTraceModel(String modelURI) {
+		return repository.createTraceModel(this, modelURI);
 	}
 }

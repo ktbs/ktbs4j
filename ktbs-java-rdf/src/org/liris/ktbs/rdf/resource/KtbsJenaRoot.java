@@ -6,7 +6,6 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -15,7 +14,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 
-	KtbsJenaRoot(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
+	KtbsJenaRoot(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -30,12 +29,13 @@ public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 				rdfModel.getResource(uri), 
 				rdfModel.getProperty(KtbsConstants.P_HAS_BASE),
 				(RDFNode)null);
-		return new KtbsResourceObjectIterator<Base>(stmtIt, Base.class, holder, false);
+		return new KtbsResourceObjectIterator<Base>(stmtIt, Base.class, repository, false);
 	}
 
 	@Override
 	public void addBase(Base base) {
-		holder.putResource(base);
+		repository.checkExistency(base);
+		
 		createParentConnection(this, base);
 	}
 
@@ -48,7 +48,7 @@ public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 		while(it.hasNext()) {
 			RDFNode node = it.next();
 			if(node.asResource().getURI().equals(baseURI))
-				return holder.getResource(baseURI, Base.class);
+				return repository.getResource(baseURI, Base.class);
 		}
 		return null;
 	}

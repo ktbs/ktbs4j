@@ -45,17 +45,18 @@ TraceModel {
 	}
 
 	@Override
-	public void addObselType(ObselType obselType) {
+	public void newObselType(String localName) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public void addRelationType(RelationType obselType) {
+	public void newRelationType(String localName, ObselType domain,
+			ObselType range) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public void addAttributeType(AttributeType obselType) {
+	public void newAttributeType(String localName, ObselType domain) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

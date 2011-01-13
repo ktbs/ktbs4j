@@ -7,14 +7,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.TemporalDomainException;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.datatypes.xsd.IllegalDateTimeFieldException;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
@@ -27,7 +25,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
-	KtbsJenaTrace(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
+	KtbsJenaTrace(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -51,13 +49,13 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 					}
 				});
 	}
-	
+
 	@Override
 	public void setTraceModel(TraceModel traceModel) {
-		TraceModel tm = holder.putResource(traceModel);
-		
+		repository.checkExistency(traceModel);
+
 		removeAllProperties(KtbsConstants.P_HAS_MODEL);
-		rdfModel.getResource(uri).addProperty(rdfModel.getProperty(KtbsConstants.P_HAS_MODEL), rdfModel.getResource(tm.getURI()));
+		rdfModel.getResource(uri).addProperty(rdfModel.getProperty(KtbsConstants.P_HAS_MODEL), rdfModel.getResource(traceModel.getURI()));
 	}
 
 	@Override
@@ -65,7 +63,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 		ResIterator restIt = rdfModel.listResourcesWithProperty(
 				rdfModel.getProperty(KtbsConstants.P_HAS_TRACE),
 				rdfModel.getResource(uri)); 
-		
+
 		return new ObselIterator(
 				restIt, 
 				new TemporalCondition() {
@@ -76,8 +74,6 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 				});
 	}
 
-
-
 	@Override
 	public Iterator<Trace> listTransformedTraces() {
 		StmtIterator it = rdfModel.listStatements(
@@ -87,7 +83,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 		return new KtbsResourceSubjectIterator<Trace>(
 				it, 
 				Trace.class,
-				holder, 
+				repository, 
 				false);
 	}
 
@@ -127,27 +123,13 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 					rdfModel.getProperty(KtbsConstants.P_HAS_TRACE), 
 					rdfModel.getResource(uri));
 			if(it.hasNext()) {
-				
-				Obsel obsel = holder.getResourceAlreadyInModel(obselURI, Obsel.class, rdfModel);
+
+				Obsel obsel = repository.getResourceAlreadyInModel(obselURI, Obsel.class, rdfModel);
 				traceObselCache.put(obselURI, obsel);
 				return obsel;
 			} else
 				return null;
 		}
-	}
-
-
-	@Override
-	public Base getBase() {
-		StmtIterator it = rdfModel.listStatements(
-				null, 
-				rdfModel.getProperty(KtbsConstants.P_OWNS), 
-				rdfModel.getResource(uri));
-		if(it.hasNext()) {
-			String baseURI = it.nextStatement().getSubject().asResource().getURI();
-			return holder.getResource(baseURI, Base.class);
-		} else
-			return null;
 	}
 
 	@Override
@@ -156,7 +138,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 		if(r==null)
 			return null;
 		else
-			return holder.getResource(r.getURI(), TraceModel.class);
+			return repository.getResource(r.getURI(), TraceModel.class);
 	}
 
 
@@ -198,7 +180,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 			while(resIt.hasNext() && !foundNext) {
 				Resource res = resIt.next();
 				String obselURI = res.getURI();
-				next = KtbsJenaTrace.this.holder.getResourceAlreadyInModel(
+				next = KtbsJenaTrace.this.repository.getResourceAlreadyInModel(
 						obselURI, 
 						Obsel.class, 
 						KtbsJenaTrace.this.rdfModel);
@@ -233,13 +215,13 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 			throw new UnsupportedOperationException("Cannot use iterator to remove obsels from a trace.");
 		}
 	}
-	
-	
+
+
 	@Override
 	public void setOrigin(String origin) {
 		removeAllAndAddLiteral(KtbsConstants.P_HAS_ORIGIN, origin);
 	}
-	
+
 	@Override
 	public void setOriginAsDate(Date origin) {
 		Calendar cal = new GregorianCalendar();

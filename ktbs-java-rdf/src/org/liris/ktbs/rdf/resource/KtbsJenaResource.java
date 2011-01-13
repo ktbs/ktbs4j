@@ -7,13 +7,13 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.AbstractKtbsResource;
 import org.liris.ktbs.core.Base;
+import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.rdf.JenaConstants;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
+import org.liris.ktbs.core.StringableResource;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -27,15 +27,15 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class KtbsJenaResource extends AbstractKtbsResource {
+public class KtbsJenaResource extends AbstractKtbsResource implements StringableResource  {
 
-	protected KtbsJenaResourceHolder holder;
+	protected RDFResourceRepositoryImpl repository;
 	protected Model rdfModel;
 
-	KtbsJenaResource(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
+	KtbsJenaResource(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
 		super(uri);
 		this.rdfModel = rdfModel;
-		this.holder = holder;
+		this.repository = holder;
 	}
 
 	@Override
@@ -284,8 +284,7 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 	}
 	
 	protected void checkExitsenceAndAddResource(String pName, KtbsResource resource) {
-		if(!holder.exists(resource.getURI())) 
-			throw new KtbsResourceNotFoundException(resource.getURI());
+		repository.checkExistency(resource);
 		removeAllAndAddResource(pName, resource.getURI());
 	}
 	
@@ -327,10 +326,10 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 		if(r==null)
 			return null;
 		else {
-			if(!holder.exists(r.getURI()) && !createEmptyIfAbsent)
+			if(!repository.exists(r.getURI()) && !createEmptyIfAbsent)
 				throw new KtbsResourceNotFoundException(r.getURI());
 			else {
-				T resource = holder.getResource(r.getURI(), clazz);
+				T resource = repository.getResource(r.getURI(), clazz);
 				return resource;
 			}
 		}
@@ -342,5 +341,21 @@ public class KtbsJenaResource extends AbstractKtbsResource {
 			return null;
 		else
 			return l.getString();
+	}
+
+	@Override
+	public String toPostableString(String mimeType) {
+		StringWriter writer = new StringWriter();
+		rdfModel.write(writer, KtbsUtils.getJenaSyntax(mimeType));
+		return writer.toString();
+	}
+	
+	
+	/*
+	 * For resources that should be in an already contained model.
+	 */
+	void incorporateResource(KtbsJenaResource resource) {
+		this.rdfModel.union(resource.rdfModel);
+		resource.rdfModel = this.rdfModel;
 	}
 }

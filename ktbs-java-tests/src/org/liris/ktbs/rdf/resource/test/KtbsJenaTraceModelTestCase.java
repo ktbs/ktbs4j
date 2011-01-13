@@ -20,8 +20,7 @@ public class KtbsJenaTraceModelTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		traceModel = loadInHolder(
-				"base1/model1/", 
+		traceModel = loadInRepo(
 				"model1.ttl", 
 				TraceModel.class);
 	}
@@ -154,29 +153,32 @@ public class KtbsJenaTraceModelTestCase extends AbstractKtbsJenaTestCase {
 	}
 
 	@Test
-	public void testAddAttributeType() {
-		AttributeType type = holder.getResource("http://localhost:8001/base1/model1/att1", AttributeType.class);
-		assertFalse(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
-		traceModel.addAttributeType(type);
-		assertTrue(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
+	public void testNewAttributeType() {
+		fail("Not yet tested since the method has changed");
+//		AttributeType type = holder.getResource("http://localhost:8001/base1/model1/att1", AttributeType.class);
+//		assertFalse(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
+//		traceModel.addAttributeType(type);
+//		assertTrue(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
 	}
 	
 	
 	@Test
-	public void testAddObselType() {
-		ObselType type = holder.getResource("http://localhost:8001/base1/model1/Type1", ObselType.class);
-		assertFalse(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
-		traceModel.addObselType(type);
-		assertTrue(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
+	public void testNewObselType() {
+		fail("Not yet tested since the method has changed");
+//		ObselType type = holder.getResource("http://localhost:8001/base1/model1/Type1", ObselType.class);
+//		assertFalse(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
+//		traceModel.addObselType(type);
+//		assertTrue(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
 	}
 	
 	
 	@Test
-	public void testAddRelationType() {
-		RelationType type = holder.getResource("http://localhost:8001/base1/model1/Relation1", RelationType.class);
-		assertFalse(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
-		traceModel.addRelationType(type);
-		assertTrue(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
+	public void testNewRelationType() {
+		fail("Not yet tested since the method has changed");
+//		RelationType type = holder.getResource("http://localhost:8001/base1/model1/Relation1", RelationType.class);
+//		assertFalse(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
+//		traceModel.addRelationType(type);
+//		assertTrue(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
 	}
 	
 	@Test

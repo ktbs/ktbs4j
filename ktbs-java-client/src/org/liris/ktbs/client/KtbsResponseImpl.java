@@ -3,21 +3,23 @@ package org.liris.ktbs.client;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.liris.ktbs.core.KtbsResource;
 
 public class KtbsResponseImpl implements KtbsResponse {
 
+	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
 
 	private KtbsResource resource;
 	private boolean executedWithSuccess;
 	private KtbsResponseStatus ktbsResponseStatus;
 	private HttpResponse httpResponse;
-	private Object value;
 
 	public KtbsResponseImpl(KtbsResource resource, boolean executedWithSuccess,
 			KtbsResponseStatus ktbsResponseStatus,
@@ -27,11 +29,6 @@ public class KtbsResponseImpl implements KtbsResponse {
 		this.executedWithSuccess = executedWithSuccess;
 		this.ktbsResponseStatus = ktbsResponseStatus;
 		this.httpResponse = httpResponse;
-	}
-
-	@Override
-	public KtbsResource getBodyAsKtbsResource() {
-		return resource;
 	}
 
 	@Override
@@ -50,7 +47,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 			if (content == null) {
 				return "";
 			}
-			return IOUtils.toString(content);
+			return EntityUtils.toString(entity);
 		} catch (IllegalStateException e) {
 		} catch (IOException e) {
 		}
@@ -77,7 +74,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 			s+=httpResponse.getStatusLine() + "" + sep;
 		try {
 			if(httpResponse.getEntity() != null)
-				s+=IOUtils.toString(httpResponse.getEntity().getContent())+sep;
+				s+=EntityUtils.toString(httpResponse.getEntity())+sep;
 		} catch (Exception e) {
 		}
 		s+=resource==null?"(Resource is null)":"(Resource is not null)"+sep;
@@ -87,7 +84,6 @@ public class KtbsResponseImpl implements KtbsResponse {
 	@Override
 	public String getHTTPETag() {
 		return readHeader(HttpHeaders.ETAG);
-			
 	}
 
 	public String readHeader(String headerName) {
@@ -107,12 +103,33 @@ public class KtbsResponseImpl implements KtbsResponse {
 	}
 
 	@Override
-	public Object getValue() {
-		return value;
+	public InputStream getBody() {
+		try {
+			return this.httpResponse.getEntity().getContent();
+		} catch (IllegalStateException e) {
+			log.error("Impossible to read content", e);
+			return null;
+		} catch (IOException e) {
+			log.error("Impossible to read content", e);
+			return null;
+		} 
 	}
 
 	@Override
-	public void setValue(Object value) {
-		this.value = value;
+	public void consume() {
+		try {
+			EntityUtils.consume(this.httpResponse.getEntity());
+		} catch (IOException e) {
+			log.warn("Impossible to release memory from the body", e);
+		}
+	}
+
+	@Override
+	public String getMimeType() {
+		Header contentType = httpResponse.getEntity().getContentType();
+		if(contentType == null)
+			return null;
+		else 
+			return contentType.getValue();
 	}
 }

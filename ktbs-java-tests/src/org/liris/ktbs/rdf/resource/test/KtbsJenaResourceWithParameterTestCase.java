@@ -19,13 +19,11 @@ public class KtbsJenaResourceWithParameterTestCase extends AbstractKtbsJenaTestC
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		trace = loadInHolder(
-				"base1/filtered1/", 
+		trace = loadInRepo(
 				"filtered1.ttl", 
 				ComputedTrace.class);
 
-		method = loadInHolder(
-				"base1/helloworld/", 
+		method = loadInRepo(
 				"helloworld.ttl", 
 				Method.class);
 	}

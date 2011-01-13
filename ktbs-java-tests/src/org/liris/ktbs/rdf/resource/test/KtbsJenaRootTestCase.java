@@ -18,8 +18,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		ktbsJenaRoot = loadInHolder(
-				"", 
+		ktbsJenaRoot = loadInRepo(
 				"ktbsroot.ttl", 
 				KtbsRoot.class);
 	}
@@ -47,8 +46,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddBase() {
-		Base b = loadInHolder(
-				"base1/", 
+		Base b = loadInRepo(
 				"base1.ttl", 
 				Base.class);
 		assertEquals(1, KtbsUtils.count(ktbsJenaRoot.listBases()));

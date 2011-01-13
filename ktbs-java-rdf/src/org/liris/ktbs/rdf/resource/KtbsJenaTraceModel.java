@@ -8,7 +8,6 @@ import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -16,7 +15,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 
-	KtbsJenaTraceModel(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
+	KtbsJenaTraceModel(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -45,7 +44,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.ATTRIBUTE_TYPE)
 				);
-		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, holder, false);
+		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, repository, false);
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.RELATION_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, holder, false);
+		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, repository, false);
 	}
 
 	@Override
@@ -65,14 +64,14 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.OBSEL_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<ObselType>(rdfModel, it, ObselType.class, holder, false);
+		return new SubjectWithRdfModelIterator<ObselType>(rdfModel, it, ObselType.class, repository, false);
 	}
 
 	@Override
 	public ObselType getObselType(String obselTypeUri) {
 		StmtIterator stmt = getTypeStatements(obselTypeUri, KtbsConstants.OBSEL_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.holder.getResourceAlreadyInModel(obselTypeUri, ObselType.class, rdfModel);
+			return KtbsJenaTraceModel.this.repository.getResourceAlreadyInModel(obselTypeUri, ObselType.class, rdfModel);
 		else
 			return null;
 	}
@@ -81,7 +80,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public RelationType getRelationType(String relationTypeUri) {
 		StmtIterator stmt = getTypeStatements(relationTypeUri, KtbsConstants.RELATION_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.holder.getResourceAlreadyInModel(relationTypeUri, RelationType.class, rdfModel);
+			return KtbsJenaTraceModel.this.repository.getResourceAlreadyInModel(relationTypeUri, RelationType.class, rdfModel);
 		else
 			return null;
 	}
@@ -90,7 +89,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public AttributeType getAttributeType(String attributeTypeUri) {
 		StmtIterator stmt = getTypeStatements(attributeTypeUri, KtbsConstants.ATTRIBUTE_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.holder.getResourceAlreadyInModel(attributeTypeUri, AttributeType.class, rdfModel);
+			return KtbsJenaTraceModel.this.repository.getResourceAlreadyInModel(attributeTypeUri, AttributeType.class, rdfModel);
 		else
 			return null;
 	}
@@ -104,17 +103,23 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	}
 
 	@Override
-	public void addObselType(ObselType type) {
-		holder.addResourceAsPartOfExistingModel(type, rdfModel);
+	public void newObselType(String localName) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void addRelationType(RelationType type) {
-		holder.addResourceAsPartOfExistingModel(type, rdfModel);
+	public void newRelationType(String localName, ObselType domain,
+			ObselType range) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+		
 	}
 
 	@Override
-	public void addAttributeType(AttributeType type) {
-		holder.addResourceAsPartOfExistingModel(type, rdfModel);
+	public void newAttributeType(String localName, ObselType domain) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+		
 	}
 }

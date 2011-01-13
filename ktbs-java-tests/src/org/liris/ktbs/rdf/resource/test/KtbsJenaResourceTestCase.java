@@ -21,8 +21,7 @@ public class KtbsJenaResourceTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
-		resource = loadInHolder(
-				"", 
+		resource = loadInRepo(
 				"ktbs-jena-resource.ttl", 
 				KtbsRoot.class);
 	}

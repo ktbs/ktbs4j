@@ -1,5 +1,7 @@
 package org.liris.ktbs.client;
 
+import java.io.InputStream;
+
 import org.apache.http.HttpResponse;
 import org.liris.ktbs.core.KtbsResource;
 
@@ -13,12 +15,6 @@ import org.liris.ktbs.core.KtbsResource;
  */
 public interface KtbsResponse {
 
-	/**
-	 * @return the body of the server HTTP response parsed and transformed 
-	 * into a KtbsResponse
-	 */
-	public KtbsResource getBodyAsKtbsResource();
-	
 	/**
 	 * @return true if the service method has been executed on the KTBS server
 	 * with success
@@ -52,6 +48,13 @@ public interface KtbsResponse {
 	public String getHTTPETag();
 
 	/**
+	 * Give the mime type of the content
+	 * 
+	 * @return the mime type, null if none.
+	 */
+	public String getMimeType();
+
+	/**
 	 * 
 	 * @return the location header returned by the KTBS server to give the URI
 	 * of the created resource, null if none.
@@ -59,10 +62,15 @@ public interface KtbsResponse {
 	public String getHTTPLocation();
 	
 	/**
+	 * Call the underlying method {@link HttpResponse#getEntity().getContentStream()}.
 	 * 
-	 * @return the value of the request once the KTBS response body 
-	 * is interpreted by the client
+	 * @return the body of the underlying HTTP response, as 
+	 * an input stream.
 	 */
-	public Object getValue();
-	void setValue(Object value);
+	public InputStream getBody();
+
+	/**
+	 * Remove the body from the memory by calling the underlying EntityUtils.consume() method.
+	 */
+	public void consume();
 }

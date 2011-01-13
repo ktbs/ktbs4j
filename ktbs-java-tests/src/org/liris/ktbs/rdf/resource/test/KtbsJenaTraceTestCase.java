@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.StoredTrace;
@@ -27,18 +26,15 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		traceObsels = loadInHolder(
-				"base1/t01/", 
+		traceObsels = loadInRepo(
 				"t01.ttl", 
 				StoredTrace.class);
 
-		traceInfo = loadInHolder(
-				"base1/t01/", 
+		traceInfo = loadInRepo(
 				"t01-info.ttl", 
 				StoredTrace.class);
 		
-		filtered1 = loadInHolder(
-				"base1/filtered1/", 
+		filtered1 = loadInRepo(
 				"filtered1.ttl", 
 				ComputedTrace.class);
 	}
@@ -214,19 +210,10 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertNull(traceObsels.getObsel(uri("obs2")));
 	}
 
-	
-
-	@Test
-	public void testGetBase() {
-		Base base = traceInfo.getBase();
-		assertNotNull(base);
-		assertEquals("http://localhost:8001/base1/",base.getURI());
-	}
-
 	@Test
 	public void testSetTraceModel() {
 		TraceModel tm1 = emptyFac.createTraceModel("http://localhost:8001/base1/model1/");
-		TraceModel tm2 = loadInHolder("ma-base/model2/","model2.ttl", TraceModel.class);
+		TraceModel tm2 = loadInRepo("model2.ttl", TraceModel.class);
 		
 		assertEquals(tm1, traceInfo.getTraceModel());
 		traceInfo.setTraceModel(tm2);
@@ -240,16 +227,6 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertEquals("http://localhost:8001/base1/model1/",tm.getURI());
 	}
 
-//	@Test
-//	public void testSetCompliantWithModel() {
-//		assertTrue(traceInfo.isCompliantWithModel());
-//		traceInfo.setCompliantWithModel(false);
-//		assertFalse(traceInfo.isCompliantWithModel());
-//
-//		traceInfo.setCompliantWithModel(true);
-//		assertFalse(traceInfo.isCompliantWithModel());
-//	}
-	
 	@Test
 	public void testIsCompliantWithModel() {
 		assertTrue(traceInfo.isCompliantWithModel());

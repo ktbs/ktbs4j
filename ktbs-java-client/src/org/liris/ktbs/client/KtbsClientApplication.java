@@ -83,6 +83,17 @@ public class KtbsClientApplication {
 	
 		return ktbsClients.get(ktbsRootUri);
 	}
+	
+	// Only one REST service instance per KtbsRoot
+	private HashMap<String, KtbsRestService> restServices = new HashMap<String, KtbsRestService>();
+	public KtbsRestService getRestService(String ktbsRootUri) {
+		if(restServices.get(ktbsRootUri) == null) {
+			restServices.put(ktbsRootUri, new KtbsRestServiceImpl(ktbsRootUri));
+			((KtbsRestServiceImpl)restServices.get(ktbsRootUri)).startSession();
+		}
+		
+		return restServices.get(ktbsRootUri);
+	}
 
 	private KtbsClientApplication() {
 		log.info("Ktbs client application is started.");

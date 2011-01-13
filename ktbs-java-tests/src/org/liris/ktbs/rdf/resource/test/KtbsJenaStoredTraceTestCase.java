@@ -18,13 +18,11 @@ public class KtbsJenaStoredTraceTestCase  extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		traceObsels = loadInHolder(
-				"base1/t01/", 
+		traceObsels = loadInRepo(
 				"t01.ttl", 
 				StoredTrace.class);
 
-		traceInfo = loadInHolder(
-				"base1/t01/", 
+		traceInfo = loadInRepo(
 				"t01-info.ttl", 
 				StoredTrace.class);
 	}
@@ -47,10 +45,10 @@ public class KtbsJenaStoredTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs1"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/obs1"));
 		
 		traceObsels.removeObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f");
 		assertEquals(3, KtbsUtils.count(traceObsels.listObsels()));
@@ -59,10 +57,10 @@ public class KtbsJenaStoredTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs1"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/obs1"));
 		
 		
 		traceObsels.removeObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
@@ -72,10 +70,10 @@ public class KtbsJenaStoredTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs1"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/obs1"));
 		
 		
 		traceObsels.removeObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
@@ -85,10 +83,10 @@ public class KtbsJenaStoredTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs1"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
+		assertTrue(repository.exists("http://localhost:8001/base1/t01/obs1"));
 		
 		
 		traceObsels.removeObsel("http://localhost:8001/base1/t01/obs1");
@@ -98,46 +96,47 @@ public class KtbsJenaStoredTraceTestCase  extends AbstractKtbsJenaTestCase {
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/obs1"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575"));
+		assertFalse(repository.exists("http://localhost:8001/base1/t01/obs1"));
 	}
 	
 	@Test
-	public void testAddObsel() {
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/obs5"));
-		assertFalse(holder.exists("http://localhost:8001/base1/t01/obs6"));
-		Obsel obsel5 = loadInHolder(
-				"base1/t01/obs5", 
-				"obsel5.ttl", 
-				Obsel.class);
-		Obsel obsel6 = loadInHolder(
-				"base1/t01/obs6", 
-				"obsel6.ttl", 
-				Obsel.class);
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs5"));
-		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs6"));
-
-		assertEquals(4, KtbsUtils.count(traceObsels.listObsels()));
-		assertFalse(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel5));
-		assertFalse(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel6));
-		assertNull(obsel5.getTrace());
-		assertNull(obsel6.getTrace());
-
-		traceObsels.addObsel(obsel5);
-		assertEquals(5, KtbsUtils.count(traceObsels.listObsels()));
-		assertTrue(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel5));
-		assertFalse(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel6));
-		assertTrue(obsel5.getTrace().equals(traceObsels));
-		assertNull(obsel6.getTrace());
-
-		traceObsels.addObsel(obsel6);
-		assertEquals(6, KtbsUtils.count(traceObsels.listObsels()));
-		assertTrue(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel5));
-		assertTrue(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel6));
-		assertTrue(obsel5.getTrace().equals(traceObsels));
-		assertTrue(obsel6.getTrace().equals(traceObsels));
+	public void testNewObsel() {
+		fail("Not yet tested");
+//		assertFalse(holder.exists("http://localhost:8001/base1/t01/obs5"));
+//		assertFalse(holder.exists("http://localhost:8001/base1/t01/obs6"));
+//		Obsel obsel5 = loadInHolder(
+//				"base1/t01/obs5", 
+//				"obsel5.ttl", 
+//				Obsel.class);
+//		Obsel obsel6 = loadInHolder(
+//				"base1/t01/obs6", 
+//				"obsel6.ttl", 
+//				Obsel.class);
+//		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs5"));
+//		assertTrue(holder.exists("http://localhost:8001/base1/t01/obs6"));
+//
+//		assertEquals(4, KtbsUtils.count(traceObsels.listObsels()));
+//		assertFalse(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel5));
+//		assertFalse(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel6));
+//		assertNull(obsel5.getTrace());
+//		assertNull(obsel6.getTrace());
+//
+//		traceObsels.addObsel(obsel5);
+//		assertEquals(5, KtbsUtils.count(traceObsels.listObsels()));
+//		assertTrue(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel5));
+//		assertFalse(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel6));
+//		assertTrue(obsel5.getTrace().equals(traceObsels));
+//		assertNull(obsel6.getTrace());
+//
+//		traceObsels.addObsel(obsel6);
+//		assertEquals(6, KtbsUtils.count(traceObsels.listObsels()));
+//		assertTrue(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel5));
+//		assertTrue(KtbsUtils.toLinkedList(traceObsels.listObsels()).contains(obsel6));
+//		assertTrue(obsel5.getTrace().equals(traceObsels));
+//		assertTrue(obsel6.getTrace().equals(traceObsels));
 	}
 
 	@Test

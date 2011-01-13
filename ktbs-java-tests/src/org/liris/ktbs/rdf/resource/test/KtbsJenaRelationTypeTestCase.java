@@ -25,8 +25,7 @@ public class KtbsJenaRelationTypeTestCase extends AbstractKtbsJenaTestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		traceModel = loadInHolder(
-				"base1/model1/", 
+		traceModel = loadInRepo(
 				"model1.ttl", 
 				TraceModel.class);
 		
@@ -37,8 +36,8 @@ public class KtbsJenaRelationTypeTestCase extends AbstractKtbsJenaTestCase {
 		
 		onChannel = traceModel.getRelationType("http://localhost:8001/base1/model1/onChannel");
 		closes = traceModel.getRelationType("http://localhost:8001/base1/model1/closes");
-		toto = holder.getResource("http://localhost:8001/toto/", RelationType.class);
-		tata = holder.getResource("http://localhost:8001/tata/", RelationType.class);
+		toto = repository.getResource("http://localhost:8001/toto/", RelationType.class);
+		tata = repository.getResource("http://localhost:8001/tata/", RelationType.class);
 	}
 	
 	

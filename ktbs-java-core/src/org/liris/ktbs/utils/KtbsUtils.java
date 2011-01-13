@@ -10,9 +10,12 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.activation.MimeType;
+
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
+import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.KtbsResource;
@@ -52,6 +55,60 @@ public class KtbsUtils {
 
 	}
 
+	/**
+	 * Give the mime type associated to a rdf syntax.
+	 * 
+	 * @param jenaSyntax the RDF syntax
+	 * @return the mime type
+	 * @see JenaConstants
+	 */
+	public static String getMimeType(String jenaSyntax) {
+		if(jenaSyntax.equals(JenaConstants.JENA_SYNTAX_TURTLE))
+			return KtbsConstants.MIME_TURTLE;
+		else if(jenaSyntax.equals(JenaConstants.JENA_SYNTAX_N3))
+			return KtbsConstants.MIME_N3;
+		else if(jenaSyntax.equals(JenaConstants.JENA_SYNTAX_N_TRIPLES))
+			return KtbsConstants.MIME_NTRIPLES;
+		else 
+			return KtbsConstants.MIME_RDF_XML;
+	}
+	
+	/**
+	 * Give the Jena syntax associated to a mime type.
+	 * 
+	 * @param mimeType the mime type
+	 * @return the RDF syntax
+	 * @see JenaConstants
+	 */
+	public static String getJenaSyntax(String mimeType) {
+		if(mimeType.equals(KtbsConstants.MIME_TURTLE))
+			return JenaConstants.JENA_SYNTAX_TURTLE;
+		else if(mimeType.equals(KtbsConstants.MIME_N3))
+			return JenaConstants.JENA_SYNTAX_N3;
+		else if(mimeType.equals(KtbsConstants.MIME_NTRIPLES))
+			return JenaConstants.JENA_SYNTAX_N_TRIPLES;
+		else if(mimeType.equals(KtbsConstants.MIME_RDF_XML))
+			return JenaConstants.JENA_SYNTAX_RDF_XML_ABBR;
+		else
+			return "text/plain";
+	}
+	
+	/**
+	 * Resolves the URI of the parent resource of a Ktbs resource.
+	 * 
+	 * @param resource the child resource whose parent resource URI 
+	 * is to be resolved
+	 * @return the URI of the parent resource of this resource, null 
+	 * if no parent URI could be resolved
+	 * 
+	 * TODO implements this method the proper way, i.e. by get the parent 
+	 * URI of the resource from the resource itself.
+	 * 
+	 */
+	public static String getParentResource(KtbsResource resource) {
+		return resolveParentURI(resource.getURI())
+;	}
+	
 	public static String getRDFType(Class<?> clazz) {
 		if(KtbsRoot.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.KTBS_ROOT;
@@ -78,6 +135,7 @@ public class KtbsUtils {
 		else
 			return null;
 	}
+
 
 	public static <T> LinkedList<T> toLinkedList(Iterator<T> it) {
 		LinkedList<T> list = new LinkedList<T>();

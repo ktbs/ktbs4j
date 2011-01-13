@@ -6,7 +6,6 @@ import java.util.HashSet;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -14,7 +13,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class KtbsJenaRelationType extends KtbsJenaResource implements
 RelationType {
 
-	KtbsJenaRelationType(String uri, Model rdfModel, KtbsJenaResourceHolder holder) {
+	KtbsJenaRelationType(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -24,7 +23,7 @@ RelationType {
 		if(res == null)
 			return null;
 		else
-			return holder.getResourceAlreadyInModel(res.getURI(), ObselType.class, rdfModel);
+			return repository.getResourceAlreadyInModel(res.getURI(), ObselType.class, rdfModel);
 	}
 
 	@Override
@@ -33,7 +32,7 @@ RelationType {
 		if(res == null)
 			return null;
 		else
-			return holder.getResourceAlreadyInModel(res.getURI(), ObselType.class, rdfModel);
+			return repository.getResourceAlreadyInModel(res.getURI(), ObselType.class, rdfModel);
 	}
 
 	@Override
@@ -42,7 +41,7 @@ RelationType {
 		if(res == null)
 			return null;
 		else
-			return holder.getResourceAlreadyInModel(res.getURI(), RelationType.class, rdfModel);
+			return repository.getResourceAlreadyInModel(res.getURI(), RelationType.class, rdfModel);
 	}
 
 	@Override

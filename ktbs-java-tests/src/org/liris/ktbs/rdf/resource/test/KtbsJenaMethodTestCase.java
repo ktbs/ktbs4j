@@ -14,12 +14,10 @@ public class KtbsJenaMethodTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		helloworld = loadInHolder(
-				"base1/helloworld/", 
+		helloworld = loadInRepo(
 				"helloworld.ttl", 
 				Method.class);
-		count = loadInHolder(
-				"base1/count/", 
+		count = loadInRepo(
 				"count.ttl", 
 				Method.class);
 	}

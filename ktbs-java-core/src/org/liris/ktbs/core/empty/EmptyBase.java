@@ -1,11 +1,11 @@
 package org.liris.ktbs.core.empty;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
@@ -23,15 +23,8 @@ public class EmptyBase extends EmptyResourceContainer implements Base {
 	}
 
 	@Override
-	public KtbsRoot getKtbsRoot() {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-
-	@Override
 	public Iterator<TraceModel> listTraceModels() {
 		throw new UnsupportedOperationException(MESSAGE);
-
 	}
 
 	@Override
@@ -39,12 +32,10 @@ public class EmptyBase extends EmptyResourceContainer implements Base {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
-
 	@Override
 	public Iterator<ComputedTrace> listComputedTraces() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
-
 
 	@Override
 	public Iterator<Method> listMethods() {
@@ -74,22 +65,9 @@ public class EmptyBase extends EmptyResourceContainer implements Base {
 	}
 
 	@Override
-	public void addTraceModel(TraceModel traceModel) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-
-	@Override
 	public TraceModel getTraceModel(String uri) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
-
-
-	@Override
-	public void addMethod(Method method) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
 
 	@Override
 	public Method getMethod(String uri) {
@@ -97,14 +75,23 @@ public class EmptyBase extends EmptyResourceContainer implements Base {
 	}
 
 	@Override
-	public void addStoredTrace(StoredTrace trace) {
+	public StoredTrace createStoredTrace(String traceURI, TraceModel model) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public void addComputedTrace(ComputedTrace trace) {
+	public ComputedTrace createComputedTrace(String traceURI, TraceModel model,
+			Method method, Collection<Trace> sources) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
+	@Override
+	public Method createMethod(String methodURI, String inheritedMethod) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 
+	@Override
+	public TraceModel createTraceModel(String modelURI) {
+		throw new UnsupportedOperationException(MESSAGE);
+	}
 }

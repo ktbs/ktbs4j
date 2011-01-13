@@ -25,8 +25,7 @@ public class KtbsJenaObselTypeTestCase extends AbstractKtbsJenaTestCase {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		traceModel = loadInHolder(
-				"base1/model1/", 
+		traceModel = loadInRepo(
 				"model1.ttl", 
 				TraceModel.class);
 		
@@ -85,7 +84,7 @@ public class KtbsJenaObselTypeTestCase extends AbstractKtbsJenaTestCase {
 		
 		assertEquals(0, KtbsUtils.count(channelEvent.listAttributes(Mode.INFERRED)));
 		assertEquals(1, KtbsUtils.count(sendMsg.listAttributes(Mode.INFERRED)));
-		assertEquals(holder.getResource("http://localhost:8001/base1/model1/message", AttributeType.class), sendMsg.listAttributes(Mode.INFERRED).next());
+		assertEquals(repository.getResource("http://localhost:8001/base1/model1/message", AttributeType.class), sendMsg.listAttributes(Mode.INFERRED).next());
 		
 	}
 

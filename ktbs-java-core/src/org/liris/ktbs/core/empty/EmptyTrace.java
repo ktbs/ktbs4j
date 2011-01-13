@@ -3,7 +3,6 @@ package org.liris.ktbs.core.empty;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
@@ -31,11 +30,6 @@ public class EmptyTrace extends EmptyResourceContainer implements Trace {
 
 	@Override
 	public Obsel getObsel(String obselURI) {
-		throw new UnsupportedOperationException(MESSAGE);
-	}
-
-	@Override
-	public Base getBase() {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
@@ -76,5 +70,4 @@ public class EmptyTrace extends EmptyResourceContainer implements Trace {
 	public void setOriginAsDate(Date origin) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
-
 }

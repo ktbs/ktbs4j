@@ -14,7 +14,6 @@ import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.KtbsJenaResourceHolder;
 import org.liris.ktbs.rdf.KtbsResourceInstanciationException;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -30,9 +29,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
  */
 public class KtbsJenaResourceFactory {
 
-	private KtbsJenaResourceHolder holder;
+	private RDFResourceRepositoryImpl holder;
 
-	public	KtbsJenaResourceFactory(KtbsJenaResourceHolder holder) {
+	public	KtbsJenaResourceFactory(RDFResourceRepositoryImpl holder) {
 		super();
 		this.holder = holder;
 	}

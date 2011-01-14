@@ -36,8 +36,8 @@ public class KtbsJenaRelationTypeTestCase extends AbstractKtbsJenaTestCase {
 		
 		onChannel = traceModel.getRelationType("http://localhost:8001/base1/model1/onChannel");
 		closes = traceModel.getRelationType("http://localhost:8001/base1/model1/closes");
-		toto = repository.getResource("http://localhost:8001/toto/", RelationType.class);
-		tata = repository.getResource("http://localhost:8001/tata/", RelationType.class);
+		toto = traceModel.newRelationType("toto", abstractMsg, channelEvent);
+		tata = traceModel.newRelationType("tata", openChat, closeChat);
 	}
 	
 	

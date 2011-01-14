@@ -3,6 +3,7 @@ package org.liris.ktbs.rdf.resource;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ObselType;
+import org.liris.ktbs.core.ResourceRepository;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -10,7 +11,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class KtbsJenaAttributeType extends KtbsJenaResource implements
 AttributeType {
 
-	KtbsJenaAttributeType(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaAttributeType(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -22,7 +23,7 @@ AttributeType {
 		else
 			return repository.getResource(domain.getURI(), ObselType.class);
 	}
-
+	
 	@Override
 	public void setDomain(ObselType domain) {
 		checkExitsenceAndAddResource(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, domain);

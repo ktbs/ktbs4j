@@ -1,13 +1,12 @@
 package org.liris.ktbs.core;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 
 public interface ResourceRepository {
 	
-	public <T extends KtbsResource> T getAfterCheck(String uri, Class<T> clazz);
 	public <T extends KtbsResource> T getResource(String uri, Class<T> clazz);
-	public KtbsResource getAfterCheck(String uri);
 	public KtbsResource getResource(String uri);
 	
 	public boolean exists(String uri);
@@ -187,4 +186,25 @@ public interface ResourceRepository {
 	 * uris is not found in the repository.
 	 */
 	public void checkExistency(String... uris);
+	
+	
+	/**
+	 * Reads a Ktbs resource from an input stream and register it.
+	 * 
+	 * <p>
+	 * If the resource loaded is an Obsel, the containing trace got by the 
+	 * ktbs:hasTrace property is updated with this new obsel.
+	 * </p>
+	 * <p>
+	 * If the resource loaded is an AttributeType, a RelationType, or an ObselType, 
+	 * the containing trace model is obtained by resolving the parent URI of the resource.
+	 * </p>
+	 * 
+	 * @param stream
+	 * @param lang
+	 * @return
+	 * @throws MultipleResourcesInStreamException when the content of the stream cannot be interpreted as 
+	 * a valid Ktbs resource.
+	 */
+	public KtbsResource loadResource(InputStream stream, String lang) throws ResourceLoadException;
 }

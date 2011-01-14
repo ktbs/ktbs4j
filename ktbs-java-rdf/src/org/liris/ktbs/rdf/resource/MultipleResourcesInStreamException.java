@@ -1,6 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
-import com.hp.hpl.jena.rdf.model.Model;
+import org.liris.ktbs.core.ResourceLoadException;
 
 @SuppressWarnings("serial")
 public class MultipleResourcesInStreamException extends ResourceLoadException {
@@ -9,7 +9,7 @@ public class MultipleResourcesInStreamException extends ResourceLoadException {
 	private int expectedNumber;
 	private int actualNumber;
 
-	public MultipleResourcesInStreamException(Model model, String rdfType,
+	public MultipleResourcesInStreamException(String model, String rdfType,
 			int expectedNumber, int actualNumber) {
 		super("",model);
 		this.rdfType = rdfType;

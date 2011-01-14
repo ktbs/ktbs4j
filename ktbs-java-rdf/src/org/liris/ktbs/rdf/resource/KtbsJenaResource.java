@@ -10,9 +10,9 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ObselType;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.StringableResource;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -29,10 +29,10 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class KtbsJenaResource extends AbstractKtbsResource implements StringableResource  {
 
-	protected RDFResourceRepositoryImpl repository;
+	protected ResourceRepository repository;
 	protected Model rdfModel;
 
-	KtbsJenaResource(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaResource(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri);
 		this.rdfModel = rdfModel;
 		this.repository = holder;
@@ -97,11 +97,11 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 			c.add(it.next().getObject());
 		return c.toArray(new String[c.size()]);
 	}
-	
+
 
 	private boolean isKtbsProperty(String pName) {
 		return pName != null &&
-				(pName.startsWith(KtbsConstants.NAMESPACE)
+		(pName.startsWith(KtbsConstants.NAMESPACE)
 				|| pName.equals(RDF.type.getURI())
 				|| pName.equals(RDFS.label.getURI()));
 	}
@@ -125,7 +125,7 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 			return null;
 		return r.getURI();
 	}
-	
+
 	protected Resource getObjectOfPropertyAsResource(String pName) {
 		Statement stmt = getStatement(pName);
 		if(stmt==null || !stmt.getObject().isResource())
@@ -166,7 +166,7 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 		while(it.hasNext())
 			it.removeNext();
 	}
-	
+
 	void setType(String typeURI) {
 		removeAllAndAddResource(RDF.type.getURI(), typeURI);
 	}
@@ -208,7 +208,7 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 			itChild.removeNext();
 
 	}
-	
+
 	protected void createParentConnection(KtbsJenaResource parent, KtbsResource childKtbsResource) {
 		if (childKtbsResource instanceof KtbsJenaResource) {
 			KtbsJenaResource child = (KtbsJenaResource) childKtbsResource;
@@ -217,11 +217,11 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 				connect(parent, child,KtbsConstants.P_HAS_BASE,KtbsConstants.P_HAS_BASE,true,true);
 			else if(parent.getClass().equals(KtbsJenaBase.class) && 
 					(child.getClass().equals(KtbsJenaComputedTrace.class)
-					|| child.getClass().equals(KtbsJenaTrace.class)
-					|| child.getClass().equals(KtbsJenaStoredTrace.class)
-					|| child.getClass().equals(KtbsJenaMethod.class)
-					|| child.getClass().equals(KtbsJenaTraceModel.class))
-					)  {
+							|| child.getClass().equals(KtbsJenaTrace.class)
+							|| child.getClass().equals(KtbsJenaStoredTrace.class)
+							|| child.getClass().equals(KtbsJenaMethod.class)
+							|| child.getClass().equals(KtbsJenaTraceModel.class))
+			)  {
 				connect(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS,true,true);
 				parent.rdfModel.getResource(child.getURI()).addProperty(RDF.type, parent.rdfModel.getResource(KtbsUtils.getRDFType(child.getClass())));
 				child.rdfModel.getResource(child.getURI()).addProperty(RDF.type, child.rdfModel.getResource(KtbsUtils.getRDFType(child.getClass())));
@@ -258,7 +258,7 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 				hasBaseInChild, 
 				childResourceInChild);
 	}
-	
+
 	protected void removeAllAndAddLiteral(String pName, Object value) {
 		removeAllProperties(pName);
 		addLiteral(pName, value);
@@ -278,20 +278,20 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 				rdfModel.getProperty(pName),
 				rdfModel.getResource(resourceURI));
 	}
-	
+
 	protected String getNotAKtbsJenaResourceMessage(ObselType type) {
 		return "Unsupported type of KTBS Resource: " + type.getClass().getCanonicalName()+ ". Only instance of class " + KtbsJenaResource.class + " are supported.";
 	}
-	
+
 	protected void checkExitsenceAndAddResource(String pName, KtbsResource resource) {
 		repository.checkExistency(resource);
 		removeAllAndAddResource(pName, resource.getURI());
 	}
-	
+
 	public Model getJenaModel() {
 		return rdfModel;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringWriter writer = new StringWriter();
@@ -310,31 +310,27 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 	public void removeProperty(String pName) {
 		if(isKtbsProperty(pName))
 			throw new IllegalStateException("Properties with KTBS's namespace are not allowed to be modified from this method.");
-		
+
 		Property property = rdfModel.getProperty(pName);
 		StmtIterator stmt = rdfModel.listStatements(
 				rdfModel.getResource(uri), 
 				property, 
 				(RDFNode)null
-				);
+		);
 		while (stmt.hasNext()) 
 			stmt.removeNext();
 	}
-	
-	protected <T extends KtbsResource> T getObjectOfPropertyAsKtbsResourceIfExists(String pName, Class<T> clazz, boolean createEmptyIfAbsent) {
+
+	protected <T extends KtbsResource> T getObjectOfPropertyAsKtbsResourceIfExists(String pName, Class<T> clazz) {
 		Resource r = getObjectOfPropertyAsResource(pName);
 		if(r==null)
 			return null;
 		else {
-			if(!repository.exists(r.getURI()) && !createEmptyIfAbsent)
-				throw new KtbsResourceNotFoundException(r.getURI());
-			else {
-				T resource = repository.getResource(r.getURI(), clazz);
-				return resource;
-			}
+			T resource = repository.getResource(r.getURI(), clazz);
+			return resource;
 		}
 	}
-	
+
 	protected String getObjectStringOrNull(String pName) {
 		Literal l = getObjectOfPropertyAsLiteral(pName);
 		if(l==null)
@@ -349,8 +345,8 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 		rdfModel.write(writer, KtbsUtils.getJenaSyntax(mimeType));
 		return writer.toString();
 	}
-	
-	
+
+
 	/*
 	 * For resources that should be in an already contained model.
 	 */

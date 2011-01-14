@@ -7,21 +7,20 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.core.ResourceLoadException;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.RDFResourceRepository;
 import org.liris.ktbs.rdf.resource.RDFResourceRepositoryImpl;
-import org.liris.ktbs.rdf.resource.ResourceLoadException;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
 public class AbstractKtbsJenaTestCase extends TestCase {
 
-	protected RDFResourceRepository repository;
+	protected ResourceRepository repository;
 	protected EmptyResourceFactory emptyFac = EmptyResourceFactory.getInstance();
 	protected SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 
-	
 	@Before
 	protected void setUp() throws Exception {
 		repository = new RDFResourceRepositoryImpl();

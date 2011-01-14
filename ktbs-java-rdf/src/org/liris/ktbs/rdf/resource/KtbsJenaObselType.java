@@ -7,10 +7,10 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.Mode;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -24,15 +24,13 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 	private Collection<RelationType> inferredOutgoingRelations = null;
 	private Collection<RelationType> inferredIncomingRelations = null;
 
-	KtbsJenaObselType(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaObselType(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
 	@Override
 	public TraceModel getTraceModel() {
 		String traceURI = KtbsUtils.resolveParentURI(uri);
-		if(!repository.exists(traceURI))
-			throw new KtbsResourceNotFoundException(traceURI);
 		return repository.getResource(traceURI, TraceModel.class);
 	}
 
@@ -44,7 +42,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getResource(uri)
 		);
 
-		Iterator<AttributeType> assertedIt = new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, repository, false);
+		Iterator<AttributeType> assertedIt = new SubjectWithRdfModelIterator<AttributeType>(it, AttributeType.class, repository, false);
 		if(mode == Mode.INFERRED) {
 			inferredAttributes = new HashSet<AttributeType>();
 			inferAttributes(this);
@@ -82,7 +80,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getResource(uri)
 		);
 
-		SubjectWithRdfModelIterator<RelationType> assertedIt = new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, repository, false);
+		SubjectWithRdfModelIterator<RelationType> assertedIt = new SubjectWithRdfModelIterator<RelationType>(it, RelationType.class, repository, false);
 		if(mode == Mode.INFERRED) {
 			inferredOutgoingRelations = new HashSet<RelationType>();
 			inferOutgoingRelations(this);
@@ -98,7 +96,7 @@ public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_RANGE),
 				rdfModel.getResource(uri)
 		);
-		SubjectWithRdfModelIterator<RelationType> assertedIt = new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, repository, false);
+		SubjectWithRdfModelIterator<RelationType> assertedIt = new SubjectWithRdfModelIterator<RelationType>(it, RelationType.class, repository, false);
 		if(mode == Mode.INFERRED) {
 			inferredIncomingRelations = new HashSet<RelationType>();
 			inferIncomingRelations(this);

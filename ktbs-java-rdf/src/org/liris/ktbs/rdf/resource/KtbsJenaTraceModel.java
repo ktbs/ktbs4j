@@ -7,6 +7,7 @@ import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TraceModel;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -15,7 +16,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 
-	KtbsJenaTraceModel(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaTraceModel(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -44,7 +45,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.ATTRIBUTE_TYPE)
 				);
-		return new SubjectWithRdfModelIterator<AttributeType>(rdfModel, it, AttributeType.class, repository, false);
+		return new SubjectWithRdfModelIterator<AttributeType>(it, AttributeType.class, repository, false);
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.RELATION_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<RelationType>(rdfModel, it, RelationType.class, repository, false);
+		return new SubjectWithRdfModelIterator<RelationType>(it, RelationType.class, repository, false);
 	}
 
 	@Override
@@ -64,14 +65,14 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 				RDF.type,
 				rdfModel.getResource(KtbsConstants.OBSEL_TYPE)
 		);
-		return new SubjectWithRdfModelIterator<ObselType>(rdfModel, it, ObselType.class, repository, false);
+		return new SubjectWithRdfModelIterator<ObselType>(it, ObselType.class, repository, false);
 	}
 
 	@Override
 	public ObselType getObselType(String obselTypeUri) {
 		StmtIterator stmt = getTypeStatements(obselTypeUri, KtbsConstants.OBSEL_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.repository.getResourceAlreadyInModel(obselTypeUri, ObselType.class, rdfModel);
+			return KtbsJenaTraceModel.this.repository.getResource(obselTypeUri, ObselType.class);
 		else
 			return null;
 	}
@@ -80,7 +81,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public RelationType getRelationType(String relationTypeUri) {
 		StmtIterator stmt = getTypeStatements(relationTypeUri, KtbsConstants.RELATION_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.repository.getResourceAlreadyInModel(relationTypeUri, RelationType.class, rdfModel);
+			return KtbsJenaTraceModel.this.repository.getResource(relationTypeUri, RelationType.class);
 		else
 			return null;
 	}
@@ -89,7 +90,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public AttributeType getAttributeType(String attributeTypeUri) {
 		StmtIterator stmt = getTypeStatements(attributeTypeUri, KtbsConstants.ATTRIBUTE_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.repository.getResourceAlreadyInModel(attributeTypeUri, AttributeType.class, rdfModel);
+			return KtbsJenaTraceModel.this.repository.getResource(attributeTypeUri, AttributeType.class);
 		else
 			return null;
 	}
@@ -103,23 +104,19 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	}
 
 	@Override
-	public void newObselType(String localName) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public ObselType newObselType(String localName) {
+		return repository.createObselType(this, localName);
 	}
 
 	@Override
-	public void newRelationType(String localName, ObselType domain,
+	public RelationType newRelationType(String localName, ObselType domain,
 			ObselType range) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-		
+		return repository.createRelationType(this, localName, domain, range);
 	}
 
 	@Override
-	public void newAttributeType(String localName, ObselType domain) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public AttributeType newAttributeType(String localName, ObselType domain) {
+		return repository.createAttributeType(this, localName, domain);
 		
 	}
 }

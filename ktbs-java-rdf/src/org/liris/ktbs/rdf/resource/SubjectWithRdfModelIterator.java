@@ -1,26 +1,21 @@
 package org.liris.ktbs.rdf.resource;
 
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.rdf.RDFResourceRepository;
+import org.liris.ktbs.core.ResourceRepository;
 
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 class SubjectWithRdfModelIterator<T extends KtbsResource> extends KtbsResourceSubjectIterator<T> {
 
-	private Model rdfModel;
-
-	SubjectWithRdfModelIterator(Model rdfModel,
-			StmtIterator stmtIterator, Class<T> clazz, RDFResourceRepository holder, boolean removeSupported) {
+	SubjectWithRdfModelIterator(
+			StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {
 		super(stmtIterator, clazz, holder, removeSupported);
-		this.rdfModel = rdfModel;
 	}
 
 	@Override
 	public T next() {
-		return holder.getResourceAlreadyInModel(
+		return holder.getResource(
 				stmtIterator.next().getSubject().getURI(), 
-				clazz,
-				this.rdfModel); 
+				clazz); 
 	}
 }

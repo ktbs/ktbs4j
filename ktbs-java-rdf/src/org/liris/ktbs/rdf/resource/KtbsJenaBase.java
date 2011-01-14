@@ -9,6 +9,7 @@ import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.Method;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
@@ -24,7 +25,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
-	KtbsJenaBase(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaBase(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

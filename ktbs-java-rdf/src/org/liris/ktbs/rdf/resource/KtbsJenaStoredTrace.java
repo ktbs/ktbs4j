@@ -6,6 +6,7 @@ import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.StoredTrace;
 
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -13,7 +14,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class KtbsJenaStoredTrace extends KtbsJenaTrace implements StoredTrace {
 
-	KtbsJenaStoredTrace(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaStoredTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

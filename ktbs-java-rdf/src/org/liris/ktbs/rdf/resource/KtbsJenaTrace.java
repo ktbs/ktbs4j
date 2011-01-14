@@ -10,6 +10,7 @@ import java.util.Map;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.Obsel;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TemporalDomainException;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
@@ -25,7 +26,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 
-	KtbsJenaTrace(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -124,7 +125,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 					rdfModel.getResource(uri));
 			if(it.hasNext()) {
 
-				Obsel obsel = repository.getResourceAlreadyInModel(obselURI, Obsel.class, rdfModel);
+				Obsel obsel = repository.getResource(obselURI, Obsel.class);
 				traceObselCache.put(obselURI, obsel);
 				return obsel;
 			} else
@@ -180,10 +181,9 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 			while(resIt.hasNext() && !foundNext) {
 				Resource res = resIt.next();
 				String obselURI = res.getURI();
-				next = KtbsJenaTrace.this.repository.getResourceAlreadyInModel(
+				next = KtbsJenaTrace.this.repository.getResource(
 						obselURI, 
-						Obsel.class, 
-						KtbsJenaTrace.this.rdfModel);
+						Obsel.class);
 				if(temporalCondition.accept(
 						next.getBeginDT(), 
 						next.getEndDT(), 

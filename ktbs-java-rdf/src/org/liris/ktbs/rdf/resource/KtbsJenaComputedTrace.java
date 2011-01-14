@@ -6,6 +6,7 @@ import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.Method;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.ResourceWithParameters;
 import org.liris.ktbs.core.Trace;
 
@@ -16,7 +17,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrace {
 
-	KtbsJenaComputedTrace(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaComputedTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 		resourceWithParameterAspect = new KtbsJenaResourceWithParameter(uri, rdfModel, holder);
 	}

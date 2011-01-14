@@ -6,6 +6,7 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.ResourceRepository;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -14,7 +15,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 
-	KtbsJenaRoot(String uri, Model rdfModel, RDFResourceRepositoryImpl holder) {
+	KtbsJenaRoot(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

@@ -154,31 +154,42 @@ public class KtbsJenaTraceModelTestCase extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testNewAttributeType() {
-		fail("Not yet tested since the method has changed");
-//		AttributeType type = holder.getResource("http://localhost:8001/base1/model1/att1", AttributeType.class);
-//		assertFalse(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
-//		traceModel.addAttributeType(type);
-//		assertTrue(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(type));
+		assertEquals(3, KtbsUtils.count(traceModel.listAttributeTypes()));
+		ObselType sendMsg = traceModel.getObselType("http://localhost:8001/base1/model1/SendMsg");
+		ObselType recvMsg = traceModel.getObselType("http://localhost:8001/base1/model1/RecvMsg");
+		AttributeType att1 = traceModel.newAttributeType("attribut-perso1", sendMsg);
+		AttributeType att2 = traceModel.newAttributeType("attribut-perso2", recvMsg);
+		
+		assertEquals(5, KtbsUtils.count(traceModel.listAttributeTypes()));
+		assertTrue(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(att1));
+		assertTrue(KtbsUtils.toLinkedList(traceModel.listAttributeTypes()).contains(att2));
+
+		assertEquals(sendMsg, att1.getDomain());
+		assertEquals(recvMsg, att2.getDomain());
 	}
 	
 	
 	@Test
 	public void testNewObselType() {
-		fail("Not yet tested since the method has changed");
-//		ObselType type = holder.getResource("http://localhost:8001/base1/model1/Type1", ObselType.class);
-//		assertFalse(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
-//		traceModel.addObselType(type);
-//		assertTrue(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
+		assertEquals(6, KtbsUtils.count(traceModel.listObselTypes()));
+		ObselType type = traceModel.newObselType("type-toto");
+		assertEquals(7, KtbsUtils.count(traceModel.listObselTypes()));
+		assertTrue(KtbsUtils.toLinkedList(traceModel.listObselTypes()).contains(type));
 	}
 	
 	
 	@Test
 	public void testNewRelationType() {
-		fail("Not yet tested since the method has changed");
-//		RelationType type = holder.getResource("http://localhost:8001/base1/model1/Relation1", RelationType.class);
-//		assertFalse(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
-//		traceModel.addRelationType(type);
-//		assertTrue(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(type));
+		assertEquals(2, KtbsUtils.count(traceModel.listRelationTypes()));
+		ObselType sendMsg = traceModel.getObselType("http://localhost:8001/base1/model1/SendMsg");
+		ObselType recvMsg = traceModel.getObselType("http://localhost:8001/base1/model1/RecvMsg");
+		RelationType rel = traceModel.newRelationType("relation-perso1", sendMsg, recvMsg);
+		
+		assertEquals(3, KtbsUtils.count(traceModel.listRelationTypes()));
+		assertTrue(KtbsUtils.toLinkedList(traceModel.listRelationTypes()).contains(rel));
+		
+		assertEquals(sendMsg, rel.getDomain());
+		assertEquals(recvMsg, rel.getRange());
 	}
 	
 	@Test

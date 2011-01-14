@@ -3,19 +3,19 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.rdf.RDFResourceRepository;
+import org.liris.ktbs.core.ResourceRepository;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public abstract class KtbsResourceIterator<T extends KtbsResource> implements Iterator<T> {
-	protected RDFResourceRepository holder;
+	protected ResourceRepository holder;
 	protected StmtIterator stmtIterator;
 	protected Class<T> clazz;
 	protected boolean removeSupported;
 
-	KtbsResourceIterator(StmtIterator stmtIterator, Class<T> clazz, RDFResourceRepository holder, boolean removeSupported) {
+	KtbsResourceIterator(StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {
 		super();
 		this.stmtIterator = stmtIterator;
 		this.clazz = clazz;

@@ -16,14 +16,14 @@ import org.liris.ktbs.client.KtbsRestService;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.Method;
+import org.liris.ktbs.core.ResourceLoadException;
+import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.RDFResourceRepository;
 import org.liris.ktbs.rdf.resource.RDFResourceRepositoryImpl;
-import org.liris.ktbs.rdf.resource.ResourceLoadException;
 
 public class KtbsRestServiveImplTestCase {
 
-	private RDFResourceRepository repository;
+	private ResourceRepository repository;
 	private KtbsRestService service;
 	
 	private String rootUri = "http://localhost:8001/";

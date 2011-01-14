@@ -23,6 +23,7 @@ public class KtbsJenaAttributeTypeTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		traceModel = loadInRepo(
+				model1,
 				"model1.ttl", 
 				TraceModel.class);
 		abstractMsg = traceModel.getObselType("http://localhost:8001/base1/model1/AbstractMsg");

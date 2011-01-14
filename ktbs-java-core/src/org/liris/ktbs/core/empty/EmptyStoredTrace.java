@@ -35,7 +35,7 @@ public class EmptyStoredTrace extends EmptyTrace implements StoredTrace {
 	}
 
 	@Override
-	public Obsel newObsel(String obselURI, StoredTrace hasTrace, ObselType type,
+	public Obsel newObsel(String obselURI, ObselType type,
 			Map<AttributeType, Object> attributes) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}

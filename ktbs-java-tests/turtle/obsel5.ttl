@@ -6,6 +6,7 @@
      ktbs:hasBegin "12000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasEnd "14000"^^<http://www.w3.org/2001/XMLSchema#integer>;
      ktbs:hasSubject "Tonton Nestor";
+     ktbs:hasTrace <http://localhost:8001/base1/t01/>;
      :message "Salut les vieux";
      :onChannel <http://localhost:8001/base1/t01/obs1>;
      :attperso "Valeur Perso";

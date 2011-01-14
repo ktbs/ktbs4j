@@ -18,6 +18,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 		super.setUp();
 
 		ktbsJenaRoot = loadInRepo(
+				root,
 				"ktbsroot.ttl", 
 				KtbsRoot.class);
 	}
@@ -25,6 +26,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 	@Test
 	public void testGet() {
 		Base b2 = loadInRepo(
+				"http://localhost:8001/base2/",
 				"base2.ttl", 
 				Base.class);
 		ktbsJenaRoot.addBase(b2);
@@ -36,6 +38,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 	public void testListBases() {
 		Iterator<Base> it = ktbsJenaRoot.listBases();
 		loadInRepo(
+				base1,
 				"base1.ttl", 
 				Base.class);
 		boolean containsBase1 = false;
@@ -51,6 +54,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 	@Test
 	public void testAddBase() {
 		Base b = loadInRepo(
+				base1,
 				"base1.ttl", 
 				Base.class);
 		ktbsJenaRoot.addBase(b);
@@ -58,6 +62,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 		Collection<Base> c = KtbsUtils.toLinkedList(ktbsJenaRoot.listBases());
 		assertTrue(c.contains(b));
 		Base b2 = loadInRepo(
+				"http://localhost:8001/base2/",
 				"base2.ttl", 
 				Base.class);
 		ktbsJenaRoot.addBase(b2);
@@ -71,6 +76,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 	@Test
 	public void testGetBase() {
 		Base b = loadInRepo(
+				base1,
 				"base1.ttl", 
 				Base.class);
 		ktbsJenaRoot.addBase(b);

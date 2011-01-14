@@ -6,6 +6,12 @@ import java.util.Map;
 
 public interface ResourceRepository {
 	
+	public static final KtbsResource[] BUILTIN_RESOURCES = new KtbsResource[]{
+		Method.FILTER,
+		Method.FUSION
+	};
+	                                                                        
+	
 	public <T extends KtbsResource> T getResource(String uri, Class<T> clazz);
 	public KtbsResource getResource(String uri);
 	
@@ -206,5 +212,5 @@ public interface ResourceRepository {
 	 * @throws MultipleResourcesInStreamException when the content of the stream cannot be interpreted as 
 	 * a valid Ktbs resource.
 	 */
-	public KtbsResource loadResource(InputStream stream, String lang) throws ResourceLoadException;
+	public void loadResource(InputStream stream, String lang) throws ResourceLoadException;
 }

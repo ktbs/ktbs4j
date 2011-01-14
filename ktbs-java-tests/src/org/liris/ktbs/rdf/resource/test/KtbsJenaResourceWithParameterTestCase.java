@@ -20,10 +20,12 @@ public class KtbsJenaResourceWithParameterTestCase extends AbstractKtbsJenaTestC
 		super.setUp();
 		
 		trace = loadInRepo(
+				filtered1,
 				"filtered1.ttl", 
 				ComputedTrace.class);
 
 		method = loadInRepo(
+				helloworldUri,
 				"helloworld.ttl", 
 				Method.class);
 	}

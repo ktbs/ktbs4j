@@ -62,6 +62,7 @@ public interface KtbsConstants {
 	public static final String SCRIPT_PYTHON = NAMESPACE + "script-python";
 	public static final String P_HAS_SOURCE_OBSEL =  NAMESPACE + "hasSourceObsel";
 	public static final String FILTER = NAMESPACE + "filter";
+	public static final String FUSION = NAMESPACE + "fusion";
 	
 	
 }

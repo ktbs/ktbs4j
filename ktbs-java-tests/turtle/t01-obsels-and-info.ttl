@@ -3,6 +3,9 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
 <http://localhost:8001/base1/> ktbs:owns <http://localhost:8001/base1/t01/>. 
+ 
+ <http://localhost:8001/base1/t01/@about> ktbs:descriptionOf <http://localhost:8001/base1/t01/>. 
+ 
 
  <http://localhost:8001/base1/count2/> ktbs:hasSource <http://localhost:8001/base1/t01/>. 
 
@@ -10,7 +13,6 @@
 
  <http://localhost:8001/base1/fusioned1/> ktbs:hasSource <http://localhost:8001/base1/t01/>. 
 
- <> ktbs:descriptionOf <http://localhost:8001/base1/t01/>. 
 
  <http://localhost:8001/base1/t01/> a ktbs:StoredTrace;
      ktbs:compliesWithModel "yes";

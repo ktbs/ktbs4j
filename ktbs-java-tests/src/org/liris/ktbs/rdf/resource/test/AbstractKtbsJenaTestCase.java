@@ -11,7 +11,7 @@ import org.liris.ktbs.core.ResourceLoadException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.resource.RDFResourceRepositoryImpl;
+import org.liris.ktbs.rdf.resource.RDFResourceRepository;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
@@ -21,24 +21,43 @@ public class AbstractKtbsJenaTestCase extends TestCase {
 	protected EmptyResourceFactory emptyFac = EmptyResourceFactory.getInstance();
 	protected SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 
+	
+	protected static final String base1 = "http://localhost:8001/base1/";
+	protected static final String root = "http://localhost:8001/";
+	protected static final String t01 = "http://localhost:8001/base1/t01/";
+	protected static final String count1 = "http://localhost:8001/base1/count1/";
+	protected static final String count2 = "http://localhost:8001/base1/count2/";
+	protected static final String filtered1 = "http://localhost:8001/base1/filtered1/";
+	protected static final String filtered2 = "http://localhost:8001/base1/filtered2/";
+	protected static final String helloworld1 = "http://localhost:8001/base1/helloworld1/";
+	protected static final String helloworldUri = "http://localhost:8001/base1/helloworld/";
+	protected static final String model1 = "http://localhost:8001/base1/model1/";
+	
+	protected String fusioned1uri = "http://localhost:8001/base1/fusioned1/";
+	protected String filtered1uri = "http://localhost:8001/base1/filtered1/";
+	protected String count1uri = "http://localhost:8001/base1/count1/";
+	protected String countUri = "http://localhost:8001/base1/count/";
+	
 	@Before
 	protected void setUp() throws Exception {
-		repository = new RDFResourceRepositoryImpl();
+		repository = new RDFResourceRepository();
 		
 		loadInRepo(
+				model1,
 				"model1.ttl", 
 				TraceModel.class);
 	}
 	
-	protected <T extends KtbsResource> T loadInRepo(String fileLocalName, Class<T> clazz) {
+	protected <T extends KtbsResource> T loadInRepo(String uri, String fileLocalName, Class<T> clazz) {
 		T t;
 		try {
 			FileInputStream stream = new FileInputStream("turtle/" + fileLocalName);
-			t = clazz.cast(repository.loadResource(
+			repository.loadResource(
 					stream, 
-					JenaConstants.JENA_SYNTAX_TURTLE));
+					JenaConstants.JENA_SYNTAX_TURTLE);
+					
 			stream.close();
-			return t;
+			return t = clazz.cast(repository.getResource(uri));
 		} catch (ResourceLoadException e) {
 			e.printStackTrace(System.err);
 			System.out.println(e.getRdfModel());

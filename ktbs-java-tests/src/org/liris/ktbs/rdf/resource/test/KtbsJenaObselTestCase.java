@@ -1,5 +1,7 @@
 package org.liris.ktbs.rdf.resource.test;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
@@ -10,13 +12,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
+import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.DomainException;
+import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsResourceNotFoundException;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RangeException;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.RelationType;
+import org.liris.ktbs.core.ResourceLoadException;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
@@ -31,6 +36,12 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 	private Obsel obsel4;
 	private Obsel obsel5;
 	private Obsel obsel6;
+
+	private String obsel5uri = "http://localhost:8001/base1/t01/obs5";
+	private String obsel6uri = "http://localhost:8001/base1/t01/obs6";
+	private String obsel7uri = "http://localhost:8001/base1/t01/obs7";
+	private String obsel8uri = "http://localhost:8001/base1/t01/obs8";
+	private String obsel9uri = "http://localhost:8001/base1/t01/obs9";
 	
 	private StoredTrace trace;
 	
@@ -39,14 +50,24 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		super.setUp();
 		
 		trace = loadInRepo(
-				"t01.ttl", 
+				t01, 
+				"t01-obsels-and-info.ttl", 
 				StoredTrace.class);
 
 		obsel1 = trace.getObsel("http://localhost:8001/base1/t01/obs1");
 		obsel2 = trace.getObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f");
 		obsel3 = trace.getObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
 		obsel4 = trace.getObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
-
+		
+		obsel5 = loadInRepo(
+				obsel5uri, 
+				"obsel5.ttl", 
+				Obsel.class);
+		
+		obsel6 = loadInRepo(
+				obsel6uri,
+				"obsel6.ttl", 
+				Obsel.class);
 		
 	}
 
@@ -56,8 +77,6 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		assertEquals(EmptyResourceFactory.getInstance().createResource("http://localhost:8001/base1/t01/"), obsel2.getTrace());
 		assertEquals(EmptyResourceFactory.getInstance().createResource("http://localhost:8001/base1/t01/"), obsel3.getTrace());
 		assertEquals(EmptyResourceFactory.getInstance().createResource("http://localhost:8001/base1/t01/"), obsel4.getTrace());
-		assertEquals(null, obsel5.getTrace());
-		assertEquals(null, obsel6.getTrace());
 	}
 
 	@Test
@@ -100,7 +119,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		assertEquals(2000,obsel2.getBegin());
 		assertEquals(5000,obsel3.getBegin());
 		assertEquals(7000,obsel4.getBegin());
-		assertEquals(12000,obsel5.getBegin());
+		
 		assertEquals(-1,obsel6.getBegin());
 	}
 
@@ -185,15 +204,10 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testListAttributes() {
-		obsel5 = loadInRepo(
-				"obsel5.ttl", 
-				Obsel.class);
-		obsel6 = loadInRepo(
-				"obsel6.ttl", 
-				Obsel.class);
+
 		
 		// needs the model to be loaded in order to know if it is an attribute
-		loadInRepo("model1.ttl", TraceModel.class);
+		loadInRepo(model1,"model1.ttl", TraceModel.class);
 		
 		assertEquals(1,KtbsUtils.count(obsel1.listAttributes()));
 		testAttributeStatement(obsel1.listAttributes().next(), newAttType("channel"), "#my-channel");
@@ -251,7 +265,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddAttribute() {
-		Obsel obsel7 = loadInRepo("obsel7.ttl", Obsel.class);
+		Obsel obsel7 = loadInRepo(obsel7uri,"obsel7.ttl", Obsel.class);
 		
 		assertEquals(0, KtbsUtils.count(obsel7.listAttributes()));
 		
@@ -283,7 +297,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddOutgoingRelation() {
-		Obsel obsel8 = loadInRepo( "obsel8.ttl", Obsel.class);
+		Obsel obsel8 = loadInRepo(obsel8uri,"obsel8.ttl", Obsel.class);
 		
 		assertEquals(0, KtbsUtils.count(obsel8.listOutgoingRelations()));
 		
@@ -304,7 +318,10 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testAddIncomingRelation() {
-		Trace t02 = loadInRepo("t02.ttl", StoredTrace.class);
+		Trace t02 = loadInRepo(
+				"http://localhost:8001/base1/t02/",
+				"t02.ttl", 
+				StoredTrace.class);
 		Obsel openChat = t02.getObsel("http://localhost:8001/base1/t02/obs1");
 		Obsel obsel8 = t02.getObsel("http://localhost:8001/base1/t02/obs8");
 		RelationType relation = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
@@ -323,10 +340,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testListIncomingRelations() {
-		obsel6 = loadInRepo(
-				"obsel6.ttl", 
-				Obsel.class);		
-		assertEquals(4,KtbsUtils.count(obsel1.listIncomingRelations()));
+		assertEquals(5,KtbsUtils.count(obsel1.listIncomingRelations()));
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("91eda250f267fa93e4ece8f3ed659139"),false);
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("a08667b20cfe4079d02f2f5ad9239575"),false);
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("017885b093580cee5e01573953fbd26f"),false);
@@ -350,9 +364,11 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 	@Test
 	public void testListOutgoingRelations() {
 		obsel5 = loadInRepo(
+				obsel5uri, 
 				"obsel5.ttl", 
 				Obsel.class);
 		obsel6 = loadInRepo(
+				obsel6uri,
 				"obsel6.ttl", 
 				Obsel.class);
 		
@@ -411,8 +427,12 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 	}
 	
 	@Test
-	public void testGetSourceObsel() {
-		Trace filtered1 = loadInRepo("filtered1-obsels.ttl", ComputedTrace.class);
+	public void testGetSourceObsel() throws FileNotFoundException, ResourceLoadException {
+		Base b = repository.createBase("http://localhost:8001/base1/");
+		
+		repository.loadResource(new FileInputStream("turtle/filtered1.ttl"), JenaConstants.JENA_SYNTAX_TURTLE);
+		repository.loadResource(new FileInputStream("turtle/filtered1-obsels.ttl"), JenaConstants.JENA_SYNTAX_TURTLE);
+		Trace filtered1 = repository.getResource("http://localhost:8001/base1/filtered1/", ComputedTrace.class);
 		Obsel o = filtered1.getObsel("http://localhost:8001/base1/filtered1/obs1");
 		Obsel source = o.getSourceObsel();
 		assertEquals("http://localhost:8001/base1/t01/obs1", source.getURI());

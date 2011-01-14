@@ -61,6 +61,10 @@ public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrac
 		Resource r = getObjectOfPropertyAsResource(KtbsConstants.P_HAS_METHOD);
 		if(r==null)
 			return null;
+		else if(r.getURI().equals(KtbsConstants.FILTER))
+			return Method.FILTER;
+		else if(r.getURI().equals(KtbsConstants.FUSION))
+			return Method.FUSION;
 		else
 			return repository.getResource(r.getURI(), Method.class);
 	}

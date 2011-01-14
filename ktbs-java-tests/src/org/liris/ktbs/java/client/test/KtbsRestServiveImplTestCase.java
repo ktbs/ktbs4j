@@ -19,7 +19,7 @@ import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ResourceLoadException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TraceModel;
-import org.liris.ktbs.rdf.resource.RDFResourceRepositoryImpl;
+import org.liris.ktbs.rdf.resource.RDFResourceRepository;
 
 public class KtbsRestServiveImplTestCase {
 
@@ -46,7 +46,7 @@ public class KtbsRestServiveImplTestCase {
 	@Before
 	public void setUp() throws Exception {
 		service = KtbsClientApplication.getInstance().getRestService("http://localhost:8001/");
-		repository = new RDFResourceRepositoryImpl();
+		repository = new RDFResourceRepository();
 		
 		repository.loadResource(
 				new FileInputStream("turtle/ktbsroot.ttl"), 

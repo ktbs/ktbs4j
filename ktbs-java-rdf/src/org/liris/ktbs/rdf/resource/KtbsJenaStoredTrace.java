@@ -46,7 +46,7 @@ public class KtbsJenaStoredTrace extends KtbsJenaTrace implements StoredTrace {
 	}
 
 	@Override
-	public Obsel newObsel(String obselURI, StoredTrace hasTrace,
+	public Obsel newObsel(String obselURI, 
 			ObselType type, Map<AttributeType, Object> attributes) {
 		return repository.createObsel(this, obselURI, type, attributes);
 	}

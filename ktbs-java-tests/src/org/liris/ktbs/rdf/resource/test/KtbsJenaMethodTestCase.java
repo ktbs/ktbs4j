@@ -15,9 +15,11 @@ public class KtbsJenaMethodTestCase extends AbstractKtbsJenaTestCase {
 		super.setUp();
 		
 		helloworld = loadInRepo(
+				helloworldUri, 
 				"helloworld.ttl", 
 				Method.class);
 		count = loadInRepo(
+				countUri, 
 				"count.ttl", 
 				Method.class);
 	}

@@ -345,13 +345,4 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 		rdfModel.write(writer, KtbsUtils.getJenaSyntax(mimeType));
 		return writer.toString();
 	}
-
-
-	/*
-	 * For resources that should be in an already contained model.
-	 */
-	void incorporateResource(KtbsJenaResource resource) {
-		this.rdfModel.union(resource.rdfModel);
-		resource.rdfModel = this.rdfModel;
-	}
 }

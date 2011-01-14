@@ -1,0 +1,90 @@
+@prefix : <http://localhost:8001/base1/model1/>.
+@prefix ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#>.
+@prefix rdfrest: <http://liris.cnrs.fr/silex/2009/rdfrest#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+ <http://localhost:8001/base1/> ktbs:owns <http://localhost:8001/base1/fusioned1/>. 
+
+ <http://localhost:8001/base1/count1/> ktbs:hasSource <http://localhost:8001/base1/fusioned1/>. 
+
+ <http://localhost:8001/base1/count2/> ktbs:hasSource <http://localhost:8001/base1/fusioned1/>. 
+
+ <> ktbs:descriptionOf <http://localhost:8001/base1/fusioned1/>. 
+
+ <http://localhost:8001/base1/helloworld1/> ktbs:hasSource <http://localhost:8001/base1/fusioned1/>. 
+
+ <http://localhost:8001/base1/fusioned1/> a ktbs:ComputedTrace;
+     ktbs:compliesWithModel "no";
+     ktbs:hasMethod ktbs:fusion;
+     ktbs:hasModel <http://localhost:8001/base1/model1/>;
+     ktbs:hasModelErrors """subject http://localhost:8001/base1/fusioned1/t01_01e98ddb3c5e0502338984a9720f3e2e of http://localhost:8001/base1/model1/onChannel is not an obsel
+subject http://localhost:8001/base1/fusioned1/t01_8e4afe53f44b2b3eacb9e33d0869da60 of http://localhost:8001/base1/model1/onChannel is not an obsel
+subject http://localhost:8001/base1/fusioned1/t01_feb4afda524c15fcc00426eded36d9b1 of http://localhost:8001/base1/model1/onChannel is not an obsel""";
+     ktbs:hasObselCollection <http://localhost:8001/base1/fusioned1/@obsels>;
+     ktbs:hasOrigin "2010-04-28T18:09:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSource <http://localhost:8001/base1/filtered2/>,
+         <http://localhost:8001/base1/t01/>. 
+
+ <http://localhost:8001/base1/fusioned1/filtered2_01e98ddb3c5e0502338984a9720f3e2e> a :SendMsg;
+     ktbs:hasBegin "2000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:02+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "4000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:04+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/filtered2/01e98ddb3c5e0502338984a9720f3e2e>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/fusioned1/>;
+     :message "hello world". 
+
+ <http://localhost:8001/base1/fusioned1/filtered2_feb4afda524c15fcc00426eded36d9b1> a :RecvMsg;
+     ktbs:hasBegin "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/filtered2/feb4afda524c15fcc00426eded36d9b1>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/fusioned1/>;
+     :from "world";
+     :message "hello yourself". 
+
+ <http://localhost:8001/base1/fusioned1/t01_01e98ddb3c5e0502338984a9720f3e2e> a :SendMsg;
+     ktbs:hasBegin "2000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:02+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "4000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:04+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/t01/01e98ddb3c5e0502338984a9720f3e2e>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/fusioned1/>;
+     :message "hello world";
+     :onChannel <http://localhost:8001/base1/fusioned1/t01_obs1>. 
+
+ <http://localhost:8001/base1/fusioned1/t01_8e4afe53f44b2b3eacb9e33d0869da60> a :CloseChat;
+     ktbs:hasBegin "7000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:07+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "7000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:07Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/t01/8e4afe53f44b2b3eacb9e33d0869da60>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/fusioned1/>;
+     :onChannel <http://localhost:8001/base1/fusioned1/t01_obs1>. 
+
+ <http://localhost:8001/base1/fusioned1/t01_feb4afda524c15fcc00426eded36d9b1> a :RecvMsg;
+     ktbs:hasBegin "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/t01/feb4afda524c15fcc00426eded36d9b1>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/fusioned1/>;
+     :from "world";
+     :message "hello yourself";
+     :onChannel <http://localhost:8001/base1/fusioned1/t01_obs1>. 
+
+ <http://localhost:8001/base1/fusioned1/t01_obs1> a :OpenChat;
+     ktbs:hasBegin "1000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:01+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "1000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:01+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/t01/obs1>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/fusioned1/>;
+     :channel "#my-channel".

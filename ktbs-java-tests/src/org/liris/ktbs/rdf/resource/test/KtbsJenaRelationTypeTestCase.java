@@ -26,6 +26,7 @@ public class KtbsJenaRelationTypeTestCase extends AbstractKtbsJenaTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		traceModel = loadInRepo(
+				model1, 
 				"model1.ttl", 
 				TraceModel.class);
 		

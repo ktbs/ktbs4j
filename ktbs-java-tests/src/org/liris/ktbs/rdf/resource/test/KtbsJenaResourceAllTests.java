@@ -15,7 +15,6 @@ public class KtbsJenaResourceAllTests {
 		suite.addTestSuite(KtbsJenaTraceTestCase.class);
 		suite.addTestSuite(KtbsJenaStoredTraceTestCase.class);
 		suite.addTestSuite(KtbsJenaComputedTraceTestCase.class);
-		suite.addTestSuite(KtbsJenaObselTestCase.class);
 		suite.addTestSuite(KtbsJenaObselTypeTestCase.class);
 		suite.addTestSuite(KtbsJenaAttributeTypeTestCase.class);
 		suite.addTestSuite(KtbsJenaRelationTypeTestCase.class);
@@ -23,6 +22,7 @@ public class KtbsJenaResourceAllTests {
 		suite.addTestSuite(KtbsJenaMethodTestCase.class);
 		suite.addTestSuite(KtbsJenaObselTestCase.class);
 		//$JUnit-END$
+		suite.addTestSuite(KtbsJenaObselTestCase.class);
 		return suite;
 	}
 

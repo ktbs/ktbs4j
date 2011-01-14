@@ -22,6 +22,7 @@ public class KtbsJenaResourceTestCase extends AbstractKtbsJenaTestCase {
 		super.setUp();
 
 		resource = loadInRepo(
+				root,
 				"ktbs-jena-resource.ttl", 
 				KtbsRoot.class);
 	}

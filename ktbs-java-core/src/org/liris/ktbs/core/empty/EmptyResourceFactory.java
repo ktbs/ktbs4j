@@ -1,6 +1,10 @@
 package org.liris.ktbs.core.empty;
 
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
+
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
@@ -30,79 +34,92 @@ public class EmptyResourceFactory {
 		return instance;
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T extends KtbsResource> T createEmptyResource(String uri, Class<T> clazz) {
-		if(KtbsResource.class.equals(clazz))
-			return (T) createResource(uri);
-		else if(StoredTrace.class.equals(clazz))
-			return (T) createStoredTrace(uri);
-			else if(Trace.class.equals(clazz))
-				return (T) createTrace(uri);
-		else if(ComputedTrace.class.equals(clazz))
-			return (T) createComputedTrace(uri);
-		else if(Obsel.class.equals(clazz))
-			return (T) createObsel(uri);
-		else if(Method.class.equals(clazz))
-			return (T) createMethod(uri);
-		else if(Base.class.equals(clazz))
-			return (T) createBase(uri);
-		else if(Root.class.equals(clazz))
-			return (T) createKtbsRoot(uri);
-		else if(AttributeType.class.equals(clazz))
-			return (T) createAttributeType(uri);
-		else if(RelationType.class.equals(clazz))
-			return (T) createRelationType(uri);
-		else if(ObselType.class.equals(clazz))
-			return (T) createObselType(uri);
-		else if(TraceModel.class.equals(clazz))
-			return (T) createTraceModel(uri);
-		else
-			throw new UnsupportedOperationException("Cannot create an instance of class \""+clazz.getCanonicalName()+"\"");
+	private class EmptyResourceInvocationHandler implements InvocationHandler {
+		private String uri;
+		
+		public EmptyResourceInvocationHandler(String uri) {
+			super();
+			this.uri = uri;
+		}
+
+		@Override
+		public Object invoke(
+				Object proxy, 
+				java.lang.reflect.Method method,
+				Object[] args) throws Throwable {
+			if(method.getName().equals("getURI"))
+				return uri;
+			else if(method.getName().equals("hashCode"))
+				return uri.hashCode();
+			else if(method.getName().equals("equals") && args.length==1) {
+				if (args[0] instanceof KtbsResource) {
+					KtbsResource resource = (KtbsResource) args[0];
+					return uri.equals(resource.getURI());
+				} else
+					return false;
+			}
+			else if(method.getName().equals("toString"))
+				return uri;
+			else if(Arrays.asList(proxy.getClass().getMethods()).contains(method))
+				throw new UnsupportedOperationException("The method "+method.getName()+" is not supported (Empty KtbsResource)");
+			else
+				throw new IllegalStateException("Method "+method.getName());
+		}
+	}
+	
+	public <T extends KtbsResource> T createEmptyResource(String uri, Class<T> cls) {
+		
+		return cls.cast(Proxy.newProxyInstance(
+				this.getClass().getClassLoader(), 
+				new Class<?>[]{cls}, 
+				new EmptyResourceInvocationHandler(uri)));
 	}
 	
 	public KtbsResource createResource(String uri) {
-		return new EmptyResource(uri);
+		return createEmptyResource(uri, KtbsResource.class);
 	}
+	
 	public Root createKtbsRoot(String uri) {
-		return new EmptyKtbsRoot(uri);
+		return createEmptyResource(uri, Root.class);
 	}
+	
 	public Base createBase(String uri) {
-		return new EmptyBase(uri);
+		return createEmptyResource(uri, Base.class);
 	}
+	
 	public Trace createTrace(String uri) {
-		return new EmptyTrace(uri);
+		return createEmptyResource(uri, Trace.class);
 	}
+	
 	public Obsel createObsel(String uri) {
-		return new EmptyObsel(uri);
+		return createEmptyResource(uri, Obsel.class);
 	}
+	
 	public StoredTrace createStoredTrace(String uri) {
-		return new EmptyStoredTrace(uri);
+		return createEmptyResource(uri, StoredTrace.class);
 	}
 		
 	public ComputedTrace createComputedTrace(String uri) {
-		return new EmptyComputedTrace(uri);
+		return createEmptyResource(uri, ComputedTrace.class);
 	}
 		
 	public TraceModel createTraceModel(String uri) {
-		return new EmptyTraceModel(uri);
+		return createEmptyResource(uri, TraceModel.class);
 	}
 		
 	public AttributeType createAttributeType(String uri) {
-		return new EmptyAttributeType(uri);
+		return createEmptyResource(uri, AttributeType.class);
 	}
 		
 	public RelationType createRelationType(String uri) {
-		return new EmptyRelationType(uri);
+		return createEmptyResource(uri, RelationType.class);
 	}
 		
 	public ObselType createObselType(String uri) {
-		return new EmptyObselType(uri);
+		return createEmptyResource(uri, ObselType.class);
 	}
 		
 	public Method createMethod(String uri) {
-		return new EmptyMethod(uri);
+		return createEmptyResource(uri, Method.class);
 	}
-	
-	
-	
 }

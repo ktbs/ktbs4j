@@ -5,7 +5,7 @@ import java.util.Iterator;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.ResourceRepository;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -13,9 +13,9 @@ import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
+public class RdfRoot extends RdfKtbsResource implements Root{
 
-	KtbsJenaRoot(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfRoot(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -30,7 +30,7 @@ public class KtbsJenaRoot extends KtbsJenaResource implements KtbsRoot{
 				rdfModel.getResource(uri), 
 				rdfModel.getProperty(KtbsConstants.P_HAS_BASE),
 				(RDFNode)null);
-		return new KtbsResourceObjectIterator<Base>(stmtIt, Base.class, repository, false);
+		return new RDFObjectIterator<Base>(stmtIt, Base.class, repository, false);
 	}
 
 	@Override

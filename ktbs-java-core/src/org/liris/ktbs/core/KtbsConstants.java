@@ -18,7 +18,7 @@ public interface KtbsConstants {
 	public static final String NAMESPACE = "http://liris.cnrs.fr/silex/2009/ktbs#";
 
 	// KTBS Root concepts and properties
-	public static final String KTBS_ROOT = NAMESPACE + "KtbsRoot";
+	public static final String ROOT = NAMESPACE + "KtbsRoot";
 	public static final String P_HAS_BASE = NAMESPACE + "hasBase";
 
 	// Base concepts and properties

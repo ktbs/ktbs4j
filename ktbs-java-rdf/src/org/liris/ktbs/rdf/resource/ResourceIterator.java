@@ -9,13 +9,13 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public abstract class KtbsResourceIterator<T extends KtbsResource> implements Iterator<T> {
+public abstract class ResourceIterator<T extends KtbsResource> implements Iterator<T> {
 	protected ResourceRepository holder;
 	protected StmtIterator stmtIterator;
 	protected Class<T> clazz;
 	protected boolean removeSupported;
 
-	KtbsResourceIterator(StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {
+	ResourceIterator(StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {
 		super();
 		this.stmtIterator = stmtIterator;
 		this.clazz = clazz;

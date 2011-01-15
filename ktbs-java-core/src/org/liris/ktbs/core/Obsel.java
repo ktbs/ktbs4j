@@ -51,14 +51,14 @@ public interface Obsel extends KtbsResource {
 	 *  The attribute statements returned are the RDF triples whose predicates are defined
 	 *  as attribute types in the trace model. If the trace model resource returned by
 	 *  {@link #getObselType().getTraceModel()} is not accessible, the method fails with 
-	 *  a {@link KtbsResourceNotFoundException}.
+	 *  a {@link ResourceNotFoundException}.
 	 * </p>
 	 * <p>
 	 * Attributes defined on this obsel with no associated attribute type defined in the trace model
 	 * are still accessible via the raw triple access method {@link KtbsResource#listNonKtbsStatements()}.
 	 * </p>
 	 * 
-	 * @throws KtbsResourceNotFoundException when the obsel cannot access
+	 * @throws ResourceNotFoundException when the obsel cannot access
 	 * the {@link TraceModel} whose obsel type belongs to.
 	 */
 	public Iterator<AttributeStatement> listAttributes();

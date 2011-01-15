@@ -38,18 +38,18 @@ public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
 		super.setUp();
 
 		base = repository.createBase("http://localhost:8001/base1/");
-		model1 = base.createTraceModel(uri("model1"));
-		model2 = base.createTraceModel(uri("model2"));
+		model1 = base.newTraceModel(uri("model1"));
+		model2 = base.newTraceModel(uri("model2"));
 		
-		trace1 = base.createStoredTrace(uri("t01"),model2);
+		trace1 = base.newStoredTrace(uri("t01"),model2);
 
-		method1 = base.createMethod(uri("method1"), "http://example/method1/");
-		method2 = base.createMethod(uri("method2"), "http://example/method2/");
-		method3 = base.createMethod(uri("method3"), "http://example/method3/");
+		method1 = base.newMethod(uri("method1"), "http://example/method1/");
+		method2 = base.newMethod(uri("method2"), "http://example/method2/");
+		method3 = base.newMethod(uri("method3"), "http://example/method3/");
 		
-		ct1 = base.createComputedTrace(uri("ct1"), model1, method1, Arrays.asList(new Trace[]{trace1}));
-		ct2 = base.createComputedTrace(uri("ct2"), model2, method2, Arrays.asList(new Trace[]{trace1, ct1}));
-		ct3 = base.createComputedTrace(uri("ct3"), model2, method3, Arrays.asList(new Trace[]{ct1, ct2}));
+		ct1 = base.newComputedTrace(uri("ct1"), model1, method1, Arrays.asList(new Trace[]{trace1}));
+		ct2 = base.newComputedTrace(uri("ct2"), model2, method2, Arrays.asList(new Trace[]{trace1, ct1}));
+		ct3 = base.newComputedTrace(uri("ct3"), model2, method3, Arrays.asList(new Trace[]{ct1, ct2}));
 		
 	}
 

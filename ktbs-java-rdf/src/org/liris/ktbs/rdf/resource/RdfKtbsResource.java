@@ -27,12 +27,12 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class KtbsJenaResource extends AbstractKtbsResource implements StringableResource  {
+public class RdfKtbsResource extends AbstractKtbsResource implements StringableResource  {
 
 	protected ResourceRepository repository;
 	protected Model rdfModel;
 
-	KtbsJenaResource(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfKtbsResource(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri);
 		this.rdfModel = rdfModel;
 		this.repository = holder;
@@ -66,7 +66,7 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 				null, 
 				(RDFNode) null) {
 			public boolean selects(Statement s) {
-				return KtbsJenaResource.this.isKtbsProperty(s);
+				return RdfKtbsResource.this.isKtbsProperty(s);
 			}
 		};
 		return new PropertyIterator(rdfModel.listStatements(selector));
@@ -79,7 +79,7 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 				null, 
 				(RDFNode) null) {
 			public boolean selects(Statement s) {
-				return !KtbsJenaResource.this.isKtbsProperty(s);
+				return !RdfKtbsResource.this.isKtbsProperty(s);
 			}
 		};
 		return new PropertyIterator(rdfModel.listStatements(selector));
@@ -171,26 +171,26 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 		removeAllAndAddResource(RDF.type.getURI(), typeURI);
 	}
 
-	protected void removeParentConnection(KtbsJenaResource parent, KtbsResource childKtbsResource) {
-		if (childKtbsResource instanceof KtbsJenaResource) {
-			KtbsJenaResource child = (KtbsJenaResource) childKtbsResource;
-			if(parent.getClass().equals(KtbsJenaRoot.class) && child.getClass().equals(Base.class)) 
+	protected void removeParentConnection(RdfKtbsResource parent, KtbsResource childKtbsResource) {
+		if (childKtbsResource instanceof RdfKtbsResource) {
+			RdfKtbsResource child = (RdfKtbsResource) childKtbsResource;
+			if(parent.getClass().equals(RdfRoot.class) && child.getClass().equals(Base.class)) 
 				removeConnection(parent, child,KtbsConstants.P_HAS_BASE,KtbsConstants.P_HAS_BASE);
-			else if(parent.getClass().equals(KtbsJenaBase.class) && child.getClass().equals(KtbsJenaTrace.class)) 
+			else if(parent.getClass().equals(RDFBase.class) && child.getClass().equals(RdfTrace.class)) 
 				removeConnection(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS);
-			else if(parent.getClass().equals(KtbsJenaBase.class) && child.getClass().equals(KtbsJenaMethod.class)) 
+			else if(parent.getClass().equals(RDFBase.class) && child.getClass().equals(RdfMethod.class)) 
 				removeConnection(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS);
-			else if(parent.getClass().equals(KtbsJenaBase.class) && child.getClass().equals(KtbsJenaTraceModel.class)) 
+			else if(parent.getClass().equals(RDFBase.class) && child.getClass().equals(RdfTraceModel.class)) 
 				removeConnection(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS);
 			else
 				throw new UnsupportedOperationException("Cannot remove a parent connection between an instance of class \""+parent.getClass()+"\" and an instance of class \""+child.getClass()+"\".");
 		} else 
-			throw new UnsupportedOperationException("Only instances of class "+KtbsJenaResource.class+" are supported [input class: "+childKtbsResource.getClass()+"].");
+			throw new UnsupportedOperationException("Only instances of class "+RdfKtbsResource.class+" are supported [input class: "+childKtbsResource.getClass()+"].");
 	}
 
 
-	private void removeConnection(KtbsJenaResource parent,
-			KtbsJenaResource child, String pNameInParent, String pNameInChild) {
+	private void removeConnection(RdfKtbsResource parent,
+			RdfKtbsResource child, String pNameInParent, String pNameInChild) {
 
 		Resource parentResourceInParent = parent.rdfModel.getResource(parent.uri);
 		Property hasBaseInParent = parent.rdfModel.getProperty(pNameInParent);
@@ -209,18 +209,18 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 
 	}
 
-	protected void createParentConnection(KtbsJenaResource parent, KtbsResource childKtbsResource) {
-		if (childKtbsResource instanceof KtbsJenaResource) {
-			KtbsJenaResource child = (KtbsJenaResource) childKtbsResource;
+	protected void createParentConnection(RdfKtbsResource parent, KtbsResource childKtbsResource) {
+		if (childKtbsResource instanceof RdfKtbsResource) {
+			RdfKtbsResource child = (RdfKtbsResource) childKtbsResource;
 
-			if(parent.getClass().equals(KtbsJenaRoot.class) && child.getClass().equals(KtbsJenaBase.class)) 
+			if(parent.getClass().equals(RdfRoot.class) && child.getClass().equals(RDFBase.class)) 
 				connect(parent, child,KtbsConstants.P_HAS_BASE,KtbsConstants.P_HAS_BASE,true,true);
-			else if(parent.getClass().equals(KtbsJenaBase.class) && 
-					(child.getClass().equals(KtbsJenaComputedTrace.class)
-							|| child.getClass().equals(KtbsJenaTrace.class)
-							|| child.getClass().equals(KtbsJenaStoredTrace.class)
-							|| child.getClass().equals(KtbsJenaMethod.class)
-							|| child.getClass().equals(KtbsJenaTraceModel.class))
+			else if(parent.getClass().equals(RDFBase.class) && 
+					(child.getClass().equals(RdfComputedTrace.class)
+							|| child.getClass().equals(RdfTrace.class)
+							|| child.getClass().equals(RdfStoredTrace.class)
+							|| child.getClass().equals(RdfMethod.class)
+							|| child.getClass().equals(RdfTraceModel.class))
 			)  {
 				connect(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS,true,true);
 				parent.rdfModel.getResource(child.getURI()).addProperty(RDF.type, parent.rdfModel.getResource(KtbsUtils.getRDFType(child.getClass())));
@@ -229,11 +229,11 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 			else
 				throw new UnsupportedOperationException("Cannot create a parent connection between an instance of class \""+parent.getClass()+"\" and an instance of class \""+child.getClass()+"\".");
 		} else 
-			throw new UnsupportedOperationException("Only instances of class "+KtbsJenaResource.class+" are supported [input class: "+childKtbsResource.getClass()+"].");
+			throw new UnsupportedOperationException("Only instances of class "+RdfKtbsResource.class+" are supported [input class: "+childKtbsResource.getClass()+"].");
 
 	}
 
-	private void connect(KtbsJenaResource parent, KtbsJenaResource child, String pNameInParent, String pNameInChild, boolean removeFirstInParent, boolean removeFirstInChild) {
+	private void connect(RdfKtbsResource parent, RdfKtbsResource child, String pNameInParent, String pNameInChild, boolean removeFirstInParent, boolean removeFirstInChild) {
 		Resource parentResourceInParent = parent.rdfModel.getResource(parent.uri);
 		Property hasBaseInParent = parent.rdfModel.getProperty(pNameInParent);
 		Resource childResourceInParent = parent.rdfModel.getResource(child.uri);
@@ -280,7 +280,7 @@ public class KtbsJenaResource extends AbstractKtbsResource implements Stringable
 	}
 
 	protected String getNotAKtbsJenaResourceMessage(ObselType type) {
-		return "Unsupported type of KTBS Resource: " + type.getClass().getCanonicalName()+ ". Only instance of class " + KtbsJenaResource.class + " are supported.";
+		return "Unsupported type of KTBS Resource: " + type.getClass().getCanonicalName()+ ". Only instance of class " + RdfKtbsResource.class + " are supported.";
 	}
 
 	protected void checkExitsenceAndAddResource(String pName, KtbsResource resource) {

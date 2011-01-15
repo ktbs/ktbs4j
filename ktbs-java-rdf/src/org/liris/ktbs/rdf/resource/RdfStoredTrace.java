@@ -12,19 +12,11 @@ import org.liris.ktbs.core.StoredTrace;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 
-public class KtbsJenaStoredTrace extends KtbsJenaTrace implements StoredTrace {
+public class RdfStoredTrace extends RdfTrace implements StoredTrace {
 
-	KtbsJenaStoredTrace(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfStoredTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
-
-//	@Override
-//	public void addObsel(Obsel obsel) {
-//		holder.addResourceAsPartOfExistingModel(obsel, rdfModel);
-//		KtbsJenaObsel kjObsel = (KtbsJenaObsel)holder.getResource(obsel.getURI(), Obsel.class);
-//		kjObsel.rdfModel = this.rdfModel;
-//		kjObsel.removeAllAndAddResource(KtbsConstants.P_HAS_TRACE,this.uri);
-//	}
 
 	@Override
 	public String getDefaultSubject() {

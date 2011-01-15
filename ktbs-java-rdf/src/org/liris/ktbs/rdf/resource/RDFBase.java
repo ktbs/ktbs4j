@@ -23,9 +23,9 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-public class KtbsJenaBase extends KtbsJenaResource implements Base {
+public class RDFBase extends RdfKtbsResource implements Base {
 
-	KtbsJenaBase(String uri, Model rdfModel, ResourceRepository holder) {
+	RDFBase(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -193,9 +193,9 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 		OwnedResourceIterator(String resourceTypeURI, String... otherAcceptedTypeURI) {
 			super();
-			ownedResourceIt = KtbsJenaBase.this.rdfModel.listObjectsOfProperty(
-					KtbsJenaBase.this.rdfModel.getResource(KtbsJenaBase.this.uri), 
-					KtbsJenaBase.this.rdfModel.getProperty(KtbsConstants.P_OWNS));
+			ownedResourceIt = RDFBase.this.rdfModel.listObjectsOfProperty(
+					RDFBase.this.rdfModel.getResource(RDFBase.this.uri), 
+					RDFBase.this.rdfModel.getProperty(KtbsConstants.P_OWNS));
 
 			this.acceptedTypeUris = new HashSet<String>();
 			this.acceptedTypeUris.add(resourceTypeURI);
@@ -209,7 +209,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 			while(ownedResourceIt.hasNext() && !foundNext) {
 				RDFNode nextNode = ownedResourceIt.next();
 				Resource candidateResource = nextNode.asResource();
-				NodeIterator it2 = KtbsJenaBase.this.rdfModel.listObjectsOfProperty(
+				NodeIterator it2 = RDFBase.this.rdfModel.listObjectsOfProperty(
 						candidateResource,
 						RDF.type);
 
@@ -230,7 +230,7 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 
 		private boolean isAcceptedType(Resource resource) {
 			for(String acceptedType:acceptedTypeUris) {
-				if(resource.equals(KtbsJenaBase.this.rdfModel.getResource(acceptedType)))
+				if(resource.equals(RDFBase.this.rdfModel.getResource(acceptedType)))
 					return true;
 			}
 			return false;
@@ -255,23 +255,23 @@ public class KtbsJenaBase extends KtbsJenaResource implements Base {
 	}
 
 	@Override
-	public StoredTrace createStoredTrace(String traceURI, TraceModel model) {
+	public StoredTrace newStoredTrace(String traceURI, TraceModel model) {
 		return repository.createStoredTrace(this, traceURI, model);
 	}
 
 	@Override
-	public ComputedTrace createComputedTrace(String traceURI, TraceModel model,
+	public ComputedTrace newComputedTrace(String traceURI, TraceModel model,
 			Method method, Collection<Trace> sources) {
 		return repository.createComputedTrace(this, traceURI, model, method, sources);
 	}
 
 	@Override
-	public Method createMethod(String methodURI, String inheritedMethod) {
+	public Method newMethod(String methodURI, String inheritedMethod) {
 		return repository.createMethod(this, methodURI, inheritedMethod);
 	}
 
 	@Override
-	public TraceModel createTraceModel(String modelURI) {
+	public TraceModel newTraceModel(String modelURI) {
 		return repository.createTraceModel(this, modelURI);
 	}
 }

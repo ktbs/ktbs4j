@@ -19,7 +19,7 @@ import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.Obsel;
@@ -33,8 +33,8 @@ import org.liris.ktbs.core.TraceModel;
 public class KtbsUtils {
 
 	public static Class<? extends KtbsResource> getJavaClass(String rdfType) {
-		if(rdfType.equals(KtbsConstants.KTBS_ROOT)) 
-			return KtbsRoot.class;
+		if(rdfType.equals(KtbsConstants.ROOT)) 
+			return Root.class;
 		else if(rdfType.equals(KtbsConstants.BASE)) 
 			return Base.class;
 		else if(rdfType.equals(KtbsConstants.STORED_TRACE)) 
@@ -110,8 +110,8 @@ public class KtbsUtils {
 ;	}
 	
 	public static String getRDFType(Class<?> clazz) {
-		if(KtbsRoot.class.isAssignableFrom(clazz)) 
-			return KtbsConstants.KTBS_ROOT;
+		if(Root.class.isAssignableFrom(clazz)) 
+			return KtbsConstants.ROOT;
 		else if(Base.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.BASE;
 		else if(StoredTrace.class.isAssignableFrom(clazz)) 

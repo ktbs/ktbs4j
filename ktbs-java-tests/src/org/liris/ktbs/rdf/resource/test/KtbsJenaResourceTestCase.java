@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -24,7 +24,7 @@ public class KtbsJenaResourceTestCase extends AbstractKtbsJenaTestCase {
 		resource = loadInRepo(
 				root,
 				"ktbs-jena-resource.ttl", 
-				KtbsRoot.class);
+				Root.class);
 	}
 
 	@Test
@@ -41,7 +41,7 @@ public class KtbsJenaResourceTestCase extends AbstractKtbsJenaTestCase {
 
 	@Test
 	public void testGetType() {
-		assertEquals(KtbsConstants.KTBS_ROOT, resource.getResourceType());
+		assertEquals(KtbsConstants.ROOT, resource.getResourceType());
 	}
 
 	@Test

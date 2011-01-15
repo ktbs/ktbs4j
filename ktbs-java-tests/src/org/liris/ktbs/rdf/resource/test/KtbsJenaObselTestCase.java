@@ -16,7 +16,7 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.DomainException;
 import org.liris.ktbs.core.JenaConstants;
-import org.liris.ktbs.core.KtbsResourceNotFoundException;
+import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RangeException;
 import org.liris.ktbs.core.RelationStatement;
@@ -173,7 +173,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		try {
 			obsel6.getObselType();
 			fail("Should fail");
-		} catch(KtbsResourceNotFoundException e) {
+		} catch(ResourceNotFoundException e) {
 			
 		} catch(Exception e) {
 			fail("Unexpected Exception");
@@ -226,7 +226,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		try {
 			obsel6.listAttributes().hasNext();
 			fail("Should fail since the obsel type is not valid");
-		} catch(KtbsResourceNotFoundException e) {
+		} catch(ResourceNotFoundException e) {
 			
 		} catch(Exception e) {
 			fail("Unexpected exception");
@@ -353,7 +353,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 		
 		try {
 			obsel6.listIncomingRelations().hasNext();
-		} catch(KtbsResourceNotFoundException e) {
+		} catch(ResourceNotFoundException e) {
 			fail("Should never need to pass through the obsel type in t" +
 					"he relation selector, since there is no incoming relation.");
 		} catch(Exception e) {
@@ -388,7 +388,7 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 			listOutgoingRelations.hasNext();
 			fail("Should fail since the obsel type is not valid");
 			
-		} catch(KtbsResourceNotFoundException e) {
+		} catch(ResourceNotFoundException e) {
 			
 		} catch(Exception e) {
 			fail("Unexpected exception");

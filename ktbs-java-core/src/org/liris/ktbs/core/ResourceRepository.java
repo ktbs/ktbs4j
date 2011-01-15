@@ -76,7 +76,7 @@ public interface ResourceRepository {
 	 * @param traceURI
 	 * @param tm
 	 * @return
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (base or trace model) is not in the repository;
 	 */
 	public StoredTrace createStoredTrace(Base base, String traceURI, TraceModel tm);
@@ -89,7 +89,7 @@ public interface ResourceRepository {
 	 * @param m
 	 * @param sources
 	 * @return
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (base, trace model, method, or source traces) is not in the repository;
 	 */
 	public ComputedTrace createComputedTrace(Base base, String traceURI,
@@ -102,7 +102,7 @@ public interface ResourceRepository {
 	 * @param methodURI
 	 * @param inherits
 	 * @return
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (the base) is not in the repository;
 	 */
 	public Method createMethod(Base base, String methodURI, String inherits);
@@ -112,7 +112,7 @@ public interface ResourceRepository {
 	 * @param base
 	 * @param modelURI
 	 * @return
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (the base) is not in the repository;
 	 */
 	public TraceModel createTraceModel(Base base, String modelURI);
@@ -125,7 +125,7 @@ public interface ResourceRepository {
 	 * @param type
 	 * @param attributes
 	 * @return
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (trace, obsel type, attribute type) is not in the repository;
 	 */
 	public Obsel createObsel(StoredTrace trace, String obselURI,
@@ -136,7 +136,7 @@ public interface ResourceRepository {
 	 * 
 	 * @param traceModel
 	 * @param localName
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (trace model) is not in the repository;
 	 */
 	public ObselType createObselType(TraceModel traceModel, String localName);
@@ -147,7 +147,7 @@ public interface ResourceRepository {
 	 * @param localName
 	 * @param domain
 	 * @param range
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (trace model, obsel types for range and domain) is not in the repository;
 	 */
 	public RelationType createRelationType(TraceModel traceModel, String localName, ObselType domain, ObselType range);
@@ -157,7 +157,7 @@ public interface ResourceRepository {
 	 * @param traceModel
 	 * @param localName
 	 * @param domain
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (trace model, obsel type for the domain) is not in the repository;
 	 */
 	public AttributeType createAttributeType(TraceModel traceModel, String localName, ObselType domain);
@@ -166,17 +166,17 @@ public interface ResourceRepository {
 	 * 
 	 * @param trace
 	 * @param obsel
-	 * @throws KtbsResourceNotFoundException when any required resource 
+	 * @throws ResourceNotFoundException when any required resource 
 	 * (trace, obsel) is not in the repository;
 	 */
 	public void removeObsel(StoredTrace trace, Obsel obsel);
 	
 	/**
 	 * Check if resources are present in the repository, throws an 
-	 * {@link KtbsResourceNotFoundException} if not.
+	 * {@link ResourceNotFoundException} if not.
 	 * 
 	 * @param resources the resources to be checked
-	 * @throws KtbsResourceNotFoundException when any of the parameter 
+	 * @throws ResourceNotFoundException when any of the parameter 
 	 * resources is not found in the repository
 	 */
 	public void checkExistency(KtbsResource... resources);
@@ -185,10 +185,10 @@ public interface ResourceRepository {
 	/**
 	 * Check if there exists a ktbs resource in the repository
 	 * for each of the parameter uri, throws an 
-	 * {@link KtbsResourceNotFoundException} if not.
+	 * {@link ResourceNotFoundException} if not.
 	 * 
 	 * @param uris the uris to be checked
-	 * @throws KtbsResourceNotFoundException when any of the parameter 
+	 * @throws ResourceNotFoundException when any of the parameter 
 	 * uris is not found in the repository.
 	 */
 	public void checkExistency(String... uris);

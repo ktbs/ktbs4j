@@ -40,7 +40,7 @@ public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
 
 		base = repository.createBase("http://localhost:8001/base1/");
 		
-		filtered2 = base.createComputedTrace(
+		filtered2 = base.newComputedTrace(
 				"http://localhost:8001/base1/filtered2/", 
 				repository.getResource("http://localhost:8001/base1/model1/", TraceModel.class), 
 				Method.FILTER, 

@@ -15,9 +15,9 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class KtbsJenaResourceWithParameter extends KtbsJenaResource implements ResourceWithParameters {
+public class RdfKtbsResourceWithParameter extends RdfKtbsResource implements ResourceWithParameters {
 
-	KtbsJenaResourceWithParameter(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfKtbsResourceWithParameter(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 	
@@ -62,7 +62,7 @@ public class KtbsJenaResourceWithParameter extends KtbsJenaResource implements R
 	
 	@Override
 	public void setParameter(String key, String value) {
-		throw new ReadOnlyObjectException(KtbsJenaResourceWithParameter.this);
+		throw new ReadOnlyObjectException(RdfKtbsResourceWithParameter.this);
 	}
 
 	@Override
@@ -76,6 +76,6 @@ public class KtbsJenaResourceWithParameter extends KtbsJenaResource implements R
 
 	@Override
 	public void removeParameter(String key) {
-		throw new ReadOnlyObjectException(KtbsJenaResourceWithParameter.this);
+		throw new ReadOnlyObjectException(RdfKtbsResourceWithParameter.this);
 	}
 }

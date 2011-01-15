@@ -75,23 +75,23 @@ public class EmptyBase extends EmptyResourceContainer implements Base {
 	}
 
 	@Override
-	public StoredTrace createStoredTrace(String traceURI, TraceModel model) {
+	public StoredTrace newStoredTrace(String traceURI, TraceModel model) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public ComputedTrace createComputedTrace(String traceURI, TraceModel model,
+	public ComputedTrace newComputedTrace(String traceURI, TraceModel model,
 			Method method, Collection<Trace> sources) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public Method createMethod(String methodURI, String inheritedMethod) {
+	public Method newMethod(String methodURI, String inheritedMethod) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 
 	@Override
-	public TraceModel createTraceModel(String modelURI) {
+	public TraceModel newTraceModel(String modelURI) {
 		throw new UnsupportedOperationException(MESSAGE);
 	}
 }

@@ -1,6 +1,5 @@
-package org.liris.ktbs.rdf.resource;
+package org.liris.ktbs.core;
 
-import org.liris.ktbs.core.ResourceLoadException;
 
 @SuppressWarnings("serial")
 public class MultipleResourcesInStreamException extends ResourceLoadException {

@@ -14,9 +14,9 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
+public class RdfTraceModel extends RdfKtbsResource implements TraceModel {
 
-	KtbsJenaTraceModel(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfTraceModel(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -72,7 +72,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public ObselType getObselType(String obselTypeUri) {
 		StmtIterator stmt = getTypeStatements(obselTypeUri, KtbsConstants.OBSEL_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.repository.getResource(obselTypeUri, ObselType.class);
+			return RdfTraceModel.this.repository.getResource(obselTypeUri, ObselType.class);
 		else
 			return null;
 	}
@@ -81,7 +81,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public RelationType getRelationType(String relationTypeUri) {
 		StmtIterator stmt = getTypeStatements(relationTypeUri, KtbsConstants.RELATION_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.repository.getResource(relationTypeUri, RelationType.class);
+			return RdfTraceModel.this.repository.getResource(relationTypeUri, RelationType.class);
 		else
 			return null;
 	}
@@ -90,7 +90,7 @@ public class KtbsJenaTraceModel extends KtbsJenaResource implements TraceModel {
 	public AttributeType getAttributeType(String attributeTypeUri) {
 		StmtIterator stmt = getTypeStatements(attributeTypeUri, KtbsConstants.ATTRIBUTE_TYPE);
 		if(stmt.hasNext())
-			return KtbsJenaTraceModel.this.repository.getResource(attributeTypeUri, AttributeType.class);
+			return RdfTraceModel.this.repository.getResource(attributeTypeUri, AttributeType.class);
 		else
 			return null;
 	}

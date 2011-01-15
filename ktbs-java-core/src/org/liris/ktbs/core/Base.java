@@ -13,23 +13,17 @@ public interface Base extends KtbsResource, ResourceContainer {
 	public Iterator<KtbsResource> listResources();
 	
 	
-	public StoredTrace createStoredTrace(String traceURI, TraceModel model);
-	public ComputedTrace createComputedTrace(String traceURI, TraceModel model, Method method, Collection<Trace> sources);
-	public Method createMethod(String methodURI, String inheritedMethod);
-	public TraceModel createTraceModel(String modelURI);
+	public StoredTrace newStoredTrace(String traceURI, TraceModel model);
+	public ComputedTrace newComputedTrace(String traceURI, TraceModel model, Method method, Collection<Trace> sources);
+	public Method newMethod(String methodURI, String inheritedMethod);
+	public TraceModel newTraceModel(String modelURI);
 
-	
-//	public void addStoredTrace(StoredTrace trace);
 	public StoredTrace getStoredTrace(String uri);
-
-//	public void addComputedTrace(ComputedTrace trace);
 	public ComputedTrace getComputedTrace(String uri);
 	public Trace getTrace(String uri);
 
-//	public void addTraceModel(TraceModel traceModel);
 	public TraceModel getTraceModel(String uri);
 	
-//	public void addMethod(Method method);
 	public Method getMethod(String uri);
 	
 }

@@ -18,13 +18,13 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class KtbsJenaObselType extends KtbsJenaResource implements ObselType {
+public class RdfObselType extends RdfKtbsResource implements ObselType {
 
 	private Collection<AttributeType> inferredAttributes = null;
 	private Collection<RelationType> inferredOutgoingRelations = null;
 	private Collection<RelationType> inferredIncomingRelations = null;
 
-	KtbsJenaObselType(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfObselType(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

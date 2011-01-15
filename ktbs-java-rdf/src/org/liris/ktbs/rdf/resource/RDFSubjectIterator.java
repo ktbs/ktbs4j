@@ -7,14 +7,15 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class KtbsResourceObjectIterator<T extends KtbsResource> extends KtbsResourceIterator<T> { 
-
-	KtbsResourceObjectIterator(StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {
+class RDFSubjectIterator<T extends KtbsResource> extends ResourceIterator<T> {
+	
+	RDFSubjectIterator(StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {
 		super(stmtIterator, clazz, holder, removeSupported);
 	}
-	
+
 	@Override
 	protected Resource getResourceFromStatement(Statement s) {
-		return s.getObject().asResource();
+		return s.getSubject();
 	}
+	
 }

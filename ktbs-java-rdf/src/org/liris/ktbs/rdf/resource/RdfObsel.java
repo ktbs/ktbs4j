@@ -10,7 +10,7 @@ import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.DomainException;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsResourceNotFoundException;
+import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.Mode;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
@@ -31,9 +31,9 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
+public class RdfObsel extends RdfKtbsResource implements Obsel {
 
-	KtbsJenaObsel(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfObsel(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -96,7 +96,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 				return null;
 			else
 				return new AttributeStatementIt(it).next().getValue();
-		} catch(KtbsResourceNotFoundException e) {
+		} catch(ResourceNotFoundException e) {
 			// the obsel type could not be retrieved
 			return null;
 		}
@@ -166,7 +166,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 				return false;
 
 			AttributeType asAttributeType = repository.getResource(s.getPredicate().getURI(), AttributeType.class);
-			ObselType obselType = KtbsJenaObsel.this.getObselType();
+			ObselType obselType = RdfObsel.this.getObselType();
 			LinkedList<AttributeType> c = KtbsUtils.toLinkedList(obselType.listAttributes(Mode.INFERRED));
 			boolean isAttribute = c.contains(asAttributeType);
 			return isAttribute;
@@ -204,7 +204,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 				else 
 					thisAsResource = s.getObject().asResource();
 			}
-			boolean sameURI = thisAsResource.getURI().equals(KtbsJenaObsel.this.uri);
+			boolean sameURI = thisAsResource.getURI().equals(RdfObsel.this.uri);
 			if(!sameURI)
 				return false;
 			return true;
@@ -226,7 +226,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 				return false;
 
 			RelationType asRelationType = repository.getResource(s.getPredicate().getURI(), RelationType.class);
-			LinkedList<RelationType> c = KtbsUtils.toLinkedList(KtbsJenaObsel.this.getObselType().listOutgoingRelations(Mode.INFERRED));
+			LinkedList<RelationType> c = KtbsUtils.toLinkedList(RdfObsel.this.getObselType().listOutgoingRelations(Mode.INFERRED));
 			boolean isOutgoingRelation = c.contains(asRelationType);
 			return isOutgoingRelation;
 		}
@@ -247,7 +247,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 				return false;
 
 			RelationType asRelationType = repository.getResource(s.getPredicate().getURI(), RelationType.class);
-			LinkedList<RelationType> c = KtbsUtils.toLinkedList(KtbsJenaObsel.this.getObselType().listIncomingRelations(Mode.INFERRED));
+			LinkedList<RelationType> c = KtbsUtils.toLinkedList(RdfObsel.this.getObselType().listIncomingRelations(Mode.INFERRED));
 			boolean isIncomingRelation = c.contains(asRelationType);
 			return isIncomingRelation;
 		}
@@ -272,7 +272,7 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 			final Statement next = stmtIt.next();
 
 			return new SimpleAttributStatement(
-					KtbsJenaObsel.this.repository.getResource(next.getPredicate().asResource().getURI(), AttributeType.class),
+					RdfObsel.this.repository.getResource(next.getPredicate().asResource().getURI(), AttributeType.class),
 					next.getObject().asLiteral().getValue()
 			);
 		}
@@ -304,17 +304,17 @@ public class KtbsJenaObsel extends KtbsJenaResource implements Obsel {
 			final Statement next = stmtIt.next();
 
 
-			Obsel thisObsel = KtbsJenaObsel.this.repository.getResource(
-					KtbsJenaObsel.this.uri, 
+			Obsel thisObsel = RdfObsel.this.repository.getResource(
+					RdfObsel.this.uri, 
 					Obsel.class);
 
-			Obsel otherObsel =  KtbsJenaObsel.this.repository.getResource(
+			Obsel otherObsel =  RdfObsel.this.repository.getResource(
 					isOutgoing?next.getObject().asResource().getURI():next.getResource().getURI(), 
 							Obsel.class);
 
 			return new SimpleRelationStatement(
 					isOutgoing?thisObsel:otherObsel, 
-							KtbsJenaObsel.this.repository.getResource(next.getPredicate().getURI(),RelationType.class), 
+							RdfObsel.this.repository.getResource(next.getPredicate().getURI(),RelationType.class), 
 							isOutgoing?otherObsel:thisObsel
 			);
 

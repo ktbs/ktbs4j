@@ -42,7 +42,7 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
@@ -194,7 +194,7 @@ public class KtbsClient implements KtbsClientService {
 
 	@Override
 	public KtbsResponse getKtbsRoot() {
-		return performGetRequest(ktbsRootURI, KtbsRoot.class, null);
+		return performGetRequest(ktbsRootURI, Root.class, null);
 	}
 
 	private KtbsResponse performDeleteRequest(String ktbsResourceURI) {

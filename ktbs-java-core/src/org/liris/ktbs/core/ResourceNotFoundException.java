@@ -1,11 +1,11 @@
 package org.liris.ktbs.core;
 
-public class KtbsResourceNotFoundException extends RuntimeException {
+public class ResourceNotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	private String resourceURI;
 
-	public KtbsResourceNotFoundException(String resourceURI) {
+	public ResourceNotFoundException(String resourceURI) {
 		super();
 		this.resourceURI = resourceURI;
 	}

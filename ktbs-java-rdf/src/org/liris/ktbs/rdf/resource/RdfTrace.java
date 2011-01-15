@@ -24,9 +24,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
+public class RdfTrace extends RdfKtbsResource implements Trace {
 
-	KtbsJenaTrace(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -81,7 +81,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 				null,
 				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
 				rdfModel.getResource(uri));
-		return new KtbsResourceSubjectIterator<Trace>(
+		return new RDFSubjectIterator<Trace>(
 				it, 
 				Trace.class,
 				repository, 
@@ -166,7 +166,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 	private class ObselIterator implements Iterator<Obsel> {
 
 		private ResIterator resIt;
-		private KtbsJenaTrace.TemporalCondition temporalCondition;
+		private RdfTrace.TemporalCondition temporalCondition;
 
 		private Obsel next;
 		ObselIterator(ResIterator stmtIt, TemporalCondition temporalCondition) {
@@ -181,7 +181,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 			while(resIt.hasNext() && !foundNext) {
 				Resource res = resIt.next();
 				String obselURI = res.getURI();
-				next = KtbsJenaTrace.this.repository.getResource(
+				next = RdfTrace.this.repository.getResource(
 						obselURI, 
 						Obsel.class);
 				if(temporalCondition.accept(
@@ -192,7 +192,7 @@ public class KtbsJenaTrace extends KtbsJenaResource implements Trace {
 				)) 
 					foundNext = true;
 
-				KtbsJenaTrace.this.traceObselCache.put(obselURI, next);
+				RdfTrace.this.traceObselCache.put(obselURI, next);
 			} 
 			if(!foundNext)
 				next = null;

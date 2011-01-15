@@ -15,11 +15,11 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrace {
+public class RdfComputedTrace extends RdfTrace implements ComputedTrace {
 
-	KtbsJenaComputedTrace(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfComputedTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
-		resourceWithParameterAspect = new KtbsJenaResourceWithParameter(uri, rdfModel, holder);
+		resourceWithParameterAspect = new RdfKtbsResourceWithParameter(uri, rdfModel, holder);
 	}
 	private ResourceWithParameters resourceWithParameterAspect;
 	
@@ -50,7 +50,7 @@ public class KtbsJenaComputedTrace extends KtbsJenaTrace implements ComputedTrac
 				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
 				(RDFNode)null);
 		
-		return new KtbsResourceObjectIterator<Trace>(
+		return new RDFObjectIterator<Trace>(
 				it, 
 				Trace.class,
 				repository, true);

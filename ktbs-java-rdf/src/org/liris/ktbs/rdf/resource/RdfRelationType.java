@@ -11,10 +11,10 @@ import org.liris.ktbs.core.ResourceRepository;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-public class KtbsJenaRelationType extends KtbsJenaResource implements
+public class RdfRelationType extends RdfKtbsResource implements
 RelationType {
 
-	KtbsJenaRelationType(String uri, Model rdfModel, ResourceRepository holder) {
+	RdfRelationType(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

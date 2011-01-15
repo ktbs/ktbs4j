@@ -163,14 +163,14 @@ public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
 				base, 
 				"http://localhost:8001/base1/count2/", 
 				(TraceModel)repository.getResource("http://localhost:8001/base1/model1/"),
-				base.createMethod("http://localhost:8001/base1/methodtoto/", KtbsConstants.SCRIPT_PYTHON),
+				base.newMethod("http://localhost:8001/base1/methodtoto/", KtbsConstants.SCRIPT_PYTHON),
 				Arrays.asList(new Trace[]{filtered1,t01})
 				);
 		repository.createComputedTrace(
 				base, 
 				"http://localhost:8001/base1/fusioned1/", 
 				(TraceModel)repository.getResource("http://localhost:8001/base1/model1/"),
-				base.createMethod("http://localhost:8001/base1/methodtoto/", KtbsConstants.SCRIPT_PYTHON),
+				base.newMethod("http://localhost:8001/base1/methodtoto/", KtbsConstants.SCRIPT_PYTHON),
 				Arrays.asList(new Trace[]{filtered1,t01})
 		);
 		

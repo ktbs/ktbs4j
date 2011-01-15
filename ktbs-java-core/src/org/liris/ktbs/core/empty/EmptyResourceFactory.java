@@ -5,7 +5,7 @@ import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
@@ -46,7 +46,7 @@ public class EmptyResourceFactory {
 			return (T) createMethod(uri);
 		else if(Base.class.equals(clazz))
 			return (T) createBase(uri);
-		else if(KtbsRoot.class.equals(clazz))
+		else if(Root.class.equals(clazz))
 			return (T) createKtbsRoot(uri);
 		else if(AttributeType.class.equals(clazz))
 			return (T) createAttributeType(uri);
@@ -63,7 +63,7 @@ public class EmptyResourceFactory {
 	public KtbsResource createResource(String uri) {
 		return new EmptyResource(uri);
 	}
-	public KtbsRoot createKtbsRoot(String uri) {
+	public Root createKtbsRoot(String uri) {
 		return new EmptyKtbsRoot(uri);
 	}
 	public Base createBase(String uri) {

@@ -16,8 +16,9 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsResourceNotFoundException;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.MultipleResourcesInStreamException;
+import org.liris.ktbs.core.ResourceNotFoundException;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
@@ -47,10 +48,10 @@ public class RDFResourceRepository implements ResourceRepository {
 
 	private static final Log log = LogFactory.getLog(RDFResourceRepository.class);
 
-	private Map<String, KtbsJenaResource> resources;
+	private Map<String, RdfKtbsResource> resources;
 
 	public RDFResourceRepository() {
-		resources = new HashMap<String, KtbsJenaResource>();
+		resources = new HashMap<String, RdfKtbsResource>();
 	}
 
 	@Override
@@ -63,7 +64,7 @@ public class RDFResourceRepository implements ResourceRepository {
 			InputStream stream, 
 			String lang) throws ResourceLoadException {
 
-		KtbsJenaResource resource = null;
+		RdfKtbsResource resource = null;
 
 		Model model = ModelFactory.createDefaultModel();
 		model.read(stream, "", lang);
@@ -101,18 +102,18 @@ public class RDFResourceRepository implements ResourceRepository {
 				String methodURI = iterator.next();
 				Model filteredModel = filterModel(model, new ResourceSelector(methodURI));
 
-				resource = new KtbsJenaMethod(methodURI, filteredModel, this);
+				resource = new RdfMethod(methodURI, filteredModel, this);
 				putResource(resource, false);
 			}
 		} 
 
-		if(types.elementSet().contains(KtbsConstants.KTBS_ROOT)) {
+		if(types.elementSet().contains(KtbsConstants.ROOT)) {
 			log.info("A root has been found in the stream.");
-			checkAtLeastNumberOfElements(model, types, KtbsConstants.KTBS_ROOT, 1);
-			String rootURI = resourceURIsByType.get(KtbsConstants.KTBS_ROOT).iterator().next();
+			checkAtLeastNumberOfElements(model, types, KtbsConstants.ROOT, 1);
+			String rootURI = resourceURIsByType.get(KtbsConstants.ROOT).iterator().next();
 			Model filteredModel = filterModel(model, new ResourceSelector(rootURI));
 
-			resource = new KtbsJenaRoot(rootURI, filteredModel, this);
+			resource = new RdfRoot(rootURI, filteredModel, this);
 			putResource(resource, false);
 		} 
 
@@ -122,7 +123,7 @@ public class RDFResourceRepository implements ResourceRepository {
 			String baseURI = resourceURIsByType.get(KtbsConstants.BASE).iterator().next();
 			Model filteredModel = filterModel(model, new ResourceSelector(baseURI));
 
-			resource = new KtbsJenaBase(baseURI, filteredModel, this);
+			resource = new RDFBase(baseURI, filteredModel, this);
 			putResource(resource, false);
 		} 
 
@@ -153,20 +154,20 @@ public class RDFResourceRepository implements ResourceRepository {
 
 			Model filteredModel = filterModel(model, new TraceModelElementSelector(traceModelURI));
 
-			resource = new KtbsJenaTraceModel(traceModelURI, filteredModel, this);
+			resource = new RdfTraceModel(traceModelURI, filteredModel, this);
 			resources.put(resource.getURI(), resource);
 
 			// put model and its children manually
 			for(String attTypeURI:resourceURIsByType.get(KtbsConstants.ATTRIBUTE_TYPE)) {
-				KtbsJenaAttributeType att = new KtbsJenaAttributeType(attTypeURI, filteredModel, this);
+				RDFAttributeType att = new RDFAttributeType(attTypeURI, filteredModel, this);
 				resources.put(attTypeURI, att);
 			}
 			for(String obselTypeURI:resourceURIsByType.get(KtbsConstants.OBSEL_TYPE)) {
-				KtbsJenaObselType obselType = new KtbsJenaObselType(obselTypeURI, filteredModel, this);
+				RdfObselType obselType = new RdfObselType(obselTypeURI, filteredModel, this);
 				resources.put(obselTypeURI, obselType);
 			}
 			for(String relTypeURI:resourceURIsByType.get(KtbsConstants.RELATION_TYPE)) {
-				KtbsJenaRelationType rel = new KtbsJenaRelationType(relTypeURI, filteredModel, this);
+				RdfRelationType rel = new RdfRelationType(relTypeURI, filteredModel, this);
 				resources.put(relTypeURI, rel);
 			}
 		} 
@@ -180,7 +181,7 @@ public class RDFResourceRepository implements ResourceRepository {
 				String computedTraceURI = iterator.next();
 				Model filteredModel = filterModel(model, new ResourceSelector(computedTraceURI));
 
-				resource = new KtbsJenaComputedTrace(computedTraceURI, filteredModel, this);
+				resource = new RdfComputedTrace(computedTraceURI, filteredModel, this);
 				putResource(resource, false);
 			}
 		}
@@ -191,7 +192,7 @@ public class RDFResourceRepository implements ResourceRepository {
 			String traceURI = resourceURIsByType.get(KtbsConstants.STORED_TRACE).iterator().next();
 			Model filteredModel = filterModel(model, new ResourceSelector(traceURI));
 
-			resource = new KtbsJenaStoredTrace(traceURI, filteredModel, this);
+			resource = new RdfStoredTrace(traceURI, filteredModel, this);
 			putResource(resource, false);
 		}
 
@@ -235,7 +236,7 @@ public class RDFResourceRepository implements ResourceRepository {
 			Model filteredModel = filterModel(model, new ResourceSelector(obselURIs));
 
 			//add the obsels to the repository
-			KtbsJenaTrace trace = (KtbsJenaTrace) resources.get(traceURI);
+			RdfTrace trace = (RdfTrace) resources.get(traceURI);
 			if(trace == null) {
 				/*
 				 * the trace does not exists
@@ -256,7 +257,7 @@ public class RDFResourceRepository implements ResourceRepository {
 				trace.rdfModel.add(filteredModel);
 
 				for(String obselURI:obselURIs) 
-					resources.put(obselURI, new KtbsJenaObsel(obselURI, trace.rdfModel, this));
+					resources.put(obselURI, new RdfObsel(obselURI, trace.rdfModel, this));
 
 				resource = trace;
 			}
@@ -373,7 +374,7 @@ public class RDFResourceRepository implements ResourceRepository {
 					"an attribute type, or a relation type. This operation should be performed " +
 			"from the Trace or the Trace Model.");
 		else if(isStandaloneResource(cls) || Method.class.isAssignableFrom(cls)){
-			resources.put(resource.getURI(), (KtbsJenaResource) resource);
+			resources.put(resource.getURI(), (RdfKtbsResource) resource);
 		} else {
 			/*
 			 * Trace, StoredTrace, ComputedTrace.
@@ -383,10 +384,10 @@ public class RDFResourceRepository implements ResourceRepository {
 			removeResource(resource);
 
 			// adds the resource and all its children
-			resources.put(resource.getURI(), (KtbsJenaResource) resource);
+			resources.put(resource.getURI(), (RdfKtbsResource) resource);
 			if(withChildren) {
 				for(KtbsResource child:getResourceChildren(resource))
-					resources.put(child.getURI(), (KtbsJenaResource) child);
+					resources.put(child.getURI(), (RdfKtbsResource) child);
 			}
 		}
 		return resource;
@@ -433,7 +434,7 @@ public class RDFResourceRepository implements ResourceRepository {
 		while (it.hasNext()) {
 			try {
 				c.add(it.next());
-			} catch(KtbsResourceNotFoundException e) {
+			} catch(ResourceNotFoundException e) {
 				// do nothing
 			}
 		}
@@ -445,7 +446,7 @@ public class RDFResourceRepository implements ResourceRepository {
 	 */
 	private static boolean isStandaloneResource(Class<? extends KtbsResource> cls) {
 		return Base.class.isAssignableFrom(cls)
-		|| KtbsRoot.class.isAssignableFrom(cls);
+		|| Root.class.isAssignableFrom(cls);
 	}
 
 	private static boolean isTypeWithChildren(Class<? extends KtbsResource> cls) {
@@ -469,9 +470,9 @@ public class RDFResourceRepository implements ResourceRepository {
 	@Override
 	public <T extends KtbsResource> T getResource(String uri, Class<T> clazz) {
 		checkExistency(uri);
-		KtbsJenaResource r = resources.get(uri);
+		RdfKtbsResource r = resources.get(uri);
 		if(!clazz.isAssignableFrom(r.getClass()))
-			throw new KtbsResourceNotFoundException("The resource \""+uri+"\" is not of type " + clazz + ", but actually "+r.getClass()+"\".");
+			throw new ResourceNotFoundException("The resource \""+uri+"\" is not of type " + clazz + ", but actually "+r.getClass()+"\".");
 		return clazz.cast(r);
 	}
 
@@ -486,7 +487,7 @@ public class RDFResourceRepository implements ResourceRepository {
 		rdfModel.getResource(baseURI).addProperty(
 				RDF.type, 
 				rdfModel.getResource(KtbsConstants.BASE));
-		KtbsJenaBase base = new KtbsJenaBase(baseURI, rdfModel, this);
+		RDFBase base = new RDFBase(baseURI, rdfModel, this);
 		putResource(base, false);
 		return base;
 	}
@@ -496,7 +497,7 @@ public class RDFResourceRepository implements ResourceRepository {
 		checkExistency(base);
 		Model tmRdfModel = createBaseChild(base, modelURI, KtbsConstants.TRACE_MODEL);
 
-		KtbsJenaTraceModel tm = new KtbsJenaTraceModel(modelURI, tmRdfModel, this);
+		RdfTraceModel tm = new RdfTraceModel(modelURI, tmRdfModel, this);
 		putResource(tm, false);
 		return tm;
 	}
@@ -507,7 +508,7 @@ public class RDFResourceRepository implements ResourceRepository {
 
 		Model methodRdfModel = createBaseChild(base, methodURI, KtbsConstants.METHOD);
 
-		KtbsJenaMethod method = new KtbsJenaMethod(methodURI, methodRdfModel, this);
+		RdfMethod method = new RdfMethod(methodURI, methodRdfModel, this);
 		method.setInherits(inherits);
 
 		putResource(method, false);
@@ -526,7 +527,7 @@ public class RDFResourceRepository implements ResourceRepository {
 				stRdfModel.getResource(tm.getURI())
 		);
 
-		KtbsJenaStoredTrace st = new KtbsJenaStoredTrace(traceURI, stRdfModel, this);
+		RdfStoredTrace st = new RdfStoredTrace(traceURI, stRdfModel, this);
 		putResource(st, false);
 		return st;
 	}
@@ -556,14 +557,14 @@ public class RDFResourceRepository implements ResourceRepository {
 			);
 		}
 
-		KtbsJenaComputedTrace ct = new KtbsJenaComputedTrace (traceURI, computedTraceRdfModel, this);
+		RdfComputedTrace ct = new RdfComputedTrace (traceURI, computedTraceRdfModel, this);
 		putResource(ct, false);
 		return ct;
 	}
 
 	private Model createBaseChild(Base base, String childURI, String childRdfType) {
 		checkExistency(base);
-		Model baseRdfModel = ((KtbsJenaBase)base).rdfModel;
+		Model baseRdfModel = ((RDFBase)base).rdfModel;
 		Model childRdfModel = ModelFactory.createDefaultModel();
 
 		baseRdfModel.getResource(childURI).addProperty(
@@ -597,9 +598,9 @@ public class RDFResourceRepository implements ResourceRepository {
 		AttributeType[] attributeTypes = (attributes==null)?new AttributeType[0]:attributes.keySet().toArray(new AttributeType[attributes.size()]);
 		checkExistency(attributeTypes);
 
-		Model traceRdfModel = ((KtbsJenaStoredTrace)trace).rdfModel;
+		Model traceRdfModel = ((RdfStoredTrace)trace).rdfModel;
 
-		KtbsJenaObsel obsel = new KtbsJenaObsel(obselURI, traceRdfModel, this);
+		RdfObsel obsel = new RdfObsel(obselURI, traceRdfModel, this);
 
 		traceRdfModel.getResource(obselURI).addProperty(
 				traceRdfModel.getProperty(KtbsConstants.P_HAS_TRACE), 
@@ -620,9 +621,9 @@ public class RDFResourceRepository implements ResourceRepository {
 	public ObselType createObselType(TraceModel traceModel, String localName) {
 		checkExistency(traceModel);
 
-		Model rdfModel = ((KtbsJenaTraceModel)traceModel).rdfModel;
+		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
 
-		KtbsJenaObselType obselType = new KtbsJenaObselType(traceModel.getURI()+localName, rdfModel, this);
+		RdfObselType obselType = new RdfObselType(traceModel.getURI()+localName, rdfModel, this);
 
 		rdfModel.getResource(obselType.getURI()).addProperty(
 				RDF.type, 
@@ -638,9 +639,9 @@ public class RDFResourceRepository implements ResourceRepository {
 			ObselType domain, ObselType range) {
 		checkExistency(traceModel, range, domain);
 
-		Model rdfModel = ((KtbsJenaTraceModel)traceModel).rdfModel;
+		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
 
-		KtbsJenaRelationType relType = new KtbsJenaRelationType(traceModel.getURI()+localName, rdfModel, this);
+		RdfRelationType relType = new RdfRelationType(traceModel.getURI()+localName, rdfModel, this);
 
 		rdfModel.getResource(relType.getURI()).addProperty(
 				RDF.type, 
@@ -658,9 +659,9 @@ public class RDFResourceRepository implements ResourceRepository {
 			ObselType domain) {
 		checkExistency(traceModel, domain);
 
-		Model rdfModel = ((KtbsJenaTraceModel)traceModel).rdfModel;
+		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
 
-		KtbsJenaAttributeType attType = new KtbsJenaAttributeType(traceModel.getURI()+localName, rdfModel, this);
+		RDFAttributeType attType = new RDFAttributeType(traceModel.getURI()+localName, rdfModel, this);
 
 		rdfModel.getResource(attType.getURI()).addProperty(
 				RDF.type, 
@@ -675,11 +676,11 @@ public class RDFResourceRepository implements ResourceRepository {
 	@Override
 	public void removeObsel(StoredTrace trace, Obsel obsel) {
 		if(!exists(trace.getURI()))
-			throw new KtbsResourceNotFoundException(trace.getURI());
+			throw new ResourceNotFoundException(trace.getURI());
 		if(!exists(obsel.getURI()))
-			throw new KtbsResourceNotFoundException(obsel.getURI());
+			throw new ResourceNotFoundException(obsel.getURI());
 
-		KtbsJenaStoredTrace jenaTrace = (KtbsJenaStoredTrace)trace;
+		RdfStoredTrace jenaTrace = (RdfStoredTrace)trace;
 		Model rdfModel = jenaTrace.rdfModel;
 		rdfModel.removeAll(rdfModel.getResource(obsel.getURI()), null, null);
 		rdfModel.removeAll( null, null,rdfModel.getResource(obsel.getURI()));
@@ -703,7 +704,7 @@ public class RDFResourceRepository implements ResourceRepository {
 	public void checkExistency(String... uris) {
 		for(String uri:uris) {
 			if(!exists(uri) && !builtinResourcesURI.contains(uri))
-				throw new KtbsResourceNotFoundException(uri);
+				throw new ResourceNotFoundException(uri);
 		}
 	}
 }

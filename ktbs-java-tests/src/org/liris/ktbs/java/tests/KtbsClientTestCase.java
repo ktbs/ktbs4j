@@ -33,7 +33,7 @@ import org.liris.ktbs.client.KtbsClientApplication;
 import org.liris.ktbs.client.KtbsResponse;
 import org.liris.ktbs.client.KtbsResponseStatus;
 import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.Trace;
@@ -103,7 +103,7 @@ public class KtbsClientTestCase {
 		KtbsResponse response = client.getKtbsRoot();
 		assertResponseSucceeded(response, true);
 		assertNull(response.getHTTPETag());
-		KtbsRoot root = (KtbsRoot) response.getBodyAsKtbsResource();
+		Root root = (Root) response.getBodyAsKtbsResource();
 		assertEquals(rootURI,root.getURI());
 		assertTrue(root.getBaseURIs().size()>=1);
 		assertTrue(root.getBaseURIs().contains("http://localhost:8001/base1/"));
@@ -113,7 +113,7 @@ public class KtbsClientTestCase {
 	public void testCreateBase() {
 		KtbsResponse response1 = client.getKtbsRoot();
 		assertResponseSucceeded(response1, true);
-		KtbsRoot root1 = (KtbsRoot) response1.getBodyAsKtbsResource();
+		Root root1 = (Root) response1.getBodyAsKtbsResource();
 
 
 		String label = "Mon label de la base créée";
@@ -158,7 +158,7 @@ public class KtbsClientTestCase {
 
 		KtbsResponse response2 = client.getKtbsRoot();
 		assertResponseSucceeded(response2, true);
-		KtbsRoot root2 = (KtbsRoot) response2.getBodyAsKtbsResource();
+		Root root2 = (Root) response2.getBodyAsKtbsResource();
 
 
 		assertEquals(root1.getBaseURIs().size()+1, root2.getBaseURIs().size());
@@ -748,7 +748,7 @@ public class KtbsClientTestCase {
 	@Test
 	public void testGetKtbsResource() {
 		KtbsResponse response;
-		response = client.getKtbsResource("http://localhost:8001/", KtbsRoot.class);
+		response = client.getKtbsResource("http://localhost:8001/", Root.class);
 		assertResponseSucceeded(response, true);
 
 		response = client.getKtbsResource("http://localhost:8001/base1/", Base.class);
@@ -767,7 +767,7 @@ public class KtbsClientTestCase {
 		assertResponseSucceeded(response, true);
 
 		try {
-			response = client.getKtbsResource("http://localhozsst:8001/", KtbsRoot.class);
+			response = client.getKtbsResource("http://localhozsst:8001/", Root.class);
 			fail("Should raise an illegal state exception because the root uri is invalid");
 		} catch(IllegalStateException e){}
 
@@ -799,7 +799,7 @@ public class KtbsClientTestCase {
 		} catch(InvalidDeserializationRequest e) {}
 
 		try {
-			response = client.getKtbsResource("http://localhost:8001/base1/t01/obs1", KtbsRoot.class);
+			response = client.getKtbsResource("http://localhost:8001/base1/t01/obs1", Root.class);
 			fail("Should have failed");
 		} catch(InvalidDeserializationRequest e) {}
 
@@ -815,7 +815,7 @@ public class KtbsClientTestCase {
 		} catch(InvalidDeserializationRequest e) {}
 
 		try {
-			response = client.getKtbsResource("http://localhost:8001/base1/t01/", KtbsRoot.class);
+			response = client.getKtbsResource("http://localhost:8001/base1/t01/", Root.class);
 			fail("Should have failed");
 		} catch(InvalidDeserializationRequest e) {}
 
@@ -831,7 +831,7 @@ public class KtbsClientTestCase {
 			fail("Should not fail with Obsel");
 		}
 		try {
-			response = client.getKtbsResource("http://localhost:8001/base1/", KtbsRoot.class);
+			response = client.getKtbsResource("http://localhost:8001/base1/", Root.class);
 			fail("Should have failed");
 		} catch(InvalidDeserializationRequest e) {}
 
@@ -1027,7 +1027,7 @@ public class KtbsClientTestCase {
 			// gets the initial state of the root before creating new resources
 			response = client.getKtbsRoot();
 			assertResponseSucceeded(response, true);
-			KtbsRoot root = (KtbsRoot)response.getBodyAsKtbsResource();
+			Root root = (Root)response.getBodyAsKtbsResource();
 			int initialBaseNumber = root.getBaseURIs().size();
 
 			// create ma-base
@@ -1040,9 +1040,9 @@ public class KtbsClientTestCase {
 
 			response = client.getKtbsRoot();
 			assertResponseSucceeded(response, true);
-			assertEquals(initialBaseNumber+1,((KtbsRoot)response.getBodyAsKtbsResource()).getBaseURIs().size());
-			assertTrue(((KtbsRoot)response.getBodyAsKtbsResource()).getBaseURIs().contains("http://localhost:8001/base1/"));
-			assertTrue(((KtbsRoot)response.getBodyAsKtbsResource()).getBaseURIs().contains("http://localhost:8001/ma-base/"));
+			assertEquals(initialBaseNumber+1,((Root)response.getBodyAsKtbsResource()).getBaseURIs().size());
+			assertTrue(((Root)response.getBodyAsKtbsResource()).getBaseURIs().contains("http://localhost:8001/base1/"));
+			assertTrue(((Root)response.getBodyAsKtbsResource()).getBaseURIs().contains("http://localhost:8001/ma-base/"));
 			response = client.getBase("ma-base");
 			assertResponseSucceeded(response, true);
 			assertEquals("Ma base n°2 que j'ai créée",response.getBodyAsKtbsResource().getLabel());

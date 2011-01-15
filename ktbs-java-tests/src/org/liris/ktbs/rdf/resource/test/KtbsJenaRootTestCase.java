@@ -6,12 +6,12 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 
-	private KtbsRoot ktbsJenaRoot;
+	private Root ktbsJenaRoot;
 
 	@Before
 	public void setUp() throws Exception {
@@ -20,7 +20,7 @@ public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
 		ktbsJenaRoot = loadInRepo(
 				root,
 				"ktbsroot.ttl", 
-				KtbsRoot.class);
+				Root.class);
 	}
 
 	@Test

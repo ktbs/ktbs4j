@@ -3,9 +3,9 @@ package org.liris.ktbs.core.empty;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.KtbsRoot;
+import org.liris.ktbs.core.Root;
 
-public class EmptyKtbsRoot extends EmptyResourceContainer implements KtbsRoot {
+public class EmptyKtbsRoot extends EmptyResourceContainer implements Root {
 
 	EmptyKtbsRoot(String uri) {
 		super(uri);

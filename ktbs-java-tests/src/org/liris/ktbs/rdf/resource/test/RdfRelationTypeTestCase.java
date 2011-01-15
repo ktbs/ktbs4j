@@ -9,7 +9,7 @@ import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.TraceModel;
 
-public class KtbsJenaRelationTypeTestCase extends AbstractKtbsJenaTestCase {
+public class RdfRelationTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private TraceModel traceModel;
 	private RelationType onChannel;

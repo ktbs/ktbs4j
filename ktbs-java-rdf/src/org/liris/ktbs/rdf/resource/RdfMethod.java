@@ -9,7 +9,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfMethod extends RdfKtbsResourceWithParameter implements Method {
 
-	RdfMethod(String uri, Model rdfModel, ResourceRepository holder) {
+	public RdfMethod(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

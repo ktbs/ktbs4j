@@ -11,11 +11,11 @@ import org.liris.ktbs.core.ResourceLoadException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
-import org.liris.ktbs.rdf.resource.RDFResourceRepository;
+import org.liris.ktbs.rdf.resource.RdfResourceRepository;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class AbstractKtbsJenaTestCase extends TestCase {
+public class AbstractKtbsRdfResourceTestCase extends TestCase {
 
 	protected ResourceRepository repository;
 	protected EmptyResourceFactory emptyFac = EmptyResourceFactory.getInstance();
@@ -40,7 +40,7 @@ public class AbstractKtbsJenaTestCase extends TestCase {
 	
 	@Before
 	protected void setUp() throws Exception {
-		repository = new RDFResourceRepository();
+		repository = new RdfResourceRepository();
 		
 		loadInRepo(
 				model1,
@@ -49,7 +49,6 @@ public class AbstractKtbsJenaTestCase extends TestCase {
 	}
 	
 	protected <T extends KtbsResource> T loadInRepo(String uri, String fileLocalName, Class<T> clazz) {
-		T t;
 		try {
 			FileInputStream stream = new FileInputStream("turtle/" + fileLocalName);
 			repository.loadResource(
@@ -57,7 +56,7 @@ public class AbstractKtbsJenaTestCase extends TestCase {
 					JenaConstants.JENA_SYNTAX_TURTLE);
 					
 			stream.close();
-			return t = clazz.cast(repository.getResource(uri));
+			return clazz.cast(repository.getResource(uri));
 		} catch (ResourceLoadException e) {
 			e.printStackTrace(System.err);
 			System.out.println(e.getRdfModel());

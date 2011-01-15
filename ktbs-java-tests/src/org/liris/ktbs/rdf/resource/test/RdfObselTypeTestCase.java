@@ -11,7 +11,7 @@ import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaObselTypeTestCase extends AbstractKtbsJenaTestCase {
+public class RdfObselTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private TraceModel traceModel;
 

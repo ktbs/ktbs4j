@@ -12,7 +12,7 @@ import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaComputedTraceTestCase extends AbstractKtbsJenaTestCase {
+public class RdfComputedTraceTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private ComputedTrace count1;
 	private ComputedTrace filtered1;

@@ -9,7 +9,7 @@ import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaStoredTraceTestCase  extends AbstractKtbsJenaTestCase {
+public class RdfStoredTraceTestCase  extends AbstractKtbsRdfResourceTestCase {
 
 
 	private StoredTrace t01;

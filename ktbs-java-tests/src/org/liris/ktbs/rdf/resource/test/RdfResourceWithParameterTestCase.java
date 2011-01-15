@@ -10,7 +10,7 @@ import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.SimpleKtbsParameter;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaResourceWithParameterTestCase extends AbstractKtbsJenaTestCase {
+public class RdfResourceWithParameterTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private Method method;
 	private ComputedTrace trace;

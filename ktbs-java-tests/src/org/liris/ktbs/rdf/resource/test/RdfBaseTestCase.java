@@ -15,7 +15,7 @@ import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaBaseTestCase extends AbstractKtbsJenaTestCase {
+public class RdfBaseTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private Base base;
 	private Base emptyBase;

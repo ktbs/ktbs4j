@@ -3,7 +3,6 @@ package org.liris.ktbs.client;
 import java.io.InputStream;
 
 import org.apache.http.HttpResponse;
-import org.liris.ktbs.core.KtbsResource;
 
 /**
  * A holder for properties of a KTBS response: the returned resource, status...

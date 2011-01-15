@@ -23,9 +23,9 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-public class RDFBase extends RdfKtbsResource implements Base {
+public class RdfBase extends RdfKtbsResource implements Base {
 
-	RDFBase(String uri, Model rdfModel, ResourceRepository holder) {
+	public RdfBase(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -193,9 +193,9 @@ public class RDFBase extends RdfKtbsResource implements Base {
 
 		OwnedResourceIterator(String resourceTypeURI, String... otherAcceptedTypeURI) {
 			super();
-			ownedResourceIt = RDFBase.this.rdfModel.listObjectsOfProperty(
-					RDFBase.this.rdfModel.getResource(RDFBase.this.uri), 
-					RDFBase.this.rdfModel.getProperty(KtbsConstants.P_OWNS));
+			ownedResourceIt = RdfBase.this.rdfModel.listObjectsOfProperty(
+					RdfBase.this.rdfModel.getResource(RdfBase.this.uri), 
+					RdfBase.this.rdfModel.getProperty(KtbsConstants.P_OWNS));
 
 			this.acceptedTypeUris = new HashSet<String>();
 			this.acceptedTypeUris.add(resourceTypeURI);
@@ -209,7 +209,7 @@ public class RDFBase extends RdfKtbsResource implements Base {
 			while(ownedResourceIt.hasNext() && !foundNext) {
 				RDFNode nextNode = ownedResourceIt.next();
 				Resource candidateResource = nextNode.asResource();
-				NodeIterator it2 = RDFBase.this.rdfModel.listObjectsOfProperty(
+				NodeIterator it2 = RdfBase.this.rdfModel.listObjectsOfProperty(
 						candidateResource,
 						RDF.type);
 
@@ -230,7 +230,7 @@ public class RDFBase extends RdfKtbsResource implements Base {
 
 		private boolean isAcceptedType(Resource resource) {
 			for(String acceptedType:acceptedTypeUris) {
-				if(resource.equals(RDFBase.this.rdfModel.getResource(acceptedType)))
+				if(resource.equals(RdfBase.this.rdfModel.getResource(acceptedType)))
 					return true;
 			}
 			return false;

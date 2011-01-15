@@ -5,7 +5,7 @@ import org.liris.ktbs.core.ResourceRepository;
 
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-class SubjectWithRdfModelIterator<T extends KtbsResource> extends RDFSubjectIterator<T> {
+class SubjectWithRdfModelIterator<T extends KtbsResource> extends RdfSubjectIterator<T> {
 
 	SubjectWithRdfModelIterator(
 			StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {

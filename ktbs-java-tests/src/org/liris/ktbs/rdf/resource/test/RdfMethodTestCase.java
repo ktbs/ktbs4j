@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.Method;
 
-public class KtbsJenaMethodTestCase extends AbstractKtbsJenaTestCase {
+public class RdfMethodTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private Method helloworld;
 	private Method count;

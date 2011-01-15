@@ -17,7 +17,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfKtbsResourceWithParameter extends RdfKtbsResource implements ResourceWithParameters {
 
-	RdfKtbsResourceWithParameter(String uri, Model rdfModel, ResourceRepository holder) {
+	public RdfKtbsResourceWithParameter(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 	

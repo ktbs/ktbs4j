@@ -176,11 +176,11 @@ public class RdfKtbsResource extends AbstractKtbsResource implements StringableR
 			RdfKtbsResource child = (RdfKtbsResource) childKtbsResource;
 			if(parent.getClass().equals(RdfRoot.class) && child.getClass().equals(Base.class)) 
 				removeConnection(parent, child,KtbsConstants.P_HAS_BASE,KtbsConstants.P_HAS_BASE);
-			else if(parent.getClass().equals(RDFBase.class) && child.getClass().equals(RdfTrace.class)) 
+			else if(parent.getClass().equals(RdfBase.class) && child.getClass().equals(RdfTrace.class)) 
 				removeConnection(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS);
-			else if(parent.getClass().equals(RDFBase.class) && child.getClass().equals(RdfMethod.class)) 
+			else if(parent.getClass().equals(RdfBase.class) && child.getClass().equals(RdfMethod.class)) 
 				removeConnection(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS);
-			else if(parent.getClass().equals(RDFBase.class) && child.getClass().equals(RdfTraceModel.class)) 
+			else if(parent.getClass().equals(RdfBase.class) && child.getClass().equals(RdfTraceModel.class)) 
 				removeConnection(parent, child,KtbsConstants.P_OWNS,KtbsConstants.P_OWNS);
 			else
 				throw new UnsupportedOperationException("Cannot remove a parent connection between an instance of class \""+parent.getClass()+"\" and an instance of class \""+child.getClass()+"\".");
@@ -213,9 +213,9 @@ public class RdfKtbsResource extends AbstractKtbsResource implements StringableR
 		if (childKtbsResource instanceof RdfKtbsResource) {
 			RdfKtbsResource child = (RdfKtbsResource) childKtbsResource;
 
-			if(parent.getClass().equals(RdfRoot.class) && child.getClass().equals(RDFBase.class)) 
+			if(parent.getClass().equals(RdfRoot.class) && child.getClass().equals(RdfBase.class)) 
 				connect(parent, child,KtbsConstants.P_HAS_BASE,KtbsConstants.P_HAS_BASE,true,true);
-			else if(parent.getClass().equals(RDFBase.class) && 
+			else if(parent.getClass().equals(RdfBase.class) && 
 					(child.getClass().equals(RdfComputedTrace.class)
 							|| child.getClass().equals(RdfTrace.class)
 							|| child.getClass().equals(RdfStoredTrace.class)

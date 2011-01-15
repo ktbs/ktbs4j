@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -42,12 +41,12 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RelationStatement;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.rdf.KtbsResourceDeserializer;
-import org.liris.ktbs.rdf.RDFResourceSerializer;
+
+import sun.misc.IOUtils;
 
 
 /**

@@ -10,8 +10,6 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.activation.MimeType;
-
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
@@ -19,12 +17,12 @@ import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RelationType;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.SimpleKtbsParameter;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;

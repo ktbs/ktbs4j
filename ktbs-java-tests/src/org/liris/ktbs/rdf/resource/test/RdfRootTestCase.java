@@ -9,7 +9,7 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.Root;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaRootTestCase extends AbstractKtbsJenaTestCase {
+public class RdfRootTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private Root ktbsJenaRoot;
 

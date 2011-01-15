@@ -33,9 +33,9 @@ import org.liris.ktbs.client.KtbsClientApplication;
 import org.liris.ktbs.client.KtbsResponse;
 import org.liris.ktbs.client.KtbsResponseStatus;
 import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RelationStatement;
+import org.liris.ktbs.core.Root;
 import org.liris.ktbs.core.Trace;
 
 import com.ibm.icu.util.Calendar;

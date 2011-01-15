@@ -10,13 +10,13 @@ import org.liris.ktbs.core.AttributeStatement;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.DomainException;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.Mode;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RangeException;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.RelationType;
+import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.SimpleRelationStatement;
 import org.liris.ktbs.core.Trace;
@@ -33,7 +33,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class RdfObsel extends RdfKtbsResource implements Obsel {
 
-	RdfObsel(String uri, Model rdfModel, ResourceRepository holder) {
+	public RdfObsel(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

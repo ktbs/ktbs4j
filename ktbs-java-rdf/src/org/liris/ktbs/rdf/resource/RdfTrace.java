@@ -26,7 +26,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfTrace extends RdfKtbsResource implements Trace {
 
-	RdfTrace(String uri, Model rdfModel, ResourceRepository holder) {
+	public RdfTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 
@@ -81,7 +81,7 @@ public class RdfTrace extends RdfKtbsResource implements Trace {
 				null,
 				rdfModel.getProperty(KtbsConstants.P_HAS_SOURCE), 
 				rdfModel.getResource(uri));
-		return new RDFSubjectIterator<Trace>(
+		return new RdfSubjectIterator<Trace>(
 				it, 
 				Trace.class,
 				repository, 

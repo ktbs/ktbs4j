@@ -6,7 +6,7 @@ import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.TraceModel;
 
-public class KtbsJenaAttributeTypeTestCase extends AbstractKtbsJenaTestCase {
+public class RdfAttributeTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private TraceModel traceModel;
 	

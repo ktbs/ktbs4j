@@ -8,10 +8,10 @@ import org.liris.ktbs.core.ResourceRepository;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-public class RDFAttributeType extends RdfKtbsResource implements
+public class RdfAttributeType extends RdfKtbsResource implements
 AttributeType {
 
-	RDFAttributeType(String uri, Model rdfModel, ResourceRepository holder) {
+	public RdfAttributeType(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 

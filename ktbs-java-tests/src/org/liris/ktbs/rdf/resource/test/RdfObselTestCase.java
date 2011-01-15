@@ -16,19 +16,19 @@ import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.DomainException;
 import org.liris.ktbs.core.JenaConstants;
-import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.RangeException;
 import org.liris.ktbs.core.RelationStatement;
 import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.ResourceLoadException;
+import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.StoredTrace;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
+public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	
 	private Obsel obsel1;
 	private Obsel obsel2;
@@ -41,7 +41,6 @@ public class KtbsJenaObselTestCase  extends AbstractKtbsJenaTestCase {
 	private String obsel6uri = "http://localhost:8001/base1/t01/obs6";
 	private String obsel7uri = "http://localhost:8001/base1/t01/obs7";
 	private String obsel8uri = "http://localhost:8001/base1/t01/obs8";
-	private String obsel9uri = "http://localhost:8001/base1/t01/obs9";
 	
 	private StoredTrace trace;
 	

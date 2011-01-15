@@ -18,7 +18,7 @@ import org.liris.ktbs.utils.KtbsUtils;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
-public class KtbsJenaTraceTestCase  extends AbstractKtbsJenaTestCase {
+public class RdfTraceTestCase  extends AbstractKtbsRdfResourceTestCase {
 
 	private String t01uri = "http://localhost:8001/base1/t01/";
 	

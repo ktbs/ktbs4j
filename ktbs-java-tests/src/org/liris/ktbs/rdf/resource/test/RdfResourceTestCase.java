@@ -13,7 +13,7 @@ import org.liris.ktbs.utils.KtbsUtils;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class KtbsJenaResourceTestCase extends AbstractKtbsJenaTestCase {
+public class RdfResourceTestCase extends AbstractKtbsRdfResourceTestCase {
 
 	private KtbsResource resource;
 

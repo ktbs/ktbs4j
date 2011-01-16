@@ -1,6 +1,7 @@
 package org.liris.ktbs.rdf.resource;
 
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,9 +14,9 @@ import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.ResourceRepository;
-import org.liris.ktbs.core.StringableResource;
 import org.liris.ktbs.utils.KtbsUtils;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -27,7 +28,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class RdfKtbsResource extends AbstractKtbsResource implements StringableResource  {
+public class RdfKtbsResource extends AbstractKtbsResource {
 
 	protected ResourceRepository repository;
 	protected Model rdfModel;
@@ -141,6 +142,14 @@ public class RdfKtbsResource extends AbstractKtbsResource implements StringableR
 				rdfModel.getProperty(pName));
 	}
 
+	protected BigInteger getBigInteger(String pName) {
+		Literal l = getObjectOfPropertyAsLiteral(pName);
+		if(l==null)
+			return null;
+		else
+			return new BigInteger(l.getValue().toString());
+	}
+	
 	@Override
 	public String getResourceType() {
 		Statement typeProperty = rdfModel.getProperty(
@@ -264,6 +273,17 @@ public class RdfKtbsResource extends AbstractKtbsResource implements StringableR
 		addLiteral(pName, value);
 	}
 
+	protected void removeAllAndAddTypedLiteral(String pName, Object value,  XSDDatatype xsdDatatype) {
+		removeAllProperties(pName);
+		addTypedLiteral(pName, value, xsdDatatype);
+	}
+
+	protected void addTypedLiteral(String pName, Object value,  XSDDatatype xsdDatatype) {
+		rdfModel.getResource(uri).addLiteral(
+				rdfModel.getProperty(pName),  
+				rdfModel.createTypedLiteral(value, xsdDatatype));
+	}
+	
 	protected void addLiteral(String pName, Object value) {
 		rdfModel.getResource(uri).addLiteral(rdfModel.getProperty(pName), value);
 	}
@@ -339,10 +359,4 @@ public class RdfKtbsResource extends AbstractKtbsResource implements StringableR
 			return l.getString();
 	}
 
-	@Override
-	public String toPostableString(String mimeType) {
-		StringWriter writer = new StringWriter();
-		rdfModel.write(writer, KtbsUtils.getJenaSyntax(mimeType));
-		return writer.toString();
-	}
 }

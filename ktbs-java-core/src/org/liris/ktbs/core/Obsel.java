@@ -1,24 +1,17 @@
 package org.liris.ktbs.core;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Iterator;
 
 public interface Obsel extends KtbsResource {
 	public Trace getTrace();
 	
-	/**
-	 * 
-	 * @return the relative begin date in milliseconds, -1 if unset
-	 */
-	public long getBegin();
-	public void setBegin(long begin);
+	public BigInteger getBegin();
+	public void setBegin(BigInteger begin);
 
-	/**
-	 * 
-	 * @return the relative end date in milliseconds, -1 if unset
-	 */
-	public long getEnd();
-	public void setEnd(long end);
+	public BigInteger getEnd();
+	public void setEnd(BigInteger end);
 
 	public String getBeginDT();
 	public String getEndDT();
@@ -34,9 +27,6 @@ public interface Obsel extends KtbsResource {
 	public void setObselType(ObselType type);
 
 	public Obsel getSourceObsel();
-	
-//	Only for a KTBS server purpose
-//	public void setSourceObsel(Obsel obsel);
 
 	public String getSubject();
 	public void setSubject(String subject);

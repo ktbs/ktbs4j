@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -16,6 +17,7 @@ import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.core.TraceModel;
 
 import com.hp.hpl.jena.datatypes.xsd.IllegalDateTimeFieldException;
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -45,7 +47,7 @@ public class RdfTrace extends RdfKtbsResource implements Trace {
 				restIt, 
 				new TemporalCondition() {
 					@Override
-					public boolean accept(String beginDT, String endDT, long begin, long end) {
+					public boolean accept(String beginDT, String endDT, BigInteger begin, BigInteger end) {
 						return true;
 					}
 				});
@@ -60,7 +62,7 @@ public class RdfTrace extends RdfKtbsResource implements Trace {
 	}
 
 	@Override
-	public Iterator<Obsel> listObsels(final long paramBegin, final long paramEnd) {
+	public Iterator<Obsel> listObsels(final BigInteger paramBegin, final BigInteger paramEnd) {
 		ResIterator restIt = rdfModel.listResourcesWithProperty(
 				rdfModel.getProperty(KtbsConstants.P_HAS_TRACE),
 				rdfModel.getResource(uri)); 
@@ -69,8 +71,8 @@ public class RdfTrace extends RdfKtbsResource implements Trace {
 				restIt, 
 				new TemporalCondition() {
 					@Override
-					public boolean accept(String beginDT, String endDT, long begin, long end) {
-						return begin>=paramBegin && end <= paramEnd;
+					public boolean accept(String beginDT, String endDT,  BigInteger begin, BigInteger end) {
+						return begin.compareTo(paramBegin) >= 0 && end.compareTo(paramEnd) <= 0;
 					}
 				});
 	}
@@ -160,7 +162,7 @@ public class RdfTrace extends RdfKtbsResource implements Trace {
 
 
 	private interface TemporalCondition {
-		public boolean accept(String beginDT, String endDT, long begin, long end);
+		public boolean accept(String beginDT, String endDT, BigInteger begin, BigInteger end);
 	}
 
 	private class ObselIterator implements Iterator<Obsel> {
@@ -216,10 +218,9 @@ public class RdfTrace extends RdfKtbsResource implements Trace {
 		}
 	}
 
-
 	@Override
 	public void setOrigin(String origin) {
-		removeAllAndAddLiteral(KtbsConstants.P_HAS_ORIGIN, origin);
+		removeAllAndAddTypedLiteral(KtbsConstants.P_HAS_ORIGIN, origin, XSDDatatype.XSDdateTime);
 	}
 
 	@Override

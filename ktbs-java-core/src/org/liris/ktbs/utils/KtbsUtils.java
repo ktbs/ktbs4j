@@ -270,4 +270,39 @@ public class KtbsUtils {
 		return new SimpleKtbsParameter(key, value);
 	}
 
+	/**
+	 * Builds a URI with a specified Ktbs resource aspect (e.g. &#64;obsels 
+	 * and &#64;about for a ktbs:StoredTrace or a ktbs:ComputedTrace) at the 
+	 * end of the URI, whatever the aspect suffix was before calling this method.
+	 * 
+	 * @param resourceURI the input resource URI
+	 * @param aspect the aspect suffix, null if no aspect suffix wanted
+	 * @param alternatives the other aspect suffixes that the resource could have had
+	 * @return the resource URI, with the desired aspect suffix
+	 */
+	public static String addAspect(String resourceURI, String aspect, String... alternatives) {
+		if(aspect == null) {
+			String uri = resourceURI;
+			for(String alt:alternatives) {
+				if(uri.endsWith(alt)) {
+					uri = uri.replaceAll(alt, "");
+					return uri;
+				}
+			}
+			return uri;
+		}
+		
+		if(resourceURI.endsWith(aspect))
+			return resourceURI;
+
+		for(String alt:alternatives) {
+			if(resourceURI.endsWith(alt)) {
+				String newURI = resourceURI.replaceAll(alt, aspect);
+				return newURI;
+			}
+		}
+
+		return resourceURI+aspect;
+	}
+
 }

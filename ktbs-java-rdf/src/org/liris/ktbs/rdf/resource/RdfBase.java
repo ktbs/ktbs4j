@@ -83,52 +83,32 @@ public class RdfBase extends RdfKtbsResource implements Base {
 		);
 	}
 
-//	@Override
-//	public void addStoredTrace(StoredTrace trace) {
-//		createParentConnection(this, trace);
-//	}
-
 	@Override
 	public StoredTrace getStoredTrace(String stUri) {
-		return returnOwnedResource(stUri, KtbsConstants.STORED_TRACE);
+		return (StoredTrace) returnOwnedResource(stUri, KtbsConstants.STORED_TRACE);
 	}
-
-//	@Override
-//	public void addComputedTrace(ComputedTrace trace) {
-//		createParentConnection(this, trace);
-//	}
 
 	@Override
 	public ComputedTrace getComputedTrace(String ctUri) {
-		return returnOwnedResource(ctUri, KtbsConstants.COMPUTED_TRACE);
+		return (ComputedTrace) returnOwnedResource(ctUri, KtbsConstants.COMPUTED_TRACE);
 	}
 
 	@Override
 	public Trace getTrace(String tUri) {
-		return returnOwnedResource(tUri, KtbsConstants.COMPUTED_TRACE, KtbsConstants.STORED_TRACE);
+		return (Trace) returnOwnedResource(tUri, KtbsConstants.COMPUTED_TRACE, KtbsConstants.STORED_TRACE);
 	}
-
-//	@Override
-//	public void addTraceModel(TraceModel traceModel) {
-//		createParentConnection(this, traceModel);
-//	}
 
 	@Override
 	public TraceModel getTraceModel(String tmUri) {
-		return returnOwnedResource(tmUri, KtbsConstants.TRACE_MODEL);
+		return (TraceModel) returnOwnedResource(tmUri, KtbsConstants.TRACE_MODEL);
 	}
-
-//	@Override
-//	public void addMethod(Method method) {
-//		createParentConnection(this, method);
-//	}
 
 	@Override
 	public Method getMethod(String methodUri) {
-		return returnOwnedResource(methodUri, KtbsConstants.METHOD);
+		return (Method) returnOwnedResource(methodUri, KtbsConstants.METHOD);
 	}
 
-	private <T extends KtbsResource> T returnOwnedResource(String resourceUri, String resourceType, String... altAcceptedTypes) {
+	private KtbsResource returnOwnedResource(String resourceUri, String resourceType, String... altAcceptedTypes) {
 		Resource methodResource = requestRDFResource(
 				resourceUri,
 				uri,
@@ -142,7 +122,7 @@ public class RdfBase extends RdfKtbsResource implements Base {
 		else {
 			Resource rdfType = rdfModel.getResource(resourceUri).getPropertyResourceValue(RDF.type);
 			Class<? extends KtbsResource> javaClass = KtbsUtils.getJavaClass(rdfType.getURI());
-			return (T) repository.getResource(resourceUri, javaClass);
+			return repository.getResource(resourceUri, javaClass);
 		}
 	}
 
@@ -243,6 +223,7 @@ public class RdfBase extends RdfKtbsResource implements Base {
 
 		@Override
 		public T next() {
+			@SuppressWarnings("unchecked")
 			T toBeReturned = (T)next;
 			doNext();
 			return toBeReturned;

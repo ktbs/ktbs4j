@@ -1,12 +1,13 @@
 package org.liris.ktbs.core;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Iterator;
 
 public interface Trace extends KtbsResource, ResourceContainer {
 	
 	public Iterator<Obsel> listObsels();
-	public Iterator<Obsel> listObsels(long begin, long end);
+	public Iterator<Obsel> listObsels(BigInteger begin, BigInteger end);
 	
 	
 	public Iterator<Trace> listTransformedTraces();
@@ -28,5 +29,4 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	public TraceModel getTraceModel();
 	public void setTraceModel(TraceModel traceModel);
 	public boolean isCompliantWithModel();
-//	public void setCompliantWithModel(boolean compliant);
 }

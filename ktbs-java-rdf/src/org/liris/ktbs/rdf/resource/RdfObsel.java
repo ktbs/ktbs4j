@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -22,6 +23,7 @@ import org.liris.ktbs.core.SimpleRelationStatement;
 import org.liris.ktbs.core.Trace;
 import org.liris.ktbs.utils.KtbsUtils;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -43,21 +45,15 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 	}
 
 	@Override
-	public long getBegin() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_HAS_BEGIN);
-		if(l==null)
-			return -1;
-		else
-			return l.getLong();
+	public BigInteger getBegin() {
+		return getBigInteger(KtbsConstants.P_HAS_BEGIN);
 	}
 
+
+
 	@Override
-	public long getEnd() {
-		Literal l = getObjectOfPropertyAsLiteral(KtbsConstants.P_HAS_END);
-		if(l==null)
-			return -1;
-		else
-			return l.getLong();
+	public BigInteger getEnd() {
+		return getBigInteger(KtbsConstants.P_HAS_END);
 	}
 
 	@Override
@@ -335,23 +331,23 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 	}
 
 	@Override
-	public void setBegin(long begin) {
+	public void setBegin(BigInteger begin) {
 		removeAllAndAddLiteral(KtbsConstants.P_HAS_BEGIN, begin);
 	}
 
 	@Override
-	public void setEnd(long end) {
+	public void setEnd(BigInteger end) {
 		removeAllAndAddLiteral(KtbsConstants.P_HAS_END, end);
 	}
 
 	@Override
 	public void setBeginDT(String beginDT) {
-		removeAllAndAddLiteral(KtbsConstants.P_HAS_BEGIN_DT, beginDT);
+		removeAllAndAddTypedLiteral(KtbsConstants.P_HAS_BEGIN_DT, beginDT, XSDDatatype.XSDdateTime);
 	}
 
 	@Override
 	public void setEndDT(String endDT) {
-		removeAllAndAddLiteral(KtbsConstants.P_HAS_END_DT, endDT);
+		removeAllAndAddTypedLiteral(KtbsConstants.P_HAS_END_DT, endDT, XSDDatatype.XSDdateTime);
 	}
 
 	@Override

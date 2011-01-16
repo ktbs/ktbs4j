@@ -146,7 +146,7 @@ public class RdfResourceRepository implements ResourceRepository {
 				}
 			}
 
-			Model filteredModel = filterModel(model, new TraceModelElementSelector(traceModelURI));
+			Model filteredModel = JenaUtils.filterModel(model, new TraceModelElementSelector(traceModelURI));
 
 			RdfTraceModel resource = new RdfTraceModel(traceModelURI, filteredModel, this);
 			resources.put(resource.getURI(), resource);
@@ -223,7 +223,7 @@ public class RdfResourceRepository implements ResourceRepository {
 						"Impossible to find the type of resource contained in the stream.", 
 						JenaUtils.toTurtleString(model));
 
-			Model filteredModel = filterModel(model, new ResourceSelector(obselURIs));
+			Model filteredModel =  JenaUtils.filterModel(model, new ResourceSelector(obselURIs));
 
 			//add the obsels to the repository
 			RdfTrace trace = (RdfTrace) resources.get(traceURI);
@@ -266,7 +266,7 @@ public class RdfResourceRepository implements ResourceRepository {
 		boolean found = false;
 		
 		for(String resourceURI:resourceURIs) {
-			Model filteredModel = filterModel(model, new ResourceSelector(resourceURI));
+			Model filteredModel =  JenaUtils.filterModel(model, new ResourceSelector(resourceURI));
 			
 			try {
 				Constructor<T> constructor = cls.getConstructor(String.class, Model.class, ResourceRepository.class);
@@ -305,28 +305,6 @@ public class RdfResourceRepository implements ResourceRepository {
 		}
 	}
 
-	/**
-	 * Creates a new model with only the statement selected by a selector.
-	 * 
-	 * @param model
-	 * @param selector
-	 * @return
-	 */
-	private Model filterModel(Model model, Selector selector) {
-		Model filteredModel = ModelFactory.createDefaultModel();
-		
-		filteredModel.add(model);
-
-		StmtIterator it = filteredModel.listStatements();
-		
-		while(it.hasNext()) {
-			Statement s = it.next();
-			if(!selector.test(s))
-				it.remove();
-		}
-
-		return filteredModel;
-	}
 
 	private class TraceModelElementSelector extends SimpleSelector {
 

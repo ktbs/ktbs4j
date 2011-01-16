@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="/home/dcram/lib/Jena-2.6.3/lib/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="/home/dcram/lib/Jena-2.6.3/lib/slf4j-api-1.5.8.jar"/>
 	<classpathentry kind="lib" path="/home/dcram/lib/Jena-2.6.3/lib/slf4j-log4j12-1.5.8.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/APACHE_COMMONS_IO_2.0"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

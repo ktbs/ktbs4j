@@ -66,26 +66,22 @@ public class KtbsClientApplication {
 
 	private static final Log log = LogFactory.getLog(KtbsClientApplication.class);
 	
-	// Only one KtbsClient instance per KtbsRoot
-	private HashMap<String, KtbsClient> ktbsClients = new HashMap<String, KtbsClient>();
 
-	/**
-	 * Returns the {@link KtbsClient} instance that is mapped with the parameter 
-	 * KTBS root URI, and creates it if it does not exist.
-	 * 
-	 * @param ktbsRootUri the URI of the KTBS root the client will communicate with
-	 * @return the KtbsClient instance mapped to the parameter KTBS root URI
-	 * 
-	 */
-	public KtbsClient getKtbsClient(String ktbsRootUri) {
-		if(ktbsClients.get(ktbsRootUri) == null)
-			ktbsClients.put(ktbsRootUri, new KtbsClient(ktbsRootUri));
-	
-		return ktbsClients.get(ktbsRootUri);
-	}
 	
 	// Only one REST service instance per KtbsRoot
 	private HashMap<String, KtbsRestService> restServices = new HashMap<String, KtbsRestService>();
+	
+	
+	
+	
+	/**
+	 * Returns the {@link KtbsRestService} instance that is mapped with the parameter 
+	 * KTBS root URI, and creates it if it does not exist.
+	 * 
+	 * @param ktbsRootUri the URI of the KTBS root the client will communicate with
+	 * @return the {@link KtbsRestService} instance mapped to the parameter KTBS root URI
+	 * 
+	 */
 	public KtbsRestService getRestService(String ktbsRootUri) {
 		if(restServices.get(ktbsRootUri) == null) {
 			restServices.put(ktbsRootUri, new KtbsRestServiceImpl(ktbsRootUri));

@@ -32,7 +32,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 	}
 
 	@Override
-	public boolean executedWithSuccess() {
+	public boolean hasSucceeded() {
 		return executedWithSuccess;
 	}
 
@@ -68,7 +68,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 	public String toString() {
 		String sep = System.getProperty ( "line.separator" );
 		sep=(sep==null)||sep.equals("")?"\n":sep;
-		String s = (executedWithSuccess()?"## Request succeeded ":"## Request failed " + "| "+ktbsResponseStatus+" ##");
+		String s = (hasSucceeded()?"## Request succeeded ":"## Request failed " + "| "+ktbsResponseStatus+" ##");
 		s+=sep;
 		if(httpResponse != null)
 			s+=httpResponse.getStatusLine() + "" + sep;

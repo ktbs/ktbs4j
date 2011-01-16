@@ -14,11 +14,14 @@ import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsStatement;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.ResourceRepository;
+import org.liris.ktbs.core.SerializableResource;
+import org.liris.ktbs.rdf.KtbsJenaResource;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -28,7 +31,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class RdfKtbsResource extends AbstractKtbsResource {
+public class RdfKtbsResource extends AbstractKtbsResource implements SerializableResource, KtbsJenaResource {
 
 	protected ResourceRepository repository;
 	protected Model rdfModel;
@@ -315,7 +318,7 @@ public class RdfKtbsResource extends AbstractKtbsResource {
 	@Override
 	public String toString() {
 		StringWriter writer = new StringWriter();
-		rdfModel.write(writer, JenaConstants.JENA_SYNTAX_TURTLE);
+		rdfModel.write(writer, JenaConstants.TURTLE);
 		return writer.toString();
 	}
 
@@ -359,4 +362,15 @@ public class RdfKtbsResource extends AbstractKtbsResource {
 			return l.getString();
 	}
 
+	@Override
+	public String toSerializedString(String mimeType) {
+		StringWriter writer = new StringWriter();
+		rdfModel.write(writer, KtbsUtils.getJenaSyntax(mimeType), "");
+		return writer.toString();
+	}
+
+	@Override
+	public Model getCopyOfModel() {
+		return rdfModel.union(ModelFactory.createDefaultModel());
+	}
 }

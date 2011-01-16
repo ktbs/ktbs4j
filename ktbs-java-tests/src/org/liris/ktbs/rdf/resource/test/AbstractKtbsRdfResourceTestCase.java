@@ -53,7 +53,7 @@ public class AbstractKtbsRdfResourceTestCase extends TestCase {
 			FileInputStream stream = new FileInputStream("turtle/" + fileLocalName);
 			repository.loadResource(
 					stream, 
-					JenaConstants.JENA_SYNTAX_TURTLE);
+					JenaConstants.TURTLE);
 					
 			stream.close();
 			return clazz.cast(repository.getResource(uri));

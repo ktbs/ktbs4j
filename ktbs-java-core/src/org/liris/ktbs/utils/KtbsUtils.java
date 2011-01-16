@@ -61,11 +61,11 @@ public class KtbsUtils {
 	 * @see JenaConstants
 	 */
 	public static String getMimeType(String jenaSyntax) {
-		if(jenaSyntax.equals(JenaConstants.JENA_SYNTAX_TURTLE))
+		if(jenaSyntax.equals(JenaConstants.TURTLE))
 			return KtbsConstants.MIME_TURTLE;
-		else if(jenaSyntax.equals(JenaConstants.JENA_SYNTAX_N3))
+		else if(jenaSyntax.equals(JenaConstants.N3))
 			return KtbsConstants.MIME_N3;
-		else if(jenaSyntax.equals(JenaConstants.JENA_SYNTAX_N_TRIPLES))
+		else if(jenaSyntax.equals(JenaConstants.N_TRIPLES))
 			return KtbsConstants.MIME_NTRIPLES;
 		else 
 			return KtbsConstants.MIME_RDF_XML;
@@ -80,13 +80,13 @@ public class KtbsUtils {
 	 */
 	public static String getJenaSyntax(String mimeType) {
 		if(mimeType.equals(KtbsConstants.MIME_TURTLE))
-			return JenaConstants.JENA_SYNTAX_TURTLE;
+			return JenaConstants.TURTLE;
 		else if(mimeType.equals(KtbsConstants.MIME_N3))
-			return JenaConstants.JENA_SYNTAX_N3;
+			return JenaConstants.N3;
 		else if(mimeType.equals(KtbsConstants.MIME_NTRIPLES))
-			return JenaConstants.JENA_SYNTAX_N_TRIPLES;
+			return JenaConstants.N_TRIPLES;
 		else if(mimeType.equals(KtbsConstants.MIME_RDF_XML))
-			return JenaConstants.JENA_SYNTAX_RDF_XML_ABBR;
+			return JenaConstants.RDF_XML_ABBR;
 		else
 			return "text/plain";
 	}

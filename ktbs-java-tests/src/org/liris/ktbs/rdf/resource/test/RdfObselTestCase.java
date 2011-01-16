@@ -2,6 +2,7 @@ package org.liris.ktbs.rdf.resource.test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
@@ -78,21 +79,25 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		assertEquals(EmptyResourceFactory.getInstance().createResource("http://localhost:8001/base1/t01/"), obsel4.getTrace());
 	}
 
+	private static BigInteger asBigInt(long number) {
+		return new BigInteger(Long.toString(number));
+	}
+	
 	@Test
 	public void testSetBegin() {
-		assertEquals(1000,obsel1.getBegin());
-		obsel1.setBegin(2000);
-		assertEquals(2000,obsel1.getBegin());
-		obsel1.setBegin(309730);
-		assertEquals(309730,obsel1.getBegin());
+		assertEquals(asBigInt(1000),obsel1.getBegin());
+		obsel1.setBegin(asBigInt(2000));
+		assertEquals(asBigInt(2000),obsel1.getBegin());
+		obsel1.setBegin(asBigInt(309730));
+		assertEquals(asBigInt(309730),obsel1.getBegin());
 	}
 	@Test
 	public void testSetEnd() {
-		assertEquals(1000,obsel1.getEnd());
-		obsel1.setEnd(2000);
-		assertEquals(2000,obsel1.getEnd());
-		obsel1.setEnd(309730);
-		assertEquals(309730,obsel1.getEnd());
+		assertEquals(asBigInt(1000),obsel1.getEnd());
+		obsel1.setEnd(asBigInt(2000));
+		assertEquals(asBigInt(2000),obsel1.getEnd());
+		obsel1.setEnd(asBigInt(309730));
+		assertEquals(asBigInt(309730),obsel1.getEnd());
 	}
 	@Test
 	public void testSetBeginDT() {
@@ -114,22 +119,22 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	
 	@Test
 	public void testGetBegin() {
-		assertEquals(1000,obsel1.getBegin());
-		assertEquals(2000,obsel2.getBegin());
-		assertEquals(5000,obsel3.getBegin());
-		assertEquals(7000,obsel4.getBegin());
+		assertEquals(asBigInt(1000),obsel1.getBegin());
+		assertEquals(asBigInt(2000),obsel2.getBegin());
+		assertEquals(asBigInt(5000),obsel3.getBegin());
+		assertEquals(asBigInt(7000),obsel4.getBegin());
 		
-		assertEquals(-1,obsel6.getBegin());
+		assertEquals(null,obsel6.getBegin());
 	}
 
 	@Test
 	public void testGetEnd() {
-		assertEquals(1000,obsel1.getEnd());
-		assertEquals(4000,obsel2.getEnd());
-		assertEquals(5000,obsel3.getEnd());
-		assertEquals(7000,obsel4.getEnd());
-		assertEquals(14000,obsel5.getEnd());
-		assertEquals(-1,obsel6.getEnd());
+		assertEquals(asBigInt(1000),obsel1.getEnd());
+		assertEquals(asBigInt(4000),obsel2.getEnd());
+		assertEquals(asBigInt(5000),obsel3.getEnd());
+		assertEquals(asBigInt(7000),obsel4.getEnd());
+		assertEquals(asBigInt(14000),obsel5.getEnd());
+		assertEquals(null,obsel6.getEnd());
 	}
 
 	@Test
@@ -429,8 +434,8 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	public void testGetSourceObsel() throws FileNotFoundException, ResourceLoadException {
 		Base b = repository.createBase("http://localhost:8001/base1/");
 		
-		repository.loadResource(new FileInputStream("turtle/filtered1.ttl"), JenaConstants.JENA_SYNTAX_TURTLE);
-		repository.loadResource(new FileInputStream("turtle/filtered1-obsels.ttl"), JenaConstants.JENA_SYNTAX_TURTLE);
+		repository.loadResource(new FileInputStream("turtle/filtered1.ttl"), JenaConstants.TURTLE);
+		repository.loadResource(new FileInputStream("turtle/filtered1-obsels.ttl"), JenaConstants.TURTLE);
 		Trace filtered1 = repository.getResource("http://localhost:8001/base1/filtered1/", ComputedTrace.class);
 		Obsel o = filtered1.getObsel("http://localhost:8001/base1/filtered1/obs1");
 		Obsel source = o.getSourceObsel();

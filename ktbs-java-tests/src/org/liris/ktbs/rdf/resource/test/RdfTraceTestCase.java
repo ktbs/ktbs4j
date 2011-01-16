@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf.resource.test;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -72,57 +73,57 @@ public class RdfTraceTestCase  extends AbstractKtbsRdfResourceTestCase {
 	}
 
 	@Test
-	public void testListObselsLongLong() {
-		assertEquals(4,KtbsUtils.count(t01.listObsels(0,Long.MAX_VALUE)));
-		Collection<Obsel> obsels = KtbsUtils.toLinkedList(t01.listObsels(0,Long.MAX_VALUE));
+	public void testListObselsBigIntegerBigInteger() {
+		assertEquals(4,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(0),BigInteger.valueOf(Long.MAX_VALUE))));
+		Collection<Obsel> obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(0),BigInteger.valueOf(Long.MAX_VALUE)));
 		assertEquals(4,obsels.size());
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(4,KtbsUtils.count(t01.listObsels(1000,7000)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(1000,7000));
+//		assertEquals(4,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(1000),BigInteger.valueOf(7000))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(1000),BigInteger.valueOf(7000)));
 		assertEquals(4,obsels.size());
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(3,KtbsUtils.count(t01.listObsels(2000,7000)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(2000,7000));
+		assertEquals(3,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(2000),BigInteger.valueOf(7000))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(2000),BigInteger.valueOf(7000)));
 		assertEquals(3,obsels.size());
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(3,KtbsUtils.count(t01.listObsels(1000,5000)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(1000,5000));
+		assertEquals(3,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(1000),BigInteger.valueOf(5000))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(1000),BigInteger.valueOf(5000)));
 		assertEquals(3,obsels.size());
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(2,KtbsUtils.count(t01.listObsels(2000,5000)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(2000,5000));
+		assertEquals(2,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(2000),BigInteger.valueOf(5000))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(2000),BigInteger.valueOf(5000)));
 		assertEquals(2,obsels.size());
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(2,KtbsUtils.count(t01.listObsels(2001,7000)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(2001,7000));
+		assertEquals(2,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(2001),BigInteger.valueOf(7000))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(2001),BigInteger.valueOf(7000)));
 		assertEquals(2,obsels.size());
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(2,KtbsUtils.count(t01.listObsels(1000,4999)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(1000,4999));
+		assertEquals(2,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(1000),BigInteger.valueOf(4999))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(1000),BigInteger.valueOf(4999)));
 		assertEquals(2,obsels.size());
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
@@ -130,24 +131,24 @@ public class RdfTraceTestCase  extends AbstractKtbsRdfResourceTestCase {
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
 
-		assertEquals(0,KtbsUtils.count(t01.listObsels(7001,Long.MAX_VALUE)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(7001,Long.MAX_VALUE));
+		assertEquals(0,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(7001),BigInteger.valueOf(Long.MAX_VALUE))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(7001),BigInteger.valueOf(Long.MAX_VALUE)));
 		assertEquals(0,obsels.size());
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(1,KtbsUtils.count(t01.listObsels(3000,5000)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(3000,5000));
+		assertEquals(1,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(3000),BigInteger.valueOf(5000))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(3000),BigInteger.valueOf(5000)));
 		assertEquals(1,obsels.size());
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/obs1")));
 
-		assertEquals(1,KtbsUtils.count(t01.listObsels(2000,4000)));
-		obsels = KtbsUtils.toLinkedList(t01.listObsels(2000,4000));
+		assertEquals(1,KtbsUtils.count(t01.listObsels(BigInteger.valueOf(2000),BigInteger.valueOf(4000))));
+		obsels = KtbsUtils.toLinkedList(t01.listObsels(BigInteger.valueOf(2000),BigInteger.valueOf(4000)));
 		assertEquals(1,obsels.size());
 		assertTrue(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f")));
 		assertFalse(obsels.contains(emptyFac.createObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139")));

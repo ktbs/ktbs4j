@@ -16,7 +16,7 @@ public enum KtbsResponseStatus {
 	/**
 	 * the KTBS resource has been modified on the server with no issue
 	 */
-	RESOURCE_MODIFIED,
+	RESOURCE_UPDATED,
 	
 	
 	/**
@@ -36,10 +36,10 @@ public enum KtbsResponseStatus {
 	 * executing the request. Users might want to call KtbsResponseStatus.getHttpStatus() to 
 	 * get more information about the exception.
 	 */
-	SERVER_EXCEPTION,
+	REQUEST_FAILED,
 	
 	/**
 	 * represents an error occurred within the KTBS client when executing the request.
 	 */
-	INTERNAL_ERR0R
+	CLIENT_ERR0R
 }

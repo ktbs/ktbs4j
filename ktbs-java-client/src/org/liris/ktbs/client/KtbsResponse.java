@@ -18,7 +18,7 @@ public interface KtbsResponse {
 	 * @return true if the service method has been executed on the KTBS server
 	 * with success
 	 */
-	public boolean executedWithSuccess();
+	public boolean hasSucceeded();
 
 	/**
 	 * A utility method that converts the HTTP response body, if any,

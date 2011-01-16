@@ -56,7 +56,6 @@ public class KtbsRestServiceImplTestCase {
 		repository = new RdfResourceRepository();
 	}
 	
-	
 	@Test
 	public void testRetrieve() {
 		KtbsResponse response = service.retrieve(rootUri);
@@ -86,7 +85,6 @@ public class KtbsRestServiceImplTestCase {
 			return null;
 		}
 	}
-	
 	
 	@Test
 	public void testCreateObsel() {

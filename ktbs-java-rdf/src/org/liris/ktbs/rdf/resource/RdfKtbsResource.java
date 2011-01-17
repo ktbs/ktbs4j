@@ -317,9 +317,10 @@ public class RdfKtbsResource extends AbstractKtbsResource implements Serializabl
 
 	@Override
 	public String toString() {
-		StringWriter writer = new StringWriter();
-		rdfModel.write(writer, JenaConstants.TURTLE);
-		return writer.toString();
+//		StringWriter writer = new StringWriter();
+//		rdfModel.write(writer, JenaConstants.TURTLE);
+//		return writer.toString();
+		return uri;
 	}
 
 	@Override

@@ -39,7 +39,6 @@ import com.google.common.collect.Multiset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -67,7 +66,7 @@ public class RdfResourceRepository implements ResourceRepository {
 
 
 		boolean resourceFound = false;
-		
+
 		Model model = ModelFactory.createDefaultModel();
 		model.read(stream, "", lang);
 
@@ -151,7 +150,7 @@ public class RdfResourceRepository implements ResourceRepository {
 			RdfTraceModel resource = new RdfTraceModel(traceModelURI, filteredModel, this);
 			resources.put(resource.getURI(), resource);
 			resourceFound = true;
-			
+
 			// put model and its children manually
 			for(String attTypeURI:resourceURIsByType.get(KtbsConstants.ATTRIBUTE_TYPE)) {
 				RdfAttributeType att = new RdfAttributeType(attTypeURI, filteredModel, this);
@@ -169,7 +168,7 @@ public class RdfResourceRepository implements ResourceRepository {
 
 		if(types.contains(KtbsConstants.COMPUTED_TRACE)) {
 			log.info("A computed trace has been found in the stream.");
-			
+
 			resourceFound |= putResourcesInModel(
 					RdfComputedTrace.class, 
 					model, 
@@ -178,8 +177,8 @@ public class RdfResourceRepository implements ResourceRepository {
 
 		if(types.contains(KtbsConstants.STORED_TRACE)) {
 			log.info("A stored trace has been found in the stream.");
-			
-			
+
+
 			resourceFound |= putResourcesInModel(
 					RdfStoredTrace.class, 
 					model, 
@@ -262,12 +261,12 @@ public class RdfResourceRepository implements ResourceRepository {
 			Class<T> cls,
 			Model model, 
 			Collection<String> resourceURIs) throws ResourceLoadException {
-		
+
 		boolean found = false;
-		
+
 		for(String resourceURI:resourceURIs) {
 			Model filteredModel =  JenaUtils.filterModel(model, new ResourceSelector(resourceURI));
-			
+
 			try {
 				Constructor<T> constructor = cls.getConstructor(String.class, Model.class, ResourceRepository.class);
 				RdfKtbsResource resource = constructor.newInstance(resourceURI, filteredModel, this);
@@ -280,7 +279,7 @@ public class RdfResourceRepository implements ResourceRepository {
 			}
 
 		}
-		
+
 		return found;
 	}
 
@@ -322,16 +321,16 @@ public class RdfResourceRepository implements ResourceRepository {
 				objectURI = s.getObject().asResource().getURI();
 			if(s.getObject().isLiteral())
 				objectURI = s.getObject().asLiteral().getValue().toString();
-			
+
 			if(subjectURI.startsWith(traceModelURI)
 					|| (objectURI !=null && objectURI.startsWith(traceModelURI)))
 				return true;
 			else
 				return false;
 		}
-		
-		
-		
+
+
+
 	}
 	private class ResourceSelector extends SimpleSelector {
 
@@ -631,7 +630,11 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public RelationType createRelationType(TraceModel traceModel, String localName,
 			ObselType domain, ObselType range) {
-		checkExistency(traceModel, range, domain);
+		checkExistency(traceModel);
+		if(domain!=null)
+			checkExistency(domain);
+		if(range!=null)
+			checkExistency(range);
 
 		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
 
@@ -640,8 +643,10 @@ public class RdfResourceRepository implements ResourceRepository {
 		rdfModel.getResource(relType.getURI()).addProperty(
 				RDF.type, 
 				rdfModel.getResource(KtbsConstants.RELATION_TYPE));
-		relType.setDomain(domain);
-		relType.setRange(range);
+		if(domain!=null)
+			relType.setDomain(domain);
+		if(range!=null)
+			relType.setRange(range);
 
 		resources.put(relType.getURI(), relType);
 		return relType;
@@ -651,7 +656,9 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public AttributeType createAttributeType(TraceModel traceModel, String localName,
 			ObselType domain) {
-		checkExistency(traceModel, domain);
+		checkExistency(traceModel);
+		if(domain!=null)
+			checkExistency(domain);
 
 		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
 
@@ -660,6 +667,7 @@ public class RdfResourceRepository implements ResourceRepository {
 		rdfModel.getResource(attType.getURI()).addProperty(
 				RDF.type, 
 				rdfModel.getResource(KtbsConstants.ATTRIBUTE_TYPE));
+		if(domain != null);
 		attType.setDomain(domain);
 
 		resources.put(attType.getURI(), attType);

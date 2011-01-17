@@ -31,29 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * </p>
  * <p>
- * 
- * The KTBS Java client API must be used as follows:
- * 
- * <code><pre>
- * // get the application
- * KTBSClientApplication app = KTBSClientApplication.getInstance();
- * 
- * // get a KTBS client object for the KTBS root uri "http://localhost:8001/"
- * KtbsClient client = app.getKtbsClient("http://localhost:8001/");
- * 
- * // initiate the underlying HTTP client, and perform authentication if required
- * client.startSession();
- * 
- * // Call services on the KTBS server through the object client
- * KtbsResponse response1 = client.getTraceObsels("http://localhost:8001/", "base1", "t01");
- * Trace trace = (Trace)response1.getBodyAsKtbsResource());
- * 
- * KtbsResponse response2 = client.createObsel("http://localhost:8001/base1/t01/", ...);
- * // ...
- * 
- * // stop the underlying HTTP client.
- * client.closeSession();
- * </pre></code>
+ * See org.liris.ktbs.example for an illustration of how to use the KTBS client.
  * </p>
  * 
  * 

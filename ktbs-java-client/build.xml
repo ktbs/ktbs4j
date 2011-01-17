@@ -13,6 +13,8 @@
 	
 <property name="rdfproject.path" location="../KTBS RDF"/>
 <property name="coreproject.path" location="../KTBS Core"/>
+<property name="clientproject.path" location="./"/>
+<property name="exampleproject.path" location="../KTBS Examples"/>
 	
 <property name="user.name" value="Damien Cram"/>
 <property name="organisation" value="LIRIS UMR 5205 CNRS"/>
@@ -43,6 +45,10 @@
 <copy file="${lib.jena}/stax-api-1.0.1.jar" todir="dist/lib"/>
 <copy file="${lib.jena}/wstx-asl-3.2.9.jar" todir="dist/lib"/>
 <copy file="${lib.jena}/arq-2.8.4.jar" todir="dist/lib"/>
+<copy file="${lib.jena}/log4j-1.2.13.jar" todir="dist/lib"/>
+<copy file="${lib.jena}/slf4j-api-1.5.8.jar" todir="dist/lib"/>
+<copy file="${lib.jena}/slf4j-log4j12-1.5.8.jar" todir="dist/lib"/>
+<copy file="${lib.jena}/xercesImpl-2.7.1.jar" todir="dist/lib"/>
 </target>
 	
 	
@@ -59,9 +65,11 @@
 			<!--<fileset dir="src"/>-->
 			<fileset dir="${rdfproject.path}/src"/>
 			<fileset dir="${coreproject.path}/src"/>
+			<fileset dir="${clientproject.path}/src"/>
 
 		    <doctitle><![CDATA[<h1>KTBS Client for Java</h1>]]></doctitle>
 		    <bottom><![CDATA[<i>Copyright &#169; 2010 LIRIS UMR 5205 CNRS. All Rights Reserved.</i>]]></bottom>
+		    <group title="KTBS classes" packages="org.liris.ktbs*"/>
 		    <group title="Core classes" packages="org.liris.ktbs.core*"/>
 		    <group title="RDF classes" packages="org.liris.ktbs.rdf*"/>
 		    <group title="Client classes" packages="org.liris.ktbs.client*"/>
@@ -80,9 +88,24 @@
 		</javadoc>
 	</target>
 	
-	
 <target name="jar-examples" >
+
+	<jar destfile="dist/ktbs-client-${version}-examples.jar">
+	 	  <fileset dir="${exampleproject.path}/bin"/>
+	 	  <manifest>
+	 		   <attribute name="Built-By" value="${user.name}"/>
+	 		   <section name="common">
+	 		     <attribute name="Specification-Title" value="${title}"/>
+	 		     <attribute name="Specification-Version" value="${version}"/>
+	 		     <attribute name="Specification-Vendor" value="${organisation}"/>
+	 		     <attribute name="Implementation-Title" value="${title}"/>
+	 		     <attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+	 		     <attribute name="Implementation-Vendor" value="${organisation}"/>
+	 		   </section>
+	 		</manifest>
+	 	 </jar>
 </target>
+	
 <target name="jar-classes" >
 		
 <jar destfile="dist/ktbs-client-${version}.jar">
@@ -102,6 +125,8 @@
  		</manifest>
  	 </jar>
 </target>
+	
+	
 <target name="jar-sources" >
 <jar destfile="dist/ktbs-client-${version}-src.jar">
  	  <fileset dir="src"/>

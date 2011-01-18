@@ -371,7 +371,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 		StringWriter writer = new StringWriter();
 
-		model.write(writer, KtbsUtils.getJenaSyntax(getPOSTMimeType()), "");
+		model.write(writer, KtbsUtils.getJenaSyntax(getPOSTMimeType()), null);
 		String asString = writer.toString();
 		return asString;
 	}

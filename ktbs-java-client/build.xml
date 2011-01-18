@@ -91,7 +91,7 @@
 <target name="jar-examples" >
 
 	<jar destfile="dist/ktbs-client-${version}-examples.jar">
-	 	  <fileset dir="${exampleproject.path}/bin"/>
+	 	  <fileset dir="${exampleproject.path}/src"/>
 	 	  <manifest>
 	 		   <attribute name="Built-By" value="${user.name}"/>
 	 		   <section name="common">

@@ -1,0 +1,8 @@
+@prefix : <http://www.example.com/> .
+:myResource a :MyType;
+:myCollectionProperty (
+	"Item1"
+	"Item2"
+	"Item3"
+	);
+.

@@ -21,6 +21,7 @@ import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.SimpleRelationStatement;
 import org.liris.ktbs.core.Trace;
+import org.liris.ktbs.rdf.JenaUtils;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
@@ -48,8 +49,6 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 	public BigInteger getBegin() {
 		return getBigInteger(KtbsConstants.P_HAS_BEGIN);
 	}
-
-
 
 	@Override
 	public BigInteger getEnd() {
@@ -87,7 +86,6 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 	public Object getAttributeValue(AttributeType attribute) {
 		StmtIterator it = rdfModel.listStatements(new AttributeSelector(attribute.getURI()));
 		try  {
-
 			if(!it.hasNext())
 				return null;
 			else
@@ -267,9 +265,10 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 		public AttributeStatement next() {
 			final Statement next = stmtIt.next();
 
+			String attURI = next.getPredicate().asResource().getURI();
 			return new SimpleAttributStatement(
-					RdfObsel.this.repository.getResource(next.getPredicate().asResource().getURI(), AttributeType.class),
-					next.getObject().asLiteral().getValue()
+					RdfObsel.this.repository.getResource(attURI, AttributeType.class),
+					JenaUtils.asJavaObject(next.getObject())
 			);
 		}
 

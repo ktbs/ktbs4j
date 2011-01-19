@@ -32,9 +32,6 @@ public class JenaBag {
 		toto.addProperty(hasFirstNames, seq);
 		printModel(model);
 
-
-
-
 		Model model2 = ModelFactory.createDefaultModel();
 		model2.read(new FileInputStream("rdf-collections.ttl"), null, "TURTLE");
 		System.out.println("------------------------------------------------");

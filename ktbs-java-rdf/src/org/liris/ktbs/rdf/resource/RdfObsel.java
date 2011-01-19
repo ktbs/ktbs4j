@@ -363,19 +363,21 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 	public void addAttribute(AttributeType attribute, Object value) {
 		AttributeType attType = repository.getResource(attribute.getURI(), AttributeType.class);
 		ObselType obselType = getObselType();
-		ObselType attDomain = attType.getDomain();
-		checkDomainOrRange(obselType, attDomain, true);
+		LinkedList<ObselType> domains = KtbsUtils.toLinkedList(attType.listDomains());
+		checkDomainOrRange(obselType, true, domains.toArray(new ObselType[domains.size()]));
 		addLiteral(attribute.getURI(), value);
 	}
 
-	private void checkDomainOrRange(ObselType obselType, ObselType attDomain, boolean domain) {
-		if(!(obselType.equals(attDomain) || obselType.hasSuperType(attDomain, Mode.INFERRED))) {
-			if(domain)
-				throw new DomainException(attDomain, obselType);
-			else
-				throw new RangeException(attDomain, obselType);
+	private void checkDomainOrRange(ObselType obselType, boolean domain, ObselType... attDomainsOrRanges) {
 
+		for(ObselType domainOrRange:attDomainsOrRanges) {
+			if(obselType.equals(domainOrRange) || obselType.hasSuperType(domainOrRange, Mode.INFERRED))
+				return;
 		}
+		if(domain)
+			throw new DomainException(attDomainsOrRanges, obselType);
+		else
+			throw new RangeException(attDomainsOrRanges, obselType);
 	}
 
 	@Override
@@ -384,7 +386,7 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 
 		ObselType obselType = getObselType();
 		ObselType relDomain = relationType.getDomain();
-		checkDomainOrRange(obselType, relDomain, true);
+		checkDomainOrRange(obselType, true, relDomain);
 		addResource(relationType.getURI(), target.getURI());
 	}
 
@@ -394,7 +396,7 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 
 		ObselType obselType = getObselType();
 		ObselType relrange = relationType.getRange();
-		checkDomainOrRange(obselType, relrange, false);
+		checkDomainOrRange(obselType, false, relrange);
 
 		rdfModel.getResource(source.getURI()).addProperty(
 				rdfModel.getProperty(relationType.getURI()),

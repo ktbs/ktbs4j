@@ -667,8 +667,8 @@ public class RdfResourceRepository implements ResourceRepository {
 		rdfModel.getResource(attType.getURI()).addProperty(
 				RDF.type, 
 				rdfModel.getResource(KtbsConstants.ATTRIBUTE_TYPE));
-		if(domain != null);
-		attType.setDomain(domain);
+		if(domain != null)
+			attType.addDomain(domain);
 
 		resources.put(attType.getURI(), attType);
 		return attType;

@@ -3,7 +3,7 @@ package org.liris.ktbs.core;
 @SuppressWarnings("serial")
 public class RangeException extends InvalidDomainOrRangeException {
 
-	public RangeException(ObselType domainOrRange, ObselType actual) {
+	public RangeException(ObselType[] domainOrRange, ObselType actual) {
 		super(domainOrRange, actual);
 	}
 
@@ -12,7 +12,7 @@ public class RangeException extends InvalidDomainOrRangeException {
 		return false;
 	}
 
-	public ObselType getExpectedRange() {
+	public ObselType[] getExpectedRange() {
 		return domainOrRange;
 	}
 }

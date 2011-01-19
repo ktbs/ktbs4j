@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfAttributeTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 
@@ -44,10 +45,22 @@ public class RdfAttributeTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 	}
 	
 	@Test
-	public void testSetDomain() {
-		assertEquals(rcvMsg, from.getDomain());
-		from.setDomain(channelEvent);
-		assertEquals(channelEvent, from.getDomain());
+	public void testListDomains() {
+		assertEquals(1, KtbsUtils.count(from.listDomains()));
+		assertTrue(KtbsUtils.toLinkedList(from.listDomains()).contains(rcvMsg));
+		from.addDomain(channelEvent);
+		assertEquals(2, KtbsUtils.count(from.listDomains()));
+		assertTrue(KtbsUtils.toLinkedList(from.listDomains()).contains(rcvMsg));
+		assertTrue(KtbsUtils.toLinkedList(from.listDomains()).contains(channelEvent));
 	}
-
+	
+	@Test
+	public void testAddDomain() {
+		assertEquals(1, KtbsUtils.count(from.listDomains()));
+		assertTrue(KtbsUtils.toLinkedList(from.listDomains()).contains(rcvMsg));
+		from.addDomain(channelEvent);
+		assertEquals(2, KtbsUtils.count(from.listDomains()));
+		assertTrue(KtbsUtils.toLinkedList(from.listDomains()).contains(rcvMsg));
+		assertTrue(KtbsUtils.toLinkedList(from.listDomains()).contains(channelEvent));
+	}
 }

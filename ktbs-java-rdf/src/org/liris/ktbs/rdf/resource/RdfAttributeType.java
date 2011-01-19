@@ -1,12 +1,16 @@
 package org.liris.ktbs.rdf.resource;
 
+import java.util.Iterator;
+
 import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.ResourceRepository;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfAttributeType extends RdfKtbsResource implements
 AttributeType {
@@ -24,8 +28,20 @@ AttributeType {
 			return repository.getResource(domain.getURI(), ObselType.class);
 	}
 	
+	
 	@Override
-	public void setDomain(ObselType domain) {
-		checkExitsenceAndAddResource(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, domain);
+	public void addDomain(ObselType domain) {
+		repository.checkExistency(domain);
+		addResource(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, domain.getURI());
+	}
+
+	@Override
+	public Iterator<ObselType> listDomains() {
+		StmtIterator it = rdfModel.listStatements(
+				rdfModel.getResource(uri), 
+				rdfModel.getProperty(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN), 
+				(RDFNode)null);
+		
+		return new RdfObjectIterator<ObselType>(it, ObselType.class, repository, false);
 	}
 }

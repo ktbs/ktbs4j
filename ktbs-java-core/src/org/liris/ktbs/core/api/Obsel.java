@@ -75,6 +75,22 @@ public interface Obsel extends KtbsResource {
 	 * @return the first target obsel encountered for that relation, null if none
 	 */
 	public Obsel getTargetObsel(RelationType relationType);
+
+	/**
+	 * List all obsels that are set as the target of a relation going out of this obsel.
+	 * 
+	 * @param relationType the relation
+	 * @return an iterator on all the target obsels of this relation
+	 */
+	public Iterator<Obsel> listTargetObsels(RelationType relationType);
+	
+	/**
+	 * List all obsels that are set as the source of an incoming relation.
+	 * 
+	 * @param relationType the relation
+	 * @return an iterator on all the source obsels of the relation
+	 */
+	public Iterator<Obsel> listSourceObsels(RelationType relationType);
 	
 	/**
 	 * Get the first obsel encountered that has an outgoing relation

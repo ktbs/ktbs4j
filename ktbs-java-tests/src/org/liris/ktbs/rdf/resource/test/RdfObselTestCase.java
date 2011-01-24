@@ -18,7 +18,6 @@ import org.liris.ktbs.core.ResourceLoadException;
 import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.api.AttributeStatement;
 import org.liris.ktbs.core.api.AttributeType;
-import org.liris.ktbs.core.api.Base;
 import org.liris.ktbs.core.api.ComputedTrace;
 import org.liris.ktbs.core.api.Obsel;
 import org.liris.ktbs.core.api.RelationStatement;
@@ -30,7 +29,7 @@ import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
-	
+
 	private Obsel obsel1;
 	private Obsel obsel2;
 	private Obsel obsel3;
@@ -42,13 +41,13 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	private String obsel6uri = "http://localhost:8001/base1/t01/obs6";
 	private String obsel7uri = "http://localhost:8001/base1/t01/obs7";
 	private String obsel8uri = "http://localhost:8001/base1/t01/obs8";
-	
+
 	private StoredTrace trace;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		
+
 		trace = loadInRepo(
 				t01, 
 				"t01-obsels-and-info.ttl", 
@@ -58,17 +57,17 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		obsel2 = trace.getObsel("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f");
 		obsel3 = trace.getObsel("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
 		obsel4 = trace.getObsel("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
-		
+
 		obsel5 = loadInRepo(
 				obsel5uri, 
 				"obsel5.ttl", 
 				Obsel.class);
-		
+
 		obsel6 = loadInRepo(
 				obsel6uri,
 				"obsel6.ttl", 
 				Obsel.class);
-		
+
 	}
 
 	@Test
@@ -82,7 +81,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	private static BigInteger asBigInt(long number) {
 		return new BigInteger(Long.toString(number));
 	}
-	
+
 	@Test
 	public void testSetBegin() {
 		assertEquals(asBigInt(1000),obsel1.getBegin());
@@ -107,7 +106,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		obsel1.setBeginDT("Tot");
 		assertEquals("Tot",obsel1.getBeginDT());
 	}
-	
+
 	@Test
 	public void testSetEndDT() {
 		assertEquals("2010-04-28T18:09:01+00:00",obsel1.getEndDT());
@@ -116,14 +115,14 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		obsel1.setEndDT("Tot");
 		assertEquals("Tot",obsel1.getEndDT());
 	}
-	
+
 	@Test
 	public void testGetBegin() {
 		assertEquals(asBigInt(1000),obsel1.getBegin());
 		assertEquals(asBigInt(2000),obsel2.getBegin());
 		assertEquals(asBigInt(5000),obsel3.getBegin());
 		assertEquals(asBigInt(7000),obsel4.getBegin());
-		
+
 		assertEquals(null,obsel6.getBegin());
 	}
 
@@ -165,7 +164,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		obsel1.setObselType(emptyFac.createObselType(type("AbstractMsg")));
 		assertEquals(emptyFac.createObselType(type("AbstractMsg")),obsel1.getObselType());
 	}
-	
+
 	@Test
 	public void testGetObselType() {
 		assertEquals(emptyFac.createObselType(type("OpenChat")),obsel1.getObselType());
@@ -173,18 +172,18 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		assertEquals(emptyFac.createObselType(type("RecvMsg")),obsel3.getObselType());
 		assertEquals(emptyFac.createObselType(type("CloseChat")),obsel4.getObselType());
 		assertEquals(emptyFac.createObselType(type("SendMsg")),obsel5.getObselType());
-//		assertEquals(emptyFac.createObselType("http://example.com/Type1"),obsel6.getObselType());
+		//		assertEquals(emptyFac.createObselType("http://example.com/Type1"),obsel6.getObselType());
 		try {
 			obsel6.getObselType();
 			fail("Should fail");
 		} catch(ResourceNotFoundException e) {
-			
+
 		} catch(Exception e) {
 			fail("Unexpected Exception");
 		}
 	}
 
-	
+
 	private static String type(String localType) {
 		return "http://localhost:8001/base1/model1/" + localType;
 	}
@@ -195,7 +194,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		obsel1.setSubject("tyty");
 		assertEquals("tyty", obsel1.getSubject());
 	}
-	
+
 	@Test
 	public void testGetSubject() {
 		assertEquals("béa",obsel1.getSubject());
@@ -207,45 +206,87 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	}
 
 	@Test
+	public void testListSourceObsels()  {
+		
+		RelationType onChannel = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
+		RelationType closes = repository.getResource("http://localhost:8001/base1/model1/closes", RelationType.class);
+		
+		assertEquals(0, KtbsUtils.count(obsel1.listSourceObsels(closes)));
+		assertEquals(5, KtbsUtils.count(obsel1.listSourceObsels(onChannel)));
+		assertTrue(KtbsUtils.toLinkedList(obsel1.listSourceObsels(onChannel)).contains(obsel2));
+		assertTrue(KtbsUtils.toLinkedList(obsel1.listSourceObsels(onChannel)).contains(obsel3));
+		assertTrue(KtbsUtils.toLinkedList(obsel1.listSourceObsels(onChannel)).contains(obsel4));
+		assertTrue(KtbsUtils.toLinkedList(obsel1.listSourceObsels(onChannel)).contains(obsel5));
+		assertTrue(KtbsUtils.toLinkedList(obsel1.listSourceObsels(onChannel)).contains(obsel6));
+
+	}
+
+	@Test
+	public void testListTargetObsels() {
+		RelationType onChannel = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
+		RelationType closes = repository.getResource("http://localhost:8001/base1/model1/closes", RelationType.class);
+		
+		assertEquals(0, KtbsUtils.count(obsel1.listTargetObsels(closes)));
+		assertEquals(0, KtbsUtils.count(obsel1.listTargetObsels(onChannel)));
+		assertEquals(0, KtbsUtils.count(obsel2.listTargetObsels(closes)));
+		assertEquals(1, KtbsUtils.count(obsel2.listTargetObsels(onChannel)));
+		assertEquals(0, KtbsUtils.count(obsel3.listTargetObsels(closes)));
+		assertEquals(1, KtbsUtils.count(obsel3.listTargetObsels(onChannel)));
+		assertEquals(0, KtbsUtils.count(obsel4.listTargetObsels(closes)));
+		assertEquals(1, KtbsUtils.count(obsel4.listTargetObsels(onChannel)));
+		assertEquals(0, KtbsUtils.count(obsel5.listTargetObsels(closes)));
+		assertEquals(1, KtbsUtils.count(obsel5.listTargetObsels(onChannel)));
+		assertTrue(KtbsUtils.toLinkedList(obsel2.listTargetObsels(onChannel)).contains(obsel1));
+		assertTrue(KtbsUtils.toLinkedList(obsel3.listTargetObsels(onChannel)).contains(obsel1));
+		assertTrue(KtbsUtils.toLinkedList(obsel4.listTargetObsels(onChannel)).contains(obsel1));
+		assertTrue(KtbsUtils.toLinkedList(obsel5.listTargetObsels(onChannel)).contains(obsel1));
+		
+		obsel2.addOutgoingRelation(onChannel, obsel3);
+		assertTrue(KtbsUtils.toLinkedList(obsel2.listTargetObsels(onChannel)).contains(obsel1));
+		assertTrue(KtbsUtils.toLinkedList(obsel2.listTargetObsels(onChannel)).contains(obsel3));
+		assertEquals(2, KtbsUtils.count(obsel2.listTargetObsels(onChannel)));
+	}
+
+	@Test
 	public void testListAttributes() {
 
-		
+
 		// needs the model to be loaded in order to know if it is an attribute
 		loadInRepo(model1,"model1.ttl", TraceModel.class);
-		
+
 		assertEquals(1,KtbsUtils.count(obsel1.listAttributes()));
 		testAttributeStatement(obsel1.listAttributes().next(), newAttType("channel"), "#my-channel");
-		
+
 		assertEquals(1,KtbsUtils.count(obsel2.listAttributes()));
 		assertContains(obsel2.listAttributes(), newAttType("message"), "hello world");
-		
+
 		assertEquals(2,KtbsUtils.count(obsel3.listAttributes()));
 		assertContains(obsel3.listAttributes(), newAttType("from"), "world");
 		assertContains(obsel3.listAttributes(), newAttType("message"), "hello yourself");
-		
+
 		assertEquals(0,KtbsUtils.count(obsel4.listAttributes()));
 		assertEquals(1,KtbsUtils.count(obsel5.listAttributes()));
 		assertContains(obsel5.listAttributes(), newAttType("message"), "Salut les vieux");
-		
+
 		try {
 			obsel6.listAttributes().hasNext();
 			fail("Should fail since the obsel type is not valid");
 		} catch(ResourceNotFoundException e) {
-			
+
 		} catch(Exception e) {
 			fail("Unexpected exception");
 		}
-		
+
 	}
-	
+
 	private void assertContains(Iterator<RelationStatement> relss, RelationType type, Obsel obsel, boolean outgoing)  {
 		for(RelationStatement rel:KtbsUtils.toLinkedList(relss)) {
 			if(type.equals(rel.getRelation()) && obsel.equals((outgoing?rel.getToObsel():rel.getFromObsel())));
-				return;
+			return;
 		}
 		fail("Not contained");
 	}
-	
+
 	private void assertContains(Iterator<AttributeStatement> atts, AttributeType type, Object value)  {
 		for(AttributeStatement att:KtbsUtils.toLinkedList(atts)) {
 			if(type.equals(att.getAttributeType()) && value.equals(att.getValue()))
@@ -253,7 +294,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		}
 		fail("Not contained");
 	}
-	
+
 	private void testAttributeStatement(AttributeStatement att, AttributeType type, Object value)  {
 		assertEquals(type, att.getAttributeType());
 		assertEquals(value, att.getValue());
@@ -262,7 +303,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	private AttributeType newAttType(String string) {
 		return emptyFac.createAttributeType("http://localhost:8001/base1/model1/" + string);
 	}
-	
+
 	private String attType(String string) {
 		return "http://localhost:8001/base1/model1/" + string;
 	}
@@ -270,9 +311,9 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	@Test
 	public void testAddAttribute() {
 		Obsel obsel7 = loadInRepo(obsel7uri,"obsel7.ttl", Obsel.class);
-		
+
 		assertEquals(0, KtbsUtils.count(obsel7.listAttributes()));
-		
+
 		obsel7.addAttribute(newAttType("from"), "Nestor");
 		assertEquals(1, KtbsUtils.count(obsel7.listAttributes()));
 		assertEquals("Nestor", obsel7.getAttributeValue(newAttType("from")));
@@ -285,7 +326,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 			obsel1.addAttribute(newAttType("from"), "Nestor");
 			fail("Should fail");
 		} catch(DomainException e) {
-			
+
 		}
 	}
 	@Test
@@ -302,21 +343,21 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	@Test
 	public void testAddOutgoingRelation() {
 		Obsel obsel8 = loadInRepo(obsel8uri,"obsel8.ttl", Obsel.class);
-		
+
 		assertEquals(0, KtbsUtils.count(obsel8.listOutgoingRelations()));
-		
+
 		RelationType relation = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
 		Obsel obsel = trace.getObsel("http://localhost:8001/base1/t01/obs1");
 		obsel8.addOutgoingRelation(relation, obsel);
-		
+
 		assertEquals(1, KtbsUtils.count(obsel8.listOutgoingRelations()));
 		assertEquals(obsel8.getTargetObsel(relation),obsel);
-		
+
 		try {
 			obsel1.addOutgoingRelation(repository.getResource("http://localhost:8001/base1/model1/closes", RelationType.class), obsel);
 			fail("Should fail");
 		} catch(DomainException e) {
-			
+
 		}
 	}
 
@@ -329,16 +370,16 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		Obsel openChat = t02.getObsel("http://localhost:8001/base1/t02/obs1");
 		Obsel obsel8 = t02.getObsel("http://localhost:8001/base1/t02/obs8");
 		RelationType relation = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
-		
+
 		assertEquals(3, KtbsUtils.count(openChat.listIncomingRelations()));
 		openChat.addIncomingRelation(obsel8, relation);
 		assertEquals(4, KtbsUtils.count(openChat.listIncomingRelations()));
-		
+
 		try {
 			obsel8.addIncomingRelation(openChat, relation);
 			fail("Should fail");
 		} catch(RangeException e) {
-			
+
 		}
 	}
 
@@ -348,18 +389,18 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("91eda250f267fa93e4ece8f3ed659139"),false);
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("a08667b20cfe4079d02f2f5ad9239575"),false);
 		assertContains(obsel1.listIncomingRelations(), newRelType("onChannel"), newObsel("017885b093580cee5e01573953fbd26f"),false);
-		
+
 		assertEquals(0,KtbsUtils.count(obsel2.listIncomingRelations()));
-		
+
 		assertEquals(0,KtbsUtils.count(obsel3.listIncomingRelations()));
-		
+
 		assertEquals(0,KtbsUtils.count(obsel4.listIncomingRelations()));
-		
+
 		try {
 			obsel6.listIncomingRelations().hasNext();
 		} catch(ResourceNotFoundException e) {
 			fail("Should never need to pass through the obsel type in t" +
-					"he relation selector, since there is no incoming relation.");
+			"he relation selector, since there is no incoming relation.");
 		} catch(Exception e) {
 			fail("Unexpected exception");
 		}
@@ -375,25 +416,25 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 				obsel6uri,
 				"obsel6.ttl", 
 				Obsel.class);
-		
+
 		assertEquals(0,KtbsUtils.count(obsel1.listOutgoingRelations()));
-		
+
 		assertEquals(1,KtbsUtils.count(obsel2.listOutgoingRelations()));
 		assertContains(obsel2.listOutgoingRelations(), newRelType("onChannel"), newObsel("obs1"),true);
-		
+
 		assertEquals(1,KtbsUtils.count(obsel3.listOutgoingRelations()));
 		assertContains(obsel3.listOutgoingRelations(), newRelType("onChannel"), newObsel("obs1"),true);
-		
+
 		assertEquals(1,KtbsUtils.count(obsel4.listOutgoingRelations()));
 		assertContains(obsel4.listOutgoingRelations(), newRelType("onChannel"), newObsel("obs1"),true);
-		
+
 		try {
 			Iterator<RelationStatement> listOutgoingRelations = obsel6.listOutgoingRelations();
 			listOutgoingRelations.hasNext();
 			fail("Should fail since the obsel type is not valid");
-			
+
 		} catch(ResourceNotFoundException e) {
-			
+
 		} catch(Exception e) {
 			fail("Unexpected exception");
 		}
@@ -402,11 +443,11 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 	private Obsel newObsel(String string) {
 		return emptyFac.createObsel("http://localhost:8001/base1/t01/"+string);
 	}
-	
+
 	private RelationType newRelType(String string) {
 		return emptyFac.createRelationType("http://localhost:8001/base1/model1/"+string);
 	}
-	
+
 	@Test
 	public void testGetTargetObsel() {
 		RelationType onChannel = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
@@ -418,22 +459,45 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		assertEquals(obsel1, obsel3.getTargetObsel(onChannel));
 		assertEquals(obsel1, obsel4.getTargetObsel(onChannel));
 	}
-	
+
+	@Test
+	public void testGetSourceObselRelationType() {
+		RelationType onChannel = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
+		RelationType closes = repository.getResource("http://localhost:8001/base1/model1/closes", RelationType.class);
+		
+		Obsel sourceObsel = obsel1.getSourceObsel(onChannel);
+		assertNotNull(sourceObsel);
+		assertNull(obsel1.getSourceObsel(closes));
+		assertNull(obsel2.getSourceObsel(onChannel));
+		assertNull(obsel2.getSourceObsel(closes));
+		assertNull(obsel3.getSourceObsel(onChannel));
+		assertNull(obsel3.getSourceObsel(closes));
+		assertNull(obsel4.getSourceObsel(onChannel));
+		assertNull(obsel4.getSourceObsel(closes));
+		assertTrue(
+				sourceObsel.equals(obsel2) 
+				|| sourceObsel.equals(obsel3) 
+				|| sourceObsel.equals(obsel4)
+				|| sourceObsel.equals(obsel5)
+				|| sourceObsel.equals(obsel6)
+				);
+	}
+
 	@Test
 	public void testSetSourceObsel() {
 		RelationType onChannel = repository.getResource("http://localhost:8001/base1/model1/onChannel", RelationType.class);
-		
+
 		Collection<Obsel> sourceObsels = new LinkedList<Obsel>();
 		sourceObsels.add(obsel2);
 		sourceObsels.add(obsel3);
 		sourceObsels.add(obsel4);
 		sourceObsels.contains(obsel1.getTargetObsel(onChannel));
 	}
-	
+
 	@Test
 	public void testGetSourceObsel() throws FileNotFoundException, ResourceLoadException {
-		Base b = repository.createBase("http://localhost:8001/base1/");
-		
+		repository.createBase("http://localhost:8001/base1/");
+
 		repository.loadResource(new FileInputStream("turtle/filtered1.ttl"), JenaConstants.TURTLE);
 		repository.loadResource(new FileInputStream("turtle/filtered1-obsels.ttl"), JenaConstants.TURTLE);
 		Trace filtered1 = repository.getResource("http://localhost:8001/base1/filtered1/", ComputedTrace.class);
@@ -441,7 +505,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 		Obsel source = o.getSourceObsel();
 		assertEquals("http://localhost:8001/base1/t01/obs1", source.getURI());
 	}
-	
+
 	@Test
 	public void testSetEndDTAsDate() {
 		try {
@@ -465,7 +529,7 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-		
+
 	}
 	@Test
 	public void testGetBeginDTAsDate() {

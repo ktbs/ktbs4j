@@ -9,8 +9,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfObjectIterator<T extends KtbsResource> extends ResourceIterator<T> { 
 
-	RdfObjectIterator(StmtIterator stmtIterator, Class<T> clazz, ResourceRepository holder, boolean removeSupported) {
-		super(stmtIterator, clazz, holder, removeSupported);
+	RdfObjectIterator(StmtIterator stmtIterator, Class<T> clazz, ResourceRepository repo, boolean removeSupported) {
+		super(stmtIterator, clazz, repo, removeSupported);
 	}
 	
 	@Override

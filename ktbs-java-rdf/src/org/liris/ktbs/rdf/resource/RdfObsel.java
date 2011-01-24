@@ -304,7 +304,7 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 					Obsel.class);
 
 			Obsel otherObsel =  RdfObsel.this.repository.getResource(
-					isOutgoing?next.getObject().asResource().getURI():next.getResource().getURI(), 
+					isOutgoing?next.getObject().asResource().getURI():next.getSubject().getURI(), 
 							Obsel.class);
 
 			return new SimpleRelationStatement(
@@ -417,6 +417,18 @@ public class RdfObsel extends RdfKtbsResource implements Obsel {
 		cal.setTime(date);
 		XSDDateTime x = new XSDDateTime(cal);
 		removeAllAndAddLiteral(KtbsConstants.P_HAS_END_DT, x);
+	}
+
+	@Override
+	public Iterator<Obsel> listTargetObsels(RelationType relationType) {
+		StmtIterator it = rdfModel.listStatements(new OutgoingRelationSelector(relationType.getURI()));
+		return new RdfObjectIterator<Obsel>(it, Obsel.class, repository, false);
+	}
+
+	@Override
+	public Iterator<Obsel> listSourceObsels(RelationType relationType) {
+		StmtIterator it = rdfModel.listStatements(new IncomingRelationSelector(relationType.getURI()));
+		return new RdfSubjectIterator<Obsel>(it, Obsel.class, repository, false);
 	}
 
 }

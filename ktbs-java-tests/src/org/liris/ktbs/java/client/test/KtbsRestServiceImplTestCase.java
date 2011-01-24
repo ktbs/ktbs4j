@@ -89,7 +89,7 @@ public class KtbsRestServiceImplTestCase {
 	@Test
 	public void testCreateObsel() {
 		
-		Map<String, String> attributes = new HashMap<String, String>();
+		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("http://localhost:8001/base1/model1/message", "Salut tout le monde");
 		
 		KtbsResponse response = service.createObsel(

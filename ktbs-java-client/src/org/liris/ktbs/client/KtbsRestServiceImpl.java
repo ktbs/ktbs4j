@@ -47,6 +47,8 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
@@ -488,7 +490,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			String endDT, 
 			BigInteger begin, 
 			BigInteger end,
-			Map<String, String> attributes) {
+			Map<String, Object> attributes) {
 		String traceURIWithoutAspect = KtbsUtils.addAspect(traceURI, null, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 
 		Model model = createModelWithType(obselURI, typeURI);
@@ -508,8 +510,11 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			or.addLiteral(model.getProperty(KtbsConstants.P_HAS_SUBJECT), subject);
 
 		if(attributes != null) {
-			for(Entry<String, String> entry:attributes.entrySet())
-				or.addLiteral(model.getProperty(entry.getKey()), entry.getValue());
+			for(Entry<String, Object> entry:attributes.entrySet()) {
+				Property attribute = model.getProperty(entry.getKey());
+				RDFNode value = JenaUtils.asJenaLiteral(model, entry.getValue());
+				or.addProperty(attribute, value);
+			}
 		}
 
 		String asString = writeToString(model);

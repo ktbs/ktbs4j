@@ -8,7 +8,6 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.AbstractKtbsResource;
 import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.JenaConstants;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.KtbsStatement;

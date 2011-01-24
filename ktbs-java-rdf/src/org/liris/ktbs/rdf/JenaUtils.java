@@ -1,6 +1,7 @@
 package org.liris.ktbs.rdf;
 
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.JenaConstants;
@@ -8,6 +9,7 @@ import org.liris.ktbs.core.JenaConstants;
 import com.hp.hpl.jena.rdf.model.Alt;
 import com.hp.hpl.jena.rdf.model.Bag;
 import com.hp.hpl.jena.rdf.model.Container;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -20,13 +22,12 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 public class JenaUtils {
-	
+
 	public static String toTurtleString(Model rdfModel) {
 		StringWriter writer = new StringWriter();
 		rdfModel.write(writer, JenaConstants.TURTLE, "");
 		return writer.toString();
 	}
-	
 
 	/**
 	 * Creates a new model with only the statement selected by a selector.
@@ -37,11 +38,11 @@ public class JenaUtils {
 	 */
 	public static Model filterModel(Model model, Selector selector) {
 		Model filteredModel = ModelFactory.createDefaultModel();
-		
+
 		filteredModel.add(model);
 
 		StmtIterator it = filteredModel.listStatements();
-		
+
 		while(it.hasNext()) {
 			Statement s = it.next();
 			if(!selector.test(s))
@@ -57,7 +58,7 @@ public class JenaUtils {
 	}
 
 	private static final class RDFLinkedListIterator implements
-			Iterator<Object> {
+	Iterator<Object> {
 		private Resource currentResource;
 
 		private RDFLinkedListIterator(Resource r) {
@@ -113,6 +114,20 @@ public class JenaUtils {
 		}
 	}
 
+	public static RDFNode asJenaLiteral(Model model, Object value) {
+		if (value instanceof Iterable<?>) {
+			Iterable<?> iterable = (Iterable<?>) value;
+			Iterator<?> it = iterable.iterator();
+			Seq seq = model.createSeq();
+			while (it.hasNext()) {
+				Object object = (Object) it.next();
+				seq.add(object);
+			}
+			return seq;
+		} else {
+			return model.createTypedLiteral(value);
+		}
+	}
 	/**
 	 * Translate the RDF node to a java object
 	 * @param r
@@ -121,8 +136,19 @@ public class JenaUtils {
 	public static Object asJavaObject(RDFNode node) {
 		if(node == null)
 			return null;
-		if(node.isLiteral())
-			return node.asLiteral().getValue();
+		if(node.isLiteral()) {
+			Literal lit = node.asLiteral();
+			if(lit.getDatatypeURI() != null)
+				// if the value already have a data type defined, let Jena parse it properly
+				return lit.getValue();
+			Object value = lit.getValue();
+			try {
+				return new BigInteger(value.toString());
+			} catch(NumberFormatException e) {
+				// could not be parsed as a BigInteger
+				return value;
+			}
+		}
 		if(node.isResource()) {
 			Resource asResource = node.asResource();
 			if(getCollectionType(asResource).equals(CollectionType.UNKOWN))
@@ -132,7 +158,7 @@ public class JenaUtils {
 		}
 		return null;
 	}
-	
+
 	public static Iterable<?> toIterable(final Resource r) {
 		if(!isCollection(r))
 			throw new IllegalStateException(r.getURI() + " is not an RDF collection.");
@@ -142,7 +168,7 @@ public class JenaUtils {
 		if(cType.equals(CollectionType.SEQ) 
 				|| cType.equals(CollectionType.ALT) 
 				|| cType.equals(CollectionType.BAG) 
-				) {
+		) {
 			Container c = null;
 			if(cType == CollectionType.SEQ)
 				c = r.as(Seq.class);
@@ -150,9 +176,9 @@ public class JenaUtils {
 				c = r.as(Alt.class);
 			if(cType == CollectionType.BAG)
 				c = r.as(Bag.class);
-			
+
 			final NodeIterator nodeIterator = c.iterator();
-			
+
 			it = new Iterator<Object>() {
 				@Override
 				public boolean hasNext() {
@@ -169,11 +195,11 @@ public class JenaUtils {
 			};
 		} else {
 			// LINKED_LIST
-			
+
 			it = new RDFLinkedListIterator(r);
 		}
-		
-		
+
+
 		return new Iterable<Object>() {
 			@Override
 			public Iterator<Object> iterator() {

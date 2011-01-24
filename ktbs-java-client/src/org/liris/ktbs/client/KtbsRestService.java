@@ -14,7 +14,7 @@ public interface KtbsRestService {
 	public KtbsResponse createTraceModel(String baseURI, String modelURI);
 	public KtbsResponse createStoredTrace(String baseURI, String traceURI, String modelURI, String origin);
 	public KtbsResponse createComputedTrace(String baseURI, String traceURI, String methodURI, Collection<String> sourceTracesURIs);
-	public KtbsResponse createObsel(String traceURI, String obselURI, String typeURI, String subject, String beginDT, String endDT, BigInteger begin, BigInteger end, Map<String, String> attributes);
+	public KtbsResponse createObsel(String traceURI, String obselURI, String typeURI, String subject, String beginDT, String endDT, BigInteger begin, BigInteger end, Map<String, Object> attributes);
 	public KtbsResponse update(KtbsResource resource, String eTag, String... traceAspect);
 	public KtbsResponse delete(String uri);
 	

@@ -644,9 +644,9 @@ public class RdfResourceRepository implements ResourceRepository {
 				RDF.type, 
 				rdfModel.getResource(KtbsConstants.RELATION_TYPE));
 		if(domain!=null)
-			relType.setDomain(domain);
+			relType.addDomain(domain);
 		if(range!=null)
-			relType.setRange(range);
+			relType.addRange(range);
 
 		resources.put(relType.getURI(), relType);
 		return relType;

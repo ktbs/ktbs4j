@@ -6,7 +6,7 @@ import java.util.Iterator;
 public interface AttributeType extends KtbsResource {
 	
 	/**
-	 * Add a declared domain to this obsel type
+	 * Add a declared domain to this attribute type
 	 * @param domain
 	 */
 	public void addDomain(ObselType domain);
@@ -18,8 +18,8 @@ public interface AttributeType extends KtbsResource {
 	public Iterator<ObselType> listDomains();
 	
 	/**
-	 * Get the declared domain for this obsel type
-	 * @return the first domain declared in the underlying RDF triples,
+	 * Get the declared domain for this attribute type
+	 * @return the first domain found in the underlying RDF triples,
 	 * null if none.
 	 */
 	public ObselType getDomain();

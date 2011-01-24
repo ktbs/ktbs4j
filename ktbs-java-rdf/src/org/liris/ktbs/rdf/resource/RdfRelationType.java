@@ -2,6 +2,7 @@ package org.liris.ktbs.rdf.resource;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ResourceRepository;
@@ -9,7 +10,9 @@ import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfRelationType extends RdfKtbsResource implements
 RelationType {
@@ -46,13 +49,15 @@ RelationType {
 	}
 
 	@Override
-	public void setRange(ObselType range) {
-		checkExitsenceAndAddResource(KtbsConstants.P_HAS_RELATION_RANGE, range);
+	public void addRange(ObselType range) {
+		repository.checkExistency(range);
+		addResource(KtbsConstants.P_HAS_RELATION_RANGE, range.getURI());
 	}
 
 	@Override
-	public void setDomain(ObselType domain) {
-		checkExitsenceAndAddResource(KtbsConstants.P_HAS_RELATION_DOMAIN, domain);
+	public void addDomain(ObselType domain) {
+		repository.checkExistency(domain);
+		addResource(KtbsConstants.P_HAS_RELATION_DOMAIN, domain.getURI());
 	}
 
 	@Override
@@ -92,5 +97,27 @@ RelationType {
 		RelationType superRelationType = relationType.getSuperRelationType();
 		if(superRelationType != null)
 			inferRanges(superRelationType, ranges);
+	}
+
+	@Override
+	public Iterator<ObselType> listRanges() {
+		StmtIterator it = rdfModel.listStatements(
+				rdfModel.getResource(uri), 
+				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_RANGE), 
+				(RDFNode)null
+		);
+		
+		return new RdfObjectIterator<ObselType>(it, ObselType.class, repository, false);
+	}
+
+	@Override
+	public Iterator<ObselType> listDomains() {
+		StmtIterator it = rdfModel.listStatements(
+				rdfModel.getResource(uri), 
+				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_DOMAIN), 
+				(RDFNode)null
+				);
+		
+		return new RdfObjectIterator<ObselType>(it, ObselType.class, repository, false);
 	}
 }

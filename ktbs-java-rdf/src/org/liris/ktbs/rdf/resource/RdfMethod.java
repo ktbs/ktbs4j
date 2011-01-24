@@ -7,7 +7,7 @@ import org.liris.ktbs.core.api.Method;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
-public class RdfMethod extends RdfKtbsResourceWithParameter implements Method {
+public class RdfMethod extends RdfResourceWithParameter implements Method {
 
 	public RdfMethod(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);

@@ -3,7 +3,6 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.api.KtbsParameter;
 import org.liris.ktbs.core.api.ResourceWithParameters;
@@ -15,9 +14,9 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class RdfKtbsResourceWithParameter extends RdfKtbsResource implements ResourceWithParameters {
+public class RdfResourceWithParameter extends RdfKtbsResource implements ResourceWithParameters {
 
-	public RdfKtbsResourceWithParameter(String uri, Model rdfModel, ResourceRepository holder) {
+	public RdfResourceWithParameter(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
 	}
 	
@@ -62,7 +61,10 @@ public class RdfKtbsResourceWithParameter extends RdfKtbsResource implements Res
 	
 	@Override
 	public void setParameter(String key, String value) {
-		throw new ReadOnlyObjectException(RdfKtbsResourceWithParameter.this);
+		removeParameter(key);
+		rdfModel.getResource(uri).addLiteral(
+				rdfModel.getProperty(KtbsConstants.P_HAS_PARAMETER), 
+				rdfModel.createLiteral(key+"="+value));
 	}
 
 	@Override
@@ -76,6 +78,11 @@ public class RdfKtbsResourceWithParameter extends RdfKtbsResource implements Res
 
 	@Override
 	public void removeParameter(String key) {
-		throw new ReadOnlyObjectException(RdfKtbsResourceWithParameter.this);
+		Iterator<KtbsParameter> it = listParameters();
+		while (it.hasNext()) {
+			KtbsParameter ktbsParameter = (KtbsParameter) it.next();
+			if(ktbsParameter.getName().equals(key))
+				it.remove();
+		}
 	}
 }

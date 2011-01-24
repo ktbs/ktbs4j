@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.liris.ktbs.core.ResourceNotFoundException;
+
 public interface Obsel extends KtbsResource {
 	public Trace getTrace();
 	

@@ -19,7 +19,7 @@ public class RdfComputedTrace extends RdfTrace implements ComputedTrace {
 
 	public RdfComputedTrace(String uri, Model rdfModel, ResourceRepository holder) {
 		super(uri, rdfModel, holder);
-		resourceWithParameterAspect = new RdfKtbsResourceWithParameter(uri, rdfModel, holder);
+		resourceWithParameterAspect = new RdfResourceWithParameter(uri, rdfModel, holder);
 	}
 	private ResourceWithParameters resourceWithParameterAspect;
 	

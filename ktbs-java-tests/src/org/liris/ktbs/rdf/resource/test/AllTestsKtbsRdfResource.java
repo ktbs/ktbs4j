@@ -23,6 +23,7 @@ public class AllTestsKtbsRdfResource {
 		suite.addTestSuite(RdfObselTestCase.class);
 		//$JUnit-END$
 		suite.addTestSuite(RdfObselTestCase.class);
+		suite.addTestSuite(RdfResourceWithParameterTestCase.class);
 		return suite;
 	}
 

@@ -4,10 +4,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.liris.ktbs.core.InferenceException;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
+import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -68,36 +70,42 @@ RelationType {
 	@Override
 	public ObselType[] getDomainsInferred() {
 		Collection<ObselType> domains = new HashSet<ObselType>();
-		inferDomains(this, domains);
+		ObselType domain = getDomain();
+		if(domain!=null)
+			domains.add(domain);
+		for(RelationType rType:inferSuperRelationTypes()) 
+			domains.addAll(KtbsUtils.toLinkedList(rType.listDomains()));
 		return domains.toArray(new ObselType[domains.size()]);
 	}
 
-	private void inferDomains(RelationType relationType,
-			Collection<ObselType> domains) {
-		ObselType domain = relationType.getDomain();
-		if(domain!=null)
-			domains.add(domain);
-		RelationType superRelationType = relationType.getSuperRelationType();
-		if(superRelationType != null)
-			inferDomains(superRelationType, domains);
+	private Collection<RelationType> inferSuperRelationTypes() {
+		Collection<RelationType> types = new HashSet<RelationType>();
+		return inferSuperRelationTypes(this, types);
+	}
+
+	private static Collection<RelationType> inferSuperRelationTypes(RelationType type, Collection<RelationType> types) {
+		RelationType superRelationType = type.getSuperRelationType();
+		if(superRelationType != null) {
+			if(types.contains(superRelationType))
+				throw new InferenceException("There are cycles in the Relation Type hierarchy. Problematic relation type: " + superRelationType);
+
+			types.add(type.getSuperRelationType());
+			return inferSuperRelationTypes(superRelationType, types);
+		} else
+			return 	types;
 	}
 
 	@Override
 	public ObselType[] getRangesInferred() {
 		Collection<ObselType> ranges = new HashSet<ObselType>();
-		inferRanges(this, ranges);
+		ObselType range = getRange();
+		if(range!=null)
+			ranges.add(range);
+		for(RelationType rType:inferSuperRelationTypes()) 
+			ranges.addAll(KtbsUtils.toLinkedList(rType.listRanges()));
 		return ranges.toArray(new ObselType[ranges.size()]);
 	}
 
-	private void inferRanges(RelationType relationType,
-			Collection<ObselType> ranges) {
-		ObselType range = relationType.getRange();
-		if(range != null)
-			ranges.add(range);
-		RelationType superRelationType = relationType.getSuperRelationType();
-		if(superRelationType != null)
-			inferRanges(superRelationType, ranges);
-	}
 
 	@Override
 	public Iterator<ObselType> listRanges() {
@@ -106,7 +114,7 @@ RelationType {
 				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_RANGE), 
 				(RDFNode)null
 		);
-		
+
 		return new RdfObjectIterator<ObselType>(it, ObselType.class, repository, false);
 	}
 
@@ -116,8 +124,8 @@ RelationType {
 				rdfModel.getResource(uri), 
 				rdfModel.getProperty(KtbsConstants.P_HAS_RELATION_DOMAIN), 
 				(RDFNode)null
-				);
-		
+		);
+
 		return new RdfObjectIterator<ObselType>(it, ObselType.class, repository, false);
 	}
 }

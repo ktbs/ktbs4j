@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.DomainException;
+import org.liris.ktbs.core.InferenceException;
 import org.liris.ktbs.core.RangeException;
 import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.TemporalDomainException;
@@ -202,6 +203,8 @@ public interface Obsel extends KtbsResource {
 	 * @param value the value of the attribute
 	 * @throws ResourceNotFoundException when the obsel cannot access
 	 * the {@link TraceModel} whose obsel type belongs to.
+	 * @throws InferenceException when there is an issue infering the type hierarchy 
+	 * of the obsel type of this obsel
 	 */
 
 	public void addAttribute(AttributeType attribute, Object value);
@@ -216,6 +219,8 @@ public interface Obsel extends KtbsResource {
 	 * @param target the target obsel of the new relation
 	 * @throws RangeException when the relation type does not 
 	 * allow an obsel of that type as a target obsel of this relation
+	 * @throws InferenceException when there is an issue infering the type hierarchy 
+	 * of the obsel type of this obsel
 	 * 
 	 */
 	public void addOutgoingRelation(RelationType relationType, Obsel target);
@@ -227,6 +232,8 @@ public interface Obsel extends KtbsResource {
 	 * @param relationType the relation type of the new relation
 	 * @throws DomainException when the relation type does not 
 	 * allow an obsel of that type as a source obsel of this relation
+	 * @throws InferenceException when there is an issue infering the type hierarchy 
+	 * of the obsel type of this obsel
 	 */
 	public void addIncomingRelation(Obsel source, RelationType relationType);
 

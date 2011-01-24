@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.liris.ktbs.core.InferenceException;
 import org.liris.ktbs.core.api.AttributeType;
 import org.liris.ktbs.core.api.Mode;
 import org.liris.ktbs.core.api.ObselType;
@@ -67,7 +68,7 @@ public class RdfObselTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 		assertEquals(0, KtbsUtils.count(channelEvent.listAttributes(Mode.ASSERTED)));
 		assertEquals(0, KtbsUtils.count(sendMsg.listAttributes(Mode.ASSERTED)));
 
-		// open chant has no super obsel type
+		// open chat has no super obsel type
 		assertEquals(1, KtbsUtils.count(openChat.listAttributes(Mode.INFERRED)));
 		next = openChat.listAttributes(Mode.INFERRED).next();
 		assertEquals(traceModel.getAttributeType("http://localhost:8001/base1/model1/channel"), next);
@@ -174,8 +175,56 @@ public class RdfObselTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 	}
 
 	@Test
-	public void testSetSuperObselType() {
+	public void testInferSuperTypes() {
+		assertEquals(0, KtbsUtils.toLinkedList(channelEvent.inferSuperTypes()).size());
+		assertEquals(0, KtbsUtils.toLinkedList(openChat.inferSuperTypes()).size());
 		
+		assertEquals(1, KtbsUtils.toLinkedList(closeChat.inferSuperTypes()).size());
+		assertTrue(KtbsUtils.toLinkedList(closeChat.inferSuperTypes()).contains(channelEvent));
+
+		assertEquals(1, KtbsUtils.toLinkedList(abstractMsg.inferSuperTypes()).size());
+		assertTrue(KtbsUtils.toLinkedList(abstractMsg.inferSuperTypes()).contains(channelEvent));
+
+		assertEquals(2, KtbsUtils.toLinkedList(sendMsg.inferSuperTypes()).size());
+		assertTrue(KtbsUtils.toLinkedList(sendMsg.inferSuperTypes()).contains(channelEvent));
+		assertTrue(KtbsUtils.toLinkedList(sendMsg.inferSuperTypes()).contains(abstractMsg));
+
+		assertEquals(2, KtbsUtils.toLinkedList(recvMsg.inferSuperTypes()).size());
+		assertTrue(KtbsUtils.toLinkedList(recvMsg.inferSuperTypes()).contains(channelEvent));
+		assertTrue(KtbsUtils.toLinkedList(recvMsg.inferSuperTypes()).contains(abstractMsg));
+		
+		// create a cycle
+		channelEvent.setSuperObselType(recvMsg);
+		try {
+			KtbsUtils.count(recvMsg.inferSuperTypes());
+			fail("should have thrown an inference exception");
+		} catch(InferenceException e) {
+		
+		}
+		try {
+			KtbsUtils.count(channelEvent.inferSuperTypes());
+			fail("should have thrown an inference exception");
+		} catch(InferenceException e) {
+			
+		}
+		try {
+			KtbsUtils.count(abstractMsg.inferSuperTypes());
+			fail("should have thrown an inference exception");
+		} catch(InferenceException e) {
+			
+		}
+		
+	}
+	
+	@Test
+	public void testSetSuperObselType() {
+		assertNull(openChat.getSuperObselType());
+		openChat.setSuperObselType(abstractMsg);
+		assertNotNull(openChat.getSuperObselType());
+		assertEquals(abstractMsg, openChat.getSuperObselType());
+		openChat.setSuperObselType(channelEvent);
+		assertNotNull(openChat.getSuperObselType());
+		assertEquals(channelEvent, openChat.getSuperObselType());
 	}
 	
 	@Test

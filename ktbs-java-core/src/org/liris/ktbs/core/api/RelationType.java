@@ -2,6 +2,8 @@ package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
+import org.liris.ktbs.core.InferenceException;
+
 /**
  * A KTBS relation type.
  * 
@@ -49,6 +51,8 @@ public interface RelationType extends KtbsResource {
 	 * accepted as a target obsel for this relation type.
 	 * 
 	 * @return all domains accepted in an array
+	 * @throws InferenceException when there is a problem 
+	 * in the relation type hierarchy
 	 */
 	public ObselType[] getDomainsInferred();
 
@@ -57,12 +61,15 @@ public interface RelationType extends KtbsResource {
 	 * accepted as a source obsel for this relation type.
 	 * 
 	 * @return all ranges accepted in an array
+	 * @throws InferenceException when there is a problem 
+	 * in the relation type hierarchy
 	 */
 	public ObselType[] getRangesInferred();
 
 	/**
 	 * Add a declared range to the relation type.
 	 * @param range
+	 * 
 	 */
 	public void addRange(ObselType range);
 	

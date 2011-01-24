@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
+import org.liris.ktbs.core.InferenceException;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.api.AttributeType;
@@ -19,10 +21,6 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfObselType extends RdfKtbsResource implements ObselType {
-
-	private Collection<AttributeType> inferredAttributes = null;
-	private Collection<RelationType> inferredOutgoingRelations = null;
-	private Collection<RelationType> inferredIncomingRelations = null;
 
 	RdfObselType(String uri, Model rdfModel, ResourceRepository repo) {
 		super(uri, rdfModel, repo);
@@ -44,33 +42,19 @@ public class RdfObselType extends RdfKtbsResource implements ObselType {
 
 		Iterator<AttributeType> assertedIt = new SubjectWithRdfModelIterator<AttributeType>(it, AttributeType.class, repository, false);
 		if(mode == Mode.INFERRED) {
-			inferredAttributes = new HashSet<AttributeType>();
-			inferAttributes(this);
+			Set<AttributeType> inferredAttributes = new HashSet<AttributeType>();
+			for(AttributeType type:KtbsUtils.toIterable(assertedIt))
+				inferredAttributes.add(type);
+
+			for(ObselType superType:KtbsUtils.toIterable(inferSuperTypes()))
+				inferredAttributes.addAll(KtbsUtils.toLinkedList(superType.listAttributes(Mode.ASSERTED)));
 			return Collections.unmodifiableCollection(inferredAttributes).iterator();
 		} else
 			return assertedIt;
 	}
 
-	private void inferAttributes(ObselType obselType) {
-		inferredAttributes.addAll(KtbsUtils.toLinkedList(obselType.listAttributes(Mode.ASSERTED)));
-		ObselType superObselType = obselType.getSuperObselType();
-		if(superObselType!= null)
-			inferAttributes(superObselType);
-	}
 
-	private void inferOutgoingRelations(ObselType obselType) {
-		inferredOutgoingRelations.addAll(KtbsUtils.toLinkedList(obselType.listOutgoingRelations(Mode.ASSERTED)));
-		ObselType superObselType = obselType.getSuperObselType();
-		if(superObselType!= null)
-			inferOutgoingRelations(superObselType);
-	}
 
-	private void inferIncomingRelations(ObselType obselType) {
-		inferredIncomingRelations.addAll(KtbsUtils.toLinkedList(obselType.listIncomingRelations(Mode.ASSERTED)));
-		ObselType superObselType = obselType.getSuperObselType();
-		if(superObselType!= null)
-			inferIncomingRelations(superObselType);
-	}
 
 	@Override
 	public Iterator<RelationType> listOutgoingRelations(Mode mode) {
@@ -82,8 +66,11 @@ public class RdfObselType extends RdfKtbsResource implements ObselType {
 
 		SubjectWithRdfModelIterator<RelationType> assertedIt = new SubjectWithRdfModelIterator<RelationType>(it, RelationType.class, repository, false);
 		if(mode == Mode.INFERRED) {
-			inferredOutgoingRelations = new HashSet<RelationType>();
-			inferOutgoingRelations(this);
+			Set<RelationType> inferredOutgoingRelations = new HashSet<RelationType>();
+			for(RelationType rType:KtbsUtils.toIterable(assertedIt))
+				inferredOutgoingRelations.add(rType);
+			for(ObselType superType:KtbsUtils.toIterable(inferSuperTypes()))
+				inferredOutgoingRelations.addAll(KtbsUtils.toLinkedList(superType.listOutgoingRelations(Mode.ASSERTED)));
 			return Collections.unmodifiableCollection(inferredOutgoingRelations).iterator();
 		} else
 			return assertedIt;
@@ -98,8 +85,11 @@ public class RdfObselType extends RdfKtbsResource implements ObselType {
 		);
 		SubjectWithRdfModelIterator<RelationType> assertedIt = new SubjectWithRdfModelIterator<RelationType>(it, RelationType.class, repository, false);
 		if(mode == Mode.INFERRED) {
-			inferredIncomingRelations = new HashSet<RelationType>();
-			inferIncomingRelations(this);
+			Set<RelationType> inferredIncomingRelations = new HashSet<RelationType>();
+			for(RelationType rType:KtbsUtils.toIterable(assertedIt))
+				inferredIncomingRelations.add(rType);
+			for(ObselType superType:KtbsUtils.toIterable(inferSuperTypes()))
+				inferredIncomingRelations.addAll(KtbsUtils.toLinkedList(superType.listIncomingRelations(Mode.ASSERTED)));
 			return Collections.unmodifiableCollection(inferredIncomingRelations).iterator();
 		} else
 			return assertedIt;
@@ -128,17 +118,24 @@ public class RdfObselType extends RdfKtbsResource implements ObselType {
 			ObselType superObselType = getSuperObselType();
 			return superObselType!= null && superObselType.equals(type);
 		} else {
-			Collection<ObselType> superTypes = new HashSet<ObselType>();
-			inferSuperTypes(this, superTypes);
-			return superTypes.contains(type);
+			return KtbsUtils.toLinkedList(inferSuperTypes()).contains(type);
 		}
 	}
 
 	private void inferSuperTypes(ObselType type, Collection<ObselType> superTypes) {
 		ObselType superObselType = type.getSuperObselType();
 		if(superObselType != null) {
+			if(superTypes.contains(superObselType))
+				throw new InferenceException("There are cycles in the Obsel Type hierarchie. Problematic obsel type: " + superObselType);
 			superTypes.add(superObselType);
 			inferSuperTypes(superObselType, superTypes);
 		}
+	}
+
+	@Override
+	public Iterator<ObselType> inferSuperTypes() {
+		Collection<ObselType> superTypes = new HashSet<ObselType>();
+		inferSuperTypes(this, superTypes);
+		return Collections.unmodifiableCollection(superTypes).iterator();
 	}
 }

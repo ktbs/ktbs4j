@@ -7,6 +7,16 @@ import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.core.api.KtbsStatement;
 import org.liris.ktbs.core.api.Method;
 
+/**
+ * A read-only method representing KTBS built-in method and throwing 
+ * an exception when invoking methods that are not relevant for such 
+ * a method.
+ * 
+ * 
+ * @author Damien Cram
+ * @see Method
+ * @see BuiltinResourceException
+ */
 public class BuiltinMethod implements Method {
 
 	private String uri;

@@ -4,6 +4,13 @@ import java.util.Arrays;
 
 import org.liris.ktbs.core.api.ObselType;
 
+/**
+ * An exception that is thrown when the domain or the range of an attribute 
+ * type or a relation type is violated.
+ * 
+ * @author Damien Cram
+ * @see RangeException
+ */
 @SuppressWarnings("serial")
 public abstract class InvalidDomainOrRangeException extends RuntimeException {
 

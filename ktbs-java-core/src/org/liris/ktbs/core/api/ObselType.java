@@ -2,13 +2,49 @@ package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
-
+/**
+ * A KTBS obsel type.
+ * 
+ * @author Damien Cram
+ *
+ */
 public interface ObselType extends KtbsResource {
+	
+	/**
+	 * Give the trace model in which this obsel type is defined.
+	 * 
+	 * <p>
+	 * The trace model is found by resolving the parent uri of this
+	 * obsel type.
+	 * </p>
+	 * 
+	 * @return the parent trace model
+	 */
 	public TraceModel getTraceModel();
 	
+	/**
+	 * Tell if an obsel type is a super type of this obsel type.
+	 * 
+	 * @param type the candidate super obsel type
+	 * @param mode should use inferrence or not
+	 * @return true if the param obsel type is a super type of 
+	 * this obsel type for the requested exploration mode, false otherwise.
+	 * 
+	 */
 	public boolean hasSuperType(ObselType type, Mode mode);
 	
+	/**
+	 * Give the value of the super obsel type asserted for this obsel type.
+	 * 
+	 * @return the super obsel type asserted if any, null otherwise
+	 */
 	public ObselType getSuperObselType();
+	
+	/**
+	 * Remove any previously defined super obsel type and set a new one.
+	 * 
+	 * @param type the new super obsel type
+	 */
 	public void setSuperObselType(ObselType type);
 	
 	/**

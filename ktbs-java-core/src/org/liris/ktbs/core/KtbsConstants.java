@@ -1,5 +1,12 @@
 package org.liris.ktbs.core;
 
+/**
+ * Constant definitions for the vocabulary defined by the KTBS in the
+ * namespace "http://liris.cnrs.fr/silex/2009/ktbs#".
+ *  
+ * @author Damien Cram
+ *
+ */
 public interface KtbsConstants {
 
 	// Rest aspects defined by the KTBS

@@ -1,6 +1,13 @@
 package org.liris.ktbs.core;
 
 
+/**
+ * An exception that is thrown when deserializing a KTBS resource from a stream
+ * failed.
+ * 
+ * @author Damien Cram
+ *
+ */
 @SuppressWarnings("serial")
 public class ResourceLoadException extends Exception {
 	private String message;

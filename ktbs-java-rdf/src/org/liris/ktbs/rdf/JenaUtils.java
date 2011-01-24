@@ -32,9 +32,9 @@ public class JenaUtils {
 	/**
 	 * Creates a new model with only the statement selected by a selector.
 	 * 
-	 * @param model
-	 * @param selector
-	 * @return
+	 * @param model the input Jena model
+	 * @param selector the Jena selector that selects the statements to be kept
+	 * @return the filtered model
 	 */
 	public static Model filterModel(Model model, Selector selector) {
 		Model filteredModel = ModelFactory.createDefaultModel();
@@ -129,9 +129,10 @@ public class JenaUtils {
 		}
 	}
 	/**
-	 * Translate the RDF node to a java object
-	 * @param r
-	 * @return
+	 * Translate the RDF node to a java object.
+	 * 
+	 * @param node the RDF node to be transformed
+	 * @return the Java object representation of that node
 	 */
 	public static Object asJavaObject(RDFNode node) {
 		if(node == null)

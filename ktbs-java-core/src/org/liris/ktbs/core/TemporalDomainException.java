@@ -1,6 +1,13 @@
 package org.liris.ktbs.core;
 
-
+/**
+ * An exception thrown whenever a value is provided for a date field (trace origin, 
+ * obsel begin, obsel end, etc) that is not compatible with the temporal domain defined 
+ * on a trace.
+ * 
+ * @author Damien Cram
+ *
+ */
 public class TemporalDomainException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	

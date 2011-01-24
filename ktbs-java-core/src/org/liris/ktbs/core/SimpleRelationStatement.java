@@ -4,6 +4,12 @@ import org.liris.ktbs.core.api.Obsel;
 import org.liris.ktbs.core.api.RelationStatement;
 import org.liris.ktbs.core.api.RelationType;
 
+/**
+ * A simple implementation of the {@link RelationStatement} interface.
+ * 
+ * @author Damien Cram
+ *
+ */
 public class SimpleRelationStatement implements RelationStatement {
 
 	private Obsel from;

@@ -332,13 +332,7 @@ public class RdfKtbsResource extends AbstractKtbsResource implements Serializabl
 			throw new IllegalStateException("Properties with KTBS's namespace are not allowed to be modified from this method.");
 
 		Property property = rdfModel.getProperty(pName);
-		StmtIterator stmt = rdfModel.listStatements(
-				rdfModel.getResource(uri), 
-				property, 
-				(RDFNode)null
-		);
-		while (stmt.hasNext()) 
-			stmt.removeNext();
+		rdfModel.getResource(uri).removeAll(property);
 	}
 
 	protected <T extends KtbsResource> T getObjectOfPropertyAsKtbsResourceIfExists(String pName, Class<T> clazz) {

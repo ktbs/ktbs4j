@@ -61,7 +61,11 @@ public interface KtbsResponse {
 	public String getHTTPLocation();
 	
 	/**
-	 * Call the underlying method {@link HttpResponse#getEntity().getContentStream()}.
+	 * The body of the HTTP response as a stream.
+	 * 
+	 * <p>
+	 * The stream is obtained by calling the method <code>getContentStream()</code> on the underlying HTTP entity. 
+	 * </p>
 	 * 
 	 * @return the body of the underlying HTTP response, as 
 	 * an input stream.

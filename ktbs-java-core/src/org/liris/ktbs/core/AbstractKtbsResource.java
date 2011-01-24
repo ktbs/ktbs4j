@@ -5,8 +5,13 @@ import java.net.URISyntaxException;
 
 import org.liris.ktbs.core.api.KtbsResource;
 
+/**
+ * A generic implementation of a {@link KtbsResource}.
+ * 
+ * @author Damien Cram
+ *
+ */
 public abstract class AbstractKtbsResource implements KtbsResource {
-
 
 	protected final String uri;
 	

@@ -30,6 +30,14 @@ import org.liris.ktbs.core.api.TraceModel;
 
 public class KtbsUtils {
 
+	/**
+	 * Give the Java class that is used to create new instances 
+	 * of a KTBS resource of given rdf type.
+	 * 
+	 * @param rdfType the value of the rdf:type property of the KTBS resource
+	 * @return the Java class that is associated to that rdf type, null if 
+	 * the rdf type does not defined a KTBS resource
+	 */
 	public static Class<? extends KtbsResource> getJavaClass(String rdfType) {
 		if(rdfType.equals(KtbsConstants.ROOT)) 
 			return Root.class;
@@ -99,14 +107,21 @@ public class KtbsUtils {
 	 * @return the URI of the parent resource of this resource, null 
 	 * if no parent URI could be resolved
 	 * 
-	 * TODO implements this method the proper way, i.e. by get the parent 
+	 * TODO implements this method the proper way, i.e. by getting the parent 
 	 * URI of the resource from the resource itself.
 	 * 
 	 */
 	public static String getParentResource(KtbsResource resource) {
-		return resolveParentURI(resource.getURI())
-;	}
+		return resolveParentURI(resource.getURI());
+	}
 	
+	/**
+	 * Give the rdf type that is used to represent a KTBS resource of a 
+	 * given Java type in RDF, according to KTBS specifications.
+	 * 
+	 * @param clazz the type of KTBS resource
+	 * @return the rdf type associated to that class of KTBS resource
+	 */
 	public static String getRDFType(Class<?> clazz) {
 		if(Root.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.ROOT;
@@ -135,6 +150,13 @@ public class KtbsUtils {
 	}
 
 
+	/**
+	 * Create a new linked list built from an iterator.
+	 * 
+	 * @param <T> the class of object contained in the new linked list
+	 * @param it the source iterator
+	 * @return the created linked list
+	 */
 	public static <T> LinkedList<T> toLinkedList(Iterator<T> it) {
 		LinkedList<T> list = new LinkedList<T>();
 		while (it.hasNext())
@@ -142,6 +164,13 @@ public class KtbsUtils {
 		return list;
 	}
 
+	/**
+	 * Create a new iterable from an iterator.
+	 * 
+	 * @param <T> the class of object contained in the new iterable
+	 * @param it the source iterator
+	 * @return the created iterable object
+	 */
 	public static <T> Iterable<T> toIterable(final Iterator<T> it) {
 		Iterable<T> iterable = new Iterable<T>() {
 			@Override
@@ -152,6 +181,13 @@ public class KtbsUtils {
 		return iterable;
 	}
 
+	/**
+	 * Transform a collection of KTBS statement to a String-Object map in which 
+	 * keys are the predicate uris of the statement and values are associated values.
+	 * 
+	 * @param it the iterator on input KTBS statements
+	 * @return the created map
+	 */
 	public static Map<String,Object> toMap(Iterator<KtbsStatement> it) {
 		Map<String,Object> map = new HashMap<String, Object>();
 		while (it.hasNext()) {
@@ -161,6 +197,12 @@ public class KtbsUtils {
 		return map;
 	}
 
+	/**
+	 * Give the number of element in an iterator.
+	 * 
+	 * @param it the input iterator
+	 * @return the number of elements
+	 */
 	public static int  count(Iterator<?> it) {
 		int cnt = 0;
 		while (it.hasNext()) {
@@ -170,6 +212,15 @@ public class KtbsUtils {
 		return cnt;
 	}
 
+	/**
+	 * Give the number of KTBS statements that have the specified value as 
+	 * subject.
+	 * 
+	 * @param it the iterator on input KTBS statement
+	 * @param subject the requested subject
+	 * @return the number of KTBS statements that have the specified value as 
+	 * subject
+	 */
 	public static int  countSubject(Iterator<KtbsStatement> it, String subject) {
 		int cnt = 0;
 		while (it.hasNext()) {
@@ -180,16 +231,34 @@ public class KtbsUtils {
 		return cnt;
 	}
 
-	public static int  countProperty(Iterator<KtbsStatement> it, String property) {
+	/**
+	 * Give the number of KTBS statements that have a predicate
+	 * of a given name.
+	 * 
+	 * @param it the iterator on input KTBS statement
+	 * @param pName the requested property name 
+	 * @return the number of KTBS statements that have a predicate
+	 * of the specified name
+	 */
+	public static int  countProperty(Iterator<KtbsStatement> it, String pName) {
 		int cnt = 0;
 		while (it.hasNext()) {
 			KtbsStatement ktbsStatement = it.next();
-			if(ktbsStatement.getProperty().equals(property))
+			if(ktbsStatement.getProperty().equals(pName))
 				cnt++;
 		}
 		return cnt;
 	}
 
+	/**
+	 * Give the number of KTBS statements that have an object
+	 * of a specified value.
+	 * 
+	 * @param it the iterator on input KTBS statement
+	 * @param object the requested object value
+	 * @return the number of KTBS statements that have an object 
+	 * of the specified value
+	 */
 	public static int  countObject(Iterator<KtbsStatement> it, String object) {
 		int cnt = 0;
 		while (it.hasNext()) {
@@ -200,16 +269,34 @@ public class KtbsUtils {
 		return cnt;
 	}
 
-	public static int  countSubjectProperty(Iterator<KtbsStatement> it, String subject, String property) {
+	/**
+	 * Give the number of KTBS statements that have a given subject and a given predicate name.
+	 * 
+	 * @param it the iterator on input KTBS statement
+	 * @param subject the requested subject name
+	 * @param pName the requested predicate name
+	 * @return the number of KTBS statements that have a given subject and a given predicate name
+	 */
+	public static int  countSubjectProperty(Iterator<KtbsStatement> it, String subject, String pName) {
 		int cnt = 0;
 		while (it.hasNext()) {
 			KtbsStatement ktbsStatement = it.next();
-			if(ktbsStatement.getSubject().equals(subject) && ktbsStatement.getProperty().equals(property) )
+			if(ktbsStatement.getSubject().equals(subject) && ktbsStatement.getProperty().equals(pName) )
 				cnt++;
 		}
 		return cnt;
 	}
 
+	/**
+	 * Give the number of KTBS statements that have a given subject 
+	 * and a predicate starting with a given prefix.
+	 * 
+	 * @param it the iterator on input KTBS statement
+	 * @param subject the requested subject name
+	 * @param propertyNS the requested predicate prefix
+	 * @return the number of KTBS statements that have a given subject 
+	 * and a predicate starting with a given prefix
+	 */
 	public static int  countSubjectPropertyNS(Iterator<KtbsStatement> it, String subject, String propertyNS) {
 		int cnt = 0;
 		while (it.hasNext()) {
@@ -220,6 +307,12 @@ public class KtbsUtils {
 		return cnt;
 	}
 
+	/**
+	 * Resolve the local name (last part after all "/" chars) of a given uri. 
+	 * 
+	 * @param uri the absolute uri
+	 * @return the local name
+	 */
 	public static String resolveLocalName(String uri) {
 		String path;
 		try {
@@ -234,6 +327,12 @@ public class KtbsUtils {
 		}
 	}
 
+	/**
+	 * Resolve the parent (the prefix until the last "/" included) of a given uri. 
+	 * 
+	 * @param uri the absolute uri
+	 * @return the parent uri
+	 */
 	public static String resolveParentURI(String uri) {
 		try {
 			String localName = resolveLocalName(uri);
@@ -246,6 +345,14 @@ public class KtbsUtils {
 
 	}
 
+	/**
+	 * Replace the last match of a regex with a given value.
+	 * 
+	 * @param input the input string
+	 * @param regex the regex
+	 * @param replacement the replacement string
+	 * @return the new string
+	 */
 	public static String replaceLast(String input, String regex, String replacement) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(input);
@@ -263,6 +370,13 @@ public class KtbsUtils {
 		return sb.toString();
 	}
 
+	/**
+	 * Parse a string that contains a KTBS parameter definition, i.e. a string 
+	 * of the form "key=value", into a {@link KtbsParameter}.
+	 * 
+	 * @param string the string containing the parameter definition
+	 * @return the {@link KtbsParameter} object created from that string
+	 */
 	public static KtbsParameter parseParameter(String string) {
 		int index = string.indexOf("=");
 		String key = string.substring(0, index);

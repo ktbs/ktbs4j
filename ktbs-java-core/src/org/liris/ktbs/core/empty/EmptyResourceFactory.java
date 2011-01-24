@@ -20,7 +20,9 @@ import org.liris.ktbs.core.api.TraceModel;
 
 /**
  * 
- * A factory that creates KTBS resources from an URI only.
+ * A factory that creates KTBS resources from an URI only. Any invocation 
+ * on a method that is different from {@link KtbsResource#getURI()} will throw
+ * an {@link UnsupportedOperationException}.
  * 
  * @author Damien Cram 
  *

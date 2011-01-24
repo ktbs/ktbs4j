@@ -2,7 +2,12 @@ package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
-
+/**
+ * A KTBS attribute type.
+ * 
+ * @author Damien Cram
+ *
+ */
 public interface AttributeType extends KtbsResource {
 	
 	/**

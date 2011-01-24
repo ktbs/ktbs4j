@@ -11,12 +11,12 @@ import org.apache.commons.logging.LogFactory;
  * 
  * <p>
  * 
- * KTBSClientApplication is a singleton that provides clients for communicating
- * with KTBS servers. Each client is an instance of the class 
- * {@link KtbsClient}. Available services are defined in 
- * the interface {@link KtbsClientService} and implemented by <code>KtbsClient</code>.
+ * KTBSClientApplication is a singleton that provides client instance for communicating
+ * with KTBS servers. Available services are defined in 
+ * the interface {@link KtbsClientService}.
  * 
  * </p>
+ * The KTBS Rest service for a guven root is obtained via the method {@link #getRestService(String)}.
  * <p>
  * 
  * Each KTBS server is identified by the URI of its KTBS root. The KTBSClientApplication allows only 
@@ -44,11 +44,8 @@ public class KtbsClientApplication {
 
 	private static final Log log = LogFactory.getLog(KtbsClientApplication.class);
 	
-
-	
 	// Only one REST service instance per KtbsRoot
 	private HashMap<String, KtbsRestService> restServices = new HashMap<String, KtbsRestService>();
-	
 	
 	
 	

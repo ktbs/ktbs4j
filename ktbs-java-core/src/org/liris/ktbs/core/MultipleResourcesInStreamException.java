@@ -1,6 +1,12 @@
 package org.liris.ktbs.core;
 
-
+/**
+ * An exception that is thrown when deserializing a KTBS resource from a stream
+ * failed due to too many different resources defined in the same stream.
+ * 
+ * @author Damien Cram
+ *
+ */
 @SuppressWarnings("serial")
 public class MultipleResourcesInStreamException extends ResourceLoadException {
 	

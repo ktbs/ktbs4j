@@ -1,5 +1,11 @@
 package org.liris.ktbs.core;
 
+/**
+ * Constant definitions for the Jena writer types.
+ *  
+ * @author Damien Cram
+ *
+ */
 public interface JenaConstants {
 	public static final String TURTLE = "TURTLE";
 	public static final String N3 = "N3";

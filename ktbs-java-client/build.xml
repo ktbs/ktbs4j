@@ -9,6 +9,7 @@
 	<property name="lib.httpcomponents-core"	location="${syslib}/httpcomponents-core-4.1"/>
 	<property name="lib.jena"	location="${syslib}/Jena-2.6.3/lib"/>
 	<property name="lib.junit"	location="${syslib}/junit-4.2.8"/>
+	<property name="lib.google-collections"	location="${syslib}/guava-r07"/>
 	
 	
 <property name="rdfproject.path" location="../KTBS RDF"/>
@@ -49,6 +50,7 @@
 <copy file="${lib.jena}/slf4j-api-1.5.8.jar" todir="dist/lib"/>
 <copy file="${lib.jena}/slf4j-log4j12-1.5.8.jar" todir="dist/lib"/>
 <copy file="${lib.jena}/xercesImpl-2.7.1.jar" todir="dist/lib"/>
+<copy file="${lib.google-collections}/guava-r07.jar" todir="dist/lib"/>
 </target>
 	
 	
@@ -57,7 +59,7 @@
 		<javadoc
 		           destdir="dist/doc/"
 		           author="true"
-		           public="true"
+				   access="public"
 		           version="true"
 		           use="true"
 		           windowtitle="KTBS Client for Java">
@@ -71,6 +73,7 @@
 		    <bottom><![CDATA[<i>Copyright &#169; 2010 LIRIS UMR 5205 CNRS. All Rights Reserved.</i>]]></bottom>
 		    <group title="KTBS classes" packages="org.liris.ktbs*"/>
 		    <group title="Core classes" packages="org.liris.ktbs.core*"/>
+		    <group title="Core API" packages="org.liris.ktbs.core.api*"/>
 		    <group title="RDF classes" packages="org.liris.ktbs.rdf*"/>
 		    <group title="Client classes" packages="org.liris.ktbs.client*"/>
 			
@@ -83,6 +86,7 @@
 			                <pathelement location="${lib.commons-io}/commons-io-2.0.jar"/>
 			                <pathelement location="${lib.httpcomponents-client}/httpclient-4.1-beta1.jar"/>
 			                <pathelement location="${lib.httpcomponents-client}/httpclient-cache-4.1-beta1.jar"/>
+			                <pathelement location="${lib.google-collections}/guava-r07.jar"/>
 			</classpath>
 
 		</javadoc>

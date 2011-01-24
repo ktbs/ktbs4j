@@ -2,6 +2,12 @@ package org.liris.ktbs.core;
 
 import org.liris.ktbs.core.api.KtbsParameter;
 
+/**
+ * A simple implementation of the {@link KtbsParameter} interface.
+ * 
+ * @author Damien Cram
+ *
+ */
 public class SimpleKtbsParameter implements KtbsParameter {
 
 	private String name;

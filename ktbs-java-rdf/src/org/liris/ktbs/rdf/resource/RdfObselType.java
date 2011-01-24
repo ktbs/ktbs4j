@@ -24,8 +24,8 @@ public class RdfObselType extends RdfKtbsResource implements ObselType {
 	private Collection<RelationType> inferredOutgoingRelations = null;
 	private Collection<RelationType> inferredIncomingRelations = null;
 
-	public RdfObselType(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfObselType(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

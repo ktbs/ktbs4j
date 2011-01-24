@@ -15,8 +15,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 public class RdfAttributeType extends RdfKtbsResource implements
 AttributeType {
 
-	public RdfAttributeType(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfAttributeType(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

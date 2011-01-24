@@ -17,8 +17,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 public class RdfRelationType extends RdfKtbsResource implements
 RelationType {
 
-	public RdfRelationType(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfRelationType(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

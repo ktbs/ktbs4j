@@ -36,8 +36,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class RdfObsel extends RdfKtbsResource implements Obsel {
 
-	public RdfObsel(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfObsel(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

@@ -268,7 +268,7 @@ public class RdfResourceRepository implements ResourceRepository {
 			Model filteredModel =  JenaUtils.filterModel(model, new ResourceSelector(resourceURI));
 
 			try {
-				Constructor<T> constructor = cls.getConstructor(String.class, Model.class, ResourceRepository.class);
+				Constructor<T> constructor = cls.getDeclaredConstructor(String.class, Model.class, ResourceRepository.class);
 				RdfKtbsResource resource = constructor.newInstance(resourceURI, filteredModel, this);
 				putResource(resource, false);
 				found = true;

@@ -28,8 +28,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfTrace extends RdfKtbsResource implements Trace {
 
-	public RdfTrace(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfTrace(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

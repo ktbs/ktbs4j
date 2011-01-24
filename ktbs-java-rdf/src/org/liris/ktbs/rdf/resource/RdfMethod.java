@@ -9,8 +9,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfMethod extends RdfResourceWithParameter implements Method {
 
-	public RdfMethod(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfMethod(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

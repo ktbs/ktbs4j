@@ -25,8 +25,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class RdfBase extends RdfKtbsResource implements Base {
 
-	public RdfBase(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfBase(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

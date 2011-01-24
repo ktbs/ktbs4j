@@ -16,8 +16,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
 
 public class RdfTraceModel extends RdfKtbsResource implements TraceModel {
 
-	public RdfTraceModel(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfTraceModel(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

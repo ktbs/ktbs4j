@@ -14,8 +14,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfStoredTrace extends RdfTrace implements StoredTrace {
 
-	public RdfStoredTrace(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfStoredTrace(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

@@ -15,8 +15,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfRoot extends RdfKtbsResource implements Root{
 
-	public RdfRoot(String uri, Model rdfModel, ResourceRepository holder) {
-		super(uri, rdfModel, holder);
+	RdfRoot(String uri, Model rdfModel, ResourceRepository repo) {
+		super(uri, rdfModel, repo);
 	}
 
 	@Override

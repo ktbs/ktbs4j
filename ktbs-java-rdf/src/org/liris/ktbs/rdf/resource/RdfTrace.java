@@ -9,12 +9,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.Obsel;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.TemporalDomainException;
-import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.Trace;
+import org.liris.ktbs.core.api.TraceModel;
 
 import com.hp.hpl.jena.datatypes.xsd.IllegalDateTimeFieldException;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;

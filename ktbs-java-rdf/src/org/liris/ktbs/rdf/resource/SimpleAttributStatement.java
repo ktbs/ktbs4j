@@ -1,7 +1,7 @@
 package org.liris.ktbs.rdf.resource;
 
-import org.liris.ktbs.core.AttributeStatement;
-import org.liris.ktbs.core.AttributeType;
+import org.liris.ktbs.core.api.AttributeStatement;
+import org.liris.ktbs.core.api.AttributeType;
 
 class SimpleAttributStatement implements AttributeStatement {
 	private AttributeType type;

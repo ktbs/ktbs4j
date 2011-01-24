@@ -1,4 +1,5 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.core.api;
+
 
 public interface RelationType extends KtbsResource {
 	public ObselType getDomain();

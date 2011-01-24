@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.Trace;
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.Trace;
 
 /**
  * 

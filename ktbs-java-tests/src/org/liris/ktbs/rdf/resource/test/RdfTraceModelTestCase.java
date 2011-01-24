@@ -5,10 +5,10 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.AttributeType;
-import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.RelationType;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.RelationType;
+import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.core.empty.EmptyResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 

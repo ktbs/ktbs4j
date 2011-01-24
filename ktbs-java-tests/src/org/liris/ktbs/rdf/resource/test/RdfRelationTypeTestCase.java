@@ -5,9 +5,9 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.RelationType;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.RelationType;
+import org.liris.ktbs.core.api.TraceModel;
 
 public class RdfRelationTypeTestCase extends AbstractKtbsRdfResourceTestCase {
 

@@ -1,5 +1,7 @@
 package org.liris.ktbs.core;
 
+import org.liris.ktbs.core.api.ObselType;
+
 @SuppressWarnings("serial")
 public class DomainException extends InvalidDomainOrRangeException {
 

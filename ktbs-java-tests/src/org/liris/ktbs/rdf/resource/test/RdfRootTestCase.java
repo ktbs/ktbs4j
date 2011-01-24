@@ -5,8 +5,8 @@ import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.Root;
+import org.liris.ktbs.core.api.Base;
+import org.liris.ktbs.core.api.Root;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfRootTestCase extends AbstractKtbsRdfResourceTestCase {

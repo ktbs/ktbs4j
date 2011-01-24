@@ -1,4 +1,4 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.core.api;
 
 import java.math.BigInteger;
 import java.util.Date;

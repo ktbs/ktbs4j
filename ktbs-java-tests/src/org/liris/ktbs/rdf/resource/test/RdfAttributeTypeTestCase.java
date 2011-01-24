@@ -2,9 +2,9 @@ package org.liris.ktbs.rdf.resource.test;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.AttributeType;
-import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfAttributeTypeTestCase extends AbstractKtbsRdfResourceTestCase {

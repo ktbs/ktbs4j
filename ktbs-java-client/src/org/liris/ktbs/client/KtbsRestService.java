@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 
-import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 
 public interface KtbsRestService {
 	

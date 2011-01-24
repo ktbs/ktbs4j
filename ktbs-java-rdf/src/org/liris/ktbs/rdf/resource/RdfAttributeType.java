@@ -2,10 +2,10 @@ package org.liris.ktbs.rdf.resource;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.ResourceRepository;
+import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.ObselType;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;

@@ -4,6 +4,18 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 
+import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.Base;
+import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.RelationType;
+import org.liris.ktbs.core.api.StoredTrace;
+import org.liris.ktbs.core.api.Trace;
+import org.liris.ktbs.core.api.TraceModel;
+
 public interface ResourceRepository {
 	
 	public static final KtbsResource[] BUILTIN_RESOURCES = new KtbsResource[]{

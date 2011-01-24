@@ -1,6 +1,6 @@
 package org.liris.ktbs.client;
 
-import org.liris.ktbs.core.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 
 @SuppressWarnings("serial")
 public class NotAPostableResourceException extends RuntimeException {

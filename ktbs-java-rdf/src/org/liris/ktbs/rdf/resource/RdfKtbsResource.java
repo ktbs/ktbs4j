@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.AbstractKtbsResource;
-import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.KtbsStatement;
-import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.SerializableResource;
+import org.liris.ktbs.core.api.Base;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.KtbsStatement;
+import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.rdf.KtbsJenaResource;
 import org.liris.ktbs.utils.KtbsUtils;
 

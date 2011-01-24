@@ -2,6 +2,8 @@ package org.liris.ktbs.core;
 
 import java.util.Arrays;
 
+import org.liris.ktbs.core.api.ObselType;
+
 @SuppressWarnings("serial")
 public abstract class InvalidDomainOrRangeException extends RuntimeException {
 

@@ -1,6 +1,7 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
+
 
 public interface ObselType extends KtbsResource {
 	public TraceModel getTraceModel();

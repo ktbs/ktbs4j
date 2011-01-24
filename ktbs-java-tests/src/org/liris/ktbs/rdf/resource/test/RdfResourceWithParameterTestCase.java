@@ -4,10 +4,10 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.ComputedTrace;
-import org.liris.ktbs.core.KtbsParameter;
-import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.SimpleKtbsParameter;
+import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsParameter;
+import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfResourceWithParameterTestCase extends AbstractKtbsRdfResourceTestCase {

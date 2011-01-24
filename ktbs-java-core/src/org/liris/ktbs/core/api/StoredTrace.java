@@ -1,6 +1,7 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.core.api;
 
 import java.util.Map;
+
 
 public interface StoredTrace extends Trace {
 	public Obsel newObsel(String obselURI, ObselType type, Map<AttributeType, Object> attributes);

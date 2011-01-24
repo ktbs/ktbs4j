@@ -2,13 +2,13 @@ package org.liris.ktbs.rdf.resource;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsParameter;
-import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ResourceRepository;
-import org.liris.ktbs.core.ResourceWithParameters;
-import org.liris.ktbs.core.Trace;
+import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsParameter;
+import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.ResourceWithParameters;
+import org.liris.ktbs.core.api.Trace;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;

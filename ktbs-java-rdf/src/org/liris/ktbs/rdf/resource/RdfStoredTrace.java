@@ -2,12 +2,12 @@ package org.liris.ktbs.rdf.resource;
 
 import java.util.Map;
 
-import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.ResourceRepository;
-import org.liris.ktbs.core.StoredTrace;
+import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.StoredTrace;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;

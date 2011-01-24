@@ -1,5 +1,7 @@
 package org.liris.ktbs.core;
 
+import org.liris.ktbs.core.api.KtbsParameter;
+
 public class SimpleKtbsParameter implements KtbsParameter {
 
 	private String name;

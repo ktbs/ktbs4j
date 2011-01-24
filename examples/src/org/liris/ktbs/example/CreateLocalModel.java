@@ -2,15 +2,15 @@ package org.liris.ktbs.example;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.AttributeType;
-import org.liris.ktbs.core.Base;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.Mode;
-import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.SerializableResource;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.Base;
+import org.liris.ktbs.core.api.Mode;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.RelationType;
+import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.rdf.resource.RdfResourceRepository;
 
 public class CreateLocalModel {

@@ -1,4 +1,4 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.core.api;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -19,7 +19,7 @@ public interface Trace extends KtbsResource, ResourceContainer {
 	/**
 	 * 
 	 * @return
-	 * @throws TemporalDomainException
+	 * @throws org.liris.ktbs.core.TemporalDomainException
 	 */
 	public Date getOriginAsDate();
 	

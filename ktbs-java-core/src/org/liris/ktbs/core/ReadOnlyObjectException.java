@@ -1,5 +1,7 @@
 package org.liris.ktbs.core;
 
+import org.liris.ktbs.core.api.KtbsResource;
+
 public class ReadOnlyObjectException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	

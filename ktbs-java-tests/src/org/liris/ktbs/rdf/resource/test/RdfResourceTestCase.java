@@ -6,8 +6,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.Root;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.Root;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.vocabulary.RDF;

@@ -2,8 +2,8 @@ package org.liris.ktbs.rdf.resource;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.KtbsResource;
 import org.liris.ktbs.core.ResourceRepository;
+import org.liris.ktbs.core.api.KtbsResource;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;

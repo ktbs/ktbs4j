@@ -1,4 +1,5 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.core.api;
+
 
 /**
  * A class that represents an inter-obsel relation between two {@link Obsel} inside a KTBS.

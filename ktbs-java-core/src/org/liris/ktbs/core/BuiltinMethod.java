@@ -2,11 +2,16 @@ package org.liris.ktbs.core;
 
 import java.util.Iterator;
 
+import org.liris.ktbs.core.api.KtbsParameter;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.KtbsStatement;
+import org.liris.ktbs.core.api.Method;
+
 public class BuiltinMethod implements Method {
 
 	private String uri;
 	
-	BuiltinMethod(String uri) {
+	public BuiltinMethod(String uri) {
 		super();
 		this.uri = uri;
 	}

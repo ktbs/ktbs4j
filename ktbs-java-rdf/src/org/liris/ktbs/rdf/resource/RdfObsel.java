@@ -7,20 +7,20 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.liris.ktbs.core.AttributeStatement;
-import org.liris.ktbs.core.AttributeType;
 import org.liris.ktbs.core.DomainException;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.Mode;
-import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.ObselType;
 import org.liris.ktbs.core.RangeException;
-import org.liris.ktbs.core.RelationStatement;
-import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.ResourceNotFoundException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.SimpleRelationStatement;
-import org.liris.ktbs.core.Trace;
+import org.liris.ktbs.core.api.AttributeStatement;
+import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.Mode;
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.RelationStatement;
+import org.liris.ktbs.core.api.RelationType;
+import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.rdf.JenaUtils;
 import org.liris.ktbs.utils.KtbsUtils;
 

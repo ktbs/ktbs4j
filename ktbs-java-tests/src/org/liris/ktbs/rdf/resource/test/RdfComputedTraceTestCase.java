@@ -5,11 +5,11 @@ import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.ComputedTrace;
-import org.liris.ktbs.core.Method;
-import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.Base;
+import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.Trace;
+import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfComputedTraceTestCase extends AbstractKtbsRdfResourceTestCase {

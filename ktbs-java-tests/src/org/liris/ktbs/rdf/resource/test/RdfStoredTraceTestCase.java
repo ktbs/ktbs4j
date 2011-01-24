@@ -4,9 +4,9 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.StoredTrace;
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfStoredTraceTestCase  extends AbstractKtbsRdfResourceTestCase {

@@ -4,15 +4,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsResource;
-import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.ResourceRepository;
-import org.liris.ktbs.core.StoredTrace;
-import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.Base;
+import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.StoredTrace;
+import org.liris.ktbs.core.api.Trace;
+import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;

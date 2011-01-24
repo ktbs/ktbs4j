@@ -1,6 +1,6 @@
 package org.liris.ktbs.rdf.resource;
 
-import org.liris.ktbs.core.KtbsStatement;
+import org.liris.ktbs.core.api.KtbsStatement;
 
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Statement;

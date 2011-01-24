@@ -8,13 +8,13 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.Base;
-import org.liris.ktbs.core.ComputedTrace;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.Obsel;
-import org.liris.ktbs.core.StoredTrace;
-import org.liris.ktbs.core.Trace;
-import org.liris.ktbs.core.TraceModel;
+import org.liris.ktbs.core.api.Base;
+import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.StoredTrace;
+import org.liris.ktbs.core.api.Trace;
+import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.ibm.icu.text.SimpleDateFormat;

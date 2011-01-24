@@ -3,10 +3,10 @@ package org.liris.ktbs.rdf.resource;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.KtbsParameter;
 import org.liris.ktbs.core.ReadOnlyObjectException;
 import org.liris.ktbs.core.ResourceRepository;
-import org.liris.ktbs.core.ResourceWithParameters;
+import org.liris.ktbs.core.api.KtbsParameter;
+import org.liris.ktbs.core.api.ResourceWithParameters;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;

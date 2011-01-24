@@ -1,5 +1,9 @@
 package org.liris.ktbs.core;
 
+import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.RelationStatement;
+import org.liris.ktbs.core.api.RelationType;
+
 public class SimpleRelationStatement implements RelationStatement {
 
 	private Obsel from;

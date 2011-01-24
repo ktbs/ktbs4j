@@ -1,9 +1,9 @@
 package org.liris.ktbs.rdf.resource;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.Method;
 import org.liris.ktbs.core.RDFRestConstants;
 import org.liris.ktbs.core.ResourceRepository;
+import org.liris.ktbs.core.api.Method;
 
 import com.hp.hpl.jena.rdf.model.Model;
 

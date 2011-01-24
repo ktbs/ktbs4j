@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.ObselType;
-import org.liris.ktbs.core.RelationType;
 import org.liris.ktbs.core.ResourceRepository;
+import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.RelationType;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;

@@ -3,6 +3,8 @@ package org.liris.ktbs.core;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.liris.ktbs.core.api.KtbsResource;
+
 public abstract class AbstractKtbsResource implements KtbsResource {
 
 

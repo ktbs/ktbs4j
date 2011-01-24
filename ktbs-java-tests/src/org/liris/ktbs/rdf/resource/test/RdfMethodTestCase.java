@@ -3,7 +3,7 @@ package org.liris.ktbs.rdf.resource.test;
 import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.Method;
+import org.liris.ktbs.core.api.Method;
 
 public class RdfMethodTestCase extends AbstractKtbsRdfResourceTestCase {
 

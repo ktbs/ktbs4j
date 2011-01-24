@@ -1,4 +1,7 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.core.api;
+
+import org.liris.ktbs.core.BuiltinMethod;
+import org.liris.ktbs.core.KtbsConstants;
 
 
 

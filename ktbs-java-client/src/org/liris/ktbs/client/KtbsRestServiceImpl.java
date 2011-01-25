@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,19 +40,13 @@ import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.rdf.JenaUtils;
 import org.liris.ktbs.rdf.KtbsJenaResource;
+import org.liris.ktbs.rdf.MinimalRdfResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -64,6 +57,8 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
 
+	
+	private MinimalRdfResourceFactory modelFactory = MinimalRdfResourceFactory.getInstance();
 
 	private String ktbsRootURI;
 
@@ -359,9 +354,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 	@Override
 	public KtbsResponse createBase(String rootURI, String baseURI) {
-		Model model = createModelWithType(baseURI, KtbsConstants.BASE);
-		model.getResource(rootURI).addProperty(model.getProperty(KtbsConstants.P_HAS_BASE), model.getResource(baseURI));
-		String asString = writeToString(model);
+		String asString = writeToString(modelFactory.createBaseModel(rootURI, baseURI));
 		return postResource(rootURI, asString);
 	}
 
@@ -378,14 +371,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		return asString;
 	}
 
-	private Model createModelWithType(String baseURI, String rdfType) {
-		Model model = ModelFactory.createDefaultModel();
-		model.getResource(baseURI).addProperty(
-				RDF.type, 
-				model.getProperty(rdfType));
-		return model;
-	}
-
+	
 	private KtbsResponse postResource(String postURI, String string) {
 		checkStarted(); 
 
@@ -438,45 +424,27 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 	@Override
 	public KtbsResponse createMethod(String baseURI, String methodURI, String inheritedMethodUri, Map<String,String> parameters) {
-		Model model = createModelWithType(methodURI, KtbsConstants.METHOD);
-		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(methodURI));
-		model.getResource(methodURI).addProperty(model.getProperty(KtbsConstants.P_INHERITS), model.getResource(inheritedMethodUri));
-		if(parameters != null) {
-			for(Entry<String, String> entry:parameters.entrySet())
-				model.getResource(methodURI).addLiteral(model.getProperty(KtbsConstants.P_HAS_PARAMETER), entry.getKey()+"="+entry.getValue());
-		}
-		String asString = writeToString(model);
+		String asString = writeToString(modelFactory.createMethodModel(baseURI, methodURI, inheritedMethodUri, parameters));
 		return postResource(baseURI, asString);
 	}
 
 	@Override
 	public KtbsResponse createTraceModel(String baseURI,String modelURI) {
-		Model model = createModelWithType(modelURI, KtbsConstants.TRACE_MODEL);
-		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(modelURI));
-		String asString = writeToString(model);
+		String asString = writeToString(modelFactory.createTraceModelModel(baseURI, modelURI));
 		return postResource(baseURI, asString);
 	}
 
 	@Override
 	public KtbsResponse createStoredTrace(String baseURI, String traceURI, String modelURI, String origin) {
-		Model model = createModelWithType(traceURI, KtbsConstants.STORED_TRACE);
-		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(traceURI));
-		model.getResource(traceURI).addProperty(model.getProperty(KtbsConstants.P_HAS_MODEL), model.getResource(modelURI));
-		model.getResource(traceURI).addLiteral(model.getProperty(KtbsConstants.P_HAS_ORIGIN), origin);
-		String asString = writeToString(model);
+		String asString = writeToString(modelFactory.createStoredTraceModel(baseURI, traceURI, modelURI, origin));
 		return postResource(baseURI, asString);
 	}
 
 	@Override
 	public KtbsResponse createComputedTrace(String baseURI, String traceURI, 
 			String methodURI, Collection<String> sourceTracesURIs) {
-		Model model = createModelWithType(traceURI, KtbsConstants.COMPUTED_TRACE);
-		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(traceURI));
-		model.getResource(traceURI).addProperty(model.getProperty(KtbsConstants.P_HAS_METHOD), model.getResource(methodURI));
-		for(String sourceTraceURI:sourceTracesURIs) 
-			model.getResource(traceURI).addProperty(model.getProperty(KtbsConstants.P_HAS_SOURCE), model.getResource(sourceTraceURI));
 
-		String asString = writeToString(model);
+		String asString = writeToString(modelFactory.createComputedTraceModel(baseURI, traceURI, methodURI, sourceTracesURIs));
 		return postResource(baseURI, asString);
 	}
 
@@ -491,34 +459,10 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			BigInteger begin, 
 			BigInteger end,
 			Map<String, Object> attributes) {
+
 		String traceURIWithoutAspect = KtbsUtils.addAspect(traceURI, null, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 
-		Model model = createModelWithType(obselURI, typeURI);
-		Resource or = model.getResource(obselURI);
-		or.addProperty(model.getProperty(KtbsConstants.P_HAS_TRACE), model.getResource(traceURIWithoutAspect));
-		if(beginDT != null)
-			or.addLiteral(model.getProperty(KtbsConstants.P_HAS_BEGIN_DT), model.createTypedLiteral(beginDT, XSDDatatype.XSDdateTime));
-		if(endDT != null)
-			or.addLiteral(model.getProperty(KtbsConstants.P_HAS_END_DT),  model.createTypedLiteral(endDT, XSDDatatype.XSDdateTime));
-		if(begin != null)
-			or.addLiteral(model.getProperty(KtbsConstants.P_HAS_BEGIN), begin);
-		if(end != null) {
-			Literal endTyped = model.createTypedLiteral(end);
-			or.addLiteral(model.getProperty(KtbsConstants.P_HAS_END), endTyped);
-		}
-		if(subject != null)
-			or.addLiteral(model.getProperty(KtbsConstants.P_HAS_SUBJECT), subject);
-
-		if(attributes != null) {
-			for(Entry<String, Object> entry:attributes.entrySet()) {
-				Property attribute = model.getProperty(entry.getKey());
-				Collection<RDFNode> values = JenaUtils.asJenaLiteral(model, entry.getValue());
-				for(RDFNode value:values)
-					or.addProperty(attribute, value);
-			}
-		}
-
-		String asString = writeToString(model);
+		String asString = writeToString(modelFactory.createObselModel(traceURIWithoutAspect, obselURI, typeURI, subject, beginDT, endDT, begin, end, attributes));
 		return postResource(traceURIWithoutAspect, asString);
 	}
 }

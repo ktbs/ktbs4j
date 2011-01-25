@@ -48,9 +48,17 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 
-public class Visu2TraceImporter {
+/**
+ * Utility functions to fix, analyze traces serialized in "almost valid" TURTLE 
+ * syntax (hence the "fix" utility, see {@link #fixFiles(File, File, String, Map)}),
+ * and to import them to a KTBS server.
+ * 
+ * @author Damien Cram
+ *
+ */
+public class TraceImporter {
 
-	private static final Log log = LogFactory.getLog(Visu2TraceImporter.class);
+	private static final Log log = LogFactory.getLog(TraceImporter.class);
 	
 	private FilenameFilter filter = new FilenameFilter() {
 		@Override
@@ -59,6 +67,14 @@ public class Visu2TraceImporter {
 		}
 	};
 
+	/**
+	 * Infer a trace model from traces contained in a triple set 
+	 * and put it into a KTBS server.
+	 * 
+	 * @param model the triple set containing the input traces, as e Jena model
+	 * @param visu2BaseURI the base uri in which the trace model and the traces must be created
+	 * @param modelURI the uri of the model to infer
+	 */
 	public void putInKtbs(final Model model, String visu2BaseURI, String modelURI) {
 		KtbsClientApplication app = KtbsClientApplication.getInstance();
 		KtbsRestService service = app.getRestService("http://localhost:8001/");
@@ -191,7 +207,14 @@ public class Visu2TraceImporter {
 	}
 
 	
-
+	/**
+	 * Calculates the number of obsels, obsel types, attributes, and attributes 
+	 * per obsel type, that are contained in some traces and write these
+	 * stats to a print stream in the Mediawiki syntax.
+	 * 
+	 * @param model the input traces, as a triple set represented in a Jena model
+	 * @param out the print stream where the result should be printed
+	 */
 	public void doStats(Model model, PrintStream out) {
 		out.println("= Statistiques globales =");
 		out.println();
@@ -325,10 +348,17 @@ public class Visu2TraceImporter {
 	}
 
 
-	public Model parse(File destination) throws FileNotFoundException {
+	/**
+	 * Parse the traces serialized in turtle files to a Jena model.
+	 * 
+	 * @param source the place where to find the turtle files containing the traces
+	 * @return the Jena model containing the traces in RDF
+	 * @throws FileNotFoundException
+	 */
+	public Model parse(File source) throws FileNotFoundException {
 		Model unionModel = ModelFactory.createDefaultModel();
 
-		for(File turtleFile:destination.listFiles(filter)) {
+		for(File turtleFile:source.listFiles(filter)) {
 			log.info("Parsing " + turtleFile.getName());
 			Model model = ModelFactory.createDefaultModel();
 			model.read(new FileInputStream(turtleFile), null, "TURTLE");
@@ -338,6 +368,24 @@ public class Visu2TraceImporter {
 		return unionModel;
 	}
 
+	/**
+	 * Fix the TURTLE syntax errors that may occur in some input 
+	 * TURTLE-serialized traces contained in a source directory, resolve 
+	 * relative URIs that are present in those files,  and write 
+	 * the fix TURTLE-serialized traces to a destination directory.
+	 * 
+	 * <p>
+	 * Only traces files with the ".ttl" suffix in the source directory are processed.
+	 * </p>
+	 * 
+	 * @param source the directory where the turtle files containing the input traces are
+	 * @param destination the directory where to write the fixed turtle files
+	 * @param uriBaseForRelativeURIs the base URI against which relative resource URIs in 
+	 * the sources files must be resolved (empty string if no resolution is whiched)
+	 * @param replacements the corrections to apply to input traces, as "regex=replacement" pairs
+	 * @throws IOException when troubles appeared in reading from/writing to source/destination directories
+	 * @throws FileNotFoundException
+	 */
 	public void fixFiles(
 			File source, 
 			File destination, 

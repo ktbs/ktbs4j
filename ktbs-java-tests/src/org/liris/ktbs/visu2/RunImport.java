@@ -17,7 +17,7 @@ public class RunImport {
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		
-		Visu2TraceImporter importer = new Visu2TraceImporter();
+		TraceImporter importer = new TraceImporter();
 
 		// The base that will contain imported resources
 		String visu2BaseURI = "http://localhost:8001/visu2/";

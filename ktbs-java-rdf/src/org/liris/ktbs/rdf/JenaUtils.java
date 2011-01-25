@@ -2,6 +2,8 @@ package org.liris.ktbs.rdf;
 
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.JenaConstants;
@@ -114,20 +116,23 @@ public class JenaUtils {
 		}
 	}
 
-	public static RDFNode asJenaLiteral(Model model, Object value) {
+	public static Collection<RDFNode> asJenaLiteral(Model model, Object value) {
+		Collection<RDFNode> nodes = new HashSet<RDFNode>();
+		
 		if (value instanceof Iterable<?>) {
 			Iterable<?> iterable = (Iterable<?>) value;
 			Iterator<?> it = iterable.iterator();
-			Seq seq = model.createSeq();
 			while (it.hasNext()) {
 				Object object = (Object) it.next();
-				seq.add(object);
+				nodes.addAll(asJenaLiteral(model, object));
 			}
-			return seq;
 		} else {
-			return model.createTypedLiteral(value);
+			nodes.add(model.createTypedLiteral(value));
 		}
+		
+		return nodes;
 	}
+	
 	/**
 	 * Translate the RDF node to a java object.
 	 * 

@@ -512,8 +512,9 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		if(attributes != null) {
 			for(Entry<String, Object> entry:attributes.entrySet()) {
 				Property attribute = model.getProperty(entry.getKey());
-				RDFNode value = JenaUtils.asJenaLiteral(model, entry.getValue());
-				or.addProperty(attribute, value);
+				Collection<RDFNode> values = JenaUtils.asJenaLiteral(model, entry.getValue());
+				for(RDFNode value:values)
+					or.addProperty(attribute, value);
 			}
 		}
 

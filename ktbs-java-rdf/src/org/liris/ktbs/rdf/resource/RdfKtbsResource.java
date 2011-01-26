@@ -32,6 +32,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class RdfKtbsResource extends AbstractKtbsResource implements SerializableResource, KtbsJenaResource {
 
+
+
 	protected ResourceRepository repository;
 	protected Model rdfModel;
 

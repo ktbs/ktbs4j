@@ -17,10 +17,12 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RdfComputedTrace extends RdfTrace implements ComputedTrace {
 
+	
 	RdfComputedTrace(String uri, Model rdfModel, ResourceRepository repo) {
 		super(uri, rdfModel, repo);
 		resourceWithParameterAspect = new RdfResourceWithParameter(uri, rdfModel, repo);
 	}
+	
 	private ResourceWithParameters resourceWithParameterAspect;
 	
 	@Override

@@ -88,6 +88,13 @@ public class KtbsRestServiceImplTestCase {
 	
 	@Test
 	public void testCreateObsel() {
+		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createBase("http://localhost:8001/", "http://localhost:8001/base1/").getKtbsStatus());
+		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createTraceModel("http://localhost:8001/base1/", "http://localhost:8001/base1/model1/").getKtbsStatus());
+		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createStoredTrace(
+				"http://localhost:8001/base1/", 
+				"http://localhost:8001/base1/t01/", 
+				"http://localhost:8001/base1/model1/", 
+				"2010-04-28T18:09:01+00:00").getKtbsStatus());
 		
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("http://localhost:8001/base1/model1/message", "Salut tout le monde");

@@ -60,9 +60,10 @@ public interface Base extends KtbsResource, ResourceContainer {
 	 * 
 	 * @param traceURI the uri of the new trace
 	 * @param model the trace model of the new trace
+	 * @param origin the origin of the created trace
 	 * @return the created stored trace
 	 */
-	public StoredTrace newStoredTrace(String traceURI, TraceModel model);
+	public StoredTrace newStoredTrace(String traceURI, TraceModel model, String origin);
 	
 	/**
 	 * Create a new owned computed trace in this base.

@@ -24,6 +24,13 @@ import org.liris.ktbs.core.api.TraceModel;
  * operations over the resources and maintaining the coherence between resources.
  * </p>
  * 
+ * <p>
+ * The creation of anonym KTBS resources is supported by invoking create* methods
+ * that have String uris as parameters instead of KTBS resource in the form of Java 
+ * objects. A <code>null</null> value at the place of the created resource uri will
+ * create an anonym resource.
+ * </p>
+ * 
  * @author Damien Cram
  *
  */
@@ -96,7 +103,9 @@ public interface ResourceRepository {
 	 * @throws ResourceNotFoundException when any required resource 
 	 * (base or trace model) is not found in the repository
 	 */
-	public StoredTrace createStoredTrace(Base base, String traceUri, TraceModel traceModel);
+	public StoredTrace createStoredTrace(Base base, String traceUri, TraceModel traceModel, String origin);
+
+	public StoredTrace createStoredTrace(String baseUri, String traceUri, String traceModelUri, String origin);
 	
 	/**
 	 * Create a new computed trace in this repository.
@@ -107,11 +116,23 @@ public interface ResourceRepository {
 	 * @param method the method used by a transformation engine to produce the content of the created trace
 	 * @param sources the collection of traces used by a transformation engine to produce the content of the created trace
 	 * @return the created computed trace
-	 * @throws ResourceNotFoundException when any required resource 
-	 * (base, trace model, method, or source traces) is not found in the repository.
 	 */
 	public ComputedTrace createComputedTrace(Base base, String traceUri,
 			TraceModel traceModel, Method method, Collection<Trace> sources);
+
+	/**
+	 * Create a new computed trace in this repository, without 
+	 * performing a consistency test (pointed resources may be absent).
+	 * 
+	 * @param baseUri the uri of the parent base that will own the created stored trace
+	 * @param traceUri the uri of the created trace, null if anonym trace
+	 * @param traceModelUri the uri of the trace model of the created trace
+	 * @param methodUri the uri of the method used by a transformation engine to produce the content of the created trace
+	 * @param sourceUris the collection of uris of the traces used by a transformation engine to produce the content of the created trace
+	 * @return the created computed trace
+	 */
+	public ComputedTrace createComputedTrace(String baseUri, String traceUri,
+			String traceModelUri, String methodUri, Collection<String> sourceUris);
 
 	
 	/**
@@ -125,6 +146,8 @@ public interface ResourceRepository {
 	 * (the base) is not found in the repository.
 	 */
 	public Method createMethod(Base base, String methodUri, String inherits);
+
+	public Method createMethod(String baseUri, String methodUri, String inherits);
 	
 	/**
 	 * Create a new trace model in this repository.
@@ -136,6 +159,8 @@ public interface ResourceRepository {
 	 * (the base) is not found in the repository.
 	 */
 	public TraceModel createTraceModel(Base base, String modelUri);
+
+	public TraceModel createTraceModel(String baseUri, String modelUri);
 	
 	/**
 	 * Create a new obsel in this repository.
@@ -150,6 +175,9 @@ public interface ResourceRepository {
 	 */
 	public Obsel createObsel(StoredTrace trace, String obselUri,
 			ObselType type, Map<AttributeType, Object> attributes);
+
+	public Obsel createObsel(String traceUri, String obselUri,
+			String typeUri, Map<String, Object> attributes);
 	
 	
 	/**
@@ -163,6 +191,8 @@ public interface ResourceRepository {
 	 */
 	public ObselType createObselType(TraceModel traceModel, String localName);
 
+	public ObselType createObselType(String traceModelUri, String localName);
+
 	/**
 	 * Create a new relation type in the repository.
 	 * 
@@ -174,6 +204,8 @@ public interface ResourceRepository {
 	 * (trace model, obsel types for range and domain) is not in the repository;
 	 */
 	public RelationType createRelationType(TraceModel traceModel, String localName, ObselType domain, ObselType range);
+
+	public RelationType createRelationType(String traceModelUri, String localName, String domainUri, String rangeUri);
 	
 	/**
 	 * Create a new attribute type in the repository.
@@ -185,6 +217,8 @@ public interface ResourceRepository {
 	 * (trace model, obsel type for the domain) is not found in the repository.
 	 */
 	public AttributeType createAttributeType(TraceModel traceModel, String localName, ObselType domain);
+
+	public AttributeType createAttributeType(String traceModelUri, String localName, String domainUri);
 
 	/**
 	 * Remove an obsel from a trace.

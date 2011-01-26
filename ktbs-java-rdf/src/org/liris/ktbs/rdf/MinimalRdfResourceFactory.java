@@ -38,6 +38,32 @@ public class MinimalRdfResourceFactory {
 		return instance;
 	}
 	
+	public Model createAttributeTypeModel(String attUri, String domainUri) {
+		Model model = createModelWithType(attUri, KtbsConstants.ATTRIBUTE_TYPE);
+		addPropertyIfNotNull(model, attUri, KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, domainUri); 
+		return model;
+	}
+
+	public Model createRelationTypeModel(String relUri, String superRelationTypeUri, String domainUri, String rangeUri) {
+		Model model = createModelWithType(relUri, KtbsConstants.RELATION_TYPE);
+		addPropertyIfNotNull(model, relUri, KtbsConstants.P_HAS_RELATION_DOMAIN, domainUri); 
+		addPropertyIfNotNull(model, relUri, KtbsConstants.P_HAS_RELATION_RANGE, rangeUri); 
+		addPropertyIfNotNull(model, relUri, KtbsConstants.P_HAS_SUPER_RELATION_TYPE, superRelationTypeUri); 
+		return model;
+	}
+
+	public Model createObselTypeModel(String obsTypeUri, String superObselTypeUri) {
+		Model model = createModelWithType(obsTypeUri, KtbsConstants.OBSEL_TYPE);
+		addPropertyIfNotNull(model, obsTypeUri, KtbsConstants.P_HAS_SUPER_OBSEL_TYPE, superObselTypeUri); 
+		return model;
+	}
+	
+	private void addPropertyIfNotNull(Model model, String subjectUri, String pName,
+			String objectUri) {
+		if(objectUri != null)
+		model.getResource(subjectUri).addProperty(model.getProperty(pName), model.getResource(objectUri));
+		
+	}
 	public Model createBaseModel(String rootURI, String baseURI) {
 		Model model = createModelWithType(baseURI, KtbsConstants.BASE);
 		model.getResource(rootURI).addProperty(model.getProperty(KtbsConstants.P_HAS_BASE), model.getResource(baseURI));
@@ -107,9 +133,14 @@ public class MinimalRdfResourceFactory {
 		return model;
 	}
 	
-	private Model createModelWithType(String baseURI, String rdfType) {
+	private Model createModelWithType(String resourceUri, String rdfType) {
 		Model model = ModelFactory.createDefaultModel();
-		model.getResource(baseURI).addProperty(
+		Resource resource;
+		if(resourceUri == null ) 
+			resource = model.createResource();
+		else
+			resource = model.createResource(resourceUri);
+		resource.addProperty(
 				RDF.type, 
 				model.getProperty(rdfType));
 		return model;

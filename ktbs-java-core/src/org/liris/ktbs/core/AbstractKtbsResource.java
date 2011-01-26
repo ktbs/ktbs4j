@@ -13,6 +13,16 @@ import org.liris.ktbs.core.api.KtbsResource;
  */
 public abstract class AbstractKtbsResource implements KtbsResource {
 
+	/*
+	 * is this resource an anonym resource or not
+	 */
+	private boolean anonym;
+	
+	public boolean isAnonym() {
+		return anonym;
+	}
+	
+	
 	protected final String uri;
 	
 	/**
@@ -24,10 +34,16 @@ public abstract class AbstractKtbsResource implements KtbsResource {
 	 */
 	public AbstractKtbsResource(String uri) {
 		super();
-		try {
-			this.uri = new URI(uri).normalize().toString();
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
+		if(uri==null) {
+			anonym = true;
+			this.uri = null;
+		} else {
+			anonym = false;
+			try {
+				this.uri = new URI(uri).normalize().toString();
+			} catch (URISyntaxException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 

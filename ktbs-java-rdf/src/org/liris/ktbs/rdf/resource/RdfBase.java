@@ -236,8 +236,8 @@ public class RdfBase extends RdfKtbsResource implements Base {
 	}
 
 	@Override
-	public StoredTrace newStoredTrace(String traceURI, TraceModel model) {
-		return repository.createStoredTrace(this, traceURI, model);
+	public StoredTrace newStoredTrace(String traceURI, TraceModel model, String origin) {
+		return repository.createStoredTrace(this, traceURI, model, origin);
 	}
 
 	@Override

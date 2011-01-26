@@ -30,6 +30,7 @@ import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.rdf.JenaUtils;
+import org.liris.ktbs.rdf.MinimalRdfResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.google.common.collect.HashMultimap;
@@ -39,6 +40,7 @@ import com.google.common.collect.Multiset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
@@ -49,6 +51,8 @@ public class RdfResourceRepository implements ResourceRepository {
 	private static final Log log = LogFactory.getLog(RdfResourceRepository.class);
 
 	private Map<String, RdfKtbsResource> resources;
+	private MinimalRdfResourceFactory minimalFac = MinimalRdfResourceFactory.getInstance();
+
 
 	public RdfResourceRepository() {
 		resources = new HashMap<String, RdfKtbsResource>();
@@ -488,41 +492,21 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public TraceModel createTraceModel(Base base, String modelURI) {
 		checkExistency(base);
-		Model tmRdfModel = createBaseChild(base, modelURI, KtbsConstants.TRACE_MODEL);
-
-		RdfTraceModel tm = new RdfTraceModel(modelURI, tmRdfModel, this);
-		putResource(tm, false);
-		return tm;
+		
+		return createTraceModel(base.getURI(), modelURI);
 	}
 
 	@Override
 	public Method createMethod(Base base, String methodURI, String inherits) {
 		checkExistency(base);
 
-		Model methodRdfModel = createBaseChild(base, methodURI, KtbsConstants.METHOD);
-
-		RdfMethod method = new RdfMethod(methodURI, methodRdfModel, this);
-		method.setInherits(inherits);
-
-		putResource(method, false);
-
-		return method;
+		return createMethod(base.getURI(), methodURI, inherits);
 	}
 
 	@Override
-	public StoredTrace createStoredTrace(Base base, String traceURI, TraceModel tm) {
+	public StoredTrace createStoredTrace(Base base, String traceURI, TraceModel tm, String origin) {
 		checkExistency(tm, base);
-
-		Model stRdfModel = createBaseChild(base, traceURI, KtbsConstants.STORED_TRACE);
-
-		stRdfModel.getResource(traceURI).addProperty(
-				stRdfModel.getProperty(KtbsConstants.P_HAS_MODEL),
-				stRdfModel.getResource(tm.getURI())
-		);
-
-		RdfStoredTrace st = new RdfStoredTrace(traceURI, stRdfModel, this);
-		putResource(st, false);
-		return st;
+		return createStoredTrace(base.getURI(), traceURI, tm.getURI(), origin);
 	}
 
 	@Override
@@ -531,48 +515,12 @@ public class RdfResourceRepository implements ResourceRepository {
 		for(Trace trace:sources) 
 			checkExistency(trace);
 
-		Model computedTraceRdfModel = createBaseChild(base, traceURI, KtbsConstants.COMPUTED_TRACE);
-
-		computedTraceRdfModel.getResource(traceURI).addProperty(
-				computedTraceRdfModel.getProperty(KtbsConstants.P_HAS_MODEL),
-				computedTraceRdfModel.getResource(tm.getURI())
-		);
-
-		computedTraceRdfModel.getResource(traceURI).addProperty(
-				computedTraceRdfModel.getProperty(KtbsConstants.P_HAS_METHOD),
-				computedTraceRdfModel.getResource(m.getURI())
-		);
-
-		for(Trace trace:sources) {
-			computedTraceRdfModel.getResource(traceURI).addProperty(
-					computedTraceRdfModel.getProperty(KtbsConstants.P_HAS_SOURCE),
-					computedTraceRdfModel.getResource(trace.getURI())
-			);
-		}
-
-		RdfComputedTrace ct = new RdfComputedTrace (traceURI, computedTraceRdfModel, this);
-		putResource(ct, false);
-		return ct;
+		
+	
+		return createComputedTrace(base.getURI(), traceURI, tm.getURI(), m.getURI(), KtbsUtils.toUriCollection(sources));
 	}
 
-	private Model createBaseChild(Base base, String childURI, String childRdfType) {
-		checkExistency(base);
-		Model baseRdfModel = ((RdfBase)base).rdfModel;
-		Model childRdfModel = ModelFactory.createDefaultModel();
-
-		baseRdfModel.getResource(childURI).addProperty(
-				RDF.type, 
-				baseRdfModel.getResource(childRdfType));
-
-		childRdfModel.getResource(childURI).addProperty(
-				RDF.type, 
-				childRdfModel.getResource(childRdfType));
-
-		createParentConnection(baseRdfModel, childRdfModel, base.getURI(), childURI);
-		return childRdfModel;
-	}
-
-	private void createParentConnection(Model baseRdfModel, Model childRdfModel, String baseUri, String childURI) {
+	private void createBaseChild(Model baseRdfModel, Model childRdfModel, String baseUri, String childURI) {
 		baseRdfModel.getResource(baseUri).addProperty(
 				baseRdfModel.getProperty(KtbsConstants.P_OWNS),
 				baseRdfModel.getResource(childURI)
@@ -582,6 +530,12 @@ public class RdfResourceRepository implements ResourceRepository {
 				childRdfModel.getProperty(KtbsConstants.P_OWNS),
 				childRdfModel.getResource(childURI)
 		);
+		
+		// Get the rdf:type of the child and add it to the base model
+		Resource type = childRdfModel.getResource(childURI).getPropertyResourceValue(RDF.type);
+		baseRdfModel.getResource(childURI).addProperty(
+				RDF.type, 
+				baseRdfModel.getResource(type.getURI()));
 	}
 
 	@Override
@@ -591,40 +545,14 @@ public class RdfResourceRepository implements ResourceRepository {
 		AttributeType[] attributeTypes = (attributes==null)?new AttributeType[0]:attributes.keySet().toArray(new AttributeType[attributes.size()]);
 		checkExistency(attributeTypes);
 
-		Model traceRdfModel = ((RdfStoredTrace)trace).rdfModel;
-
-		RdfObsel obsel = new RdfObsel(obselURI, traceRdfModel, this);
-
-		traceRdfModel.getResource(obselURI).addProperty(
-				traceRdfModel.getProperty(KtbsConstants.P_HAS_TRACE), 
-				traceRdfModel.getResource(trace.getURI()));
-		traceRdfModel.getResource(obselURI).addProperty(
-				RDF.type, 
-				traceRdfModel.getResource(type.getURI()));
-		if(attributes!=null) {
-			for(AttributeType att:attributes.keySet())
-				obsel.addAttribute(att, attributes.get(att));
-		}
-
-		resources.put(obsel.getURI(), obsel);
-		return obsel;
+		return createObsel(trace.getURI(), obselURI, type.getURI(), KtbsUtils.toUriMap(attributes));
 	}
 
 	@Override
 	public ObselType createObselType(TraceModel traceModel, String localName) {
 		checkExistency(traceModel);
 
-		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
-
-		RdfObselType obselType = new RdfObselType(traceModel.getURI()+localName, rdfModel, this);
-
-		rdfModel.getResource(obselType.getURI()).addProperty(
-				RDF.type, 
-				rdfModel.getResource(KtbsConstants.OBSEL_TYPE));
-
-		resources.put(obselType.getURI(), obselType);
-
-		return obselType;
+		return createObselType(traceModel.getURI(), localName);
 	}
 
 	@Override
@@ -636,20 +564,8 @@ public class RdfResourceRepository implements ResourceRepository {
 		if(range!=null)
 			checkExistency(range);
 
-		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
-
-		RdfRelationType relType = new RdfRelationType(traceModel.getURI()+localName, rdfModel, this);
-
-		rdfModel.getResource(relType.getURI()).addProperty(
-				RDF.type, 
-				rdfModel.getResource(KtbsConstants.RELATION_TYPE));
-		if(domain!=null)
-			relType.addDomain(domain);
-		if(range!=null)
-			relType.addRange(range);
-
-		resources.put(relType.getURI(), relType);
-		return relType;
+	
+		return createRelationType(traceModel.getURI(), localName, domain.getURI(), range.getURI());
 
 	}
 
@@ -660,18 +576,8 @@ public class RdfResourceRepository implements ResourceRepository {
 		if(domain!=null)
 			checkExistency(domain);
 
-		Model rdfModel = ((RdfTraceModel)traceModel).rdfModel;
-
-		RdfAttributeType attType = new RdfAttributeType(traceModel.getURI()+localName, rdfModel, this);
-
-		rdfModel.getResource(attType.getURI()).addProperty(
-				RDF.type, 
-				rdfModel.getResource(KtbsConstants.ATTRIBUTE_TYPE));
-		if(domain != null)
-			attType.addDomain(domain);
-
-		resources.put(attType.getURI(), attType);
-		return attType;
+		
+		return createAttributeType(traceModel.getURI(), localName, domain.getURI());
 	}
 
 
@@ -708,5 +614,152 @@ public class RdfResourceRepository implements ResourceRepository {
 			if(!exists(uri) && !builtinResourcesURI.contains(uri))
 				throw new ResourceNotFoundException(uri);
 		}
+	}
+
+	@Override
+	public ComputedTrace createComputedTrace(String baseUri, String traceUri,
+			String traceModelUri, String methodUri,
+			Collection<String> sourceUris) {
+		
+		Model computedTraceRdfModel = minimalFac.createComputedTraceModel(baseUri, traceUri, methodUri, sourceUris);
+		
+		computedTraceRdfModel.getResource(traceUri).addProperty(
+				computedTraceRdfModel.getProperty(KtbsConstants.P_HAS_MODEL),
+				computedTraceRdfModel.getResource(traceModelUri)
+		);
+
+		RdfComputedTrace ct = new RdfComputedTrace(traceUri, computedTraceRdfModel, this);
+		putResource(ct, false);
+		
+		if(exists(baseUri)) {
+			createBaseChild(
+					((RdfBase)resources.get(baseUri)).rdfModel, 
+					computedTraceRdfModel, 
+					baseUri, 
+					traceUri);
+		}
+		return ct;
+	}
+
+	@Override
+	public StoredTrace createStoredTrace(String baseUri, String traceUri,
+			String traceModelUri, String origin) {
+		Model stRdfModel = minimalFac.createStoredTraceModel(baseUri, traceUri, traceModelUri, origin);
+			
+		RdfStoredTrace st = new RdfStoredTrace(traceUri, stRdfModel, this);
+		putResource(st, false);
+		if(exists(baseUri)) {
+			createBaseChild(
+					((RdfBase)resources.get(baseUri)).rdfModel, 
+					stRdfModel, 
+					baseUri, 
+					traceUri);
+		}
+		
+		return st;
+	}
+
+	@Override
+	public Method createMethod(String baseUri, String methodUri, String inherits) {
+		Model methodRdfModel = minimalFac.createMethodModel(baseUri, methodUri, inherits, null);
+
+		RdfMethod method = new RdfMethod(methodUri, methodRdfModel, this);
+		putResource(method, false);
+		if(exists(baseUri)) {
+			createBaseChild(
+					((RdfBase)resources.get(baseUri)).rdfModel, 
+					methodRdfModel, 
+					baseUri, 
+					methodUri);
+		}
+		
+		return method;
+	}
+
+	@Override
+	public TraceModel createTraceModel(String baseUri, String modelUri) {
+		Model tmRdfModel = minimalFac.createTraceModelModel(baseUri, modelUri);
+		RdfTraceModel tm = new RdfTraceModel(modelUri, tmRdfModel, this);
+		putResource(tm, false);
+		
+		if(exists(baseUri)) {
+			createBaseChild(
+					((RdfBase)resources.get(baseUri)).rdfModel, 
+					tmRdfModel, 
+					baseUri, 
+					modelUri);
+		}
+		
+		return tm;
+	}
+
+	@Override
+	public Obsel createObsel(String traceUri, String obselUri, String typeUri,
+			Map<String, Object> attributes) {
+		Model traceRdfModel = minimalFac.createObselModel(traceUri, obselUri, typeUri, null, null, null, null, null, attributes);
+
+		Model sharedModelForTrace = mergeWithParentModel(traceUri, traceRdfModel);
+		RdfObsel obsel = new RdfObsel(obselUri, sharedModelForTrace, this);
+		
+		resources.put(obsel.getURI(), obsel);
+		
+		return obsel;
+	}
+
+	private Model mergeWithParentModel(String parentUri, Model elementModel) {
+		if(exists(parentUri)) {
+			RdfKtbsResource rdfKtbsResource = resources.get(parentUri);
+			rdfKtbsResource.rdfModel.add(elementModel);
+			return rdfKtbsResource.rdfModel;
+		} else
+			return elementModel;
+	}
+
+	@Override
+	public ObselType createObselType(String traceModelUri, String localName) {
+		String obsTypeUri = getModelElementUri(traceModelUri, localName);
+		Model rdfModel = minimalFac.createObselTypeModel(obsTypeUri, null);
+		
+		Model model = mergeWithParentModel(traceModelUri, rdfModel);
+
+		RdfObselType obselType = new RdfObselType(obsTypeUri, model, this);
+
+		resources.put(obselType.getURI(), obselType);
+		return obselType;
+	}
+
+	private String getModelElementUri(String traceModelUri, String localName) {
+		if(localName == null)
+			// anonymous resource
+			return null;
+		else 
+			return traceModelUri+localName;
+	}
+	
+
+	@Override
+	public RelationType createRelationType(String traceModelUri,
+			String localName, String domainUri, String rangeUri) {
+		String relUri = getModelElementUri(traceModelUri, localName);
+		Model rdfModel = minimalFac.createRelationTypeModel(relUri, null, domainUri, rangeUri);
+		Model model = mergeWithParentModel(traceModelUri, rdfModel);
+
+		RdfRelationType relType = new RdfRelationType(relUri, model, this);
+
+		resources.put(relType.getURI(), relType);
+		return relType;
+	}
+
+	@Override
+	public AttributeType createAttributeType(String traceModelUri,
+			String localName, String domainUri) {
+		String attUri = getModelElementUri(traceModelUri, localName);
+		Model rdfModel = minimalFac.createAttributeTypeModel(attUri, domainUri);
+
+		Model model = mergeWithParentModel(traceModelUri, rdfModel);
+		RdfAttributeType attType = new RdfAttributeType(attUri, model, this);
+
+		resources.put(attType.getURI(), attType);
+		return attType;
 	}
 }

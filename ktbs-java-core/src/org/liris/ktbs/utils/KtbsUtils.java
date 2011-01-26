@@ -2,6 +2,8 @@ package org.liris.ktbs.utils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -417,6 +419,38 @@ public class KtbsUtils {
 		}
 
 		return resourceURI+aspect;
+	}
+
+	/**
+	 * Create a collection of resource uris from a collection of KTBS resources.
+	 * 
+	 * @param c the input collection of KTBS resources
+	 * @return the collection of resource uris
+	 */
+	public static Collection<String> toUriCollection(Collection<? extends KtbsResource> c) {
+		if( c == null)
+			return null;
+		Collection<String> uriCollection = new ArrayList<String>(c.size());
+		for(KtbsResource r:c)
+			uriCollection.add(r.getURI());
+		return uriCollection;
+	}
+
+	/**
+	 * Create an attribute map with attribute uris as keys
+	 * from an attribute map that has {@link AttributeType} object as keys
+	 * 
+	 * @param attributes the input attribute map
+	 * @return the created attribute map with attribute uris as keys
+	 */
+	public static Map<String, Object> toUriMap(
+			Map<AttributeType, Object> attributes) {
+		if(attributes == null)
+			return null;
+		Map<String, Object> m = new HashMap<String, Object>();
+		for(AttributeType att:attributes.keySet())
+			m.put(att.getURI(), attributes.get(att));
+		return m;
 	}
 
 }

@@ -41,7 +41,7 @@ public class RdfBaseTestCase extends AbstractKtbsRdfResourceTestCase {
 		model1 = base.newTraceModel(uri("model1"));
 		model2 = base.newTraceModel(uri("model2"));
 		
-		trace1 = base.newStoredTrace(uri("t01"),model2);
+		trace1 = base.newStoredTrace(uri("t01"),model2, "Nestor");
 
 		method1 = base.newMethod(uri("method1"), "http://example/method1/");
 		method2 = base.newMethod(uri("method2"), "http://example/method2/");

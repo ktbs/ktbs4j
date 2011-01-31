@@ -279,12 +279,25 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		Model filteredModel = JenaUtils.filterModel(model, selector);
 		String stringRepresentation = writeToString(filteredModel);
 
-		return updateResource(postURI,stringRepresentation, eTag);
+		String uriToPost = postURI;
+		if(traceAspects.length == 1) {
+			if(traceAspects[0] == KtbsConstants.OBSELS_ASPECT)
+				uriToPost = KtbsUtils.addAspect(postURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
+			else if(traceAspects[0] == KtbsConstants.ABOUT_ASPECT)
+				uriToPost = KtbsUtils.addAspect(postURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
+		}
+		
+		return updateResource(
+				uriToPost,
+				stringRepresentation, 
+				eTag, 
+				traceAspects);
 	}
 
 	private KtbsResponse updateResource(String postURI,
 			String stringRepresentation,
-			String eTag) {
+			String eTag,
+			String... traceAspects) {
 
 		checkStarted(); 
 

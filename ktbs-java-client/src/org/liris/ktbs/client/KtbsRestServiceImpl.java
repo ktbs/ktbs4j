@@ -44,6 +44,7 @@ import org.liris.ktbs.rdf.MinimalRdfResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -57,7 +58,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
 
-	
+
 	private MinimalRdfResourceFactory modelFactory = MinimalRdfResourceFactory.getInstance();
 
 	private String ktbsRootURI;
@@ -217,7 +218,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 				"specified for a trace.");
 			String traceAspect = traceAspects[0];
 			if(!traceAspect.equals(KtbsConstants.ABOUT_ASPECT) 
-					|| !traceAspect.equals(KtbsConstants.OBSELS_ASPECT)) 
+					&& !traceAspect.equals(KtbsConstants.OBSELS_ASPECT)) 
 				throw new IllegalArgumentException("Unknown trace aspect: " + traceAspect);
 			if(traceAspect.equals(KtbsConstants.ABOUT_ASPECT)) {
 				// @about aspect
@@ -353,8 +354,10 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	}
 
 	@Override
-	public KtbsResponse createBase(String rootURI, String baseURI) {
-		String asString = writeToString(modelFactory.createBaseModel(rootURI, baseURI));
+	public KtbsResponse createBase(String rootURI, String baseURI, String label) {
+		Resource br = modelFactory.createBaseModel(rootURI, baseURI);
+		addPropertyToModel(br, RDFS.label.getURI(), label);
+		String asString = writeToString(br.getModel());
 		return postResource(rootURI, asString);
 	}
 
@@ -371,7 +374,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		return asString;
 	}
 
-	
+
 	private KtbsResponse postResource(String postURI, String string) {
 		checkStarted(); 
 
@@ -423,28 +426,49 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	}
 
 	@Override
-	public KtbsResponse createMethod(String baseURI, String methodURI, String inheritedMethodUri, Map<String,String> parameters) {
-		String asString = writeToString(modelFactory.createMethodModel(baseURI, methodURI, inheritedMethodUri, parameters));
+	public KtbsResponse createMethod(String baseURI, String methodURI, String inheritedMethodUri, Map<String,String> parameters, String label) {
+		Resource r = modelFactory.createMethodModel(baseURI, methodURI, inheritedMethodUri, parameters);
+		addPropertyToModel(r, RDFS.label.getURI(), label);
+		String asString = writeToString(r.getModel());
 		return postResource(baseURI, asString);
 	}
 
 	@Override
-	public KtbsResponse createTraceModel(String baseURI,String modelURI) {
-		String asString = writeToString(modelFactory.createTraceModelModel(baseURI, modelURI));
+	public KtbsResponse createTraceModel(String baseURI,String modelURI, String label) {
+		Resource r = modelFactory.createTraceModelModel(baseURI, modelURI);
+		addPropertyToModel(r, RDFS.label.getURI(), label);
+		String asString = writeToString(r.getModel());
 		return postResource(baseURI, asString);
 	}
 
 	@Override
-	public KtbsResponse createStoredTrace(String baseURI, String traceURI, String modelURI, String origin) {
-		String asString = writeToString(modelFactory.createStoredTraceModel(baseURI, traceURI, modelURI, origin));
+	public KtbsResponse createStoredTrace(String baseURI, String traceURI, String modelURI, String origin, String label) {
+		Resource createStoredTraceModel = modelFactory.createStoredTraceModel(baseURI, traceURI, modelURI, origin);
+
+		Resource r = createStoredTraceModel;
+		addPropertyToModel(r, RDFS.label.getURI(), label);
+
+		String asString = writeToString(r.getModel());
 		return postResource(baseURI, asString);
+	}
+
+	private void addPropertyToModel(Resource r, String pName, Object object) {
+		if(object != null) {
+			Model model = r.getModel();
+			model.add(
+					r,
+					model.getProperty(pName),
+					model.createTypedLiteral(object));
+		}
 	}
 
 	@Override
 	public KtbsResponse createComputedTrace(String baseURI, String traceURI, 
-			String methodURI, Collection<String> sourceTracesURIs) {
+			String methodURI, Collection<String> sourceTracesURIs, String label) {
 
-		String asString = writeToString(modelFactory.createComputedTraceModel(baseURI, traceURI, methodURI, sourceTracesURIs));
+		Resource r = modelFactory.createComputedTraceModel(baseURI, traceURI, methodURI, sourceTracesURIs);
+		addPropertyToModel(r, RDFS.label.getURI(), label);
+		String asString = writeToString(r.getModel());
 		return postResource(baseURI, asString);
 	}
 
@@ -458,11 +482,14 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			String endDT, 
 			BigInteger begin, 
 			BigInteger end,
-			Map<String, Object> attributes) {
+			Map<String, Object> attributes,
+			String label) {
 
 		String traceURIWithoutAspect = KtbsUtils.addAspect(traceURI, null, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 
-		String asString = writeToString(modelFactory.createObselModel(traceURIWithoutAspect, obselURI, typeURI, subject, beginDT, endDT, begin, end, attributes));
+		Resource or = modelFactory.createObselModel(traceURIWithoutAspect, obselURI, typeURI, subject, beginDT, endDT, begin, end, attributes);
+		addPropertyToModel(or, RDFS.label.getURI(), label);
+		String asString = writeToString(or.getModel());
 		return postResource(traceURIWithoutAspect, asString);
 	}
 }

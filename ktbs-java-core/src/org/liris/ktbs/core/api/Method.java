@@ -21,6 +21,11 @@ public interface Method extends KtbsResource, ResourceWithParameters {
 	 * The built-in method named "ktbs:fusion" in the KTBS.
 	 */
 	public static final Method FUSION = new BuiltinMethod(KtbsConstants.FUSION); 
+
+	/**
+	 * The built-in method named "ktbs:fusion" in the KTBS.
+	 */
+	public static final Method SCRIPT_PYTHON = new BuiltinMethod(KtbsConstants.SCRIPT_PYTHON); 
 	
 	/**
 	 * Give the value of the property "ktbs:inherits" as a string.

@@ -1,7 +1,6 @@
 package org.liris.ktbs.rdf.resource.test;
 
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -16,8 +15,6 @@ import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
-
-import com.ibm.icu.text.SimpleDateFormat;
 
 public class RdfTraceTestCase  extends AbstractKtbsRdfResourceTestCase {
 
@@ -214,15 +211,9 @@ public class RdfTraceTestCase  extends AbstractKtbsRdfResourceTestCase {
 	public void testGetOriginAsDate() {
 		Date origin = t01.getOriginAsDate();
 		assertNotNull(origin);
-		try {
-			assertEquals(
-					new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").parse("2010-04-28 20:09:00"),
-					origin
-			);
-		} catch (ParseException e) {
-			fail(e.getMessage());
-		}
+		assertDateEquals(origin,2010,4,28,20,9,0);
 	}
+
 
 	@Test
 	public void testGetObsel() {

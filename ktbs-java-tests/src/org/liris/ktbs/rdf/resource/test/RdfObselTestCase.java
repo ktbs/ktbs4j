@@ -3,7 +3,7 @@ package org.liris.ktbs.rdf.resource.test;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
-import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -508,57 +508,57 @@ public class RdfObselTestCase  extends AbstractKtbsRdfResourceTestCase {
 
 	@Test
 	public void testSetEndDTAsDate() {
-		try {
-			assertEquals(sdf.parse("2010-04-28 20:09:01"),obsel1.getEndDTAsDate());
+			Date endDTAsDate = obsel1.getEndDTAsDate();
 			Date d = new Date();
 			obsel1.setEndDTAsDate(d);
-			assertEquals(d,obsel1.getEndDTAsDate());
-		} catch (ParseException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+			
+			Calendar c = Calendar.getInstance();
+			c.setTime(d);
+			
+			assertDateEquals(obsel1.getEndDTAsDate(), 
+					c.get(Calendar.YEAR), 
+					c.get(Calendar.MONTH) +1, 
+					c.get(Calendar.DAY_OF_MONTH), 
+					c.get(Calendar.HOUR_OF_DAY), 
+					c.get(Calendar.MINUTE), 
+					c.get(Calendar.SECOND)); 
 	}
 	@Test
 	public void testSetBeginDTAsDate() {
-		try {
-			assertEquals(sdf.parse("2010-04-28 20:09:01"),obsel1.getBeginDTAsDate());
+			assertDateEquals(obsel1.getBeginDTAsDate(), 2010, 4, 28, 20, 9, 1);
 			Date d = new Date();
 			obsel1.setBeginDTAsDate(d);
 			assertEquals(d,obsel1.getBeginDTAsDate());
-		} catch (ParseException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
 
 	}
 	@Test
 	public void testGetBeginDTAsDate() {
-		try {
-			assertEquals(sdf.parse("2010-04-28 20:09:01"),obsel1.getBeginDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:02"),obsel2.getBeginDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:05"),obsel3.getBeginDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:07"),obsel4.getBeginDTAsDate());
+//			assertEquals(sdf.parse("2010-04-28 20:09:01"),obsel1.getBeginDTAsDate());
+			assertDateEquals(obsel1.getBeginDTAsDate(), 2010, 4,28, 20,9,1);
+//			assertEquals(sdf.parse("2010-04-28 20:09:02"),obsel2.getBeginDTAsDate());
+			assertDateEquals(obsel2.getBeginDTAsDate(), 2010, 4,28, 20,9,2);
+//			assertEquals(sdf.parse("2010-04-28 20:09:05"),obsel3.getBeginDTAsDate());
+			assertDateEquals(obsel3.getBeginDTAsDate(), 2010, 4,28, 20,9,5);
+//			assertEquals(sdf.parse("2010-04-28 20:09:07"),obsel4.getBeginDTAsDate());
+			assertDateEquals(obsel4.getBeginDTAsDate(), 2010, 4,28, 20,9,7);
 			assertNull(obsel5.getBeginDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:12"),obsel6.getBeginDTAsDate());
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-			fail(e1.getMessage());
-		}
+//			assertEquals(sdf.parse("2010-04-28 20:09:12"),obsel6.getBeginDTAsDate());
+			assertDateEquals(obsel6.getBeginDTAsDate(), 2010, 4,28, 20,9,12);
 	}
 
 	@Test
 	public void testGetEndDTAsDate() {
-		try {
-			assertEquals(sdf.parse("2010-04-28 20:09:01"),obsel1.getEndDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:04"),obsel2.getEndDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:05"),obsel3.getEndDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:07"),obsel4.getEndDTAsDate());
+//			assertEquals(sdf.parse("2010-04-28 20:09:01"),obsel1.getEndDTAsDate());
+			assertDateEquals(obsel1.getEndDTAsDate(), 2010, 4,28, 20,9,1);
+//			assertEquals(sdf.parse("2010-04-28 20:09:04"),obsel2.getEndDTAsDate());
+			assertDateEquals(obsel2.getEndDTAsDate(), 2010, 4,28, 20,9,4);
+//			assertEquals(sdf.parse("2010-04-28 20:09:05"),obsel3.getEndDTAsDate());
+			assertDateEquals(obsel3.getEndDTAsDate(), 2010, 4,28, 20,9,5);
+//			assertEquals(sdf.parse("2010-04-28 20:09:07"),obsel4.getEndDTAsDate());
+			assertDateEquals(obsel4.getEndDTAsDate(), 2010, 4,28, 20,9,7);
 			assertNull(obsel5.getEndDTAsDate());
-			assertEquals(sdf.parse("2010-04-28 20:09:14"),obsel6.getEndDTAsDate());
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-			fail(e1.getMessage());
-		}
+//			assertEquals(sdf.parse("2010-04-28 20:09:14"),obsel6.getEndDTAsDate());
+			assertDateEquals(obsel6.getEndDTAsDate(), 2010, 4,28, 20,9,14);
 	}
 
 }

@@ -1,6 +1,9 @@
 package org.liris.ktbs.rdf.resource;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,11 +71,16 @@ public class RdfResourceRepository implements ResourceRepository {
 			InputStream stream, 
 			String lang) throws ResourceLoadException {
 
+		loadResourceFromReader(new InputStreamReader(stream), lang);
 
+	}
+
+	private void loadResourceFromReader(Reader reader, String lang)
+	throws ResourceLoadException, MultipleResourcesInStreamException {
 		boolean resourceFound = false;
 
 		Model model = ModelFactory.createDefaultModel();
-		model.read(stream, "", lang);
+		model.read(reader, "", lang);
 
 
 		// try to find the type of the resource contained
@@ -258,7 +266,6 @@ public class RdfResourceRepository implements ResourceRepository {
 
 		if(!resourceFound)
 			throw new ResourceLoadException("No resource could be found in the stream.", JenaUtils.toTurtleString(model));
-
 	}
 
 	private <T extends RdfKtbsResource> boolean putResourcesInModel(
@@ -492,7 +499,7 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public TraceModel createTraceModel(Base base, String modelURI) {
 		checkExistency(base);
-		
+
 		return createTraceModel(base.getURI(), modelURI);
 	}
 
@@ -515,8 +522,8 @@ public class RdfResourceRepository implements ResourceRepository {
 		for(Trace trace:sources) 
 			checkExistency(trace);
 
-		
-	
+
+
 		return createComputedTrace(base.getURI(), traceURI, tm.getURI(), m.getURI(), KtbsUtils.toUriCollection(sources));
 	}
 
@@ -530,7 +537,7 @@ public class RdfResourceRepository implements ResourceRepository {
 				childRdfModel.getProperty(KtbsConstants.P_OWNS),
 				childRdfModel.getResource(childURI)
 		);
-		
+
 		// Get the rdf:type of the child and add it to the base model
 		Resource type = childRdfModel.getResource(childURI).getPropertyResourceValue(RDF.type);
 		baseRdfModel.getResource(childURI).addProperty(
@@ -564,7 +571,7 @@ public class RdfResourceRepository implements ResourceRepository {
 		if(range!=null)
 			checkExistency(range);
 
-	
+
 		return createRelationType(traceModel.getURI(), localName, domain.getURI(), range.getURI());
 
 	}
@@ -576,7 +583,7 @@ public class RdfResourceRepository implements ResourceRepository {
 		if(domain!=null)
 			checkExistency(domain);
 
-		
+
 		return createAttributeType(traceModel.getURI(), localName, domain.getURI());
 	}
 
@@ -620,9 +627,13 @@ public class RdfResourceRepository implements ResourceRepository {
 	public ComputedTrace createComputedTrace(String baseUri, String traceUri,
 			String traceModelUri, String methodUri,
 			Collection<String> sourceUris) {
-		
-		Model computedTraceRdfModel = minimalFac.createComputedTraceModel(baseUri, traceUri, methodUri, sourceUris);
-		
+
+		Resource r = minimalFac.createComputedTraceModel(
+				baseUri, 
+				traceUri, 
+				methodUri, 
+				sourceUris);
+		Model computedTraceRdfModel = r.getModel();
 		computedTraceRdfModel.getResource(traceUri).addProperty(
 				computedTraceRdfModel.getProperty(KtbsConstants.P_HAS_MODEL),
 				computedTraceRdfModel.getResource(traceModelUri)
@@ -630,7 +641,7 @@ public class RdfResourceRepository implements ResourceRepository {
 
 		RdfComputedTrace ct = new RdfComputedTrace(traceUri, computedTraceRdfModel, this);
 		putResource(ct, false);
-		
+
 		if(exists(baseUri)) {
 			createBaseChild(
 					((RdfBase)resources.get(baseUri)).rdfModel, 
@@ -644,8 +655,8 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public StoredTrace createStoredTrace(String baseUri, String traceUri,
 			String traceModelUri, String origin) {
-		Model stRdfModel = minimalFac.createStoredTraceModel(baseUri, traceUri, traceModelUri, origin);
-			
+		Resource r = minimalFac.createStoredTraceModel(baseUri, traceUri, traceModelUri, origin);
+		Model stRdfModel = r.getModel();
 		RdfStoredTrace st = new RdfStoredTrace(traceUri, stRdfModel, this);
 		putResource(st, false);
 		if(exists(baseUri)) {
@@ -655,14 +666,15 @@ public class RdfResourceRepository implements ResourceRepository {
 					baseUri, 
 					traceUri);
 		}
-		
+
 		return st;
 	}
 
 	@Override
 	public Method createMethod(String baseUri, String methodUri, String inherits) {
-		Model methodRdfModel = minimalFac.createMethodModel(baseUri, methodUri, inherits, null);
+		Resource r = minimalFac.createMethodModel(baseUri, methodUri, inherits, null);
 
+		Model methodRdfModel = r.getModel();
 		RdfMethod method = new RdfMethod(methodUri, methodRdfModel, this);
 		putResource(method, false);
 		if(exists(baseUri)) {
@@ -672,16 +684,19 @@ public class RdfResourceRepository implements ResourceRepository {
 					baseUri, 
 					methodUri);
 		}
-		
+
 		return method;
 	}
 
 	@Override
 	public TraceModel createTraceModel(String baseUri, String modelUri) {
-		Model tmRdfModel = minimalFac.createTraceModelModel(baseUri, modelUri);
+		Resource r = minimalFac.createTraceModelModel(baseUri, modelUri);
+
+		Model tmRdfModel = r.getModel();
+
 		RdfTraceModel tm = new RdfTraceModel(modelUri, tmRdfModel, this);
 		putResource(tm, false);
-		
+
 		if(exists(baseUri)) {
 			createBaseChild(
 					((RdfBase)resources.get(baseUri)).rdfModel, 
@@ -689,20 +704,22 @@ public class RdfResourceRepository implements ResourceRepository {
 					baseUri, 
 					modelUri);
 		}
-		
+
 		return tm;
 	}
 
 	@Override
 	public Obsel createObsel(String traceUri, String obselUri, String typeUri,
 			Map<String, Object> attributes) {
-		Model traceRdfModel = minimalFac.createObselModel(traceUri, obselUri, typeUri, null, null, null, null, null, attributes);
+		Resource r = minimalFac.createObselModel(traceUri, obselUri, typeUri, null, null, null, null, null, attributes);
+
+		Model traceRdfModel = r.getModel();
 
 		Model sharedModelForTrace = mergeWithParentModel(traceUri, traceRdfModel);
 		RdfObsel obsel = new RdfObsel(obselUri, sharedModelForTrace, this);
-		
+
 		resources.put(obsel.getURI(), obsel);
-		
+
 		return obsel;
 	}
 
@@ -718,8 +735,8 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public ObselType createObselType(String traceModelUri, String localName) {
 		String obsTypeUri = getModelElementUri(traceModelUri, localName);
-		Model rdfModel = minimalFac.createObselTypeModel(obsTypeUri, null);
-		
+		Resource r = minimalFac.createObselTypeModel(obsTypeUri, null);
+		Model rdfModel  = r.getModel();
 		Model model = mergeWithParentModel(traceModelUri, rdfModel);
 
 		RdfObselType obselType = new RdfObselType(obsTypeUri, model, this);
@@ -735,13 +752,15 @@ public class RdfResourceRepository implements ResourceRepository {
 		else 
 			return traceModelUri+localName;
 	}
-	
+
 
 	@Override
 	public RelationType createRelationType(String traceModelUri,
 			String localName, String domainUri, String rangeUri) {
 		String relUri = getModelElementUri(traceModelUri, localName);
-		Model rdfModel = minimalFac.createRelationTypeModel(relUri, null, domainUri, rangeUri);
+
+		Resource r = minimalFac.createRelationTypeModel(relUri, null, domainUri, rangeUri);
+		Model rdfModel = r.getModel();
 		Model model = mergeWithParentModel(traceModelUri, rdfModel);
 
 		RdfRelationType relType = new RdfRelationType(relUri, model, this);
@@ -754,12 +773,22 @@ public class RdfResourceRepository implements ResourceRepository {
 	public AttributeType createAttributeType(String traceModelUri,
 			String localName, String domainUri) {
 		String attUri = getModelElementUri(traceModelUri, localName);
-		Model rdfModel = minimalFac.createAttributeTypeModel(attUri, domainUri);
+		
+		Resource r = minimalFac.createAttributeTypeModel(attUri, domainUri);
 
+		Model rdfModel = r.getModel();
+		
+		
 		Model model = mergeWithParentModel(traceModelUri, rdfModel);
 		RdfAttributeType attType = new RdfAttributeType(attUri, model, this);
 
 		resources.put(attType.getURI(), attType);
 		return attType;
+	}
+
+	@Override
+	public void loadResource(String stringRepresentation, String lang)
+	throws ResourceLoadException {
+		loadResourceFromReader(new StringReader(stringRepresentation), lang);
 	}
 }

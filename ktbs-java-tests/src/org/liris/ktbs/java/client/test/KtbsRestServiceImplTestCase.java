@@ -78,7 +78,7 @@ public class KtbsRestServiceImplTestCase {
 		KtbsResponse retrieve = service.retrieve(uri);
 		assertEquals(KtbsResponseStatus.RESOURCE_RETRIEVED, retrieve.getKtbsStatus());
 		try {
-			repository.loadResource(retrieve.getBody(), KtbsUtils.getJenaSyntax(retrieve.getMimeType()));
+			repository.loadResource(retrieve.getBodyAsString(), KtbsUtils.getJenaSyntax(retrieve.getMimeType()));
 			return repository.getResource(uri);
 		} catch(ResourceLoadException e) {
 			fail(e.getMessage());
@@ -88,13 +88,14 @@ public class KtbsRestServiceImplTestCase {
 	
 	@Test
 	public void testCreateObsel() {
-		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createBase("http://localhost:8001/", "http://localhost:8001/base1/").getKtbsStatus());
-		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createTraceModel("http://localhost:8001/base1/", "http://localhost:8001/base1/model1/").getKtbsStatus());
+		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createBase("http://localhost:8001/", "http://localhost:8001/base1/", null).getKtbsStatus());
+		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createTraceModel("http://localhost:8001/base1/", "http://localhost:8001/base1/model1/", null).getKtbsStatus());
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED,  service.createStoredTrace(
 				"http://localhost:8001/base1/", 
 				"http://localhost:8001/base1/t01/", 
 				"http://localhost:8001/base1/model1/", 
-				"2010-04-28T18:09:01+00:00").getKtbsStatus());
+				"2010-04-28T18:09:01+00:00",
+				"Un label de trace").getKtbsStatus());
 		
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("http://localhost:8001/base1/model1/message", "Salut tout le monde");
@@ -108,7 +109,8 @@ public class KtbsRestServiceImplTestCase {
 				null,
 				null,
 				new BigInteger("1000"),
-				attributes
+				attributes,
+				null
 				);
 		
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
@@ -118,25 +120,25 @@ public class KtbsRestServiceImplTestCase {
 	
 	@Test
 	public void testCreate() throws FileNotFoundException, IOException {
-		KtbsResponse response = service.createBase("http://localhost:8001/", "http://localhost:8001/base2/");
+		KtbsResponse response = service.createBase("http://localhost:8001/", "http://localhost:8001/base2/", null);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		assertEquals("http://localhost:8001/base2/", response.getHTTPLocation());
 		
 		
-		response = service.createTraceModel("http://localhost:8001/base2/", "http://localhost:8001/base2/model2/");
+		response = service.createTraceModel("http://localhost:8001/base2/", "http://localhost:8001/base2/model2/", null);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		assertEquals("http://localhost:8001/base2/model2/", response.getHTTPLocation());
 
-		response = service.createTraceModel("http://localhost:8001/base2/", "http://localhost:8001/base2/model3/");
+		response = service.createTraceModel("http://localhost:8001/base2/", "http://localhost:8001/base2/model3/", null);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		assertEquals("http://localhost:8001/base2/model3/", response.getHTTPLocation());
 
 		
-		response = service.createStoredTrace("http://localhost:8001/base2/", "http://localhost:8001/base2/trace2/", "http://localhost:8001/base2/model2/", "Le premier de l'an");
+		response = service.createStoredTrace("http://localhost:8001/base2/", "http://localhost:8001/base2/trace2/", "http://localhost:8001/base2/model2/", "Le premier de l'an", null);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		assertEquals("http://localhost:8001/base2/trace2/", response.getHTTPLocation());
 		
-		response = service.createStoredTrace("http://localhost:8001/base2/", "http://localhost:8001/base2/trace3/", "http://localhost:8001/base2/model2/", "Le premier de l'an");
+		response = service.createStoredTrace("http://localhost:8001/base2/", "http://localhost:8001/base2/trace3/", "http://localhost:8001/base2/model2/", "Le premier de l'an", null);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		assertEquals("http://localhost:8001/base2/trace3/", response.getHTTPLocation());
 		
@@ -147,7 +149,8 @@ public class KtbsRestServiceImplTestCase {
 				"http://localhost:8001/base2/", 
 				"http://localhost:8001/base2/method2/", 
 				KtbsConstants.SCRIPT_PYTHON,
-				parameters);
+				parameters,
+				null);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		assertEquals("http://localhost:8001/base2/method2/", response.getHTTPLocation());
 
@@ -155,7 +158,7 @@ public class KtbsRestServiceImplTestCase {
 				"http://localhost:8001/base2/", 
 				"http://localhost:8001/base2/comp-trace1/", 
 				"http://localhost:8001/base2/method2/", 
-				Arrays.asList(new String[]{"http://localhost:8001/base2/trace2/","http://localhost:8001/base2/trace3/"}));
+				Arrays.asList(new String[]{"http://localhost:8001/base2/trace2/","http://localhost:8001/base2/trace3/"}), null);
 		
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		assertEquals("http://localhost:8001/base2/comp-trace1/", response.getHTTPLocation());
@@ -171,18 +174,16 @@ public class KtbsRestServiceImplTestCase {
 		repository.loadResource(new FileInputStream("turtle/gra_model1.ttl"), JenaConstants.TURTLE);
 		TraceModel tm = repository.getResource(model1Uri, TraceModel.class);
 		
-		KtbsResponse response = service.createBase(rootUri, base1Uri);
+		KtbsResponse response = service.createBase(rootUri, base1Uri, null);
 		assertCreateSucceeded(response, base1Uri);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 		
-		response = service.createTraceModel(base1Uri, model1Uri);
+		response = service.createTraceModel(base1Uri, model1Uri, null);
 		assertCreateSucceeded(response, model1Uri);
 		assertEquals(KtbsResponseStatus.RESOURCE_CREATED, response.getKtbsStatus());
 
-		response = service.update(tm, getETag(tm));
+		response = service.update(tm, getETag(tm), null);
 		assertEquals(KtbsResponseStatus.RESOURCE_UPDATED, response.getKtbsStatus());
-		
-		
 		
 //		response = service.retrieve(base1Uri);
 //		assertEquals(KtbsResponseStatus.RESOURCE_RETRIEVED, response.getKtbsStatus());

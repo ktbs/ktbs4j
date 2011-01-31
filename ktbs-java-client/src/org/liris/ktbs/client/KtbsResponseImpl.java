@@ -12,6 +12,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.liris.ktbs.core.api.KtbsResource;
 
+
+
+
 public class KtbsResponseImpl implements KtbsResponse {
 
 	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
@@ -20,6 +23,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 	private boolean executedWithSuccess;
 	private KtbsResponseStatus ktbsResponseStatus;
 	private HttpResponse httpResponse;
+	private String contentAsString;
 
 	public KtbsResponseImpl(KtbsResource resource, boolean executedWithSuccess,
 			KtbsResponseStatus ktbsResponseStatus,
@@ -29,6 +33,14 @@ public class KtbsResponseImpl implements KtbsResponse {
 		this.executedWithSuccess = executedWithSuccess;
 		this.ktbsResponseStatus = ktbsResponseStatus;
 		this.httpResponse = httpResponse;
+
+
+		try {
+			contentAsString = EntityUtils.toString(this.httpResponse.getEntity());
+			EntityUtils.consume(this.httpResponse.getEntity());
+		} catch (Exception e) {
+			log.warn("Unable to read the content of the response.", e);
+		}
 	}
 
 	@Override
@@ -88,10 +100,10 @@ public class KtbsResponseImpl implements KtbsResponse {
 
 	public String readHeader(String headerName) {
 		if(httpResponse==null)
-				return null;
-		
+			return null;
+
 		Header[] headers = httpResponse.getHeaders(headerName);
-		
+
 		if(headers==null || headers.length == 0)
 			return null;
 		return headers[0].getValue();
@@ -103,25 +115,9 @@ public class KtbsResponseImpl implements KtbsResponse {
 	}
 
 	@Override
-	public InputStream getBody() {
-		try {
-			return this.httpResponse.getEntity().getContent();
-		} catch (IllegalStateException e) {
-			log.error("Impossible to read content", e);
-			return null;
-		} catch (IOException e) {
-			log.error("Impossible to read content", e);
-			return null;
-		} 
-	}
+	public String getBodyAsString() {
+		return contentAsString;
 
-	@Override
-	public void consume() {
-		try {
-			EntityUtils.consume(this.httpResponse.getEntity());
-		} catch (IOException e) {
-			log.warn("Impossible to release memory from the body", e);
-		}
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package org.liris.ktbs.client;
 
-import java.io.InputStream;
-
 import org.apache.http.HttpResponse;
 
 /**
@@ -61,19 +59,16 @@ public interface KtbsResponse {
 	public String getHTTPLocation();
 	
 	/**
-	 * The body of the HTTP response as a stream.
+	 * The body of the HTTP response as a Java string.
 	 * 
 	 * <p>
-	 * The stream is obtained by calling the method <code>getContentStream()</code> on the underlying HTTP entity. 
+	 * The string is obtained from the stream returned by the method <code>getContentStream()</code>
+	 *  on the underlying HTTP entity. 
 	 * </p>
 	 * 
 	 * @return the body of the underlying HTTP response, as 
-	 * an input stream.
+	 * a string.
 	 */
-	public InputStream getBody();
+	public String getBodyAsString();
 
-	/**
-	 * Remove the body from the memory by calling the underlying EntityUtils.consume() method.
-	 */
-	public void consume();
 }

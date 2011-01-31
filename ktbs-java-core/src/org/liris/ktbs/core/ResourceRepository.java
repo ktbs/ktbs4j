@@ -254,7 +254,7 @@ public interface ResourceRepository {
 	
 	
 	/**
-	 * Reads a Ktbs resource from an input stream and register it.
+	 * Read a Ktbs resource from an input stream and register it.
 	 * 
 	 * <p>
 	 * If the resource loaded is an Obsel, the containing trace got by the 
@@ -269,6 +269,27 @@ public interface ResourceRepository {
 	 * @param lang the Jena syntax that was used to serialize the resource into the stream
 	 * @throws MultipleResourcesInStreamException when the content of the stream cannot be interpreted as 
 	 * a valid Ktbs resource.
+	 * @see #loadResource(String, String)
 	 */
 	public void loadResource(InputStream stream, String lang) throws ResourceLoadException;
+	
+	/**
+	 * Read a Ktbs resource from an string and register it.
+	 * 
+	 * <p>
+	 * If the resource loaded is an Obsel, the containing trace got by the 
+	 * ktbs:hasTrace property is updated with this new obsel.
+	 * </p>
+	 * <p>
+	 * If the resource loaded is an AttributeType, a RelationType, or an ObselType, 
+	 * the containing trace model is obtained by resolving the parent URI of the resource.
+	 * </p>
+	 * 
+	 * @param stringRepresentation the string representation of the ktbs resource to be loead
+	 * @param lang the Jena syntax that was used to serialize the resource into the stream
+	 * @throws MultipleResourcesInStreamException when the content of the string cannot be interpreted as 
+	 * a valid Ktbs resource.
+	 * @see {@link #loadResource(InputStream, String)}
+	 */
+	public void loadResource(String stringRepresentation, String lang) throws ResourceLoadException;
 }

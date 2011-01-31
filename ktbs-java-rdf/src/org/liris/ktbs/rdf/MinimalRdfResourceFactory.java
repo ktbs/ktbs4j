@@ -38,24 +38,27 @@ public class MinimalRdfResourceFactory {
 		return instance;
 	}
 	
-	public Model createAttributeTypeModel(String attUri, String domainUri) {
-		Model model = createModelWithType(attUri, KtbsConstants.ATTRIBUTE_TYPE);
+	public Resource createAttributeTypeModel(String attUri, String domainUri) {
+		Resource atr = createModelWithType(attUri, KtbsConstants.ATTRIBUTE_TYPE);
+		Model model = atr.getModel();
 		addPropertyIfNotNull(model, attUri, KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, domainUri); 
-		return model;
+		return atr;
 	}
 
-	public Model createRelationTypeModel(String relUri, String superRelationTypeUri, String domainUri, String rangeUri) {
-		Model model = createModelWithType(relUri, KtbsConstants.RELATION_TYPE);
+	public Resource createRelationTypeModel(String relUri, String superRelationTypeUri, String domainUri, String rangeUri) {
+		Resource rtr = createModelWithType(relUri, KtbsConstants.RELATION_TYPE);
+		Model model = rtr.getModel();
 		addPropertyIfNotNull(model, relUri, KtbsConstants.P_HAS_RELATION_DOMAIN, domainUri); 
 		addPropertyIfNotNull(model, relUri, KtbsConstants.P_HAS_RELATION_RANGE, rangeUri); 
 		addPropertyIfNotNull(model, relUri, KtbsConstants.P_HAS_SUPER_RELATION_TYPE, superRelationTypeUri); 
-		return model;
+		return rtr;
 	}
 
-	public Model createObselTypeModel(String obsTypeUri, String superObselTypeUri) {
-		Model model = createModelWithType(obsTypeUri, KtbsConstants.OBSEL_TYPE);
+	public Resource createObselTypeModel(String obsTypeUri, String superObselTypeUri) {
+		Resource otr = createModelWithType(obsTypeUri, KtbsConstants.OBSEL_TYPE);
+		Model model = otr.getModel();
 		addPropertyIfNotNull(model, obsTypeUri, KtbsConstants.P_HAS_SUPER_OBSEL_TYPE, superObselTypeUri); 
-		return model;
+		return otr;
 	}
 	
 	private void addPropertyIfNotNull(Model model, String subjectUri, String pName,
@@ -64,50 +67,55 @@ public class MinimalRdfResourceFactory {
 		model.getResource(subjectUri).addProperty(model.getProperty(pName), model.getResource(objectUri));
 		
 	}
-	public Model createBaseModel(String rootURI, String baseURI) {
-		Model model = createModelWithType(baseURI, KtbsConstants.BASE);
+	public Resource createBaseModel(String rootURI, String baseURI) {
+		Resource br = createModelWithType(baseURI, KtbsConstants.BASE);
+		Model model = br.getModel();
 		model.getResource(rootURI).addProperty(model.getProperty(KtbsConstants.P_HAS_BASE), model.getResource(baseURI));
-		return model;
+		return br;
 	}
 	
-	public Model createMethodModel(String baseURI, String methodURI, String inheritedMethodUri, Map<String,String> parameters) {
-		Model model = createModelWithType(methodURI, KtbsConstants.METHOD);
+	public Resource createMethodModel(String baseURI, String methodURI, String inheritedMethodUri, Map<String,String> parameters) {
+		Resource mr = createModelWithType(methodURI, KtbsConstants.METHOD);
+		Model model = mr.getModel();
 		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(methodURI));
 		model.getResource(methodURI).addProperty(model.getProperty(KtbsConstants.P_INHERITS), model.getResource(inheritedMethodUri));
 		if(parameters != null) {
 			for(Entry<String, String> entry:parameters.entrySet())
 				model.getResource(methodURI).addLiteral(model.getProperty(KtbsConstants.P_HAS_PARAMETER), entry.getKey()+"="+entry.getValue());
 		}
-		return model;
+		return mr;
 	}
 	
-	public Model createTraceModelModel(String baseURI, String modelURI) {
-		Model model = createModelWithType(modelURI, KtbsConstants.TRACE_MODEL);
+	public Resource createTraceModelModel(String baseURI, String modelURI) {
+		Resource tmr = createModelWithType(modelURI, KtbsConstants.TRACE_MODEL);
+		Model model = tmr.getModel();
 		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(modelURI));
-		return model;
+		return tmr;
 	}
 	
-	public Model createStoredTraceModel(String baseURI, String traceURI, String modelURI, String origin) {
-		Model model = createModelWithType(traceURI, KtbsConstants.STORED_TRACE);
+	public Resource createStoredTraceModel(String baseURI, String traceURI, String modelURI, String origin) {
+		Resource str = createModelWithType(traceURI, KtbsConstants.STORED_TRACE);
+		Model model = str.getModel();
 		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(traceURI));
 		model.getResource(traceURI).addProperty(model.getProperty(KtbsConstants.P_HAS_MODEL), model.getResource(modelURI));
 		model.getResource(traceURI).addLiteral(model.getProperty(KtbsConstants.P_HAS_ORIGIN), origin);
-		return model;
+		return str;
 	}
 	
-	public Model createComputedTraceModel(String baseURI, String traceURI, String methodURI, Collection<String> sourceTracesURIs) {
-		Model model = createModelWithType(traceURI, KtbsConstants.COMPUTED_TRACE);
+	public Resource createComputedTraceModel(String baseURI, String traceURI, String methodURI, Collection<String> sourceTracesURIs) {
+		Resource ctr = createModelWithType(traceURI, KtbsConstants.COMPUTED_TRACE);
+		Model model = ctr.getModel();
 		model.getResource(baseURI).addProperty(model.getProperty(KtbsConstants.P_OWNS), model.getResource(traceURI));
 		model.getResource(traceURI).addProperty(model.getProperty(KtbsConstants.P_HAS_METHOD), model.getResource(methodURI));
 		for(String sourceTraceURI:sourceTracesURIs) 
 			model.getResource(traceURI).addProperty(model.getProperty(KtbsConstants.P_HAS_SOURCE), model.getResource(sourceTraceURI));
-		return model;
+		return ctr;
 	}
 	
-	public Model createObselModel(String traceURI, String obselURI, String typeURI, String subject, String beginDT, String endDT, BigInteger begin, BigInteger end, Map<String, Object> attributes) {
+	public Resource createObselModel(String traceURI, String obselURI, String typeURI, String subject, String beginDT, String endDT, BigInteger begin, BigInteger end, Map<String, Object> attributes) {
 		
-		Model model = createModelWithType(obselURI, typeURI);
-		Resource or = model.getResource(obselURI);
+		Resource or = createModelWithType(obselURI, typeURI);
+		Model model = or.getModel();
 		or.addProperty(model.getProperty(KtbsConstants.P_HAS_TRACE), model.getResource(traceURI));
 		if(beginDT != null)
 			or.addLiteral(model.getProperty(KtbsConstants.P_HAS_BEGIN_DT), model.createTypedLiteral(beginDT, XSDDatatype.XSDdateTime));
@@ -130,10 +138,10 @@ public class MinimalRdfResourceFactory {
 					or.addProperty(attribute, value);
 			}
 		}
-		return model;
+		return or;
 	}
 	
-	private Model createModelWithType(String resourceUri, String rdfType) {
+	private Resource createModelWithType(String resourceUri, String rdfType) {
 		Model model = ModelFactory.createDefaultModel();
 		Resource resource;
 		if(resourceUri == null ) 
@@ -143,7 +151,7 @@ public class MinimalRdfResourceFactory {
 		resource.addProperty(
 				RDF.type, 
 				model.getProperty(rdfType));
-		return model;
+		return resource;
 	}
 
 }

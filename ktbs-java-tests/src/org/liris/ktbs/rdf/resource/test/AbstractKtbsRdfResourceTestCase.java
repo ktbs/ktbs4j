@@ -1,6 +1,8 @@
 package org.liris.ktbs.rdf.resource.test;
 
 import java.io.FileInputStream;
+import java.util.Calendar;
+import java.util.Date;
 
 import junit.framework.TestCase;
 
@@ -37,6 +39,19 @@ public class AbstractKtbsRdfResourceTestCase extends TestCase {
 	protected String filtered1uri = "http://localhost:8001/base1/filtered1/";
 	protected String count1uri = "http://localhost:8001/base1/count1/";
 	protected String countUri = "http://localhost:8001/base1/count/";
+	
+	protected void assertDateEquals(Date date, int y, int month, int day, int h,
+			int minute, int s) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		assertEquals(y, c.get(Calendar.YEAR));
+		assertEquals(month, c.get(Calendar.MONTH) + 1);
+		assertEquals(day, c.get(Calendar.DAY_OF_MONTH));
+		assertEquals(h, c.get(Calendar.HOUR_OF_DAY));
+		assertEquals(minute, c.get(Calendar.MINUTE));
+		assertEquals(s, c.get(Calendar.SECOND));
+	}
+
 	
 	@Before
 	protected void setUp() throws Exception {

@@ -80,14 +80,14 @@ public class TraceImporter {
 		KtbsRestService service = app.getRestService("http://localhost:8001/");
 		ResourceRepository repository = new RdfResourceRepository();
 
-		KtbsResponse response = service.createBase("http://localhost:8001/", visu2BaseURI);
+		KtbsResponse response = service.createBase("http://localhost:8001/", visu2BaseURI, null);
 		checkSuccess(response);
 
 		// Extract the trace model for the rdf statements
 		TraceModelExtractor extractor = new TraceModelExtractor(repository, visu2BaseURI);
 		TraceModel traceModel = extractor.inferTraceModel(modelURI,model);
 
-		response = service.createTraceModel(visu2BaseURI, traceModel.getURI());
+		response = service.createTraceModel(visu2BaseURI, traceModel.getURI(), null);
 		checkSuccess(response);
 
 		// List all traces in the model
@@ -125,7 +125,8 @@ public class TraceImporter {
 					visu2BaseURI, 
 					traceURI, 
 					modelURI, 
-					new Date(earliestDate).toString());
+					new Date(earliestDate).toString(),
+					null);
 			checkSuccess(response);
 		}
 
@@ -189,7 +190,8 @@ public class TraceImporter {
 						null, 
 						new BigInteger(Long.toString(beginLong - origins.get(traceURI))), 
 						new BigInteger(Long.toString(endLong - origins.get(traceURI))), 
-						attributes);
+						attributes,
+						null);
 
 				checkSuccess(response);
 			}
@@ -202,8 +204,7 @@ public class TraceImporter {
 			if(response.getKtbsStatus() == KtbsResponseStatus.REQUEST_FAILED)
 				System.err.println(response.getServerMessage());
 			System.exit(1);
-		} else
-			response.consume();
+		} 
 	}
 
 	

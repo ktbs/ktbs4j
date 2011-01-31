@@ -31,7 +31,7 @@ public class InteractWithRemoteKTBSServer {
 		ResourceRepository repository = new RdfResourceRepository();
 
 		/*
-		 * PREREQUISITE: the KTBS server has been fulled with populate-ktbs and populate-t01
+		 * PREREQUISITE: the KTBS server has been fulled with populate-ktbs and populate-t01 scripts
 		 */
 
 
@@ -42,7 +42,7 @@ public class InteractWithRemoteKTBSServer {
 		KtbsResponse response = service.retrieve("http://localhost:8001/base1/");
 		if(response.hasSucceeded()) {
 			// Load (deserialize) the retrieved resource in the repository
-			repository.loadResource(response.getBody(), JenaConstants.TURTLE);
+			repository.loadResource(response.getBodyAsString(), JenaConstants.TURTLE);
 
 			// Get the resource from the repository
 			Base base1 = (Base) repository.getResource("http://localhost:8001/base1/");
@@ -66,7 +66,7 @@ public class InteractWithRemoteKTBSServer {
 		TraceModel model1 = null;
 		if(response.hasSucceeded()) {
 			// Load (deserialize) the retrieved resource in the repository
-			repository.loadResource(response.getBody(), JenaConstants.TURTLE);
+			repository.loadResource(response.getBodyAsString(), JenaConstants.TURTLE);
 
 			// Get the resource from the repository
 			model1 = (TraceModel) repository.getResource("http://localhost:8001/base1/model1/");
@@ -118,8 +118,8 @@ public class InteractWithRemoteKTBSServer {
 		StoredTrace t01 = null;
 		if(responseAbout.hasSucceeded() && responseObsels.hasSucceeded()) {
 			// Load (deserialize) the retrieved resources in the repository
-			repository.loadResource(responseAbout.getBody(), JenaConstants.TURTLE);
-			repository.loadResource(responseObsels.getBody(), JenaConstants.TURTLE);
+			repository.loadResource(responseAbout.getBodyAsString(), JenaConstants.TURTLE);
+			repository.loadResource(responseObsels.getBodyAsString(), JenaConstants.TURTLE);
 
 			// Get the resource from the repository
 			t01 = (StoredTrace) repository.getResource("http://localhost:8001/base1/t01/");
@@ -170,7 +170,8 @@ public class InteractWithRemoteKTBSServer {
 				null, 
 				new BigInteger("10000"), 
 				new BigInteger("12000"), 
-				attributes);
+				attributes,
+				null);
 		
 		if(response.hasSucceeded()) 
 			System.out.println("The obsel has been remotely created");

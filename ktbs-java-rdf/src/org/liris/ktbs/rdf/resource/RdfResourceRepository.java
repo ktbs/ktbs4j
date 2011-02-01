@@ -71,11 +71,11 @@ public class RdfResourceRepository implements ResourceRepository {
 			InputStream stream, 
 			String lang) throws ResourceLoadException {
 
-		loadResourceFromReader(new InputStreamReader(stream), lang);
+		loadResourceFromReader(new InputStreamReader(stream), lang, false);
 
 	}
 
-	private void loadResourceFromReader(Reader reader, String lang)
+	private void loadResourceFromReader(Reader reader, String lang, boolean isTraceModel)
 	throws ResourceLoadException, MultipleResourcesInStreamException {
 		boolean resourceFound = false;
 
@@ -93,6 +93,16 @@ public class RdfResourceRepository implements ResourceRepository {
 			types.add(typeURI);
 			resourceURIsByType.put(typeURI, stmt.getSubject().getURI());
 		}
+		
+		
+		if(isTraceModel) {
+			// the resource to load is explicitely designated by the user as being a trace model, no need to explore the triples
+			// for a rdf:type statement
+			
+			loadTraceModel(model, types, resourceURIsByType);
+			return;
+		}
+		
 
 		/*
 		 * TODO KTBS bug : quand on fait un GET sur une trace, on n'a pas le rdf:type de la trace
@@ -133,49 +143,7 @@ public class RdfResourceRepository implements ResourceRepository {
 		} 
 
 		if(types.contains(KtbsConstants.TRACE_MODEL) || containsOnly(types, KtbsConstants.ATTRIBUTE_TYPE, KtbsConstants.OBSEL_TYPE, KtbsConstants.RELATION_TYPE)) {
-			log.info("A trace model, or trace model elements have been found in the stream.");
-			checkAtLeastNumberOfElements(model, types, KtbsConstants.TRACE_MODEL, 1);
-
-			String traceModelURI = null;
-			// get the trace model URI
-			Iterator<String> iterator = resourceURIsByType.get(KtbsConstants.TRACE_MODEL).iterator();
-			if(iterator.hasNext())
-				traceModelURI = iterator.next();
-			else {
-				iterator = resourceURIsByType.get(KtbsConstants.OBSEL_TYPE).iterator();
-				if(iterator.hasNext())
-					traceModelURI = KtbsUtils.resolveParentURI(iterator.next());
-				else{
-					iterator = resourceURIsByType.get(KtbsConstants.ATTRIBUTE_TYPE).iterator();
-					if(iterator.hasNext())
-						traceModelURI = KtbsUtils.resolveParentURI(iterator.next());
-					else{
-						iterator = resourceURIsByType.get(KtbsConstants.RELATION_TYPE).iterator();
-						if(iterator.hasNext())
-							traceModelURI = KtbsUtils.resolveParentURI(iterator.next());
-					}
-				}
-			}
-
-			Model filteredModel = JenaUtils.filterModel(model, new TraceModelElementSelector(traceModelURI));
-
-			RdfTraceModel resource = new RdfTraceModel(traceModelURI, filteredModel, this);
-			resources.put(resource.getURI(), resource);
-			resourceFound = true;
-
-			// put model and its children manually
-			for(String attTypeURI:resourceURIsByType.get(KtbsConstants.ATTRIBUTE_TYPE)) {
-				RdfAttributeType att = new RdfAttributeType(attTypeURI, filteredModel, this);
-				resources.put(attTypeURI, att);
-			}
-			for(String obselTypeURI:resourceURIsByType.get(KtbsConstants.OBSEL_TYPE)) {
-				RdfObselType obselType = new RdfObselType(obselTypeURI, filteredModel, this);
-				resources.put(obselTypeURI, obselType);
-			}
-			for(String relTypeURI:resourceURIsByType.get(KtbsConstants.RELATION_TYPE)) {
-				RdfRelationType rel = new RdfRelationType(relTypeURI, filteredModel, this);
-				resources.put(relTypeURI, rel);
-			}
+			resourceFound = loadTraceModel(model, types, resourceURIsByType);
 		} 
 
 		if(types.contains(KtbsConstants.COMPUTED_TRACE)) {
@@ -266,6 +234,56 @@ public class RdfResourceRepository implements ResourceRepository {
 
 		if(!resourceFound)
 			throw new ResourceLoadException("No resource could be found in the stream.", JenaUtils.toTurtleString(model));
+	}
+
+	private boolean loadTraceModel(Model model, Multiset<String> types,
+			Multimap<String, String> resourceURIsByType)
+			throws MultipleResourcesInStreamException {
+		boolean resourceFound;
+		log.info("A trace model, or trace model elements have been found in the stream.");
+		checkAtLeastNumberOfElements(model, types, KtbsConstants.TRACE_MODEL, 1);
+
+		String traceModelURI = null;
+		// get the trace model URI
+		Iterator<String> iterator = resourceURIsByType.get(KtbsConstants.TRACE_MODEL).iterator();
+		if(iterator.hasNext())
+			traceModelURI = iterator.next();
+		else {
+			iterator = resourceURIsByType.get(KtbsConstants.OBSEL_TYPE).iterator();
+			if(iterator.hasNext())
+				traceModelURI = KtbsUtils.resolveParentURI(iterator.next());
+			else{
+				iterator = resourceURIsByType.get(KtbsConstants.ATTRIBUTE_TYPE).iterator();
+				if(iterator.hasNext())
+					traceModelURI = KtbsUtils.resolveParentURI(iterator.next());
+				else{
+					iterator = resourceURIsByType.get(KtbsConstants.RELATION_TYPE).iterator();
+					if(iterator.hasNext())
+						traceModelURI = KtbsUtils.resolveParentURI(iterator.next());
+				}
+			}
+		}
+
+		Model filteredModel = JenaUtils.filterModel(model, new TraceModelElementSelector(traceModelURI));
+
+		RdfTraceModel resource = new RdfTraceModel(traceModelURI, filteredModel, this);
+		resources.put(resource.getURI(), resource);
+		resourceFound = true;
+
+		// put model and its children manually
+		for(String attTypeURI:resourceURIsByType.get(KtbsConstants.ATTRIBUTE_TYPE)) {
+			RdfAttributeType att = new RdfAttributeType(attTypeURI, filteredModel, this);
+			resources.put(attTypeURI, att);
+		}
+		for(String obselTypeURI:resourceURIsByType.get(KtbsConstants.OBSEL_TYPE)) {
+			RdfObselType obselType = new RdfObselType(obselTypeURI, filteredModel, this);
+			resources.put(obselTypeURI, obselType);
+		}
+		for(String relTypeURI:resourceURIsByType.get(KtbsConstants.RELATION_TYPE)) {
+			RdfRelationType rel = new RdfRelationType(relTypeURI, filteredModel, this);
+			resources.put(relTypeURI, rel);
+		}
+		return resourceFound;
 	}
 
 	private <T extends RdfKtbsResource> boolean putResourcesInModel(
@@ -789,6 +807,12 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public void loadResource(String stringRepresentation, String lang)
 	throws ResourceLoadException {
-		loadResourceFromReader(new StringReader(stringRepresentation), lang);
+		loadResourceFromReader(new StringReader(stringRepresentation), lang, false);
+	}
+
+	@Override
+	public void loadTraceModelResource(String stringRepresentation, String lang)
+			throws ResourceLoadException {
+		
 	}
 }

@@ -292,4 +292,19 @@ public interface ResourceRepository {
 	 * @see {@link #loadResource(InputStream, String)}
 	 */
 	public void loadResource(String stringRepresentation, String lang) throws ResourceLoadException;
+
+	/**
+	 * Read a Ktbs trace model from a string and register it. This method behave exactly as 
+	 * the {@link #loadResource(String, String)} method, except that the user specifically 
+	 * indicates to this repository that the resource to be loaded is a Trace Model.
+	 * 
+	 * <p>
+	 * This loading method is specific for trace model resources because there is no 
+	 * "resource rdf:type ktbs:TraceModel" triple returned by the server when requesting a trace model.
+	 * </p>
+	 * @param stringRepresentation
+	 * @param lang
+	 * @throws ResourceLoadException
+	 */
+	public void loadTraceModelResource(String stringRepresentation, String lang) throws ResourceLoadException;
 }

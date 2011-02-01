@@ -494,7 +494,8 @@ public class RdfResourceRepository implements ResourceRepository {
 		checkExistency(uri);
 		RdfKtbsResource r = resources.get(uri);
 		if(!clazz.isAssignableFrom(r.getClass()))
-			throw new ResourceNotFoundException("The resource \""+uri+"\" is not of type " + clazz + ", but actually "+r.getClass()+"\".");
+			throw new ResourceNotFoundException("The resource \""+uri+"\" is not of type " + clazz + ", but actually "+r.getClass()+"\"." +
+					" Maybe the resource is en empty trace model.");
 		return clazz.cast(r);
 	}
 
@@ -813,6 +814,6 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public void loadTraceModelResource(String stringRepresentation, String lang)
 			throws ResourceLoadException {
-		
+		loadResourceFromReader(new StringReader(stringRepresentation), lang, true);
 	}
 }

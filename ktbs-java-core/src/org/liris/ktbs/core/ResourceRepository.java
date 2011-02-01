@@ -274,7 +274,10 @@ public interface ResourceRepository {
 	public void loadResource(InputStream stream, String lang) throws ResourceLoadException;
 	
 	/**
-	 * Read a Ktbs resource from an string and register it.
+	 * Read a Ktbs resource from an string and register it. This method fail fail with 
+	 * a {@link ResourceLoadException} when the resource to be loaded is an empty trace model. 
+	 * You can rather invoke {@link #loadTraceModelResource(String, String)} to safely load 
+	 * a trace model.
 	 * 
 	 * <p>
 	 * If the resource loaded is an Obsel, the containing trace got by the 
@@ -294,7 +297,7 @@ public interface ResourceRepository {
 	public void loadResource(String stringRepresentation, String lang) throws ResourceLoadException;
 
 	/**
-	 * Read a Ktbs trace model from a string and register it. This method behave exactly as 
+	 * Read a Ktbs trace model from a string and register it. This method behaves exactly as 
 	 * the {@link #loadResource(String, String)} method, except that the user specifically 
 	 * indicates to this repository that the resource to be loaded is a Trace Model.
 	 * 

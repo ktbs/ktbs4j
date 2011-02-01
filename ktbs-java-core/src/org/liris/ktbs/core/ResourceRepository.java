@@ -305,9 +305,10 @@ public interface ResourceRepository {
 	 * This loading method is specific for trace model resources because there is no 
 	 * "resource rdf:type ktbs:TraceModel" triple returned by the server when requesting a trace model.
 	 * </p>
-	 * @param stringRepresentation
-	 * @param lang
+	 * @param traceModelUri the URI of the trace model contained in the string
+	 * @param stringRepresentation the string representation of the trace model
+	 * @param lang the Jena syntax that was used to serialize the resource into the string
 	 * @throws ResourceLoadException
 	 */
-	public void loadTraceModelResource(String stringRepresentation, String lang) throws ResourceLoadException;
+	public void loadTraceModelResource(String traceModelUri, String stringRepresentation, String lang) throws ResourceLoadException;
 }

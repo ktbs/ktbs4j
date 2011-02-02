@@ -39,7 +39,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 			contentAsString = EntityUtils.toString(this.httpResponse.getEntity());
 			EntityUtils.consume(this.httpResponse.getEntity());
 		} catch (Exception e) {
-			log.warn("Unable to read the content of the response.", e);
+			log.info("Unable to read the content of the response.", e);
 		}
 	}
 

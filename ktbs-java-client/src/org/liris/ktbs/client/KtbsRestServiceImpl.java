@@ -206,7 +206,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	@Override
 	public KtbsResponse update(KtbsResource resource, String eTag, String... traceAspects) {
 
-		final String postURI = resource.getURI();
+		final String putURI = resource.getURI();
 
 		Model model = ((KtbsJenaResource)resource).getCopyOfModel();
 
@@ -225,9 +225,9 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 				selector = new SimpleSelector() {
 					@Override
 					public boolean selects(Statement s) {
-						if(s.getSubject().getURI().equals(postURI))  
+						if(s.getSubject().getURI().equals(putURI))  
 							return true;
-						if(s.getSubject().getURI().equals(KtbsUtils.addAspect(postURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT))) 
+						if(s.getSubject().getURI().equals(KtbsUtils.addAspect(putURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT))) 
 							return true;
 						return false;
 					}
@@ -266,10 +266,10 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			selector = new SimpleSelector() {
 				@Override
 				public boolean selects(Statement s) {
-					if(postURI.equals(s.getSubject().getURI()))  
+					if(putURI.equals(s.getSubject().getURI()))  
 						return true;
 					if(s.getObject().isResource() && 
-							postURI.equals(s.getObject().asResource().getURI()))
+							putURI.equals(s.getObject().asResource().getURI()))
 						return true;
 					return false;
 				}
@@ -279,12 +279,12 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		Model filteredModel = JenaUtils.filterModel(model, selector);
 		String stringRepresentation = writeToString(filteredModel);
 
-		String uriToPost = postURI;
+		String uriToPost = putURI;
 		if(traceAspects.length == 1) {
 			if(traceAspects[0] == KtbsConstants.OBSELS_ASPECT)
-				uriToPost = KtbsUtils.addAspect(postURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
+				uriToPost = KtbsUtils.addAspect(putURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
 			else if(traceAspects[0] == KtbsConstants.ABOUT_ASPECT)
-				uriToPost = KtbsUtils.addAspect(postURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
+				uriToPost = KtbsUtils.addAspect(putURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
 		}
 		
 		return updateResource(

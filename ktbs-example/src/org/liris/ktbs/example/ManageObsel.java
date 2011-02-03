@@ -25,7 +25,11 @@ import org.liris.ktbs.rdf.resource.RdfResourceRepository;
 import org.liris.ktbs.rdf.resource.RdfStoredTrace;
 import org.liris.ktbs.utils.KtbsUtils;
 
-
+/**
+ * Implementation of populate
+ * @author Dino
+ *
+ */
 public class ManageObsel {
 	
 	private static final String SERVER_URL = "http://localhost:8001/";

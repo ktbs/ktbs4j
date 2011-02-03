@@ -159,10 +159,11 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		KtbsResource ktbsResource = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
 
+		String body = null;
 		try {
 			response = httpClient.execute(get);
 			HttpEntity entity;
-
+			
 			if(response == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+uri+"\".");
 				ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
@@ -173,8 +174,8 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 					log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+uri+"\".");
 					ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
 				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+					body = EntityUtils.toString(response.getEntity());
 					if(log.isDebugEnabled()) {
-						String body = EntityUtils.toString(response.getEntity());
 						log.debug("Response header:" + response.getStatusLine());
 						log.debug("Response body:\n" + body);
 					}
@@ -197,7 +198,8 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		} 
 
 		return new KtbsResponseImpl(
-				ktbsResource, 
+				ktbsResource,
+				body,
 				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_RETRIEVED, 
 				ktbsResponseStatus, 
 				response);
@@ -315,6 +317,8 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
 		}
 
+		String body = null;
+		
 		try {
 			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
 			if(log.isDebugEnabled()) {
@@ -333,19 +337,20 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 										KtbsResponseStatus.REQUEST_FAILED);
 			}
 
+			body = EntityUtils.toString(response.getEntity());
+			
 			if(log.isDebugEnabled()) {
-				String body = EntityUtils.toString(response.getEntity());
 				log.debug("Response header:" + response.getStatusLine());
 				log.debug("Response body:\n" + body);
 			}
-			if(ktbsResponseStatus == KtbsResponseStatus.RESOURCE_UPDATED) {
+//			if(ktbsResponseStatus == KtbsResponseStatus.RESOURCE_UPDATED) {
 
 				/*
 				 * Cannot read the resource returned since it is written in POST syntax (i.e. turtle) and there 
 				 * is a bug reading resource in turtle send by the server.
 				 */
 				EntityUtils.consume(response.getEntity());
-			}
+//			}
 		} catch (ClientProtocolException e) {
 			log.error("An error occured when communicating with the KTBS", e);
 			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
@@ -356,6 +361,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 		return new KtbsResponseImpl(
 				null, 
+				body, 
 				(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_UPDATED || ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED), 
 				ktbsResponseStatus, 
 				response);
@@ -407,6 +413,8 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
 		}
 
+		String body = null;
+		
 		try {
 			log.info("Sending POST request to the KTBS: "+post.getRequestLine());
 			response = httpClient.execute(post);
@@ -418,8 +426,8 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 							KtbsResponseStatus.REQUEST_FAILED;
 			}
 
+			body = EntityUtils.toString(response.getEntity());
 			if(log.isDebugEnabled()) {
-				String body = EntityUtils.toString(response.getEntity());
 				log.debug("Response header:" + response.getStatusLine());
 				log.debug("Response body:\n" + body);
 			}
@@ -433,6 +441,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 		return new KtbsResponseImpl(
 				null, 
+				body,
 				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED, 
 				ktbsResponseStatus, 
 				response);

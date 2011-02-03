@@ -802,7 +802,8 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public void loadResource(String stringRepresentation, String lang)
 	throws ResourceLoadException {
-		loadResourceFromReader(new StringReader(stringRepresentation), lang);
+		StringReader reader = new StringReader(new String(stringRepresentation));
+		loadResourceFromReader(reader, lang);
 	}
 
 	@Override

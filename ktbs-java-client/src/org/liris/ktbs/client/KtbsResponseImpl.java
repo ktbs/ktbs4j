@@ -25,7 +25,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 	private HttpResponse httpResponse;
 	private String contentAsString;
 
-	public KtbsResponseImpl(KtbsResource resource, boolean executedWithSuccess,
+	public KtbsResponseImpl(KtbsResource resource, String body, boolean executedWithSuccess,
 			KtbsResponseStatus ktbsResponseStatus,
 			HttpResponse httpResponse) {
 		super();
@@ -33,14 +33,14 @@ public class KtbsResponseImpl implements KtbsResponse {
 		this.executedWithSuccess = executedWithSuccess;
 		this.ktbsResponseStatus = ktbsResponseStatus;
 		this.httpResponse = httpResponse;
-
-
-		try {
-			contentAsString = EntityUtils.toString(this.httpResponse.getEntity());
-			EntityUtils.consume(this.httpResponse.getEntity());
-		} catch (Exception e) {
-			log.info("Unable to read the content of the response.", e);
-		}
+		
+		this.contentAsString = body;
+//		try {
+//			contentAsString = EntityUtils.toString(this.httpResponse.getEntity());
+//			EntityUtils.consume(this.httpResponse.getEntity());
+//		} catch (Exception e) {
+//			log.info("Unable to read the content of the response.", e);
+//		}
 	}
 
 	@Override

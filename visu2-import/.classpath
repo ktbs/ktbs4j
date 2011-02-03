@@ -24,5 +24,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/KTBS Core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/KTBS RDF"/>
 	<classpathentry kind="lib" path="/home/dcram/lib/weka-3-6-4/weka.jar" sourcepath="/home/dcram/lib/weka-3-6-4/weka-src.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/HIBERNATE_3.6.0"/>
+	<classpathentry kind="lib" path="/home/dcram/lib/mysql-connector-java-5.1.14/mysql-connector-java-5.1.14-bin.jar"/>
+	<classpathentry kind="lib" path="/home/dcram/lib/hibernate-distribution-3.6.0.Final/lib/jpa/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

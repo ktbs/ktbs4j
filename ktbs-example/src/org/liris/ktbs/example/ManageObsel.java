@@ -264,7 +264,7 @@ public class ManageObsel {
 				
 				"  FILTER (?beginApparition <= ?beginOperateur)" +
 				"  FILTER (?endApparition < ?beginDisparition)" +
-				"  FILTER (?endDisparition <= ?endOperateur)" +
+				"  FILTER (?endDisparition >= ?endOperateur)" +
 				"}";
 			
 			Map<String, String> parameters = new HashMap<String, String>();

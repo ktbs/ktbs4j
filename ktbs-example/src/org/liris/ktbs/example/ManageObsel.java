@@ -79,13 +79,13 @@ public class ManageObsel {
 								String obselBegin = "0";
 								String obselEnd = "5";
 								String obselTypeUri = traceModelUri+"ActionInstructeur";
-								String populationGenerateur = traceModelUri + "populationGenerateur/";
-								String roleSujetGenerateur = traceModelUri + "roleSujetGenerateur/";
-								String natureSujetGenerateur = traceModelUri + "natureSujetGenerateur/";
-								String sousSystemeElementaire = traceModelUri + "sousSystemeElementaire/";
-								String evenement = traceModelUri + "evenement/";
-								String numeroOrdre = traceModelUri + "numeroOrdre/";
-								String materiel = traceModelUri + "materiel/";
+								String populationGenerateur = traceModelUri + "populationGenerateur";
+								String roleSujetGenerateur = traceModelUri + "roleSujetGenerateur";
+								String natureSujetGenerateur = traceModelUri + "natureSujetGenerateur";
+								String sousSystemeElementaire = traceModelUri + "sousSystemeElementaire";
+								String evenement = traceModelUri + "evenement";
+								String numeroOrdre = traceModelUri + "numeroOrdre";
+								String materiel = traceModelUri + "materiel";
 								Map<String, Object> attributes = new HashMap<String, Object>();
 								attributes.put(populationGenerateur, "Individu");
 								attributes.put(roleSujetGenerateur, "Instructeur");
@@ -109,24 +109,10 @@ public class ManageObsel {
 								attributes.put(materiel, "YC");
 								String obs2 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
 								
-								subject = "Op 1";
-								obselLabel = "Image de conduite";
-								obselBegin = "5";
-								obselEnd = "12";
-								obselTypeUri = traceModelUri+"ActionOperateur";
-								attributes = new HashMap<String, Object>();
-								attributes.put(populationGenerateur, "Individu");
-								attributes.put(roleSujetGenerateur, "OperateurPrimaire");
-								attributes.put(natureSujetGenerateur, "Evalué");
-								attributes.put(sousSystemeElementaire, "RPR");
-								attributes.put(numeroOrdre, "0015");
-								attributes.put(materiel, "YE");
-								String obs3 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
-								
 								subject = "CP0";
 								obselLabel = "BAS TEMPS DE DOUBLEMENT CNI";
 								obselBegin = "11";
-								obselEnd = "15";
+								obselEnd = "11";
 								obselTypeUri = traceModelUri+"Alarme";
 								attributes = new HashMap<String, Object>();
 								attributes.put(populationGenerateur, "Individu");
@@ -136,12 +122,26 @@ public class ManageObsel {
 								attributes.put(numeroOrdre, "1450");
 								attributes.put(materiel, "KA");
 								attributes.put(evenement, "En apparition");
+								String obs3 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
+								
+								subject = "Op 1";
+								obselLabel = "Image de conduite";
+								obselBegin = "12";
+								obselEnd = "16";
+								obselTypeUri = traceModelUri+"ActionOperateur";
+								attributes = new HashMap<String, Object>();
+								attributes.put(populationGenerateur, "Individu");
+								attributes.put(roleSujetGenerateur, "OperateurPrimaire");
+								attributes.put(natureSujetGenerateur, "Evalué");
+								attributes.put(sousSystemeElementaire, "RPR");
+								attributes.put(numeroOrdre, "0015");
+								attributes.put(materiel, "YE");
 								String obs4 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
 								
 								subject = "CP0";
 								obselLabel = "BAS TEMPS DE DOUBLEMENT CNI";
 								obselBegin = "16";
-								obselEnd = "17";
+								obselEnd = "16";
 								obselTypeUri = traceModelUri+"Alarme";
 								attributes = new HashMap<String, Object>();
 								attributes.put(populationGenerateur, "Individu");
@@ -222,25 +222,49 @@ public class ManageObsel {
 
 		} else {
 			String sparql = 
-				"PREFIX : <http://localhost:8001/base2/model1/>" +
-				"PREFIX ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#>" +
+				"PREFIX : <http://localhost:8001/base2/model1/> " +
+				"PREFIX ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#> " +
+				"PREFIX rdf: <http://www.w3.org/2000/01/rdf-schema#> " +
 				"CONSTRUCT{" +
 				"[" +
 				"a :ActionInstructeur ;" +
-				"ktbs:hasBegin ?begin ;" +
-				"ktbs:hasEnd ?end ;" +
-				"ktbs:hasSourceObsel ?alarme, ?actionoperateur " +
+				" ktbs:hasBegin ?beginApparition ;" +
+				" ktbs:hasEnd ?endOperateur ;" +
+				" ktbs:hasSourceObsel ?alarme1,?alarme2, ?actionoperateur ;" +
+				" rdf:label ?label1, ?label2 ;" +
+				" :evenement ?evenement1, ?evenement2 ;" +
+				" :numeroOrdre ?numOrdre " +
 				"]" +
 				"} " +
 				"WHERE{" +
-				"?alarme " +
-				" a :Alarme ;" +
-				//" ktbs:label \"BAS TEMPS DE DOUBLEMENT CNI\" ;"+
-				" ktbs:hasBegin ?begin ." +
-				"?actionoperateur " +
-				" a :ActionOperateur ;" +
-				//" :numeroOrdre \"0015\" ;"+
-				" ktbs:hasEnd ?end ." +
+				
+				" ?alarme1 " +
+				"  a :Alarme ;" +
+				"   ktbs:hasBegin ?beginApparition ;" +
+				"   ktbs:hasEnd ?endApparition ;" +
+				"   :evenement ?evenement1 ;" +
+				"   rdf:label ?label ."+
+				"  FILTER (regex(?label , \"BAS TEMPS DE DOUBLEMENT CNI\" ))"+
+				"  FILTER (regex(?evenement1 , \"En apparition\" ))"+
+				
+				" ?alarme2 " +
+				"  a :Alarme ;" +
+				"   ktbs:hasBegin ?beginDisparition ;" +
+				"   ktbs:hasEnd ?endDisparition ;" +
+				"   :evenement ?evenement2 ;" +
+				"   rdf:label ?label ."+
+				"  FILTER (regex(?evenement2 , \"En disparition\" ))"+
+				
+				" ?actionoperateur " +
+				"  a :ActionOperateur ;" +
+				"   :numeroOrdre ?numOrdre ;"+
+				"   ktbs:hasBegin ?beginOperateur ;" +
+				"   ktbs:hasEnd ?endOperateur ." +
+				"  FILTER (regex(?numOrdre, \"0015\" ))"+
+				
+				"  FILTER (?beginApparition <= ?beginOperateur)" +
+				"  FILTER (?endApparition < ?beginDisparition)" +
+				"  FILTER (?endDisparition <= ?endOperateur)" +
 				"}";
 			
 			Map<String, String> parameters = new HashMap<String, String>();

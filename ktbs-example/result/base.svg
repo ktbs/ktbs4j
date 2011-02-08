@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="1200" height="800" xml:lang="fr" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+<desc>Just try ...</desc>
+<rect x="10" y="600px" rx="0" ry="0" width="1180" height="200" stroke="#303030" fill="#FFFFFF"/>
+<image width="35px" height="35px" xlink:href="actionOperateur.gif" x="475px" y="680px"/>
+<text id="ligne1" x="475px" y="680px">
+	 				(19, 0)
+				</text>
+<image width="35px" height="35px" xlink:href="actionOperateur.gif" x="300px" y="680px"/>
+<text id="ligne1" x="300px" y="680px">
+	 				(12, 0)
+				</text>
+<image width="35px" height="35px" xlink:href="actionInstructeur.gif" x="0px" y="640px"/>
+<text id="ligne1" x="0px" y="640px">
+	 				(0, 0)
+				</text>
+<image width="35px" height="35px" xlink:href="alarme.jpg" x="400px" y="720px"/>
+<text id="ligne1" x="400px" y="720px">
+	 				(16, 0)
+				</text>
+<image width="35px" height="35px" xlink:href="actionOperateur.gif" x="50px" y="680px"/>
+<text id="ligne1" x="50px" y="680px">
+	 				(2, 0)
+				</text>
+<image width="35px" height="35px" xlink:href="alarme.jpg" x="600px" y="720px"/>
+<text id="ligne1" x="600px" y="720px">
+	 				(24, 0)
+				</text>
+<image width="35px" height="35px" xlink:href="alarme.jpg" x="450px" y="720px"/>
+<text id="ligne1" x="450px" y="720px">
+	 				(18, 0)
+				</text>
+<image width="35px" height="35px" xlink:href="alarme.jpg" x="275px" y="720px"/>
+<text id="ligne1" x="275px" y="720px">
+	 				(11, 0)
+				</text>
+<rect x="10" y="300px" rx="0" ry="0" width="1180" height="200" stroke="#303030" fill="#FFFFFF"/>
+<image width="35px" height="35px" xlink:href="actionInstructeur.gif" x="275px" y="340px"/>
+<text id="ligne1" x="275px" y="340px">
+	 				(11, 300)
+				</text>
+<image width="35px" height="35px" xlink:href="actionInstructeur.gif" x="450px" y="340px"/>
+<text id="ligne1" x="450px" y="340px">
+	 				(18, 300)
+				</text>
+<line x1="293" y1="340" x2="325" y2="720" style="fill:none;stroke:black;stroke-width:2px;"/>
+<text id="ligne1" x="325px" y="720px">
+	 		(325, 720)
+		</text>
+<line x1="293" y1="340" x2="425" y2="720" style="fill:none;stroke:black;stroke-width:2px;"/>
+<text id="ligne1" x="425px" y="720px">
+	 		(425, 720)
+		</text>
+<line x1="293" y1="340" x2="300" y2="720" style="fill:none;stroke:black;stroke-width:2px;"/>
+<text id="ligne1" x="300px" y="720px">
+	 		(300, 720)
+		</text>
+<line x1="468" y1="340" x2="500" y2="720" style="fill:none;stroke:black;stroke-width:2px;"/>
+<text id="ligne1" x="500px" y="720px">
+	 		(500, 720)
+		</text>
+<line x1="468" y1="340" x2="625" y2="720" style="fill:none;stroke:black;stroke-width:2px;"/>
+<text id="ligne1" x="625px" y="720px">
+	 		(625, 720)
+		</text>
+<line x1="468" y1="340" x2="475" y2="720" style="fill:none;stroke:black;stroke-width:2px;"/>
+<text id="ligne1" x="475px" y="720px">
+	 		(475, 720)
+		</text>
+</svg>

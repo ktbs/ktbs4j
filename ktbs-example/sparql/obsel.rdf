@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:ktbs='http://liris.cnrs.fr/silex/2009/ktbs#'
+  xmlns:_7='http://localhost:8001/base2/model1/'
+  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+>
+  <_7:Alarme rdf:about="http://localhost:8001/base2/firstTrace/508c4b6b7e01f8750e9709b4d4ca3d35">
+    <_7:evenement rdf:datatype="http://www.w3.org/2001/XMLSchema#string">En apparition</_7:evenement>
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1750</_7:numeroOrdre>
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">18</ktbs:hasBegin>
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CP0</ktbs:hasSubject>
+
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Simulateur (Calculateur)</_7:roleSujetGenerateur>
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">KA</_7:materiel>
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non évalué</_7:natureSujetGenerateur>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FONCT 3 BOUCLES</rdfs:label>
+
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RPR</_7:sousSystemeElementaire>
+  </_7:Alarme>
+  <_7:Alarme rdf:about="http://localhost:8001/base2/firstTrace/cf4f37b391e3572cd354da8b8447a2dc">
+    <_7:evenement rdf:datatype="http://www.w3.org/2001/XMLSchema#string">En apparition</_7:evenement>
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1450</_7:numeroOrdre>
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ktbs:hasBegin>
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CP0</ktbs:hasSubject>
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Simulateur (Calculateur)</_7:roleSujetGenerateur>
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">KA</_7:materiel>
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non évalué</_7:natureSujetGenerateur>
+
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BAS TEMPS DE DOUBLEMENT CNI</rdfs:label>
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RPR</_7:sousSystemeElementaire>
+  </_7:Alarme>
+  <_7:ActionInstructeur rdf:about="http://localhost:8001/base2/firstTrace/e58b465c56d3ab822d6e5dc21668521d">
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></_7:numeroOrdre>
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</ktbs:hasBegin>
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Insructeur 1</ktbs:hasSubject>
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Instructeur</_7:roleSujetGenerateur>
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></_7:materiel>
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non évalué</_7:natureSujetGenerateur>
+
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Demande de changement de mode</rdfs:label>
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string"></_7:sousSystemeElementaire>
+  </_7:ActionInstructeur>
+  <_7:ActionOperateur rdf:about="http://localhost:8001/base2/firstTrace/4a8926ba733a4729166e5c87411fb375">
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0053</_7:numeroOrdre>
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ktbs:hasBegin>
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Op 1</ktbs:hasSubject>
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">OperateurPrimaire</_7:roleSujetGenerateur>
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">YC</_7:materiel>
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Evalué</_7:natureSujetGenerateur>
+
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Image de conduite</rdfs:label>
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RPR</_7:sousSystemeElementaire>
+  </_7:ActionOperateur>
+  <_7:ActionOperateur rdf:about="http://localhost:8001/base2/firstTrace/d87c686bb08f33d08bb8658ae9c52a5c">
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0015</_7:numeroOrdre>
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</ktbs:hasBegin>
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Op 1</ktbs:hasSubject>
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">16</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">OperateurPrimaire</_7:roleSujetGenerateur>
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">YE</_7:materiel>
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Evalué</_7:natureSujetGenerateur>
+
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Image de conduite</rdfs:label>
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RPR</_7:sousSystemeElementaire>
+  </_7:ActionOperateur>
+  <_7:Alarme rdf:about="http://localhost:8001/base2/firstTrace/2cc9691b683dc27a2d7b9ebca53c76ae">
+    <_7:evenement rdf:datatype="http://www.w3.org/2001/XMLSchema#string">En disparition</_7:evenement>
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1450</_7:numeroOrdre>
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">16</ktbs:hasBegin>
+
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CP0</ktbs:hasSubject>
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">16</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Simulateur (Calculateur)</_7:roleSujetGenerateur>
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">KA</_7:materiel>
+
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non évalué</_7:natureSujetGenerateur>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">BAS TEMPS DE DOUBLEMENT CNI</rdfs:label>
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RPR</_7:sousSystemeElementaire>
+  </_7:Alarme>
+  <_7:Alarme rdf:about="http://localhost:8001/base2/firstTrace/f4e95f593d4ae65022ba76a3d6cde83f">
+    <_7:evenement rdf:datatype="http://www.w3.org/2001/XMLSchema#string">En disparition</_7:evenement>
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1750</_7:numeroOrdre>
+
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">24</ktbs:hasBegin>
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CP0</ktbs:hasSubject>
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">26</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Simulateur (Calculateur)</_7:roleSujetGenerateur>
+
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">KA</_7:materiel>
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non évalué</_7:natureSujetGenerateur>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FONCT 3 BOUCLES</rdfs:label>
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RPR</_7:sousSystemeElementaire>
+  </_7:Alarme>
+  <_7:ActionOperateur rdf:about="http://localhost:8001/base2/firstTrace/0fae08e60256a95041d5fd65963f5749">
+    <_7:numeroOrdre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0018</_7:numeroOrdre>
+
+    <ktbs:hasBegin rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">19</ktbs:hasBegin>
+    <ktbs:hasTrace rdf:resource="http://localhost:8001/base2/firstTrace/"/>
+    <ktbs:hasSubject rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Op 1</ktbs:hasSubject>
+    <ktbs:hasEnd rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">26</ktbs:hasEnd>
+    <_7:populationGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individu</_7:populationGenerateur>
+    <_7:roleSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">OperateurPrimaire</_7:roleSujetGenerateur>
+
+    <_7:materiel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">YE</_7:materiel>
+    <_7:natureSujetGenerateur rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Evalué</_7:natureSujetGenerateur>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Image de conduite</rdfs:label>
+    <_7:sousSystemeElementaire rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RPR</_7:sousSystemeElementaire>
+  </_7:ActionOperateur>
+</rdf:RDF>

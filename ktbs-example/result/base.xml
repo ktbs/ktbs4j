@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../ant/xsd/base.xsd">
+  <label>Primary base</label>
+  <traces>
+	  <trace>
+	  	<label>First M-Trace</label>
+	  	<model>
+	  		<obselTypes>
+	  			<obselType id="ActionInstructeur"><label>Action Instructeur</label></obselType>
+	  			<obselType id="ActionOperateur"><label>Action Opérateur</label></obselType>
+	  			<obselType id="Alarme"><label>Alarme</label></obselType>
+	  		</obselTypes>
+	  		<label>Model of Primary trace</label>
+	  	</model>
+	  	<obsels>
+	  		<obsel>
+	  			<id>0c436151d83b947652cb16ac6de98113</id>
+	  			<hasBegin>19</hasBegin>
+	  				<hasEnd>26</hasEnd>
+	  			<obselType id="ActionOperateur"><label>Action Opérateur</label></obselType>
+	  			<label>Image de conduite</label>
+	  			<params/>
+	  		</obsel>
+	  		<obsel>
+	  			<id>13c03fb6ceecb9c7dd01b9cd2ed8a316</id>
+	  			<hasBegin>12</hasBegin>
+	  				<hasEnd>16</hasEnd>
+	  			<obselType id="ActionOperateur"><label>Action Opérateur</label></obselType>
+	  			<label>Image de conduite</label>
+	  			<params/>
+	  		</obsel>
+	  		<obsel>
+	  			<id>19a3c680f35fe3374f011976067210c2</id>
+	  			<hasBegin>0</hasBegin>
+	  				<hasEnd>5</hasEnd>
+	  			<obselType id="ActionInstructeur"><label>Action Instructeur</label></obselType>
+	  			<label>Demande de changement de mode</label>
+	  			<params/>
+	  		</obsel>
+	  		<obsel>
+	  			<id>72945f70d92f968cc23932436c8f08be</id>
+	  			<hasBegin>16</hasBegin>
+	  				<hasEnd>16</hasEnd>
+	  			<obselType id="Alarme"><label>Alarme</label></obselType>
+	  			<label>BAS TEMPS DE DOUBLEMENT CNI</label>
+	  			<params/>
+	  		</obsel>
+	  		<obsel>
+	  			<id>b83a98546564644555b18f6ef8f585c2</id>
+	  			<hasBegin>2</hasBegin>
+	  				<hasEnd>10</hasEnd>
+	  			<obselType id="ActionOperateur"><label>Action Opérateur</label></obselType>
+	  			<label>Image de conduite</label>
+	  			<params/>
+	  		</obsel>
+	  		<obsel>
+	  			<id>b9746c263d889bd891864793231b7af2</id>
+	  			<hasBegin>24</hasBegin>
+	  				<hasEnd>26</hasEnd>
+	  			<obselType id="Alarme"><label>Alarme</label></obselType>
+	  			<label>FONCT 3 BOUCLES</label>
+	  			<params/>
+	  		</obsel>
+	  		<obsel>
+	  			<id>d03e16d7d9737c9dcf20c8dbf451cc5d</id>
+	  			<hasBegin>18</hasBegin>
+	  				<hasEnd>20</hasEnd>
+	  			<obselType id="Alarme"><label>Alarme</label></obselType>
+	  			<label>FONCT 3 BOUCLES</label>
+	  			<params/>
+	  		</obsel>
+	  		<obsel>
+	  			<id>e5e5d9b8a96a1defe7b17d9fc51f36aa</id>
+	  			<hasBegin>11</hasBegin>
+	  				<hasEnd>11</hasEnd>
+	  			<obselType id="Alarme"><label>Alarme</label></obselType>
+	  			<label>BAS TEMPS DE DOUBLEMENT CNI</label>
+	  			<params/>
+	  		</obsel>
+	  	</obsels>
+	  	<methods />
+	  </trace>
+  	  <trace>
+	  	<label>SparQl trace</label>
+	  	<model>
+	  		<obselTypes>
+	  			<obselType id="ActionInstructeur"><label>Action Instructeur</label></obselType>
+	  			<obselType id="ActionOperateur"><label>Action Opérateur</label></obselType>
+	  			<obselType id="Alarme"><label>Alarme</label></obselType>
+	  		</obselTypes>
+	  		<label>Model of Primary trace</label>
+	  	</model>
+	  	<obsels>
+	  		<obsel>
+	  			<id>75ef79164b4d496fb17a9f577f11dacd</id>
+	  				<hasBegin>11</hasBegin>
+	  				<hasEnd>16</hasEnd>
+	  			<obselType id="ActionInstructeur"><label>Action Instructeur</label></obselType>
+	  			<label>BAS TEMPS DE DOUBLEMENT CNI</label>
+	  			<params />
+	  		</obsel>
+	  		<obsel>
+	  			<id>b8cd4cc4a57b0a32a8da62eef4247519</id>
+	  			<hasBegin>18</hasBegin>
+	  				<hasEnd>26</hasEnd>
+	  			<obselType id="ActionInstructeur"><label>Action Instructeur</label></obselType>
+	  			<label>FONCT 3 BOUCLES</label>
+	  			<params/>
+	  		</obsel>
+	  	</obsels>
+	  	<methods>
+	  		<method>
+	  			<label>Method Sparql</label>
+	  			<lines>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>11</begin><end>16</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>12</begin><end>16</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>11</begin><end>16</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>16</begin><end>16</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>11</begin><end>16</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>11</begin><end>11</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>18</begin><end>26</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>19</begin><end>26</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>18</begin><end>26</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>24</begin><end>26</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>18</begin><end>26</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>18</begin><end>18</end>
+	  					</obselEnd>
+	  				</line>
+	  			</lines>
+	  		</method>
+	  	</methods>
+	  </trace>
+  </traces>
+</base>

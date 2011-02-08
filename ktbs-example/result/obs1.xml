@@ -1,0 +1,30 @@
+<j.0:RDF
+    xmlns:j.0="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:ktbs="http://liris.cnrs.fr/silex/2009/ktbs#"
+    xmlns="http://localhost:8001/base2/model1/"
+    xmlns:rdf="http://www.w3.org/2000/01/rdf-schema#" > 
+  <j.0:Description j.0:nodeID="A0">
+    <evenement j.0:datatype="http://www.w3.org/2001/XMLSchema#string">En apparition</evenement>
+    <ktbs:hasSourceObsel j.0:resource="http://localhost:8001/base2/firstTrace/cf4f37b391e3572cd354da8b8447a2dc"/>
+    <ktbs:hasBegin j.0:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ktbs:hasBegin>
+    <ktbs:hasEnd j.0:datatype="http://www.w3.org/2001/XMLSchema#integer">16</ktbs:hasEnd>
+    <ktbs:hasSourceObsel j.0:resource="http://localhost:8001/base2/firstTrace/d87c686bb08f33d08bb8658ae9c52a5c"/>
+    <rdf:label j.0:datatype="http://www.w3.org/2001/XMLSchema#string">BAS TEMPS DE DOUBLEMENT CNI</rdf:label>
+    <evenement j.0:datatype="http://www.w3.org/2001/XMLSchema#string">En disparition</evenement>
+    <ktbs:hasSourceObsel j.0:resource="http://localhost:8001/base2/firstTrace/2cc9691b683dc27a2d7b9ebca53c76ae"/>
+    <numeroOrdre j.0:datatype="http://www.w3.org/2001/XMLSchema#string">0015</numeroOrdre>
+    <j.0:type j.0:resource="http://localhost:8001/base2/model1/ActionInstructeur"/>
+  </j.0:Description>
+  <j.0:Description j.0:nodeID="A1">
+    <evenement j.0:datatype="http://www.w3.org/2001/XMLSchema#string">En apparition</evenement>
+    <ktbs:hasSourceObsel j.0:resource="http://localhost:8001/base2/firstTrace/508c4b6b7e01f8750e9709b4d4ca3d35"/>
+    <numeroOrdre j.0:datatype="http://www.w3.org/2001/XMLSchema#string">0018</numeroOrdre>
+    <ktbs:hasBegin j.0:datatype="http://www.w3.org/2001/XMLSchema#integer">18</ktbs:hasBegin>
+    <ktbs:hasEnd j.0:datatype="http://www.w3.org/2001/XMLSchema#integer">26</ktbs:hasEnd>
+    <ktbs:hasSourceObsel j.0:resource="http://localhost:8001/base2/firstTrace/f4e95f593d4ae65022ba76a3d6cde83f"/>
+    <rdf:label j.0:datatype="http://www.w3.org/2001/XMLSchema#string">FONCT 3 BOUCLES</rdf:label>
+    <evenement j.0:datatype="http://www.w3.org/2001/XMLSchema#string">En disparition</evenement>
+    <ktbs:hasSourceObsel j.0:resource="http://localhost:8001/base2/firstTrace/0fae08e60256a95041d5fd65963f5749"/>
+    <j.0:type j.0:resource="http://localhost:8001/base2/model1/ActionInstructeur"/>
+  </j.0:Description>
+</j.0:RDF>

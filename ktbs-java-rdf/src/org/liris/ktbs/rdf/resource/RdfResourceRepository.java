@@ -28,7 +28,6 @@ import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.core.api.Obsel;
 import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
-import org.liris.ktbs.core.api.Root;
 import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
@@ -269,7 +268,7 @@ public class RdfResourceRepository implements ResourceRepository {
 					"Impossible to find out the uri of the trace model to load in repository (empty trace model).", 
 					JenaUtils.toTurtleString(model));
 		}
-		
+
 		Model filteredModel = JenaUtils.filterModel(model, new TraceModelElementSelector(traceModelURI));
 
 		RdfTraceModel resource = new RdfTraceModel(traceModelURI, filteredModel, this);
@@ -389,26 +388,72 @@ public class RdfResourceRepository implements ResourceRepository {
 			throw new UnsupportedOperationException("Cannot put an obsel, an obsel type, " +
 					"an attribute type, or a relation type. This operation should be performed " +
 			"from the Trace or the Trace Model.");
-		else if(isStandaloneResource(cls) || Method.class.isAssignableFrom(cls)){
-			resources.put(resource.getURI(), (RdfKtbsResource) resource);
-		} else {
-			/*
-			 * Trace, StoredTrace, ComputedTrace.
-			 */
 
-			// remove the resource and all its children
-			removeResource(resource);
+		/*
+		 * Trace, StoredTrace, ComputedTrace.
+		 */
 
-			// adds the resource and all its children
-			resources.put(resource.getURI(), (RdfKtbsResource) resource);
-			if(withChildren) {
-				for(KtbsResource child:getResourceChildren(resource))
-					resources.put(child.getURI(), (RdfKtbsResource) child);
+		// remove the resource and all its children
+		removeResource(resource);
+
+		String parentResourceURI = getParentResourceURI((RdfKtbsResource) resource);
+		
+		if(parentResourceURI != null && exists(parentResourceURI)) {
+			if(Base.class.isAssignableFrom(resource.getClass())) {
+				createRootBaseRelationship(
+						((RdfKtbsResource)resources.get(parentResourceURI)).rdfModel,
+						((RdfKtbsResource)resource).rdfModel,
+						parentResourceURI,
+						resource.getURI());
+			} else if (isBaseChildResource(resource)) {
+				createBaseChild(
+						((RdfKtbsResource)resources.get(parentResourceURI)).rdfModel,
+						((RdfKtbsResource)resource).rdfModel,
+						parentResourceURI,
+						resource.getURI());
 			}
 		}
+
+		// adds the resource and all its children
+		resources.put(resource.getURI(), (RdfKtbsResource) resource);
+		if(withChildren) {
+			for(KtbsResource child:getResourceChildren(resource))
+				resources.put(child.getURI(), (RdfKtbsResource) child);
+		}
+
 		return resource;
 	}
 
+
+	/*
+	 * Gets the URI of the parent resource of a resource in the KTBS 
+	 * resource hierarchy if the targeted parent-child involves two 
+	 * resources that are in different Jena models.
+	 */
+	private String getParentResourceURI(RdfKtbsResource resource) {
+
+		Model m = resource.rdfModel;
+		Resource r = m.getResource(resource.getURI());
+		if(Base.class.isAssignableFrom(resource.getClass())) {
+			// get the root uri if exist
+			StmtIterator hasBaseIt = m.listStatements(null, m.getProperty(KtbsConstants.P_HAS_BASE), r);
+			if(hasBaseIt.hasNext())
+				return hasBaseIt.next().getSubject().asResource().getURI();
+		} else if(isBaseChildResource(resource)) {
+			// get the base uri if exist
+			StmtIterator hasBaseChildIt = m.listStatements(null, m.getProperty(KtbsConstants.P_OWNS), r);
+			if(hasBaseChildIt.hasNext())
+				return hasBaseChildIt.next().getSubject().asResource().getURI();
+		} 
+		return null;
+	}
+
+	private boolean isBaseChildResource(KtbsResource resource) {
+		return StoredTrace.class.isAssignableFrom(resource.getClass())
+		|| ComputedTrace.class.isAssignableFrom(resource.getClass())
+		|| Method.class.isAssignableFrom(resource.getClass())
+		|| TraceModel.class.isAssignableFrom(resource.getClass());
+	}
 
 	private  <T extends KtbsResource> void removeResource(T resource) {
 		if(exists(resource.getURI())) {
@@ -454,15 +499,6 @@ public class RdfResourceRepository implements ResourceRepository {
 				// do nothing
 			}
 		}
-	}
-
-	/*
-	 * A standalone resource is a resource that has no reference 
-	 * to any parent resource.
-	 */
-	private static boolean isStandaloneResource(Class<? extends KtbsResource> cls) {
-		return Base.class.isAssignableFrom(cls)
-		|| Root.class.isAssignableFrom(cls);
 	}
 
 	private static boolean isTypeWithChildren(Class<? extends KtbsResource> cls) {
@@ -538,6 +574,19 @@ public class RdfResourceRepository implements ResourceRepository {
 
 
 		return createComputedTrace(base.getURI(), traceURI, tm.getURI(), m.getURI(), KtbsUtils.toUriCollection(sources));
+	}
+
+	private void createRootBaseRelationship(Model rootRdfModel, Model baseRdfModel, String rootUri, String baseURI) {
+		rootRdfModel.getResource(rootUri).addProperty(
+				rootRdfModel.getProperty(KtbsConstants.P_HAS_BASE),
+				rootRdfModel.getResource(baseURI)
+		);
+
+		baseRdfModel.getResource(rootUri).addProperty(
+				baseRdfModel.getProperty(KtbsConstants.P_HAS_BASE),
+				baseRdfModel.getResource(baseURI)
+		);
+
 	}
 
 	private void createBaseChild(Model baseRdfModel, Model childRdfModel, String baseUri, String childURI) {
@@ -809,7 +858,7 @@ public class RdfResourceRepository implements ResourceRepository {
 	@Override
 	public void loadTraceModelResource(String traceModelUri, String stringRepresentation, String lang)
 	throws ResourceLoadException {
-		
+
 		Model model = readModel(new StringReader(stringRepresentation), lang);
 		StmtIterator it = model.listStatements(null, RDF.type, (RDFNode)null);
 		Multimap<String, String> resourceURIsByType = HashMultimap.create();
@@ -818,7 +867,7 @@ public class RdfResourceRepository implements ResourceRepository {
 			String typeURI = stmt.getObject().asResource().getURI();
 			resourceURIsByType.put(typeURI, stmt.getSubject().getURI());
 		}
-		
+
 		loadTraceModel(
 				model,
 				resourceURIsByType, 

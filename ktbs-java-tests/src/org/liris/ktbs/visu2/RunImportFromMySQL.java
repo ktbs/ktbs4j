@@ -6,8 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -17,7 +15,6 @@ public class RunImportFromMySQL {
 	private static File destinationDir = new File("/home/dcram/Documents/trace-visu/traces/visu2-03022011/absolute");
 	private static File statDir = new File("/home/dcram/Documents/trace-visu/traces/visu2-03022011/stats");
 
-	private static Map<String, String> replacements = new HashMap<String, String>();
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 	
@@ -46,14 +43,15 @@ public class RunImportFromMySQL {
 
 		
 		// Transform visu2-imported obsels into valid TURTLE
-		initReplacements();
-		importer.fixFiles(sourceDir, destinationDir, visu2BaseURI, replacements);
+		importer.fixFiles(sourceDir, destinationDir, visu2BaseURI, Visu2Utils.getFixRegexs());
 		
 		
-//		// Parse visu2 TURTLE-encoded files into a RDF model
+		// Parse visu2 TURTLE-encoded files into a RDF model
 		Model model = importer.parse(destinationDir);
 		importer.doStats(model, new PrintStream(new File(statDir, "stats.txt")));
-//		
+		
+		
+		
 		/*
 		 *  Infer a proper trace model from this traces and put it 
 		 *  into the KTBS server together with the traces.
@@ -62,52 +60,5 @@ public class RunImportFromMySQL {
 		importer.putInKtbs(model, visu2BaseURI, modelURI);
 	}
 
-	private static void initReplacements() {
-		replacements = new HashMap<String, String>();
-
-		/* 
-		 * (MULTILINE)
-		 * FROM:
-		 * . a 
-		 * 
-		 * TO:
-		 * [] a 
-		 */
-		replacements.put("^\\s*\\.\\s+a\\s+", "[] a ");
-
-
-		/* 
-		 * (MULTILINE)
-		 * FROM:
-		 * :hasText "Couverture de la bande dessinée "Bienvenue à Boboland"";
-		 * 
-		 * TO:
-		 * :hasText  """Couverture de la bande dessinée "Bienvenue à Boboland"""";
-		 * 
-		 */
-		replacements.put("^\\s*(:\\S+)\\s+\"(.*\".*)\"\\s*;", "$1 \"\"\"\n$2\n\"\"\";");
-		
-		/* 
-		 * FROM "" TO "'"
-		 */
-		replacements.put("\\x92", "'");
-		
-		
-		/* 
-		 * FROM a tab character "\t" (not allowed in literals by the TURTLE parser of the KTBS) TO a whitespace character " ".
-		 */
-		replacements.put("\t", " ");
-
-		
-		/* 
-		 * FROM
-		 * 
-		 * <http://liris.cnrs.fr/silex/2009/ktbs/>
-		 * 
-		 * TO
-		 * 
-		 * <http://liris.cnrs.fr/silex/2009/ktbs#>
-		 */
-		replacements.put("<http://liris.cnrs.fr/silex/2009/ktbs/>", "<http://liris.cnrs.fr/silex/2009/ktbs#>");
-	}
+	
 }

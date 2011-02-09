@@ -35,6 +35,7 @@
             <generator class="increment"/>
         </id>
         <property name="rdfText" type="java.lang.String" column="rdf"/>
+        <property name="type" type="java.lang.String" column="type_obsel"/>
     </class>
 
 </hibernate-mapping>

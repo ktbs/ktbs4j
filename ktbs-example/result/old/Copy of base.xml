@@ -97,17 +97,6 @@
 	  				<hasEnd>16</hasEnd>
 	  			<obselType id="ActionInstructeur"><label>Action Instructeur</label></obselType>
 	  			<label>BAS TEMPS DE DOUBLEMENT CNI</label>
-	  			<dest>
-	  				<line type="ActionOperateur">
-	  					<begin>12</begin><end>16</end>
-	  				</line>
-	  				<line type="Alarme">
-	  					<begin>16</begin><end>16</end>
-	  				</line>
-	  				<line type="Alarme">
-	  					<begin>11</begin><end>11</end>
-	  				</line>
-	  			</dest>
 	  			<params />
 	  		</obsel>
 	  		<obsel>
@@ -116,23 +105,62 @@
 	  				<hasEnd>26</hasEnd>
 	  			<obselType id="ActionInstructeur"><label>Action Instructeur</label></obselType>
 	  			<label>FONCT 3 BOUCLES</label>
-	  			<dest>
-	  				<line type="ActionOperateur">
-	  					<begin>19</begin><end>26</end>
-	  				</line>
-	  				<line type="Alarme">
-	  					<begin>24</begin><end>26</end>
-	  				</line>
-	  				<line type="Alarme">
-	  					<begin>18</begin><end>18</end>
-	  				</line>
-	  			</dest>
 	  			<params/>
 	  		</obsel>
 	  	</obsels>
 	  	<methods>
 	  		<method>
 	  			<label>Method Sparql</label>
+	  			<lines>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>11</begin><end>16</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>12</begin><end>16</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>11</begin><end>16</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>16</begin><end>16</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>11</begin><end>16</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>11</begin><end>11</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>18</begin><end>26</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>19</begin><end>26</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>18</begin><end>26</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>24</begin><end>26</end>
+	  					</obselEnd>
+	  				</line>
+	  				<line>
+	  					<obselBegin>
+	  						<begin>18</begin><end>26</end>
+	  					</obselBegin>
+	  					<obselEnd>
+	  						<begin>18</begin><end>18</end>
+	  					</obselEnd>
+	  				</line>
+	  			</lines>
 	  		</method>
 	  	</methods>
 	  </trace>

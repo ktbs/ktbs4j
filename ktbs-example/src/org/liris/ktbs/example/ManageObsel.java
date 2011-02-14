@@ -154,7 +154,51 @@ public class ManageObsel {
 								String obs5 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
 								
 								
-								String traceUri = insertObselsInTrace(storedTraceUri, obs1, obs2, obs2, obs3, obs4, obs5);
+								subject = "CP0";
+								obselLabel = "FONCT 3 BOUCLES";
+								obselBegin = "18";
+								obselEnd = "20";
+								obselTypeUri = traceModelUri+"Alarme";
+								attributes = new HashMap<String, Object>();
+								attributes.put(populationGenerateur, "Individu");
+								attributes.put(roleSujetGenerateur, "Simulateur (Calculateur)");
+								attributes.put(natureSujetGenerateur, "Non évalué");
+								attributes.put(sousSystemeElementaire, "RPR");
+								attributes.put(numeroOrdre, "1750");
+								attributes.put(materiel, "KA");
+								attributes.put(evenement, "En apparition");
+								String obs6 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
+								
+								subject = "Op 1";
+								obselLabel = "Image de conduite";
+								obselBegin = "19";
+								obselEnd = "26";
+								obselTypeUri = traceModelUri+"ActionOperateur";
+								attributes = new HashMap<String, Object>();
+								attributes.put(populationGenerateur, "Individu");
+								attributes.put(roleSujetGenerateur, "OperateurPrimaire");
+								attributes.put(natureSujetGenerateur, "Evalué");
+								attributes.put(sousSystemeElementaire, "RPR");
+								attributes.put(numeroOrdre, "0015");
+								attributes.put(materiel, "YE");
+								String obs7 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
+								
+								subject = "CP0";
+								obselLabel = "FONCT 3 BOUCLES";
+								obselBegin = "24";
+								obselEnd = "26";
+								obselTypeUri = traceModelUri+"Alarme";
+								attributes = new HashMap<String, Object>();
+								attributes.put(populationGenerateur, "Individu");
+								attributes.put(roleSujetGenerateur, "Simulateur (Calculateur)");
+								attributes.put(natureSujetGenerateur, "Non évalué");
+								attributes.put(sousSystemeElementaire, "RPR");
+								attributes.put(numeroOrdre, "1750");
+								attributes.put(materiel, "KA");
+								attributes.put(evenement, "En disparition");
+								String obs8 = createObsel(storedTraceUri, obselTypeUri, attributes, subject, obselLabel, obselBegin, obselEnd);
+								
+								String traceUri = insertObselsInTrace(storedTraceUri, obs1, obs2, obs2, obs3, obs4, obs5, obs6, obs7, obs8);
 								if(traceUri != null){
 									String traceComputedUri = baseUri + "secondTrace/";
 									String traceComputedLabel = "Filtered Trace";
@@ -225,11 +269,12 @@ public class ManageObsel {
 				"PREFIX : <http://localhost:8001/base2/model1/> " +
 				"PREFIX ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#> " +
 				"PREFIX rdf: <http://www.w3.org/2000/01/rdf-schema#> " +
-				"CONSTRUCT{" +
+				"CONSTRUCT {" +
 				"[" +
 				"a :ActionInstructeur ;" +
 				" ktbs:hasBegin ?beginApparition ;" +
 				" ktbs:hasEnd ?endOperateur ;" +
+				" ktbs:hasTrace <http://localhost:8001/base2/firstTrace/> ;" +
 				" ktbs:hasSourceObsel ?alarme1,?alarme2, ?actionoperateur ;" +
 				" rdf:label ?label1, ?label2 ;" +
 				" :evenement ?evenement1, ?evenement2 ;" +
@@ -243,8 +288,7 @@ public class ManageObsel {
 				"   ktbs:hasBegin ?beginApparition ;" +
 				"   ktbs:hasEnd ?endApparition ;" +
 				"   :evenement ?evenement1 ;" +
-				"   rdf:label ?label ."+
-				"  FILTER (regex(?label , \"BAS TEMPS DE DOUBLEMENT CNI\" ))"+
+				"   rdf:label ?label1 ."+
 				"  FILTER (regex(?evenement1 , \"En apparition\" ))"+
 				
 				" ?alarme2 " +
@@ -252,7 +296,8 @@ public class ManageObsel {
 				"   ktbs:hasBegin ?beginDisparition ;" +
 				"   ktbs:hasEnd ?endDisparition ;" +
 				"   :evenement ?evenement2 ;" +
-				"   rdf:label ?label ."+
+				"   rdf:label ?label2 ."+
+				"  FILTER (regex(?label1 , ?label2 ))"+
 				"  FILTER (regex(?evenement2 , \"En disparition\" ))"+
 				
 				" ?actionoperateur " +
@@ -260,7 +305,6 @@ public class ManageObsel {
 				"   :numeroOrdre ?numOrdre ;"+
 				"   ktbs:hasBegin ?beginOperateur ;" +
 				"   ktbs:hasEnd ?endOperateur ." +
-				"  FILTER (regex(?numOrdre, \"0015\" ))"+
 				
 				"  FILTER (?beginApparition <= ?beginOperateur)" +
 				"  FILTER (?endApparition < ?beginDisparition)" +

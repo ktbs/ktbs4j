@@ -53,6 +53,17 @@
 				<xs:element name="hasEnd" type="xs:integer"  minOccurs="1" maxOccurs="1" />
 				<xs:element  ref="obselType" minOccurs="1" maxOccurs="1" />
 				<xs:element ref="label" minOccurs="1" maxOccurs="1" />
+				<xs:element  name="dest" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="line" type="obselLight" minOccurs="1" maxOccurs="unbounded" >
+								<xs:complexType>
+									<xs:attribute  name="type" type="xs:string" use="required"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 				<xs:element ref="params" minOccurs="1" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
@@ -96,23 +107,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="label" minOccurs="1" maxOccurs="1" />
-				<xs:element name="lines" minOccurs="1" maxOccurs="unbounded" >
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="line" minOccurs="1" maxOccurs="unbounded" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-
-	<xs:element name="line" >
-	<xs:complexType>
-		<xs:sequence>
-			<xs:element name="obselsBegin" type="obselLight" minOccurs="1" maxOccurs="1" />
-			<xs:element name="obselsEnd" type="obselLight" minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 
@@ -127,7 +122,7 @@
 	<xs:element name="methods">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="method" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="method" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

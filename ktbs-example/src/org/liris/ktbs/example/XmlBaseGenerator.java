@@ -12,6 +12,7 @@ import org.liris.ktbs.core.ResourceLoadException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.api.Base;
 import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.rdf.resource.RdfComputedTrace;
 import org.liris.ktbs.rdf.resource.RdfResourceRepository;
@@ -61,9 +62,14 @@ public class XmlBaseGenerator {
 		
 		
 		Base base = (Base)repository.getResource(BASE_URI);
-		RdfStoredTrace rdfStoredTrace = (RdfStoredTrace)repository.getResource(BASE_URI+"firstTrace/");
-		for (Obsel obsel : KtbsUtils.toIterable(rdfStoredTrace.listObsels())) {
-			System.out.println(obsel);
+		//RdfStoredTrace rdfStoredTrace = (RdfStoredTrace)repository.getResource(BASE_URI+"firstTrace/");
+		for (Trace traceUri : KtbsUtils.toIterable(base.listTraces())) {
+			System.out.println(traceUri);
+			Trace trace = (Trace)repository.getResource(traceUri.getURI());
+			for (Obsel obsel : KtbsUtils.toIterable(trace.listObsels())) {
+				System.out.println(obsel);
+				System.out.println("");
+			}
 		} 
 		
 		

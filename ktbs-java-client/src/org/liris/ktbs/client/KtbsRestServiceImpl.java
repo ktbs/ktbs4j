@@ -286,10 +286,12 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		 * - Remove all rdf:type statements for StoredTrace and ComputedTrace since
 		 * it is not accepted by the KTBS in an UPDATE.
 		 * - Remove the hasOrigin statement in the RDF sent to the server for an update
+		 * - Remove the hasModel statement in the RDF sent to the server for an update
 		 */
 		filteredModel.removeAll(null, RDF.type, filteredModel.getResource(KtbsConstants.STORED_TRACE));
 		filteredModel.removeAll(null, RDF.type, filteredModel.getResource(KtbsConstants.COMPUTED_TRACE));
 		filteredModel.removeAll(null, filteredModel.getProperty(KtbsConstants.P_HAS_ORIGIN), null);
+		filteredModel.removeAll(null, filteredModel.getProperty(KtbsConstants.P_HAS_MODEL), null);
 		
 		String stringRepresentation = writeToString(filteredModel);
 

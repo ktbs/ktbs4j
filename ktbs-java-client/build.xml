@@ -19,7 +19,7 @@
 	
 <property name="user.name" value="Damien Cram"/>
 <property name="organisation" value="LIRIS UMR 5205 CNRS"/>
-<property name="version" value="1.0.2"/>
+<property name="version" value="1.0.3"/>
 <property name="title" value="KTBS Client for Java"/>
 
 	

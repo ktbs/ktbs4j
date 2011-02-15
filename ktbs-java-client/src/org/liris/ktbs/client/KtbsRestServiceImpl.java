@@ -48,6 +48,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -279,6 +280,15 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		}
 
 		Model filteredModel = JenaUtils.filterModel(model, selector);
+		
+		/*
+		 * TODO KTBS BUG : Temporary FIX
+		 * Remove all rdf:type statements for StoredTrace and ComputedTrace since
+		 * it is not accepted by the KTBS in an UPDATE.
+		 */
+		filteredModel.removeAll(null, RDF.type, filteredModel.getResource(KtbsConstants.STORED_TRACE));
+		filteredModel.removeAll(null, RDF.type, filteredModel.getResource(KtbsConstants.COMPUTED_TRACE));
+		
 		String stringRepresentation = writeToString(filteredModel);
 
 		String uriToPost = putURI;

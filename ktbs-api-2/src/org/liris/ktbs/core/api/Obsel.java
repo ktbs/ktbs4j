@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.api.share.AttributePair;
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.KtbsResource;
 import org.liris.ktbs.core.api.share.RelationStatement;
 
@@ -15,7 +14,7 @@ import org.liris.ktbs.core.api.share.RelationStatement;
  * @author Damien Cram
  *
  */
-public interface Obsel extends KtbsResource, ContainedResource {
+public interface Obsel extends KtbsResource {
 
 	/**
 	 * Give the parent trace in which this obsel is contained.
@@ -97,12 +96,12 @@ public interface Obsel extends KtbsResource, ContainedResource {
 	public void setObselType(ObselType type);
 
 	/**
-	 * Give the obsel that has been used has a source by a t
-	 * ransformation processor to produce this obsel.
+	 * Give the obsels that has been used has the source obsels by a 
+	 * transformation processor to produce this obsel.
 	 * 
-	 * @return the source obsel if any, null otherwise
+	 * @return the source obsel set
 	 */
-	public Obsel getSourceObsel();
+	public Iterator<Obsel> listTransformationSourceObsels();
 
 	
 	/**

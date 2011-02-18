@@ -1,4 +1,4 @@
-package org.liris.ktbs.core.rest;
+package org.liris.ktbs.rest;
 
 /**
  * Holds codes for {@link KtbsResponse} different status.

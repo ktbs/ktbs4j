@@ -35,9 +35,9 @@ public interface TransformationResource {
 	 * Give the value of a parameter that is defined on this resource.
 	 * 
 	 * @param key the name of the parameter to retrieve
-	 * @return the parameter statement of that name if any, null otherwise
+	 * @return the parameter of that name if any, null otherwise
 	 */
-	public MethodParameter getMethodParameter(String key);
+	public String getMethodParameter(String key);
 	
 	/**
 	 * Remove any parameter definition of a given name/key.

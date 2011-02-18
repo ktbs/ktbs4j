@@ -2,7 +2,6 @@ package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.TransformationResource;
 
 
@@ -12,7 +11,7 @@ import org.liris.ktbs.core.api.share.TransformationResource;
  * @author Damien Cram
  *
  */
-public interface ComputedTrace extends Trace, TransformationResource, ContainedResource {
+public interface ComputedTrace extends Trace, TransformationResource  {
 	
 	/**
 	 * The KTBS method used to computed this trace.

@@ -1,8 +1,7 @@
 package org.liris.ktbs.core.api;
 
-import java.util.Collection;
+import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.KtbsResource;
 import org.liris.ktbs.core.api.share.Mode;
 import org.liris.ktbs.core.api.share.WithDomainResource;
@@ -14,7 +13,7 @@ import org.liris.ktbs.core.api.share.WithRangeResource;
  * @author Damien Cram
  *
  */
-public interface RelationType extends KtbsResource, WithDomainResource<ObselType>, WithRangeResource<ObselType>, ContainedResource {
+public interface RelationType extends KtbsResource, WithDomainResource<ObselType>, WithRangeResource<ObselType>  {
 	
 	/**
 	 * Tell if a relation type is a super relation type of this relation type.
@@ -24,7 +23,7 @@ public interface RelationType extends KtbsResource, WithDomainResource<ObselType
 	 * @return true if the param relation type is a super type of 
 	 * this relation type for the requested exploration mode, false otherwise.
 	 */
-	public boolean hasSuperRelationType(ObselType type, Mode mode);
+	public boolean hasSuperRelationType(RelationType type, Mode mode);
 	
 	
 	/**
@@ -40,7 +39,7 @@ public interface RelationType extends KtbsResource, WithDomainResource<ObselType
 	 * 
 	 * @return the collection of asserted super relation types for this relation type
 	 */
-	public Collection<RelationType> getSuperRelationTypes();
+	public Iterator<RelationType> listSuperRelationTypes();
 	
 	/**
 	 * Add a super relation type assertion to this relation type.

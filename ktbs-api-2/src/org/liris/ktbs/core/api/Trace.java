@@ -45,7 +45,7 @@ public interface Trace extends KtbsResource, ResourceContainer<Obsel> {
 	 * 
 	 * @return an iterator on the transformed traces
 	 */
-	public Iterator<Trace> listTransformedTraces();
+	public Iterator<ComputedTrace> listTransformedTraces();
 	
 	/**
 	 * Give the value of the "ktbs:hasOrigin" property.
@@ -89,5 +89,5 @@ public interface Trace extends KtbsResource, ResourceContainer<Obsel> {
 	 * 
 	 * @return "yes" if compliant, "no" if not, or "unknown"
 	 */
-	public String isCompliantWithModel();
+	public String getCompliantWithModel();
 }

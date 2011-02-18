@@ -3,7 +3,6 @@ package org.liris.ktbs.core.api;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.KtbsResource;
 import org.liris.ktbs.core.api.share.ResourceContainer;
 
@@ -13,7 +12,7 @@ import org.liris.ktbs.core.api.share.ResourceContainer;
  * @author Damien Cram
  *
  */
-public interface TraceModel extends KtbsResource, ResourceContainer<KtbsResource>, ContainedResource {
+public interface TraceModel extends KtbsResource, ResourceContainer<KtbsResource> {
 	
 	/**
 	 * List all attribute types defined in this trace model.

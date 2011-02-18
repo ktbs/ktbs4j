@@ -2,7 +2,6 @@ package org.liris.ktbs.core.api;
 
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.api.share.BuiltinMethod;
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.KtbsResource;
 import org.liris.ktbs.core.api.share.TransformationResource;
 
@@ -13,7 +12,7 @@ import org.liris.ktbs.core.api.share.TransformationResource;
  * @author Damien Cram
  *
  */
-public interface Method extends KtbsResource, TransformationResource, ContainedResource {
+public interface Method extends KtbsResource, TransformationResource  {
 	
 	/**
 	 * The built-in method named "ktbs:filter" in the KTBS.
@@ -55,5 +54,11 @@ public interface Method extends KtbsResource, TransformationResource, ContainedR
 	 * @return the method etag value as a string, null otherwise
 	 */
 	public String getETag();
+
+	/**
+	 * 
+	 * @param etag
+	 */
+	public void setEtag(String etag);
 
 }

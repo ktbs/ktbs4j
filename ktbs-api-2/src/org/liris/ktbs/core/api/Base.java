@@ -1,9 +1,8 @@
 package org.liris.ktbs.core.api;
 
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.Set;
 
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.KtbsResource;
 import org.liris.ktbs.core.api.share.ResourceContainer;
 
@@ -13,7 +12,7 @@ import org.liris.ktbs.core.api.share.ResourceContainer;
  * @author Damien Cram
  *
  */
-public interface Base extends KtbsResource, ResourceContainer<KtbsResource>, ContainedResource {
+public interface Base extends KtbsResource, ResourceContainer<KtbsResource>  {
 	
 	/**
 	 * Give the owner of this base.
@@ -52,21 +51,6 @@ public interface Base extends KtbsResource, ResourceContainer<KtbsResource>, Con
 	
 	
 	/**
-	 * List all traces (either stored or computed) owned by this base.
-	 * 
-	 * @return an iterator on owned traces
-	 */
-	public Iterator<Trace> listTraces();
-
-	/**
-	 * List all resource (either stored trace, computed trace, method or 
-	 * trace model) owned by this base.
-	 * 
-	 * @return an iterator on owned resources
-	 */
-	public Iterator<KtbsResource> listResources();
-	
-	/**
 	 * Create a new owned stored trace in this base.
 	 * 
 	 * @param traceLocalName the local name of the new trace
@@ -87,7 +71,7 @@ public interface Base extends KtbsResource, ResourceContainer<KtbsResource>, Con
 	 * the obsels of the new trace
 	 * @return the created computed trace
 	 */
-	public ComputedTrace newComputedTrace(String traceLocalName, TraceModel model, Method method, Collection<Trace> sources);
+	public ComputedTrace newComputedTrace(String traceLocalName, TraceModel model, Method method, Set<Trace> sources);
 	
 	/**
 	 * Create a new owned method in this base.

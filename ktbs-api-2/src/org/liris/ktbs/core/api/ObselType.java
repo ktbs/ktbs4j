@@ -1,9 +1,7 @@
 package org.liris.ktbs.core.api;
 
-import java.util.Collection;
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.KtbsResource;
 import org.liris.ktbs.core.api.share.Mode;
 
@@ -13,7 +11,7 @@ import org.liris.ktbs.core.api.share.Mode;
  * @author Damien Cram
  *
  */
-public interface ObselType extends KtbsResource, ContainedResource {
+public interface ObselType extends KtbsResource  {
 	
 	/**
 	 * Give the trace model in which this obsel type is defined.
@@ -45,7 +43,7 @@ public interface ObselType extends KtbsResource, ContainedResource {
 	 * 
 	 * @return the collection of asserted super obsel type
 	 */
-	public Collection<ObselType> getSuperObselTypes();
+	public Iterator<ObselType> listSuperObselTypes();
 	
 	
 	/**

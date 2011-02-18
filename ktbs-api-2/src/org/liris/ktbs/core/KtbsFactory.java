@@ -1,6 +1,6 @@
 package org.liris.ktbs.core;
 
-import org.liris.ktbs.core.rest.KtbsRestService;
+import org.liris.ktbs.rest.KtbsRestService;
 
 /**
  * A factory that creates KTBS repositories.

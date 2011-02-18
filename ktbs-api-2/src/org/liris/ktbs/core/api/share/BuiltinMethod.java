@@ -110,7 +110,7 @@ public class BuiltinMethod implements Method {
 	}
 
 	@Override
-	public MethodParameter getMethodParameter(String key) {
+	public String getMethodParameter(String key) {
 		throw new BuiltinResourceException(uri + " is a KTBS built-in method");
 	}
 
@@ -124,4 +124,8 @@ public class BuiltinMethod implements Method {
 		throw new BuiltinResourceException(uri + " is a KTBS built-in method");
 	}
 
+	@Override
+	public void setEtag(String etag) {
+		throw new BuiltinResourceException(uri + " is a KTBS built-in method");
+	}
 }

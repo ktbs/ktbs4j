@@ -26,7 +26,7 @@ public interface Root extends KtbsResource, ResourceContainer<Base> {
 	 * @param baseLocalName the local name of the create base
 	 * @param owner the user id of the owner of this base
 	 */
-	public void newBase(String baseLocalName, String owner);
+	public Base newBase(String baseLocalName, String owner);
 	
 	/**
 	 * Give the owned base of a given uri.

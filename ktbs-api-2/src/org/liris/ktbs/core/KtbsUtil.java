@@ -1,6 +1,6 @@
 package org.liris.ktbs.core;
 
-import org.liris.ktbs.core.rest.KtbsRestService;
+import org.liris.ktbs.rest.KtbsRestService;
 
 /**
  * The entry point of the KTBS Java API.

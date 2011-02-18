@@ -1,6 +1,6 @@
 package org.liris.ktbs.core.api.share;
 
-import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * An interface that defined an attribute or a relation's behavior 
@@ -24,7 +24,7 @@ public interface WithRangeResource<T> {
 	 * 
 	 * @return an iterator on the ranges
 	 */
-	public Collection<T> getRanges();
+	public Iterator<T> listRanges();
 	
 	/**
 	 * Get the first asserted range found for this attribute/relation type

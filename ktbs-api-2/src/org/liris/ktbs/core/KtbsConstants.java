@@ -19,6 +19,7 @@ public interface KtbsConstants {
 	public static final String MIME_NTRIPLES = "text/nt";
 	public static final String MIME_N3 = "text/n3";
 	public static final String MIME_TURTLE = "text/turtle";
+	public static final String MIME_JSON = "text/json";
 	
 	
 	// KTBS vocabulary

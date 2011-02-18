@@ -1,4 +1,4 @@
-package org.liris.ktbs.core.rest;
+package org.liris.ktbs.rest;
 
 import java.util.Collection;
 import java.util.Map;

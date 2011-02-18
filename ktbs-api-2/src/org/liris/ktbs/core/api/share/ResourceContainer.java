@@ -1,5 +1,7 @@
 package org.liris.ktbs.core.api.share;
 
+import java.util.Iterator;
+
 /**
  * An interface for a KTBS resource that can contain other KTBS resources.
  * 
@@ -25,4 +27,12 @@ public interface ResourceContainer<T extends KtbsResource> {
 	 * @return true if a KTBS resource has been removed, false otherwise
 	 */
 	public boolean delete(String resourceURI);
+	
+	/**
+	 * List all resource of this container.
+	 * 
+	 * @return an iterator on contained resources
+	 */
+	public Iterator<T> listResources();
+	
 }

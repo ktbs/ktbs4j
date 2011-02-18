@@ -1,6 +1,6 @@
 package org.liris.ktbs.core.api.share;
 
-import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * An interface that defined an attribute or a relation's behavior 
@@ -24,7 +24,7 @@ public interface WithDomainResource<T> {
 	 * 
 	 * @return an iterator on the domains
 	 */
-	public Collection<T> getDomains();
+	public Iterator<T> listDomains();
 	
 	/**
 	 * Get the first asserted domain found for this attribute/relation type

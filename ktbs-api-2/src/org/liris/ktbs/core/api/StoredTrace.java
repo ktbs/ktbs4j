@@ -2,15 +2,13 @@ package org.liris.ktbs.core.api;
 
 import java.util.Map;
 
-import org.liris.ktbs.core.api.share.ContainedResource;
-
 /**
  * A KTBS stored trace.
  * 
  * @author Damien Cram
  *
  */
-public interface StoredTrace extends Trace, ContainedResource {
+public interface StoredTrace extends Trace {
 	
 	/**
 	 * Create a new obsel and add it to this stored trace.

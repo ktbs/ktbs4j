@@ -1,6 +1,5 @@
 package org.liris.ktbs.core.api;
 
-import org.liris.ktbs.core.api.share.ContainedResource;
 import org.liris.ktbs.core.api.share.KtbsResource;
 import org.liris.ktbs.core.api.share.WithDomainResource;
 import org.liris.ktbs.core.api.share.WithRangeResource;
@@ -13,7 +12,7 @@ import org.liris.ktbs.core.api.share.WithRangeResource;
  * @author Damien Cram
  *
  */
-public interface AttributeType extends KtbsResource, WithDomainResource<ObselType>, WithRangeResource<String>, ContainedResource {
+public interface AttributeType extends KtbsResource, WithDomainResource<ObselType>, WithRangeResource<String> {
 	
 	
 }

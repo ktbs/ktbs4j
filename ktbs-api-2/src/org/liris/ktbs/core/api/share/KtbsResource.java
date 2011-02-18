@@ -14,6 +14,20 @@ import java.util.Iterator;
 public interface KtbsResource extends Comparable<KtbsResource> {
 	
 	/**
+	 * Give the local name of the KTBS resource.
+	 * 
+	 * @return the local name 
+	 */
+	public String getLocalName();
+	
+	/**
+	 * Give the KTBS resource that contains this resource.
+	 * 
+	 * @return the parent resource
+	 */
+	public KtbsResource getParentResource();
+	
+	/**
 	 * Give the immutable URI of this KTBS resource.
 	 * 
 	 * @return the uri of the resource

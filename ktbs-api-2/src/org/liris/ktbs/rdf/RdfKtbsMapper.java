@@ -23,7 +23,6 @@ import org.liris.ktbs.core.api.share.RelationStatement;
 import org.liris.ktbs.core.api.share.TransformationResource;
 import org.liris.ktbs.core.api.share.WithDomainResource;
 import org.liris.ktbs.core.api.share.WithRangeResource;
-import org.liris.ktbs.core.impl.WithRangeString;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
 

@@ -1,6 +1,7 @@
 package org.liris.ktbs.core.impl;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.liris.ktbs.core.api.ComputedTrace;
 import org.liris.ktbs.core.api.Method;
@@ -59,5 +60,9 @@ public class ComputedTraceImpl extends TraceImpl implements ComputedTrace {
 	@Override
 	public void addSourceTrace(Trace sourceTrace) {
 		sourceTraceDelegate.add(sourceTrace);
+	}
+
+	void setSources(Set<String> sourceURIs) {
+		sourceTraceDelegate.set(sourceURIs);
 	}
 }

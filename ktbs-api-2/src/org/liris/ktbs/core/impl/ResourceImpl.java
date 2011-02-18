@@ -12,10 +12,9 @@ import org.liris.ktbs.utils.KtbsUtils;
 
 public abstract class ResourceImpl implements KtbsResource {
 
-	protected ResourceProvider manager;
+	protected ResourceManager manager;
 	protected final String uri;
 
-	
 	public ResourceImpl(String uri) {
 		super();
 		this.uri = uri;
@@ -57,6 +56,11 @@ public abstract class ResourceImpl implements KtbsResource {
 	@Override
 	public Iterator<PropertyStatement> listProperties() {
 		return propertyStatements.iterator();
+	}
+	
+	@Override
+	public Iterator<String> listLabels() {
+		return labels.iterator();
 	}
 
 	@Override
@@ -106,7 +110,6 @@ public abstract class ResourceImpl implements KtbsResource {
 			if(propertyName.equals(propertyStatement.getPropertyName()))
 				it.remove();
 		}
-
 	}
 
 	@Override

@@ -17,7 +17,7 @@ import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.core.api.share.KtbsResource;
 
-public interface ResourceProvider {
+public interface ResourceManager {
 	
 	public KtbsResource getKtbsResource(String uri);
 

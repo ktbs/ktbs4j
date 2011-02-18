@@ -63,6 +63,12 @@ public interface KtbsResource extends Comparable<KtbsResource> {
 	 * @see KtbsResource#listProperties()
 	 */
 	public Iterator<PropertyStatement> listProperties();
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Iterator<String> listLabels();
 	
 	/**
 	 * Return all values of a given property that are set on this resource.

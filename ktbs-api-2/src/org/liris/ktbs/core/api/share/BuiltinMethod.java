@@ -128,4 +128,9 @@ public class BuiltinMethod implements Method {
 	public void setEtag(String etag) {
 		throw new BuiltinResourceException(uri + " is a KTBS built-in method");
 	}
+
+	@Override
+	public Iterator<String> listLabels() {
+		throw new BuiltinResourceException(uri + " is a KTBS built-in method");
+	}
 }

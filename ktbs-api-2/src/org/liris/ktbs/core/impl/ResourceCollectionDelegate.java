@@ -10,9 +10,9 @@ class ResourceCollectionDelegate<T extends KtbsResource> {
 	
 	protected Set<String> set = new HashSet<String>();
 	
-	private ResourceProvider manager;
+	private ResourceManager manager;
 
-	public ResourceCollectionDelegate(ResourceProvider manager) {
+	public ResourceCollectionDelegate(ResourceManager manager) {
 		super();
 		this.manager = manager;
 	}
@@ -45,5 +45,9 @@ class ResourceCollectionDelegate<T extends KtbsResource> {
 
 	public boolean contains(T t) {
 		return set.contains(t.getURI());
+	}
+
+	public void set(Set<String> set) {
+		this.set = set;
 	}
 }

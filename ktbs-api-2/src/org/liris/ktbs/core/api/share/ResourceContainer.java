@@ -8,7 +8,7 @@ import java.util.Iterator;
  * @author Damien Cram
  *
  */
-public interface ResourceContainer<T extends KtbsResource> {
+public interface ResourceContainer<T extends KtbsResource> extends KtbsResource {
 	
 	/**
 	 * Give a KTBS resource that is contained in this resource.

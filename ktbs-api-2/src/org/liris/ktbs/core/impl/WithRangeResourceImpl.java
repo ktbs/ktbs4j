@@ -7,7 +7,7 @@ import org.liris.ktbs.core.api.share.WithRangeResource;
 
 class WithRangeResourceImpl<T extends KtbsResource> extends ResourceCollectionDelegate<T> implements WithRangeResource<T> {
 
-	WithRangeResourceImpl(ResourceProvider manager) {
+	WithRangeResourceImpl(ResourceManager manager) {
 		super(manager);
 	}
 

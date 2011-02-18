@@ -9,7 +9,7 @@ import org.liris.ktbs.core.api.StoredTrace;
 
 public class StoredTraceImpl extends TraceImpl implements StoredTrace {
 	
-	protected StoredTraceImpl(String uri) {
+	StoredTraceImpl(String uri) {
 		super(uri);
 	}
 

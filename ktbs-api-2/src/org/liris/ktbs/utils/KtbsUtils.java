@@ -305,4 +305,26 @@ public class KtbsUtils {
 		else 
 			return URI.create(parentURI).resolve(child).toString();
 	}
+
+
+	public static String getRDFType(KtbsResource r) {
+		if(Obsel.class.isAssignableFrom(r.getClass()))
+			return ((Obsel)r).getObselType().getURI();
+		else
+			return getRDFType(r.getClass());
+	}
+
+
+	public static String getJenaSyntax(String mimeFormat) {
+		if(mimeFormat.equals(KtbsConstants.MIME_RDF_XML))
+			return KtbsConstants.JENA_RDF_XML;
+		else if(mimeFormat.equals(KtbsConstants.MIME_TURTLE))
+			return KtbsConstants.JENA_TURTLE;
+		else if(mimeFormat.equals(KtbsConstants.MIME_N3))
+			return KtbsConstants.JENA_N3;
+		else if(mimeFormat.equals(KtbsConstants.MIME_NTRIPLES))
+			return KtbsConstants.JENA_N_TRIPLES;
+		else
+			throw new IllegalArgumentException("This mime type cannot be mapped to an rdf syntax: " + mimeFormat);
+	}
 }

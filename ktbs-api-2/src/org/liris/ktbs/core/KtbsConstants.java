@@ -13,13 +13,21 @@ public interface KtbsConstants {
 	public static final String OBSELS_ASPECT = "@obsels";
 	public static final String ABOUT_ASPECT = "@about";
 	
+	public static final String JENA_TURTLE = "TURTLE";
+	public static final String JENA_N3 = "N3";
+	public static final String JENA_N3_PP = "N3-PP";
+	public static final String JENA_N3_PLAIN = "N3-PLAIN";
+	public static final String JENA_N3_TRIPLE = "N3-TRIPLE";
+	public static final String JENA_N_TRIPLES = "N-TRIPLE";
+	public static final String JENA_RDF_XML = "RDF/XML";
+	public static final String JENA_RDF_XML_ABBR = "RDF/XML-ABBREV";
 	
 	// Mime type supported by the KTBS
-	public static final String MIME_RDF_XML = "Application/rdf+xml";
+	public static final String MIME_RDF_XML = "application/rdf+xml";
 	public static final String MIME_NTRIPLES = "text/nt";
 	public static final String MIME_N3 = "text/n3";
 	public static final String MIME_TURTLE = "text/turtle";
-	public static final String MIME_JSON = "text/json";
+	public static final String MIME_JSON = "application/json";
 	
 	
 	// KTBS vocabulary
@@ -49,6 +57,7 @@ public interface KtbsConstants {
 	public static final String ATTRIBUTE_TYPE = NAMESPACE + "AttributeType";
 	public static final String OBSEL_TYPE = NAMESPACE + "ObselType";
 	public static final String P_HAS_ATTRIBUTE_DOMAIN = NAMESPACE + "hasAttributeDomain";
+	public static final String P_HAS_ATTRIBUTE_RANGE = NAMESPACE + "hasAttributeRange";
 	public static final String P_HAS_RELATION_DOMAIN = NAMESPACE + "hasRelationDomain";
 	public static final String P_HAS_RELATION_RANGE = NAMESPACE + "hasRelationRange";
 	public static final String P_HAS_SUPER_RELATION_TYPE = NAMESPACE + "hasSuperRelationType";
@@ -63,6 +72,8 @@ public interface KtbsConstants {
 	public static final String P_HAS_SUBJECT = NAMESPACE + "hasSubject";
 	public static final String P_HAS_TRACE = NAMESPACE + "hasTrace";
 	public static final String P_HAS_METHOD = NAMESPACE + "hasMethod";
+	public static final String P_HAS_OWNER = NAMESPACE + "hasOwner";
+	public static final String P_HAS_ETAG = NAMESPACE + "hasETag";
 	
 	// Method Properties
 	public static final String P_HAS_PARAMETER = NAMESPACE + "hasParameter";

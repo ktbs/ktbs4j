@@ -7,7 +7,7 @@ import org.liris.ktbs.core.api.share.WithDomainResource;
 
 class WithDomainResourceImpl<T extends KtbsResource> extends ResourceCollectionDelegate<T> implements WithDomainResource<T> {
 	
-	WithDomainResourceImpl(ResourceProvider manager) {
+	WithDomainResourceImpl(ResourceManager manager) {
 		super(manager);
 	}
 

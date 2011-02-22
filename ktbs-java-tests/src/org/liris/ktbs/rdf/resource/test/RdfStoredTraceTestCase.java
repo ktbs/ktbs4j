@@ -11,7 +11,6 @@ import org.liris.ktbs.utils.KtbsUtils;
 
 public class RdfStoredTraceTestCase  extends AbstractKtbsRdfResourceTestCase {
 
-
 	private StoredTrace t01;
 	
 	@Before

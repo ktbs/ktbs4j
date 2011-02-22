@@ -1,6 +1,7 @@
 package org.liris.ktbs.client;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -8,6 +9,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,11 +47,12 @@ import org.liris.ktbs.rdf.MinimalRdfResourceFactory;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.SimpleSelector;
 import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
@@ -164,7 +168,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		try {
 			response = httpClient.execute(get);
 			HttpEntity entity;
-			
+
 			if(response == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+uri+"\".");
 				ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
@@ -279,8 +283,17 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			};
 		}
 
-		Model filteredModel = JenaUtils.filterModel(model, selector);
-		
+
+		String uriToPost = putURI;
+		if(traceAspects.length == 1) {
+			if(traceAspects[0] == KtbsConstants.OBSELS_ASPECT)
+				uriToPost = KtbsUtils.addAspect(putURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
+			else if(traceAspects[0] == KtbsConstants.ABOUT_ASPECT)
+				uriToPost = KtbsUtils.addAspect(putURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
+		}
+
+
+
 		/*
 		 * TODO KTBS BUG : Temporary FIX
 		 * - Remove all rdf:type statements for StoredTrace and ComputedTrace since
@@ -291,29 +304,56 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		 * - Remove the hasObselCollection statement in the RDF sent to the server for an update
 		 * - Remove the descriptionOf statement in the RDF sent to the server for an update
 		 */
-		filteredModel.removeAll(null, RDF.type, filteredModel.getResource(KtbsConstants.STORED_TRACE));
-		filteredModel.removeAll(null, RDF.type, filteredModel.getResource(KtbsConstants.COMPUTED_TRACE));
-		filteredModel.removeAll(null, filteredModel.getProperty(KtbsConstants.P_HAS_ORIGIN), null);
-		filteredModel.removeAll(null, filteredModel.getProperty(KtbsConstants.P_HAS_MODEL), null);
-		filteredModel.removeAll(null, filteredModel.getProperty(KtbsConstants.P_COMPLIES_WITH_MODEL), null);
-		filteredModel.removeAll(null, filteredModel.getProperty(KtbsConstants.NAMESPACE + "hasObselCollection"), null);
-		filteredModel.removeAll(null, filteredModel.getProperty(KtbsConstants.NAMESPACE + "descriptionOf"), null);
-		
-		String stringRepresentation = writeToString(filteredModel);
+		Model filteredModel = JenaUtils.filterModel(model, selector);
+		Model editableModel = getEditable(uriToPost);
+		if(editableModel != null) {
+			Set<String> editableProperties = new TreeSet<String>();
+			StmtIterator it = editableModel.listStatements();
+			while (it.hasNext()) {
+				Statement statement = (Statement) it.next();
+				editableProperties.add(statement.getPredicate().getURI());
+			}
 
-		String uriToPost = putURI;
-		if(traceAspects.length == 1) {
-			if(traceAspects[0] == KtbsConstants.OBSELS_ASPECT)
-				uriToPost = KtbsUtils.addAspect(putURI, KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
-			else if(traceAspects[0] == KtbsConstants.ABOUT_ASPECT)
-				uriToPost = KtbsUtils.addAspect(putURI, KtbsConstants.ABOUT_ASPECT, KtbsConstants.OBSELS_ASPECT);
+			it = filteredModel.listStatements();
+			while (it.hasNext()) {
+				Statement statement = (Statement) it.next();
+				if(!editableProperties.contains(statement.getPredicate().getURI())) {
+					log.warn("A non-editable statement has been removed from the rdf sent to KTBS: " + statement);
+					it.remove();
+				}
+			}
 		}
-		
+		/*
+		 * End of fix
+		 */
+
+		String stringRepresentation = writeToString(filteredModel);
+		log.info("Filtered model:" + stringRepresentation);
 		return updateResource(
 				uriToPost,
 				stringRepresentation, 
 				eTag, 
 				traceAspects);
+	}
+
+	private Model getEditable(String uriToPost) {
+		KtbsResponse response = retrieve(uriToPost+"?editable");
+		if(!response.hasSucceeded()) {
+			log.warn("Could not get the editable properties from uri: " + uriToPost);
+			return null;
+		} else {
+			String modelAsString = response.getBodyAsString();
+			Model editableModel = ModelFactory.createDefaultModel();
+			try {
+
+				editableModel.read(new StringReader(modelAsString), "", KtbsUtils.getJenaSyntax(getGETMimeType()));
+			} catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			return editableModel;
+		}
+
 	}
 
 	private KtbsResponse updateResource(String postURI,
@@ -338,7 +378,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		}
 
 		String body = null;
-		
+
 		try {
 			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
 			if(log.isDebugEnabled()) {
@@ -358,19 +398,19 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 			}
 
 			body = EntityUtils.toString(response.getEntity());
-			
+
 			if(log.isDebugEnabled()) {
 				log.debug("Response header:" + response.getStatusLine());
 				log.debug("Response body:\n" + body);
 			}
-//			if(ktbsResponseStatus == KtbsResponseStatus.RESOURCE_UPDATED) {
+			//			if(ktbsResponseStatus == KtbsResponseStatus.RESOURCE_UPDATED) {
 
-				/*
-				 * Cannot read the resource returned since it is written in POST syntax (i.e. turtle) and there 
-				 * is a bug reading resource in turtle send by the server.
-				 */
-				EntityUtils.consume(response.getEntity());
-//			}
+			/*
+			 * Cannot read the resource returned since it is written in POST syntax (i.e. turtle) and there 
+			 * is a bug reading resource in turtle send by the server.
+			 */
+			EntityUtils.consume(response.getEntity());
+			//			}
 		} catch (ClientProtocolException e) {
 			log.error("An error occured when communicating with the KTBS", e);
 			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
@@ -434,7 +474,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		}
 
 		String body = null;
-		
+
 		try {
 			log.info("Sending POST request to the KTBS: "+post.getRequestLine());
 			response = httpClient.execute(post);

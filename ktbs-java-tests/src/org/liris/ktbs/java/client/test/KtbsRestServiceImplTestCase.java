@@ -24,6 +24,7 @@ import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ResourceLoadException;
 import org.liris.ktbs.core.ResourceRepository;
 import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.rdf.resource.RdfResourceRepository;
 import org.liris.ktbs.utils.KtbsUtils;
@@ -165,6 +166,49 @@ public class KtbsRestServiceImplTestCase {
 	}
 	
 	
+	/*
+	 * Precondition : ktbs has been loaded with examples at url http://localhost:8001/
+	 */
+	@Test
+	public void testUpdateFromKtbsTests() throws FileNotFoundException, ResourceLoadException {
+
+		// Not working since the ktbs is returning a null etag for a base
+		//		KtbsResource base = retrieveAsKtbsResource(base1Uri);
+//		System.err.println(base.getLabel());
+//		base.setLabel("Une nouvelle étiquette pour voir");
+//		service.update(base, getEtag(base1Uri));
+//		base = retrieveAsKtbsResource(base1Uri);
+//		System.err.println(base.getLabel());
+
+		// works fine
+//		TraceModel model = (TraceModel)retrieveAsKtbsResource(model1Uri);
+//		System.err.println(KtbsUtils.toLinkedList(model.listObselTypes()));
+//		model.newObselType("TypeNestor");
+//		service.update(model, getEtag(model1Uri));
+//		model = (TraceModel)retrieveAsKtbsResource(model1Uri);
+//		System.err.println(KtbsUtils.toLinkedList(model.listObselTypes()));
+		
+		StoredTrace storedTrace = (StoredTrace)retrieveAsKtbsResource(t01Uri);
+		System.err.println(storedTrace.getLabel());
+		System.err.println(storedTrace.getOrigin());
+		storedTrace.setLabel("Nouveau label");
+		storedTrace.setOrigin("Origine bidon");
+		
+		service.update(storedTrace, getEtag(t01Uri+"@about"), KtbsConstants.ABOUT_ASPECT);
+		storedTrace = (StoredTrace)retrieveAsKtbsResource(t01Uri);
+		System.err.println(storedTrace.getLabel());
+		System.err.println(storedTrace.getOrigin());
+		
+	}
+	
+	private String getEtag(String uri) {
+		KtbsResponse r = service.retrieve(uri);
+		assertEquals(true, r.hasSucceeded());
+		String etag = r.getHTTPETag();
+		assertNotNull(etag);
+		return etag;
+	}
+
 	@Test
 	public void testUpdate() throws FileNotFoundException, ResourceLoadException {
 		/*

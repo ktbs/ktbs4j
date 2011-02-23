@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.liris.ktbs.core.api.PropertyStatement;
 
-public abstract class ResourcePojo extends UriResource {
+public class ResourcePojo extends UriResource {
 
 	private Set<String> labels = new HashSet<String>();
 	private Set<PropertyStatement> properties = new HashSet<PropertyStatement>();

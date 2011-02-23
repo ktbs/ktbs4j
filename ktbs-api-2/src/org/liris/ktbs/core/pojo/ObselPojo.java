@@ -18,7 +18,7 @@ public class ObselPojo extends ResourcePojo {
 	private Set<RelationStatementPojo> incomingRelations = new HashSet<RelationStatementPojo>();
 	private Set<RelationStatementPojo> outgoingRelations = new HashSet<RelationStatementPojo>();
 
-	private Set<AttributePairPojo> 	attributePairs;
+	private Set<AttributePairPojo> 	attributePairs = new HashSet<AttributePairPojo>();
 
 	public String getSubject() {
 		return subject;

@@ -49,19 +49,19 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class RdfModel2Resource {
+public class Rdf2Pojo {
 
-	private static final Log log = LogFactory.getLog(RdfModel2Resource.class);
+	private static final Log log = LogFactory.getLog(Rdf2Pojo.class);
 
 	private Model model;
 	private SerializationOptions options = new SerializationOptions();
 
-	public RdfModel2Resource(Model model) {
+	public Rdf2Pojo(Model model) {
 		super();
 		this.model = model;
 	}
 
-	public RdfModel2Resource(Model model, SerializationOptions options) {
+	public Rdf2Pojo(Model model, SerializationOptions options) {
 		super();
 		this.model = model;
 		this.options = options;
@@ -73,7 +73,7 @@ public class RdfModel2Resource {
 		return readResource(uri, cls);
 	}
 
-	private ResourcePojo readResource(String uri, Class<?> cls) {
+	public ResourcePojo readResource(String uri, Class<?> cls) {
 		if(Root.class.isAssignableFrom(cls)) 
 			return readRoot(uri);
 		else if(Base.class.isAssignableFrom(cls)) 
@@ -240,9 +240,7 @@ public class RdfModel2Resource {
 
 		while (it.hasNext()) {
 			Statement statement = (Statement) it.next();
-			if(statement.getPredicate().getURI().startsWith(KtbsConstants.NAMESPACE) || 
-					statement.getPredicate().equals(RDFS.label) ||
-					statement.getPredicate().equals(RDF.type)
+			if(KtbsUtils.hasReservedNamespace(statement.getPredicate().getURI())
 			)
 				continue;
 			else
@@ -268,12 +266,12 @@ public class RdfModel2Resource {
 
 		// the traceformed traces
 		StmtIterator it = model.listStatements(
-				model.getResource(trace.getUri()), 
-				model.getProperty(KtbsConstants.P_HAS_TRANSFORMED_TRACE), 
-				(RDFNode)null);
+				null, 
+				model.getProperty(KtbsConstants.P_HAS_SOURCE), 
+				model.getResource(trace.getUri()));
 		while (it.hasNext()) {
 			Statement statement = (Statement) it.next();
-			trace.getTransformedTraces().add(readComputedTrace(statement.getObject().asResource().getURI()));
+			trace.getTransformedTraces().add(readComputedTrace(statement.getSubject().getURI()));
 		}
 
 		// the obsels
@@ -289,7 +287,7 @@ public class RdfModel2Resource {
 		// origin
 		Object origin = getValue(trace.getUri(), KtbsConstants.P_HAS_ORIGIN);
 		if(origin != null)
-			trace.setOrigin((String)origin);
+			trace.setOrigin(origin.toString());
 
 		// complies with model
 		Object yesNoValue = getValue(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL);
@@ -329,12 +327,12 @@ public class RdfModel2Resource {
 		// beginDT
 		Object beginDT = getValue(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT);
 		if(beginDT != null)
-			obsel.setBeginDT((String)beginDT);
+			obsel.setBeginDT(beginDT.toString());
 
 		// endDT
 		Object endDT = getValue(obsel.getUri(), KtbsConstants.P_HAS_END_DT);
 		if(endDT != null)
-			obsel.setEndDT((String)endDT);
+			obsel.setEndDT(endDT.toString());
 
 		// subject
 		Object subject = getValue(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT);
@@ -365,7 +363,7 @@ public class RdfModel2Resource {
 		// outgoing relations
 		Set<Statement> outgoingTargetObselStatements = findOutgoingTargetObselStatements(obsel.getUri());
 		for(Statement stmt:outgoingTargetObselStatements) {
-			obsel.getIncomingRelations().add(new RelationStatementPojo(
+			obsel.getOutgoingRelations().add(new RelationStatementPojo(
 					obsel, 
 					readRelationType(stmt.getPredicate().getURI()),
 					readObsel(stmt.getObject().asResource().getURI())));
@@ -611,7 +609,7 @@ public class RdfModel2Resource {
 		while (it.hasNext()) {
 			Statement stmt = it.next();
 			String uri2 = stmt.getSubject().getURI();
-			if(!uri2.startsWith(traceModel.getUri()))
+			if(!uri2.startsWith(traceModel.getUri()) || uri2.equals(traceModel.getUri()))
 				// triple is not a resource of this trace model
 				continue;
 
@@ -645,8 +643,14 @@ public class RdfModel2Resource {
 			return null;
 	}
 
+	/*
+	 * Return null if there is not such property set for that resource
+	 */
 	private Object getValue(String uri, String pName) {
-		RDFNode object = model.getResource(uri).getProperty(model.getProperty(pName)).getObject();
+		Statement stmt = model.getResource(uri).getProperty(model.getProperty(pName));
+		if(stmt == null)
+			return null;
+		RDFNode object = stmt.getObject();
 		if(object!=null && object.isLiteral())
 			return object.asLiteral().getValue();
 		else

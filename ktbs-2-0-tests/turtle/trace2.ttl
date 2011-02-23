@@ -1,0 +1,12 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://liris.cnrs.fr/silex/2009/ktbs#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://localhost:8001/ma-base/> :owns <http://localhost:8001/ma-base/trace2/> .
+
+<http://localhost:8001/ma-base/trace2/>
+    a :StoredTrace ;
+    :hasModel <http://localhost:8001/ma-base/model2/> ;
+    rdfs:label "La trace de la base n°2";
+    :hasOrigin "2011-01-03T12:00:00Z"^^xsd:dateTime ;
+.

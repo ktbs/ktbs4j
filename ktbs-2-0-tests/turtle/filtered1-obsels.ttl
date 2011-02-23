@@ -1,0 +1,35 @@
+@prefix : <http://localhost:8001/base1/model1/>.
+@prefix ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#>.
+
+<http://localhost:8001/base1/filtered1/23cc66e8cbf49d67e18be5e0fed4cdbd> a :RecvMsg;
+     ktbs:hasBegin "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "5000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:05+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/t01/23cc66e8cbf49d67e18be5e0fed4cdbd>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/filtered1/>;
+     :from "world";
+     :message "hello yourself";
+     :onChannel <http://localhost:8001/base1/filtered1/obs1>. 
+
+ <http://localhost:8001/base1/filtered1/92be11ba62bb497e5aec72cdd2b3aa13> a :SendMsg;
+     ktbs:hasBegin "2000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:02+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "4000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:04+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel  <http://localhost:8001/base1/t01/92be11ba62bb497e5aec72cdd2b3aa13>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/filtered1/>;
+     :message "hello world";
+     :onChannel <http://localhost:8001/base1/filtered1/obs1>. 
+
+<http://localhost:8001/base1/filtered1/obs1> a :OpenChat;
+     ktbs:hasBegin "1000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasBeginDT "2010-04-28T18:09:01+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasEnd "1000"^^<http://www.w3.org/2001/XMLSchema#integer>;
+     ktbs:hasEndDT "2010-04-28T18:09:01+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+     ktbs:hasSourceObsel <http://localhost:8001/base1/t01/obs1>;
+     ktbs:hasSubject "béa";
+     ktbs:hasTrace <http://localhost:8001/base1/filtered1/>;
+     :channel "#my-channel".

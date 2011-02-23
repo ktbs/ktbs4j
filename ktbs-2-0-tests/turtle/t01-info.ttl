@@ -1,0 +1,19 @@
+@prefix : <http://localhost:8001/base1/model1/>.
+@prefix ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#>.
+
+ <http://localhost:8001/base1/> ktbs:owns <http://localhost:8001/base1/t01/>. 
+
+ <http://localhost:8001/base1/count2/> ktbs:hasSource <http://localhost:8001/base1/t01/>. 
+
+ <http://localhost:8001/base1/filtered1/> ktbs:hasSource <http://localhost:8001/base1/t01/>. 
+
+ <http://localhost:8001/base1/fusioned1/> ktbs:hasSource <http://localhost:8001/base1/t01/>. 
+
+ <http://localhost:8001/base1/t01/@about> ktbs:descriptionOf <http://localhost:8001/base1/t01/>. 
+
+ <http://localhost:8001/base1/t01/> a ktbs:StoredTrace;
+     ktbs:compliesWithModel "yes";
+     ktbs:hasModel <http://localhost:8001/base1/model1/>;
+     ktbs:hasSubject "Damien Cram";
+     ktbs:hasObselCollection <http://localhost:8001/base1/t01/@obsels>;
+     ktbs:hasOrigin "2010-04-28T18:09:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>.

@@ -2,16 +2,15 @@ package org.liris.ktbs.core.nocache.tests;
 
 import java.util.HashSet;
 
+import junit.framework.TestCase;
+
 import org.liris.ktbs.core.api.Base;
 import org.liris.ktbs.core.api.ComputedTrace;
 import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.core.impl.ResourceManager;
 import org.liris.ktbs.core.nocache.DefaultManager;
 import org.liris.ktbs.tests.utils.ResourceProxy;
-
-import junit.framework.TestCase;
 
 public class DefaultManagerTestCase extends TestCase {
 

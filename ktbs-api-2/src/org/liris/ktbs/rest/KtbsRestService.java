@@ -1,6 +1,6 @@
 package org.liris.ktbs.rest;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 
 /**
  * 

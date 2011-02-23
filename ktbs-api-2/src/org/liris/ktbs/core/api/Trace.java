@@ -3,8 +3,6 @@ package org.liris.ktbs.core.api;
 import java.math.BigInteger;
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.ResourceContainer;
 
 /**
  * A KTBS trace.

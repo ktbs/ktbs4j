@@ -1,4 +1,4 @@
-package org.liris.ktbs.core.api.share;
+package org.liris.ktbs.core.api;
 
 /**
  * A property statement describing a KTBS resource.

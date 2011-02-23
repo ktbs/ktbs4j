@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.ResourceContainer;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.ResourceContainer;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public abstract class ResourceContainerImpl<T extends KtbsResource> extends ResourceImpl implements ResourceContainer<T> {
@@ -33,6 +33,6 @@ public abstract class ResourceContainerImpl<T extends KtbsResource> extends Reso
 	}
 	
 	protected void addContainedResource(T resource) {
-		resourceURIs.add(resource.getURI());
+		resourceURIs.add(resource.getUri());
 	}
 }

@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import org.liris.ktbs.core.api.AttributeType;
 import org.liris.ktbs.core.api.ObselType;
-import org.liris.ktbs.core.api.share.WithDomainResource;
+import org.liris.ktbs.core.api.WithDomainResource;
 
 public class AttributeTypeImpl extends ResourceImpl implements AttributeType {
 

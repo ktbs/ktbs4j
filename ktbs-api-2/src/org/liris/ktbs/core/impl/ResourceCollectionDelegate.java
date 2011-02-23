@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 
 class ResourceCollectionDelegate<T extends KtbsResource> {
 	
@@ -18,7 +18,7 @@ class ResourceCollectionDelegate<T extends KtbsResource> {
 	}
 	
 	protected void add(T t) {
-		set.add(t.getURI());
+		set.add(t.getUri());
 	}
 	
 	protected Iterator<T> list() {
@@ -44,7 +44,7 @@ class ResourceCollectionDelegate<T extends KtbsResource> {
 	}
 
 	public boolean contains(T t) {
-		return set.contains(t.getURI());
+		return set.contains(t.getUri());
 	}
 
 	public void set(Set<String> set) {

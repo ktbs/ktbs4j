@@ -1,6 +1,6 @@
 package org.liris.ktbs.core.impl;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 
 public class LinkedResourceDelegate<T extends KtbsResource> {
 	
@@ -13,7 +13,7 @@ public class LinkedResourceDelegate<T extends KtbsResource> {
 	}
 	
 	void set(T t) {
-		this.resourceURI = t.getURI();
+		this.resourceURI = t.getUri();
 	}
 	
 	T get() {

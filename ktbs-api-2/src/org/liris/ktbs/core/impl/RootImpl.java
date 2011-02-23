@@ -35,5 +35,4 @@ public class RootImpl extends ResourceContainerImpl<Base> implements Root{
 	public Base getBase(String baseURI) {
 		return baseContainerDelegate.get(baseURI);
 	}
-
 }

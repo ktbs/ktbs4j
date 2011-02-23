@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
 import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.api.share.KtbsResource;
 
 public class TraceModelImpl extends ResourceContainerImpl<KtbsResource> implements
 		TraceModel {

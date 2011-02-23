@@ -4,8 +4,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.share.MethodParameter;
-import org.liris.ktbs.core.api.share.TransformationResource;
+import org.liris.ktbs.core.api.MethodParameter;
+import org.liris.ktbs.core.api.TransformationResource;
+import org.liris.ktbs.core.api.share.SimpleMethodParameter;
 
 public class TransformationResourceImpl implements TransformationResource {
 	
@@ -14,37 +15,6 @@ public class TransformationResourceImpl implements TransformationResource {
 	}
 
 	private Set<MethodParameter> parameters = new HashSet<MethodParameter>();
-	private class SimpleMethodParameter implements MethodParameter {
-
-		private String name;
-		private String value;
-		
-		
-		public SimpleMethodParameter(String name, String value) {
-			super();
-			this.name = name;
-			this.value = value;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public String getValue() {
-			return value;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			if (obj instanceof MethodParameter) {
-				MethodParameter mp = (MethodParameter) obj;
-				return mp.getName().equals(name);
-			}
-			return false;
-		}
-	}
 	
 	@Override
 	public Iterator<MethodParameter> listMethodParameters() {

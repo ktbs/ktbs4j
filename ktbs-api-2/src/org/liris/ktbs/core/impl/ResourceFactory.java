@@ -9,16 +9,16 @@ import java.util.Set;
 import org.liris.ktbs.core.api.AttributeType;
 import org.liris.ktbs.core.api.Base;
 import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.core.api.Obsel;
 import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
+import org.liris.ktbs.core.api.ResourceContainer;
 import org.liris.ktbs.core.api.Root;
 import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.ResourceContainer;
 import org.liris.ktbs.utils.KtbsUtils;
 
 /*
@@ -42,7 +42,7 @@ public class ResourceFactory {
 	}
 
 	private String makeUri(ResourceContainer<?> container, String traceLocalName, boolean leaf) {
-		String uri = KtbsUtils.resolveAbsoluteChildURI(container.getURI(), traceLocalName);
+		String uri = KtbsUtils.resolveAbsoluteChildURI(container.getUri(), traceLocalName);
 		return URI.create(leaf?uri:(uri+"/")).normalize().toString();
 	}
 
@@ -68,7 +68,7 @@ public class ResourceFactory {
 		if(linkedResources!= null) {
 			Set<String> uris = new HashSet<String>();
 			for(KtbsResource r:linkedResources)
-				uris.add(r.getURI());
+				uris.add(r.getUri());
 			try {
 				resource.getClass().getDeclaredMethod(fieldName, Set.class).invoke(resource, uris);
 			} catch (Exception e) {
@@ -112,6 +112,51 @@ public class ResourceFactory {
 	}
 
 	public AttributeType createAttributeType(TraceModel traceModel,
+			String localName, Collection<ObselType> domain) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Method createMethod(String baseUri, String methodLocalName,
+			String inheritedMethod) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Root createRoot(String rootUri) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public TraceModel createTraceModel(String baseUri, String modelLocalName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Base createBase(String rootUri, String baseLocalName, String owner) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Obsel createObsel(String traceUri, String obselLocalName,
+			ObselType type, Map<AttributeType, Object> attributes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public ObselType createObselType(String traceModelUri, String localName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public RelationType createRelationType(String traceModelUri,
+			String localName, Collection<ObselType> domains,
+			Collection<ObselType> ranges) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public AttributeType createAttributeType(String traceModelUri,
 			String localName, Collection<ObselType> domain) {
 		// TODO Auto-generated method stub
 		return null;

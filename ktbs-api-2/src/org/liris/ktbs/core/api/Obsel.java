@@ -4,9 +4,6 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.AttributePair;
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.RelationStatement;
 
 /**
  * A KTBS obsel.

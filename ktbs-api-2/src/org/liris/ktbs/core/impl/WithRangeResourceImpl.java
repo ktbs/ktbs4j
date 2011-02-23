@@ -2,8 +2,8 @@ package org.liris.ktbs.core.impl;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.WithRangeResource;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.WithRangeResource;
 
 class WithRangeResourceImpl<T extends KtbsResource> extends ResourceCollectionDelegate<T> implements WithRangeResource<T> {
 

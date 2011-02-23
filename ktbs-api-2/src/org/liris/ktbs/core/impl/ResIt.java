@@ -3,7 +3,7 @@ package org.liris.ktbs.core.impl;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 
 public class ResIt<T extends KtbsResource> implements Iterator<T> {
 

@@ -2,8 +2,6 @@ package org.liris.ktbs.core.api;
 
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.api.share.BuiltinMethod;
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.TransformationResource;
 
 
 /**

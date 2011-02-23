@@ -5,9 +5,9 @@ import java.util.Set;
 
 import org.liris.ktbs.core.api.ComputedTrace;
 import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.MethodParameter;
 import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.share.MethodParameter;
-import org.liris.ktbs.core.api.share.TransformationResource;
+import org.liris.ktbs.core.api.TransformationResource;
 
 public class ComputedTraceImpl extends TraceImpl implements ComputedTrace {
 

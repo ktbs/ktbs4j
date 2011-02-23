@@ -16,7 +16,9 @@ import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.api.AttributeType;
 import org.liris.ktbs.core.api.Base;
 import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.MethodParameter;
 import org.liris.ktbs.core.api.Obsel;
 import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
@@ -24,9 +26,40 @@ import org.liris.ktbs.core.api.Root;
 import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.api.share.KtbsResource;
+import org.liris.ktbs.core.api.share.SimpleMethodParameter;
+
+import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class KtbsUtils {
+	
+	/**
+	 * Tell if a given property name is defined is a namespace reserved by the KTBS.
+	 * 
+	 * <p>
+	 *  Reserved namespaces are:
+	 *  <ul>
+	 *  <li>http://liris.cnrs.fr/silex/2009/ktbs#</li>
+	 *  <li>http://blablabla/rdf#</li>
+	 *  <li>http://blablabla/rdfs#</li>
+	 *  </ul>
+	 * </p>
+	 * 
+	 * <p>
+	 * The purpose of forbidding the entire namespaces rdf anb rdfs (while 
+	 * only rdf:type and rdfs:label are reserved by the KTBS) is to draw the border
+	 * between triples that are interpreted as relations between obsel and triples interpreted as
+	 * simple resource properties.
+	 * </p>
+	 * 
+	 * @param pName
+	 * @return
+	 */
+	public static boolean hasReservedNamespace(String pName) {
+		return pName.startsWith(KtbsConstants.NAMESPACE)
+				|| pName.startsWith(RDFS.getURI())
+				|| pName.startsWith(RDF.getURI());
+	}
 
 	/**
 	 * Give the Java class that is used to create new instances 
@@ -58,7 +91,13 @@ public class KtbsUtils {
 		return null;
 
 	}
-
+	
+	public static MethodParameter parseMethodParameter(String string) {
+		int index = string.indexOf("=");
+		String key = string.substring(0, index);
+		String value = string.substring(index+1, string.length());
+		return new SimpleMethodParameter(key, value);
+	}
 
 	/**
 	 * Resolves the URI of the parent resource of a Ktbs resource.
@@ -73,7 +112,7 @@ public class KtbsUtils {
 	 * 
 	 */
 	public static String getParentResource(KtbsResource resource) {
-		return resolveParentURI(resource.getURI());
+		return resolveParentURI(resource.getUri());
 	}
 
 	/**
@@ -269,7 +308,7 @@ public class KtbsUtils {
 			return null;
 		Collection<String> uriCollection = new ArrayList<String>(c.size());
 		for(KtbsResource r:c)
-			uriCollection.add(r.getURI());
+			uriCollection.add(r.getUri());
 		return uriCollection;
 	}
 
@@ -286,7 +325,7 @@ public class KtbsUtils {
 			return null;
 		Map<String, Object> m = new HashMap<String, Object>();
 		for(AttributeType att:attributes.keySet())
-			m.put(att.getURI(), attributes.get(att));
+			m.put(att.getUri(), attributes.get(att));
 		return m;
 	}
 
@@ -309,7 +348,7 @@ public class KtbsUtils {
 
 	public static String getRDFType(KtbsResource r) {
 		if(Obsel.class.isAssignableFrom(r.getClass()))
-			return ((Obsel)r).getObselType().getURI();
+			return ((Obsel)r).getObselType().getUri();
 		else
 			return getRDFType(r.getClass());
 	}

@@ -1,6 +1,7 @@
-package org.liris.ktbs.core.api.share;
+package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
+
 
 /**
  * An interface for a KTBS resource that can contain other KTBS resources.

@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.share.WithRangeResource;
+import org.liris.ktbs.core.api.WithRangeResource;
 
 public class WithRangeString implements WithRangeResource<String> {
 

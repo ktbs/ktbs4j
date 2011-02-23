@@ -2,7 +2,6 @@ package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.TransformationResource;
 
 
 /**

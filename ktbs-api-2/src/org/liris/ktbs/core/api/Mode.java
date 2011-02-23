@@ -1,7 +1,5 @@
-package org.liris.ktbs.core.api.share;
+package org.liris.ktbs.core.api;
 
-import org.liris.ktbs.core.api.ObselType;
-import org.liris.ktbs.core.api.RelationType;
 
 /**
  * The possible exploration modes when requesting for

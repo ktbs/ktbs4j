@@ -5,24 +5,24 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.liris.ktbs.core.KtbsConstants;
+import org.liris.ktbs.core.api.AttributePair;
 import org.liris.ktbs.core.api.AttributeType;
 import org.liris.ktbs.core.api.Base;
 import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.MethodParameter;
 import org.liris.ktbs.core.api.Obsel;
+import org.liris.ktbs.core.api.PropertyStatement;
+import org.liris.ktbs.core.api.RelationStatement;
 import org.liris.ktbs.core.api.RelationType;
 import org.liris.ktbs.core.api.Root;
 import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.api.share.AttributePair;
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.MethodParameter;
-import org.liris.ktbs.core.api.share.PropertyStatement;
-import org.liris.ktbs.core.api.share.RelationStatement;
-import org.liris.ktbs.core.api.share.TransformationResource;
-import org.liris.ktbs.core.api.share.WithDomainResource;
-import org.liris.ktbs.core.api.share.WithRangeResource;
+import org.liris.ktbs.core.api.TransformationResource;
+import org.liris.ktbs.core.api.WithDomainResource;
+import org.liris.ktbs.core.api.WithRangeResource;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -32,20 +32,19 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-@SuppressWarnings("unused")
-public class RdfKtbsMapper {
+public class Resource2RdfModel {
 
 	private KtbsResource resource;
 	private Model model;
 	private SerializationOptions options = new SerializationOptions();
 
-	public RdfKtbsMapper(KtbsResource resource) {
+	public Resource2RdfModel(KtbsResource resource) {
 		super();
 		this.resource = resource;
 		this.model = ModelFactory.createDefaultModel();
 	}
 
-	public RdfKtbsMapper(KtbsResource resource, SerializationOptions options) {
+	public Resource2RdfModel(KtbsResource resource, SerializationOptions options) {
 		this(resource);
 		this.options = options;
 	}
@@ -106,25 +105,25 @@ public class RdfKtbsMapper {
 		else
 			model.getResource(uri).addProperty(
 					model.getProperty(pName), 
-					model.getResource(objectResource.getURI()));
+					model.getResource(objectResource.getUri()));
 	}
 
 	private void putGenericResource(KtbsResource r) {
 		// Avoid cycles
-		if(alreadyProcessed.contains(r.getURI()))
+		if(alreadyProcessed.contains(r.getUri()))
 			return;
-		alreadyProcessed.add(r.getURI());
+		alreadyProcessed.add(r.getUri());
 
 
-		model.getResource(r.getURI()).addProperty(
+		model.getResource(r.getUri()).addProperty(
 				RDF.type, 
 				model.getResource(KtbsUtils.getRDFType(r)));
 
 		for(String label:KtbsUtils.toIterable(r.listLabels()))
-			putLiteral(r.getURI(), RDFS.label.getURI(), label);
+			putLiteral(r.getUri(), RDFS.label.getURI(), label);
 
 		for(PropertyStatement stmt:KtbsUtils.toIterable(r.listProperties()))
-			putLiteral(r.getURI(), stmt.getPropertyName(), stmt.getPropertyValue());
+			putLiteral(r.getUri(), stmt.getPropertyName(), stmt.getPropertyValue());
 
 	}
 
@@ -167,9 +166,9 @@ public class RdfKtbsMapper {
 				put(base);
 		} else if(withContainedResourceURI()) {
 			for(Base base:KtbsUtils.toIterable(root.listBases())) {
-				putResource(root.getURI(), KtbsConstants.P_HAS_BASE, base);
+				putResource(root.getUri(), KtbsConstants.P_HAS_BASE, base);
 				if(withContainedResourceType())
-					putResource(base.getURI(), RDF.type.getURI(), KtbsConstants.BASE);
+					putResource(base.getUri(), RDF.type.getURI(), KtbsConstants.BASE);
 			}
 		}
 	}
@@ -177,7 +176,7 @@ public class RdfKtbsMapper {
 	private void put(Base base) {
 		putGenericResource(base);
 
-		putLiteral(base.getURI(), KtbsConstants.P_HAS_OWNER, base.getOwner());
+		putLiteral(base.getUri(), KtbsConstants.P_HAS_OWNER, base.getOwner());
 
 		putBaseChildren(base, base.listStoredTraces());
 		putBaseChildren(base, base.listComputedTraces());
@@ -190,11 +189,11 @@ public class RdfKtbsMapper {
 			if(withContainedResource())
 				put(child);
 			else if (withContainedResourceURI()) {
-				model.getResource(base.getURI()).addProperty(
+				model.getResource(base.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_OWNS), 
-						model.getResource(child.getURI()));
+						model.getResource(child.getUri()));
 				if (withContainedResourceType()) 
-					model.getResource(child.getURI()).addProperty(
+					model.getResource(child.getUri()).addProperty(
 							RDF.type, 
 							model.getResource(KtbsUtils.getRDFType(child)));
 			}
@@ -206,7 +205,7 @@ public class RdfKtbsMapper {
 			if(withContainedResource())
 				put(child);
 			else if (withContainedResourceURI() || withContainedResourceType()) 
-					model.getResource(child.getURI()).addProperty(
+					model.getResource(child.getUri()).addProperty(
 							RDF.type, 
 							model.getResource(KtbsUtils.getRDFType(child)));
 		}
@@ -216,7 +215,7 @@ public class RdfKtbsMapper {
 		putGenericResource(trace);
 		putTraceResource(trace);
 
-		putLiteral(trace.getURI(), KtbsConstants.P_HAS_SUBJECT, trace.getDefaultSubject());
+		putLiteral(trace.getUri(), KtbsConstants.P_HAS_SUBJECT, trace.getDefaultSubject());
 	}
 
 	private void put(TraceModel traceModel) {
@@ -235,7 +234,7 @@ public class RdfKtbsMapper {
 	
 	private void putWithStringRangeResource(WithRangeResource<String> r, String rangePropName) {
 		for(String s:KtbsUtils.toIterable(r.listRanges())) 
-			model.getResource(((KtbsResource)r).getURI()).addLiteral(
+			model.getResource(((KtbsResource)r).getUri()).addLiteral(
 					model.getProperty(rangePropName),
 					model.getResource(s));
 	}
@@ -251,9 +250,9 @@ public class RdfKtbsMapper {
 			if(withLinkedResource())
 				put(domain);
 			
-			model.getResource(((KtbsResource)r).getURI()).addProperty(
+			model.getResource(((KtbsResource)r).getUri()).addProperty(
 					model.getProperty(domainPropName),
-					model.getResource(domain.getURI()));
+					model.getResource(domain.getUri()));
 			
 			// ignore other options
 		}
@@ -264,9 +263,9 @@ public class RdfKtbsMapper {
 			if(withLinkedResource())
 				put(range);
 			
-			model.getResource(((KtbsResource)r).getURI()).addProperty(
+			model.getResource(((KtbsResource)r).getUri()).addProperty(
 					model.getProperty(rangePropName),
-					model.getResource(range.getURI()));
+					model.getResource(range.getUri()));
 			
 			// ignore other options
 		}
@@ -275,7 +274,7 @@ public class RdfKtbsMapper {
 	private void put(ComputedTrace trace) {
 		putGenericResource(trace);
 		putTraceResource(trace);
-		putTransformationResource(trace, trace.getURI());
+		putTransformationResource(trace, trace.getUri());
 
 		if(withLinkedResource()) {
 			put(trace.getMethod());
@@ -284,35 +283,35 @@ public class RdfKtbsMapper {
 		}
 
 		if(withLinkedResourceURI()) {
-			model.getResource(trace.getURI()).addProperty(
+			model.getResource(trace.getUri()).addProperty(
 					model.getProperty(KtbsConstants.P_HAS_METHOD),
-					model.getResource(trace.getMethod().getURI()));
+					model.getResource(trace.getMethod().getUri()));
 			for(Trace sourceTrace:KtbsUtils.toIterable(trace.listSourceTraces())) 
-				model.getResource(trace.getURI()).addProperty(
+				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE),
-						model.getResource(sourceTrace.getURI()));
+						model.getResource(sourceTrace.getUri()));
 		}
 	}
 
 	private void put(Method method) {
 		putGenericResource(method);
-		putTransformationResource(method, method.getURI());
+		putTransformationResource(method, method.getUri());
 
-		putResource(method.getURI(), KtbsConstants.P_INHERITS, method.getInheritedMethod());
-		putLiteral(method.getURI(), KtbsConstants.P_HAS_ETAG, method.getETag());
+		putResource(method.getUri(), KtbsConstants.P_INHERITS, method.getInheritedMethod());
+		putLiteral(method.getUri(), KtbsConstants.P_HAS_ETAG, method.getETag());
 	}
 
 	private void put(Obsel obsel) {
 		putGenericResource(obsel);
 
-		putLiteral(obsel.getURI(), KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
-		putLiteral(obsel.getURI(), KtbsConstants.P_HAS_END_DT, obsel.getEndDT());
-		putLiteral(obsel.getURI(), KtbsConstants.P_HAS_BEGIN, obsel.getBegin());
-		putLiteral(obsel.getURI(), KtbsConstants.P_HAS_END, obsel.getEnd());
-		putLiteral(obsel.getURI(), KtbsConstants.P_HAS_SUBJECT, obsel.getSubject());
+		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
+		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_END_DT, obsel.getEndDT());
+		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN, obsel.getBegin());
+		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_END, obsel.getEnd());
+		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT, obsel.getSubject());
 
 		for(AttributePair pair:KtbsUtils.toIterable(obsel.listAttributes())) {
-			putLiteral(obsel.getURI(), pair.getAttributeType().getURI(), pair.getValue());
+			putLiteral(obsel.getUri(), pair.getAttributeType().getUri(), pair.getValue());
 		}
 
 		for(RelationStatement stmt:KtbsUtils.toIterable(obsel.listOutgoingRelations())) {
@@ -320,15 +319,15 @@ public class RdfKtbsMapper {
 				put(stmt.getToObsel());
 
 			if(withLinkedResourceType())
-				model.getResource(stmt.getToObsel().getURI()).addProperty(
+				model.getResource(stmt.getToObsel().getUri()).addProperty(
 						RDF.type,
-						model.getResource(stmt.getToObsel().getObselType().getURI())
+						model.getResource(stmt.getToObsel().getObselType().getUri())
 				);
 
 			if(withLinkedResourceURI())
-				model.getResource(obsel.getURI()).addProperty(
-						model.getProperty(stmt.getRelation().getURI()),
-						model.getResource(stmt.getToObsel().getURI())
+				model.getResource(obsel.getUri()).addProperty(
+						model.getProperty(stmt.getRelation().getUri()),
+						model.getResource(stmt.getToObsel().getUri())
 				);
 		}
 
@@ -337,15 +336,15 @@ public class RdfKtbsMapper {
 				put(stmt.getFromObsel());
 
 			if(withLinkedResourceType())
-				model.getResource(stmt.getFromObsel().getURI()).addProperty(
+				model.getResource(stmt.getFromObsel().getUri()).addProperty(
 						RDF.type,
-						model.getResource(stmt.getFromObsel().getObselType().getURI())
+						model.getResource(stmt.getFromObsel().getObselType().getUri())
 				);
 
 			if(withLinkedResourceURI())
-				model.getResource(stmt.getFromObsel().getURI()).addProperty(
-						model.getProperty(stmt.getRelation().getURI()),
-						model.getResource(obsel.getURI())
+				model.getResource(stmt.getFromObsel().getUri()).addProperty(
+						model.getProperty(stmt.getRelation().getUri()),
+						model.getResource(obsel.getUri())
 				);
 		}
 	}
@@ -356,8 +355,8 @@ public class RdfKtbsMapper {
 	}
 
 	private void putTraceResource(Trace trace) {
-		putLiteral(trace.getURI(), KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
-		putLiteral(trace.getURI(), KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliantWithModel());
+		putLiteral(trace.getUri(), KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
+		putLiteral(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliantWithModel());
 
 		if(withLinkedResource()) {
 			put(trace.getTraceModel());
@@ -365,22 +364,22 @@ public class RdfKtbsMapper {
 		} 
 
 		if(withLinkedResourceURI()) {
-			model.getResource(trace.getURI()).addProperty(
+			model.getResource(trace.getUri()).addProperty(
 					model.getProperty(KtbsConstants.P_HAS_MODEL), 
-					model.getResource(trace.getTraceModel().getURI()));
+					model.getResource(trace.getTraceModel().getUri()));
 
 			for(KtbsResource child:KtbsUtils.toIterable(trace.listTransformedTraces()))
-				model.getResource(trace.getURI()).addProperty(
+				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE), 
-						model.getResource(child.getURI()));
+						model.getResource(child.getUri()));
 		}
 
 		if(withLinkedResourceType()) {
-			model.getResource(trace.getTraceModel().getURI()).addProperty(
+			model.getResource(trace.getTraceModel().getUri()).addProperty(
 					RDF.type, 
 					model.getResource(KtbsConstants.TRACE_MODEL));
 			for(KtbsResource child:KtbsUtils.toIterable(trace.listTransformedTraces()))
-				model.getResource(child.getURI()).addProperty(
+				model.getResource(child.getUri()).addProperty(
 						RDF.type, 
 						model.getResource(KtbsUtils.getRDFType(child)));
 		}
@@ -389,14 +388,14 @@ public class RdfKtbsMapper {
 			addResourceListToModel(trace.listObsels());
 		} else if(withContainedResourceURI()) {
 			for(Obsel obsel:KtbsUtils.toIterable(trace.listObsels())) {
-				model.getResource(obsel.getURI()).addProperty(
+				model.getResource(obsel.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_TRACE), 
-						model.getResource(trace.getURI()));
+						model.getResource(trace.getUri()));
 
 				if(withContainedResourceType()) {
-					model.getResource(obsel.getURI()).addProperty(
+					model.getResource(obsel.getUri()).addProperty(
 							RDF.type, 
-							model.getResource(obsel.getObselType().getURI()));
+							model.getResource(obsel.getObselType().getUri()));
 				}
 			}
 		}

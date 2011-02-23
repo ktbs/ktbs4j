@@ -1,9 +1,7 @@
-package org.liris.ktbs.core.api.share;
+package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.Method;
 
 /**
  * A set of functionalities that must be implemented by KTBS resources

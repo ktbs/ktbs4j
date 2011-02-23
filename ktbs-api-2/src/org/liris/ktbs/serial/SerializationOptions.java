@@ -1,6 +1,7 @@
 package org.liris.ktbs.serial;
 
 public class SerializationOptions {
+	
 	private boolean withContainedResourceURI = true;
 	private boolean withContainedResourceType = false;
 	private boolean withContainedResource = false;

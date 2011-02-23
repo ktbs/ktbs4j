@@ -1,6 +1,5 @@
-package org.liris.ktbs.core.api.share;
+package org.liris.ktbs.core.api;
 
-import org.liris.ktbs.core.api.AttributeType;
 
 
 /**

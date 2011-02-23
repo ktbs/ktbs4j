@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.share.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
@@ -51,7 +51,7 @@ public class RestDao implements ResourceDao {
 		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
 		KtbsResponse response = service.post(resource);
 		if(response.hasSucceeded()) {
-			if(!response.getHTTPLocation().equals(resource.getURI()))
+			if(!response.getHTTPLocation().equals(resource.getUri()))
 				log.warn("The resource has been created but in a diffrent uri location than expected.");
 				return true;
 		} else
@@ -62,14 +62,14 @@ public class RestDao implements ResourceDao {
 	public boolean save(KtbsResource resource) {
 		StringWriter writer = new StringWriter();
 		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
-		String etag = etags.get(resource.getURI());
+		String etag = etags.get(resource.getUri());
 		if(etag == null)
 			// should update the etag
-			get(resource.getURI());
+			get(resource.getUri());
 		
-		etag = etags.get(resource.getURI());
+		etag = etags.get(resource.getUri());
 		if(etag == null) {
-			log.warn("Could not find an etag for the resource \""+resource.getURI()+"\".");
+			log.warn("Could not find an etag for the resource \""+resource.getUri()+"\".");
 			return false;
 		}
 		

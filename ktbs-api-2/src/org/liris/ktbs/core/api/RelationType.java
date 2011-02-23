@@ -2,10 +2,6 @@ package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.Mode;
-import org.liris.ktbs.core.api.share.WithDomainResource;
-import org.liris.ktbs.core.api.share.WithRangeResource;
 
 /**
  * A KTBS relation type.

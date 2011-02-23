@@ -29,7 +29,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.share.KtbsResource;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
 public class KtbsRestServiceImpl implements KtbsRestService {
@@ -313,7 +313,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	public KtbsResponse post(KtbsResource resource) {
 		checkStarted(); 
 		
-		String postURI = resource.getURI();
+		String postURI = resource.getUri();
 		
 		HttpPost post = new HttpPost(postURI);
 		post.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
@@ -375,7 +375,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 
 	@Override
 	public KtbsResponse update(KtbsResource resource, String etag) {
-		final String putURI = resource.getURI();
+		final String putURI = resource.getUri();
 
 		checkStarted(); 
 

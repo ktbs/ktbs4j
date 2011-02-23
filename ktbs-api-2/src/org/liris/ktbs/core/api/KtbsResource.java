@@ -1,7 +1,8 @@
-package org.liris.ktbs.core.api.share;
+package org.liris.ktbs.core.api;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 
 
 
@@ -32,7 +33,7 @@ public interface KtbsResource extends Comparable<KtbsResource> {
 	 * 
 	 * @return the uri of the resource
 	 */
-	public String getURI();
+	public String getUri();
 
 	/**
 	 * Give the label attached to this resource.

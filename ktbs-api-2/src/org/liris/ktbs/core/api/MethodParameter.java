@@ -1,7 +1,5 @@
-package org.liris.ktbs.core.api.share;
+package org.liris.ktbs.core.api;
 
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.Method;
 
 /**
  * A parameter for KTBS resources that handle "key=value" 

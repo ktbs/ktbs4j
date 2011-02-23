@@ -2,11 +2,11 @@ package org.liris.ktbs.core.impl;
 
 import java.util.Iterator;
 
+import org.liris.ktbs.core.api.Mode;
 import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
-import org.liris.ktbs.core.api.share.Mode;
-import org.liris.ktbs.core.api.share.WithDomainResource;
-import org.liris.ktbs.core.api.share.WithRangeResource;
+import org.liris.ktbs.core.api.WithDomainResource;
+import org.liris.ktbs.core.api.WithRangeResource;
 
 public class RelationTypeImpl extends ResourceImpl implements RelationType {
 

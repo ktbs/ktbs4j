@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.liris.ktbs.core.api.AttributeType;
+import org.liris.ktbs.core.api.Mode;
 import org.liris.ktbs.core.api.ObselType;
 import org.liris.ktbs.core.api.RelationType;
 import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.api.share.Mode;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class ObselTypeImpl extends ResourceImpl implements ObselType {

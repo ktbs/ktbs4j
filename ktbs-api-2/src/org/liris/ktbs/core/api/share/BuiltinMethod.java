@@ -4,7 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.liris.ktbs.core.KtbsConstants;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.core.api.Method;
+import org.liris.ktbs.core.api.MethodParameter;
+import org.liris.ktbs.core.api.PropertyStatement;
+import org.liris.ktbs.core.api.error.BuiltinResourceException;
 
 /**
  * A read-only method representing KTBS built-in method and throwing 
@@ -26,7 +30,7 @@ public class BuiltinMethod implements Method {
 	}
 
 	@Override
-	public String getURI() {
+	public String getUri() {
 		return uri;
 	}
 
@@ -116,7 +120,7 @@ public class BuiltinMethod implements Method {
 
 	@Override
 	public String getLocalName() {
-		return getURI().replaceAll(KtbsConstants.NAMESPACE, "");
+		return getUri().replaceAll(KtbsConstants.NAMESPACE, "");
 	}
 
 	@Override

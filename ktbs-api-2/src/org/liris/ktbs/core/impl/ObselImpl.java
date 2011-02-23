@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.liris.ktbs.core.api.AttributePair;
 import org.liris.ktbs.core.api.AttributeType;
 import org.liris.ktbs.core.api.Obsel;
 import org.liris.ktbs.core.api.ObselType;
+import org.liris.ktbs.core.api.RelationStatement;
 import org.liris.ktbs.core.api.RelationType;
 import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.share.AttributePair;
-import org.liris.ktbs.core.api.share.RelationStatement;
 
 public class ObselImpl extends ResourceImpl implements Obsel {
 
@@ -129,18 +129,18 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 
 	@Override
 	public Object getAttributeValue(AttributeType attribute) {
-		return getAttributeValue(attribute.getURI());
+		return getAttributeValue(attribute.getUri());
 	}
 
 	@Override
 	public Collection<Object> getAttributeValues(AttributeType attribute) {
-		return getAttributeValues(attribute.getURI());
+		return getAttributeValues(attribute.getUri());
 	}
 
 	@Override
 	public Object getAttributeValue(String attributeTypeURI) {
 		for(AttributePair pair:attributePairs) {
-			if(pair.getAttributeType().getURI().equals(attributeTypeURI))
+			if(pair.getAttributeType().getUri().equals(attributeTypeURI))
 				return pair.getValue();
 		}
 		return null;
@@ -150,7 +150,7 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 	public Collection<Object> getAttributeValues(String attributeTypeURI) {
 		Set<Object> values = new HashSet<Object>();
 		for(AttributePair pair:attributePairs) {
-			if(pair.getAttributeType().getURI().equals(attributeTypeURI))
+			if(pair.getAttributeType().getUri().equals(attributeTypeURI))
 				values.add(pair.getValue());
 		}
 		return values;
@@ -158,7 +158,7 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 
 	@Override
 	public void addAttribute(AttributeType attribute, Object value) {
-		attributePairs.add(new AttributePairURI(attribute.getURI(), value));
+		attributePairs.add(new AttributePairURI(attribute.getUri(), value));
 	}
 
 	@Override
@@ -199,12 +199,12 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 	
 	@Override
 	public void addOutgoingRelation(RelationType relationType, Obsel target) {
-		outgoingRelations.add(new RelationStatementURI(uri, relationType.getURI(), target.getURI()));
+		outgoingRelations.add(new RelationStatementURI(uri, relationType.getUri(), target.getUri()));
 	}
 
 	@Override
 	public void addIncomingRelation(Obsel source, RelationType relationType) {
-		incomingRelations.add(new RelationStatementURI(source.getURI(), relationType.getURI(), uri));
+		incomingRelations.add(new RelationStatementURI(source.getUri(), relationType.getUri(), uri));
 	}
 
 	@Override
@@ -219,13 +219,13 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 
 	@Override
 	public Obsel getTargetObsel(RelationType relationType) {
-		return getTargetObsel(relationType.getURI());
+		return getTargetObsel(relationType.getUri());
 	}
 
 	@Override
 	public Obsel getTargetObsel(String relationTypeUri) {
 		for(RelationStatement stmt:outgoingRelations) {
-			if(stmt.getRelation().getURI().equals(relationTypeUri))
+			if(stmt.getRelation().getUri().equals(relationTypeUri))
 				return stmt.getToObsel();
 		}
 		return null;
@@ -233,13 +233,13 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 
 	@Override
 	public Obsel getSourceObsel(RelationType relationType) {
-		return getSourceObsel(relationType.getURI());
+		return getSourceObsel(relationType.getUri());
 	}
 
 	@Override
 	public Obsel getSourceObsel(String relationTypeUri) {
 		for(RelationStatement stmt:incomingRelations) {
-			if(stmt.getRelation().getURI().equals(relationTypeUri))
+			if(stmt.getRelation().getUri().equals(relationTypeUri))
 				return stmt.getFromObsel();
 		}
 		return null;
@@ -247,14 +247,14 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 
 	@Override
 	public Collection<Obsel> getTargetObsels(RelationType relationType) {
-		return getTargetObsels(relationType.getURI());
+		return getTargetObsels(relationType.getUri());
 	}
 
 	@Override
 	public Collection<Obsel> getTargetObsels(String relationTypeUri) {
 		Set<Obsel> targets = new HashSet<Obsel>();
 		for(RelationStatement stmt:outgoingRelations) {
-			if(stmt.getRelation().getURI().equals(relationTypeUri))
+			if(stmt.getRelation().getUri().equals(relationTypeUri))
 				targets.add(stmt.getToObsel());
 		}
 		return targets;
@@ -262,14 +262,14 @@ public class ObselImpl extends ResourceImpl implements Obsel {
 
 	@Override
 	public Collection<Obsel> getSourceObsels(RelationType relationType) {
-		return getSourceObsels(relationType.getURI());
+		return getSourceObsels(relationType.getUri());
 	}
 
 	@Override
 	public Collection<Obsel> getSourceObsels(String relationTypeUri) {
 		Set<Obsel> sources = new HashSet<Obsel>();
 		for(RelationStatement stmt:incomingRelations) {
-			if(stmt.getRelation().getURI().equals(relationTypeUri))
+			if(stmt.getRelation().getUri().equals(relationTypeUri))
 				sources.add(stmt.getFromObsel());
 		}
 		return sources;

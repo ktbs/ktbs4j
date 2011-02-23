@@ -1,13 +1,15 @@
 package org.liris.ktbs.core.impl;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.PropertyStatement;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.api.PropertyStatement;
+import org.liris.ktbs.core.api.share.SimplePropertyStatement;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public abstract class ResourceImpl implements KtbsResource {
@@ -17,16 +19,18 @@ public abstract class ResourceImpl implements KtbsResource {
 
 	public ResourceImpl(String uri) {
 		super();
+		// Ensure the uri is valid
+		URI.create(uri);
 		this.uri = uri;
 	}
 
 	@Override
 	public int compareTo(KtbsResource o) {
-		return uri.compareTo(o.getURI());
+		return uri.compareTo(o.getUri());
 	}
 
 	@Override
-	public String getURI() {
+	public String getUri() {
 		return uri;
 	}
 
@@ -84,22 +88,7 @@ public abstract class ResourceImpl implements KtbsResource {
 
 	@Override
 	public void addProperty(final String propertyName, final Object value) {
-		propertyStatements.add(new PropertyStatement() {
-			@Override
-			public String getResourceUri() {
-				return ResourceImpl.this.uri;
-			}
-
-			@Override
-			public Object getPropertyValue() {
-				return value;
-			}
-
-			@Override
-			public String getPropertyName() {
-				return propertyName;
-			}
-		});
+		propertyStatements.add(new SimplePropertyStatement(uri, value, propertyName));
 	}
 
 	@Override

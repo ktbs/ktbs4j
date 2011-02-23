@@ -5,11 +5,11 @@ import java.util.Set;
 
 import org.liris.ktbs.core.api.Base;
 import org.liris.ktbs.core.api.ComputedTrace;
+import org.liris.ktbs.core.api.KtbsResource;
 import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.core.api.StoredTrace;
 import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.api.share.KtbsResource;
 
 public class BaseImpl extends ResourceContainerImpl<KtbsResource> implements  Base {
 

@@ -2,8 +2,6 @@ package org.liris.ktbs.core.api;
 
 import java.util.Iterator;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.ResourceContainer;
 
 /**
  * A KTBS root.

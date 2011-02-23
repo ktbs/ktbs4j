@@ -3,8 +3,8 @@ package org.liris.ktbs.serial;
 import java.io.Reader;
 import java.io.Writer;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.rdf.RdfKtbsMapper;
+import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.rdf.Resource2RdfModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -20,7 +20,7 @@ public class RdfResourceSerializer implements KtbsResourceSerializer {
 	public void serialize(Writer writer, KtbsResource resource,
 			String mimeFormat) {
 		
-		RdfKtbsMapper mapper = new RdfKtbsMapper(resource);
+		Resource2RdfModel mapper = new Resource2RdfModel(resource);
 		Model model = mapper.getModel();
 		
 		model.write(writer, KtbsUtils.getJenaSyntax(mimeFormat), "");

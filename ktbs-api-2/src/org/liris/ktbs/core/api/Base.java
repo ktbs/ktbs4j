@@ -3,8 +3,6 @@ package org.liris.ktbs.core.api;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.share.KtbsResource;
-import org.liris.ktbs.core.api.share.ResourceContainer;
 
 /**
  * A KTBS base.

@@ -1,28 +1,27 @@
 package org.liris.ktbs.rdf;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.AttributePair;
-import org.liris.ktbs.core.api.AttributeType;
-import org.liris.ktbs.core.api.Base;
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.KtbsResource;
-import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.core.api.MethodParameter;
-import org.liris.ktbs.core.api.Obsel;
 import org.liris.ktbs.core.api.PropertyStatement;
-import org.liris.ktbs.core.api.RelationStatement;
-import org.liris.ktbs.core.api.RelationType;
-import org.liris.ktbs.core.api.Root;
-import org.liris.ktbs.core.api.StoredTrace;
-import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.api.TransformationResource;
-import org.liris.ktbs.core.api.WithDomainResource;
-import org.liris.ktbs.core.api.WithRangeResource;
+import org.liris.ktbs.core.pojo.AttributePairPojo;
+import org.liris.ktbs.core.pojo.AttributeTypePojo;
+import org.liris.ktbs.core.pojo.BasePojo;
+import org.liris.ktbs.core.pojo.ComputedTracePojo;
+import org.liris.ktbs.core.pojo.MethodPojo;
+import org.liris.ktbs.core.pojo.ObselPojo;
+import org.liris.ktbs.core.pojo.RelationStatementPojo;
+import org.liris.ktbs.core.pojo.RelationTypePojo;
+import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.pojo.RootPojo;
+import org.liris.ktbs.core.pojo.StoredTracePojo;
+import org.liris.ktbs.core.pojo.TraceModelPojo;
+import org.liris.ktbs.core.pojo.TracePojo;
+import org.liris.ktbs.core.pojo.WithDomain;
+import org.liris.ktbs.core.pojo.WithParameters;
+import org.liris.ktbs.core.pojo.WithRange;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -34,17 +33,17 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class Resource2RdfModel {
 
-	private KtbsResource resource;
+	private ResourcePojo resource;
 	private Model model;
 	private SerializationOptions options = new SerializationOptions();
 
-	public Resource2RdfModel(KtbsResource resource) {
+	public Resource2RdfModel(ResourcePojo resource) {
 		super();
 		this.resource = resource;
 		this.model = ModelFactory.createDefaultModel();
 	}
 
-	public Resource2RdfModel(KtbsResource resource, SerializationOptions options) {
+	public Resource2RdfModel(ResourcePojo resource, SerializationOptions options) {
 		this(resource);
 		this.options = options;
 	}
@@ -66,7 +65,7 @@ public class Resource2RdfModel {
 		return model;
 	}
 
-	private void put(KtbsResource r) {
+	private void put(ResourcePojo r) {
 		/*
 		 * Should never be called since there are specialized put/1 methods
 		 * for each type of supported resource.
@@ -99,7 +98,7 @@ public class Resource2RdfModel {
 				model.getResource(objectUri));
 	}
 
-	private void putResource(String uri, String pName, KtbsResource objectResource) {
+	private void putResource(String uri, String pName, ResourcePojo objectResource) {
 		if(objectResource == null)
 			return;
 		else
@@ -108,7 +107,7 @@ public class Resource2RdfModel {
 					model.getResource(objectResource.getUri()));
 	}
 
-	private void putGenericResource(KtbsResource r) {
+	private void putGenericResource(ResourcePojo r) {
 		// Avoid cycles
 		if(alreadyProcessed.contains(r.getUri()))
 			return;
@@ -119,11 +118,11 @@ public class Resource2RdfModel {
 				RDF.type, 
 				model.getResource(KtbsUtils.getRDFType(r)));
 
-		for(String label:KtbsUtils.toIterable(r.listLabels()))
+		for(String label:r.getLabels())
 			putLiteral(r.getUri(), RDFS.label.getURI(), label);
 
-		for(PropertyStatement stmt:KtbsUtils.toIterable(r.listProperties()))
-			putLiteral(r.getUri(), stmt.getPropertyName(), stmt.getPropertyValue());
+		for(PropertyStatement stmt:r.getProperties())
+			putLiteral(r.getUri(), stmt.getProperty(), stmt.getValue());
 
 	}
 
@@ -157,15 +156,15 @@ public class Resource2RdfModel {
 	//------------------------------------------------------------------------------
 	// SPECIALIZED METHODS
 	//------------------------------------------------------------------------------
-	private void put(Root root) {
+	private void put(RootPojo root) {
 
 		putGenericResource(root);
 
 		if(withContainedResource()) {
-			for(Base base:KtbsUtils.toIterable(root.listBases()))
+			for(BasePojo base:root.getBases())
 				put(base);
 		} else if(withContainedResourceURI()) {
-			for(Base base:KtbsUtils.toIterable(root.listBases())) {
+			for(BasePojo base:root.getBases()) {
 				putResource(root.getUri(), KtbsConstants.P_HAS_BASE, base);
 				if(withContainedResourceType())
 					putResource(base.getUri(), RDF.type.getURI(), KtbsConstants.BASE);
@@ -173,19 +172,19 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void put(Base base) {
+	private void put(BasePojo base) {
 		putGenericResource(base);
 
 		putLiteral(base.getUri(), KtbsConstants.P_HAS_OWNER, base.getOwner());
 
-		putBaseChildren(base, base.listStoredTraces());
-		putBaseChildren(base, base.listComputedTraces());
-		putBaseChildren(base, base.listMethods());
-		putBaseChildren(base, base.listTraceModels());
+		putBaseChildren(base, base.getStoredTraces());
+		putBaseChildren(base, base.getComputedTraces());
+		putBaseChildren(base, base.getMethods());
+		putBaseChildren(base, base.getTraceModels());
 	}
 
-	private void putBaseChildren(Base base, Iterator<? extends KtbsResource> it) {
-		for(KtbsResource child:KtbsUtils.toIterable(it)) {
+	private void putBaseChildren(BasePojo base, Set<? extends ResourcePojo> set) {
+		for(ResourcePojo child:set) {
 			if(withContainedResource())
 				put(child);
 			else if (withContainedResourceURI()) {
@@ -200,8 +199,8 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void putTraceModelChildren(TraceModel tm, Iterator<? extends KtbsResource> it) {
-		for(KtbsResource child:KtbsUtils.toIterable(it)) {
+	private void putTraceModelChildren(TraceModelPojo tm, Set<? extends ResourcePojo> set) {
+		for(ResourcePojo child:set) {
 			if(withContainedResource())
 				put(child);
 			else if (withContainedResourceURI() || withContainedResourceType()) 
@@ -211,46 +210,46 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void put(StoredTrace trace) {
+	private void put(StoredTracePojo trace) {
 		putGenericResource(trace);
 		putTraceResource(trace);
 
 		putLiteral(trace.getUri(), KtbsConstants.P_HAS_SUBJECT, trace.getDefaultSubject());
 	}
 
-	private void put(TraceModel traceModel) {
+	private void put(TraceModelPojo traceModel) {
 		putGenericResource(traceModel);
 		
-		putTraceModelChildren(traceModel, traceModel.listAttributeTypes());
-		putTraceModelChildren(traceModel, traceModel.listRelationTypes());
-		putTraceModelChildren(traceModel, traceModel.listObselTypes());
+		putTraceModelChildren(traceModel, traceModel.getAttributeTypes());
+		putTraceModelChildren(traceModel, traceModel.getRelationTypes());
+		putTraceModelChildren(traceModel, traceModel.getObselTypes());
 	}
 
-	private void put(AttributeType attType) {
+	private void put(AttributeTypePojo attType) {
 		putGenericResource(attType);
 		putWithDomainResource(attType, KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN);
 		putWithStringRangeResource(attType, KtbsConstants.P_HAS_ATTRIBUTE_RANGE);
 	}
 	
-	private void putWithStringRangeResource(WithRangeResource<String> r, String rangePropName) {
-		for(String s:KtbsUtils.toIterable(r.listRanges())) 
-			model.getResource(((KtbsResource)r).getUri()).addLiteral(
+	private void putWithStringRangeResource(WithRange<String> r, String rangePropName) {
+		for(String s:r.getRanges()) 
+			model.getResource(((ResourcePojo)r).getUri()).addLiteral(
 					model.getProperty(rangePropName),
 					model.getResource(s));
 	}
 
-	private void put(RelationType relType) {
+	private void put(RelationTypePojo relType) {
 		putGenericResource(relType);
 		putWithDomainResource(relType, KtbsConstants.P_HAS_RELATION_DOMAIN);
 		putWithRangeResource(relType, KtbsConstants.P_HAS_RELATION_RANGE);
 	}
 
-	private void putWithDomainResource(WithDomainResource<? extends KtbsResource> r, String domainPropName) {
-		for(KtbsResource domain:KtbsUtils.toIterable(r.listDomains())) {
+	private void putWithDomainResource(WithDomain<? extends ResourcePojo> r, String domainPropName) {
+		for(ResourcePojo domain:r.getDomains()) {
 			if(withLinkedResource())
 				put(domain);
 			
-			model.getResource(((KtbsResource)r).getUri()).addProperty(
+			model.getResource(((ResourcePojo)r).getUri()).addProperty(
 					model.getProperty(domainPropName),
 					model.getResource(domain.getUri()));
 			
@@ -258,12 +257,12 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void putWithRangeResource(WithRangeResource<? extends KtbsResource> r , String rangePropName) {
-		for(KtbsResource range:KtbsUtils.toIterable(r.listRanges())) {
+	private void putWithRangeResource(WithRange<? extends ResourcePojo> r , String rangePropName) {
+		for(ResourcePojo range:r.getRanges()) {
 			if(withLinkedResource())
 				put(range);
 			
-			model.getResource(((KtbsResource)r).getUri()).addProperty(
+			model.getResource(((ResourcePojo)r).getUri()).addProperty(
 					model.getProperty(rangePropName),
 					model.getResource(range.getUri()));
 			
@@ -271,14 +270,14 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void put(ComputedTrace trace) {
+	private void put(ComputedTracePojo trace) {
 		putGenericResource(trace);
 		putTraceResource(trace);
 		putTransformationResource(trace, trace.getUri());
 
 		if(withLinkedResource()) {
 			put(trace.getMethod());
-			for(Trace sourceTrace:KtbsUtils.toIterable(trace.listSourceTraces())) 
+			for(TracePojo sourceTrace:trace.getSourceTraces()) 
 				put(trace);
 		}
 
@@ -286,22 +285,22 @@ public class Resource2RdfModel {
 			model.getResource(trace.getUri()).addProperty(
 					model.getProperty(KtbsConstants.P_HAS_METHOD),
 					model.getResource(trace.getMethod().getUri()));
-			for(Trace sourceTrace:KtbsUtils.toIterable(trace.listSourceTraces())) 
+			for(TracePojo sourceTrace:trace.getSourceTraces()) 
 				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE),
 						model.getResource(sourceTrace.getUri()));
 		}
 	}
 
-	private void put(Method method) {
+	private void put(MethodPojo method) {
 		putGenericResource(method);
 		putTransformationResource(method, method.getUri());
 
-		putResource(method.getUri(), KtbsConstants.P_INHERITS, method.getInheritedMethod());
-		putLiteral(method.getUri(), KtbsConstants.P_HAS_ETAG, method.getETag());
+		putResource(method.getUri(), KtbsConstants.P_INHERITS, method.getInherits());
+		putLiteral(method.getUri(), KtbsConstants.P_HAS_ETAG, method.getEtag());
 	}
 
-	private void put(Obsel obsel) {
+	private void put(ObselPojo obsel) {
 		putGenericResource(obsel);
 
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
@@ -310,11 +309,11 @@ public class Resource2RdfModel {
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_END, obsel.getEnd());
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT, obsel.getSubject());
 
-		for(AttributePair pair:KtbsUtils.toIterable(obsel.listAttributes())) {
+		for(AttributePairPojo pair:obsel.getAttributePairs()) {
 			putLiteral(obsel.getUri(), pair.getAttributeType().getUri(), pair.getValue());
 		}
 
-		for(RelationStatement stmt:KtbsUtils.toIterable(obsel.listOutgoingRelations())) {
+		for(RelationStatementPojo stmt:obsel.getOutgoingRelations()) {
 			if(withLinkedResource()) 
 				put(stmt.getToObsel());
 
@@ -331,7 +330,7 @@ public class Resource2RdfModel {
 				);
 		}
 
-		for(RelationStatement stmt:KtbsUtils.toIterable(obsel.listIncomingRelations())) {
+		for(RelationStatementPojo stmt:obsel.getIncomingRelations()) {
 			if(withLinkedResource()) 
 				put(stmt.getFromObsel());
 
@@ -349,18 +348,18 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void putTransformationResource(TransformationResource r, String uri) {
-		for(MethodParameter param:KtbsUtils.toIterable(r.listMethodParameters())) 
+	private void putTransformationResource(WithParameters r, String uri) {
+		for(MethodParameter param:r.getMethodParameters()) 
 			putLiteral(uri, KtbsConstants.P_HAS_PARAMETER, param.getName()+"="+param.getValue());
 	}
 
-	private void putTraceResource(Trace trace) {
+	private void putTraceResource(TracePojo trace) {
 		putLiteral(trace.getUri(), KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
-		putLiteral(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliantWithModel());
+		putLiteral(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliesWithModel());
 
 		if(withLinkedResource()) {
 			put(trace.getTraceModel());
-			addResourceListToModel(trace.listTransformedTraces());
+			addResourceListToModel(trace.getTransformedTraces());
 		} 
 
 		if(withLinkedResourceURI()) {
@@ -368,7 +367,7 @@ public class Resource2RdfModel {
 					model.getProperty(KtbsConstants.P_HAS_MODEL), 
 					model.getResource(trace.getTraceModel().getUri()));
 
-			for(KtbsResource child:KtbsUtils.toIterable(trace.listTransformedTraces()))
+			for(ResourcePojo child:trace.getTransformedTraces())
 				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE), 
 						model.getResource(child.getUri()));
@@ -378,16 +377,16 @@ public class Resource2RdfModel {
 			model.getResource(trace.getTraceModel().getUri()).addProperty(
 					RDF.type, 
 					model.getResource(KtbsConstants.TRACE_MODEL));
-			for(KtbsResource child:KtbsUtils.toIterable(trace.listTransformedTraces()))
+			for(ResourcePojo child:trace.getTransformedTraces())
 				model.getResource(child.getUri()).addProperty(
 						RDF.type, 
 						model.getResource(KtbsUtils.getRDFType(child)));
 		}
 
 		if(withContainedResource()) {
-			addResourceListToModel(trace.listObsels());
+			addResourceListToModel(trace.getObsels());
 		} else if(withContainedResourceURI()) {
-			for(Obsel obsel:KtbsUtils.toIterable(trace.listObsels())) {
+			for(ObselPojo obsel:trace.getObsels()) {
 				model.getResource(obsel.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_TRACE), 
 						model.getResource(trace.getUri()));
@@ -405,8 +404,8 @@ public class Resource2RdfModel {
 	// -------------------------------------------------------------------------
 	// SHORTCUT METHOD
 	// -------------------------------------------------------------------------
-	private void addResourceListToModel(Iterator<? extends KtbsResource> list) {
-		for(KtbsResource child:KtbsUtils.toIterable(list))
+	private void addResourceListToModel(Set<? extends ResourcePojo> set) {
+		for(ResourcePojo child:set)
 			put(child);
 	}
 }

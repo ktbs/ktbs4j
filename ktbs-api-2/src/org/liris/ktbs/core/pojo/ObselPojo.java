@@ -8,6 +8,8 @@ public class ObselPojo extends ResourcePojo {
 	
 	private ObselTypePojo obselType;
 	
+	private TracePojo trace;
+
 	private String subject;
 	private BigInteger begin;
 	private BigInteger end;
@@ -99,5 +101,13 @@ public class ObselPojo extends ResourcePojo {
 
 	public Set<RelationStatementPojo> getOutgoingRelations() {
 		return outgoingRelations;
+	}
+	
+	public TracePojo getTrace() {
+		return trace;
+	}
+	
+	public void setTrace(TracePojo trace) {
+		this.trace = trace;
 	}
 }

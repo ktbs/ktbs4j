@@ -9,18 +9,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.AttributeType;
-import org.liris.ktbs.core.api.Base;
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.core.api.MethodParameter;
-import org.liris.ktbs.core.api.Obsel;
-import org.liris.ktbs.core.api.ObselType;
-import org.liris.ktbs.core.api.RelationType;
-import org.liris.ktbs.core.api.Root;
-import org.liris.ktbs.core.api.StoredTrace;
-import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.core.api.share.SimpleMethodParameter;
 import org.liris.ktbs.core.api.share.SimplePropertyStatement;
 import org.liris.ktbs.core.pojo.AttributePairPojo;
@@ -37,6 +26,7 @@ import org.liris.ktbs.core.pojo.RootPojo;
 import org.liris.ktbs.core.pojo.StoredTracePojo;
 import org.liris.ktbs.core.pojo.TraceModelPojo;
 import org.liris.ktbs.core.pojo.TracePojo;
+import org.liris.ktbs.core.pojo.WithParameters;
 import org.liris.ktbs.core.pojo.WithParametersPojo;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
@@ -74,27 +64,27 @@ public class Rdf2Pojo {
 	}
 
 	public ResourcePojo readResource(String uri, Class<?> cls) {
-		if(Root.class.isAssignableFrom(cls)) 
+		if(RootPojo.class.isAssignableFrom(cls)) 
 			return readRoot(uri);
-		else if(Base.class.isAssignableFrom(cls)) 
+		else if(BasePojo.class.isAssignableFrom(cls)) 
 			return readBase(uri);
-		else if(StoredTrace.class.isAssignableFrom(cls)) 
+		else if(StoredTracePojo.class.isAssignableFrom(cls)) 
 			return readStoredTrace(uri);
-		else if(ComputedTrace.class.isAssignableFrom(cls)) 
+		else if(ComputedTracePojo.class.isAssignableFrom(cls)) 
 			return readComputedTrace(uri);
-		else if(Obsel.class.isAssignableFrom(cls)) 
+		else if(ObselPojo.class.isAssignableFrom(cls)) 
 			return readObsel(uri);
-		else if(ObselType.class.isAssignableFrom(cls)) 
+		else if(ObselTypePojo.class.isAssignableFrom(cls)) 
 			return readObselType(uri);
-		else if(AttributeType.class.isAssignableFrom(cls)) 
+		else if(AttributeTypePojo.class.isAssignableFrom(cls)) 
 			return readAttributeType(uri);
-		else if(RelationType.class.isAssignableFrom(cls)) 
+		else if(RelationTypePojo.class.isAssignableFrom(cls)) 
 			return readRelationType(uri);
-		else if(TraceModel.class.isAssignableFrom(cls)) 
+		else if(TraceModelPojo.class.isAssignableFrom(cls)) 
 			return readTraceModel(uri);
-		else if(Method.class.isAssignableFrom(cls)) 
+		else if(MethodPojo.class.isAssignableFrom(cls)) 
 			return readMethod(uri);
-		else if(Trace.class.isAssignableFrom(cls)) 
+		else if(TracePojo.class.isAssignableFrom(cls)) 
 			return readTrace(uri);
 		else 
 			throw new IllegalStateException("Should never be invoked since specified method are defined for each resource");
@@ -199,8 +189,8 @@ public class Rdf2Pojo {
 		return trace;
 	}
 
-	private WithParametersPojo readResourceWithParameters(String uri) {
-		WithParametersPojo withParametersPojo = new WithParametersPojo();
+	private WithParameters readResourceWithParameters(String uri) {
+		WithParameters withParametersPojo = new WithParametersPojo();
 
 		StmtIterator it = model.listStatements(
 				model.getResource(uri), 
@@ -245,7 +235,6 @@ public class Rdf2Pojo {
 				continue;
 			else
 				resource.getProperties().add(new SimplePropertyStatement(
-						resource.getParentUri(), 
 						getRdfObjectAsJavaObject(statement.getObject()), 
 						statement.getPredicate().getURI()));
 		}
@@ -338,6 +327,9 @@ public class Rdf2Pojo {
 		Object subject = getValue(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT);
 		if(subject!= null)
 			obsel.setSubject((String)subject);
+
+		// parent trace
+		obsel.setTrace(readTrace(getResourceUri(uri, KtbsConstants.P_HAS_TRACE)));
 
 
 		// source obsels (transformation source obsels)
@@ -680,7 +672,7 @@ public class Rdf2Pojo {
 					throw new IllegalStateException("There are more than one ktbs:hasTrace property for the resource " + uri);
 
 				// this is an obsel
-				cls = Obsel.class;
+				cls = ObselPojo.class;
 			} 
 		}
 

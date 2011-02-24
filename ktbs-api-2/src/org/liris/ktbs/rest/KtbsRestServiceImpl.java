@@ -3,14 +3,18 @@ package org.liris.ktbs.rest;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -29,7 +33,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.pojo.ResourcePojo;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
 public class KtbsRestServiceImpl implements KtbsRestService {
@@ -40,10 +44,10 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
 
 
-	private String ktbsRootURI;
+	private URI ktbsRootURI;
 
 	KtbsRestServiceImpl(String ktbsRootURI) {
-		this.ktbsRootURI = ktbsRootURI;
+		this.ktbsRootURI = URI.create(ktbsRootURI);
 	}
 
 	private HttpClient httpClient;
@@ -52,14 +56,19 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	private HttpParams httpParams;
 
 
+	public void startSession() {
+		startSession(null, null);
+	}
+	
 	/**
 	 * Starts the underlying HTTP client with default parameters for caching 
 	 * and general HTTP protocol matters, and loads Jena classes.
 	 */
-	public void startSession() {
+	public void startSession(String user, String password) {
 
 		log.info("Starting KtbsClient session for the KTBS root URI \""+ktbsRootURI+"\".");
 
+		
 		CacheConfig cacheConfig = new CacheConfig();  
 		cacheConfig.setMaxCacheEntries(1000);
 		cacheConfig.setMaxObjectSizeBytes(10000);
@@ -80,7 +89,22 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		HttpProtocolParams.setUserAgent(httpParams, "KTBS Client, based on Apache-HttpClient/" + release + " (java 1.5)");
 
 		log.debug("Creating the caching HTTP client.");
-		httpClient = new CachingHttpClient(new DefaultHttpClient(httpParams), cacheConfig);
+		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(httpParams);
+		if(user != null) {
+			log.info("Sarting Http authentication");
+			HttpHost targetHost = new HttpHost(
+					ktbsRootURI.getHost(), 
+					ktbsRootURI.getPort()==-1?80:ktbsRootURI.getPort(),
+							ktbsRootURI.getScheme()); 
+			
+			defaultHttpClient.getCredentialsProvider().setCredentials(
+					new AuthScope(targetHost.getHostName(), targetHost.getPort()), 
+			        new UsernamePasswordCredentials(user, password)
+					);
+		}
+		
+		httpClient = new CachingHttpClient(defaultHttpClient, cacheConfig);
+		
 		this.started = true;
 
 		log.info("Session started.");
@@ -136,7 +160,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		get.addHeader(HttpHeaders.ACCEPT, getGETMimeType());
 
 		HttpResponse response = null;
-		KtbsResource ktbsResource = null;
+		ResourcePojo ktbsResource = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
 
 		String body = null;
@@ -310,7 +334,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	
 
 	@Override
-	public KtbsResponse post(KtbsResource resource) {
+	public KtbsResponse post(ResourcePojo resource) {
 		checkStarted(); 
 		
 		String postURI = resource.getUri();
@@ -374,7 +398,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	}
 
 	@Override
-	public KtbsResponse update(KtbsResource resource, String etag) {
+	public KtbsResponse update(ResourcePojo resource, String etag) {
 		final String putURI = resource.getUri();
 
 		checkStarted(); 

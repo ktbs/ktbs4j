@@ -2,17 +2,18 @@ package org.liris.ktbs.core.pojo;
 
 import java.net.URI;
 
+import org.liris.ktbs.core.UriResource;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class UriResource implements Comparable<UriResource>{
+public class UriResourceImpl implements UriResource {
 
 	private String uri;
 	
-	public UriResource() {
+	public UriResourceImpl() {
 		super();
 	}
 
-	public UriResource(String uri) {
+	public UriResourceImpl(String uri) {
 		super();
 		setURI(uri);
 	}
@@ -28,8 +29,8 @@ public class UriResource implements Comparable<UriResource>{
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof UriResource) {
-			UriResource r = (UriResource) obj;
+		if (obj instanceof UriResourceImpl) {
+			UriResourceImpl r = (UriResourceImpl) obj;
 			return uri.equals(r.uri);
 		} else 
 			return false;
@@ -42,7 +43,7 @@ public class UriResource implements Comparable<UriResource>{
 
 	@Override
 	public int compareTo(UriResource o) {
-		return uri.compareTo(o.uri);
+		return uri.compareTo(o.getUri());
 	}
 	
 	public String getLocalName() {

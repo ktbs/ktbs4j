@@ -1,26 +1,21 @@
 package org.liris.ktbs.core.nocache;
 
-import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.AttributeType;
-import org.liris.ktbs.core.api.Base;
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.KtbsResource;
-import org.liris.ktbs.core.api.Method;
-import org.liris.ktbs.core.api.Obsel;
-import org.liris.ktbs.core.api.ObselType;
-import org.liris.ktbs.core.api.RelationType;
-import org.liris.ktbs.core.api.Root;
-import org.liris.ktbs.core.api.StoredTrace;
-import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.TraceModel;
-import org.liris.ktbs.core.impl.ResourceFactory;
-import org.liris.ktbs.core.impl.ResourceImpl;
 import org.liris.ktbs.core.impl.ResourceManager;
+import org.liris.ktbs.core.pojo.AttributeTypePojo;
+import org.liris.ktbs.core.pojo.BasePojo;
+import org.liris.ktbs.core.pojo.ComputedTracePojo;
+import org.liris.ktbs.core.pojo.MethodPojo;
+import org.liris.ktbs.core.pojo.ObselPojo;
+import org.liris.ktbs.core.pojo.ObselTypePojo;
+import org.liris.ktbs.core.pojo.RelationTypePojo;
+import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.pojo.StoredTracePojo;
+import org.liris.ktbs.core.pojo.TraceModelPojo;
 import org.liris.ktbs.dao.ResourceDao;
 
 
@@ -30,108 +25,75 @@ public class DefaultManager implements ResourceManager {
 	 * Injected by Spring
 	 */
 	private ResourceDao dao;
-	private ResourceFactory factory = new ResourceFactory();
+
+	@Override
+	public ResourcePojo getKtbsResource(String uri) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BasePojo newBase(String rootUri, String baseLocalName, String owner) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StoredTracePojo newStoredTrace(String baseUri,
+			String traceLocalName, String model, String origin,
+			String defaultSubject) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ComputedTracePojo newComputedTrace(String baseUri,
+			String traceLocalName, String methodUri, Set<String> sourceTraces) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MethodPojo newMethod(String baseUri, String methodLocalName,
+			String inheritedMethod, String etag) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TraceModelPojo newTraceModel(String baseUri, String modelLocalName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ObselPojo newObsel(String storedTraceUri, String obselLocalName,
+			String typeUri, String beginDT, String endDT, BigInteger begin,
+			BigInteger end, String subject, Map<String, Object> attributes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ObselTypePojo newObselType(String traceModelUri, String localName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RelationTypePojo newRelationType(String traceModelUri,
+			String localName, Set<String> domains, Set<String> ranges) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AttributeTypePojo newAttributeType(String traceModelUri,
+			String localName, Collection<String> domainUris,
+			Collection<String> rangeUris) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
-	private Map<String, KtbsResource> cachedResources = new HashMap<String, KtbsResource>();
-	
-	
-	@Override
-	public KtbsResource getKtbsResource(String uri) {
-		KtbsResource resource = dao.get(uri);
-		if(resource == null)
-			return cachedResources.get(uri);
-		else {
-			cachedResources.put(uri, resource);
-			return resource;
-		}
-	}
 
-	@Override
-	public StoredTrace newStoredTrace(Base base, String traceLocalName,
-			TraceModel model, String origin) {
-		
-		StoredTrace storedTrace = factory.createStoredTrace(base, traceLocalName, model, origin);
-
-		try {
-			storedTrace.getClass().getDeclaredField("manager").set(storedTrace, this);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		
-		if(dao.create(storedTrace)) {
-			cachedResources.put(storedTrace.getUri(), storedTrace);
-			return storedTrace;
-		} else
-			return null;
-	}
-
-	@Override
-	public ComputedTrace newComputedTrace(Base base, String traceLocalName,
-			Method method, Set<Trace> sources) {
-		ComputedTrace computedTrace = factory.createComputedTrace(base, null, traceLocalName, null, method, sources);
-
-		try {
-			Field declaredField = ResourceImpl.class.getDeclaredField("manager");
-			declaredField.setAccessible(true);
-			declaredField.set(computedTrace, this);
-			declaredField.setAccessible(false);
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		
-		
-		if(dao.create(computedTrace)) {
-			cachedResources.put(computedTrace.getUri(), computedTrace);
-			return computedTrace;
-		} else
-			return null;
-	}
-
-	@Override
-	public Method newMethod(Base base, String methodLocalName,
-			String inheritedMethod) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TraceModel newTraceModel(Base base, String modelLocalName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Base newBase(Root root, String baseLocalName, String owner) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Obsel newObsel(StoredTrace storedTrac, String obselLocalName,
-			ObselType type, Map<AttributeType, Object> attributes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ObselType newObselType(TraceModel traceModel, String localName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RelationType newRelationType(TraceModel traceModel,
-			String localName, Collection<ObselType> domains,
-			Collection<ObselType> ranges) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public AttributeType newAttributeType(TraceModel traceModel,
-			String localName, Collection<ObselType> domain) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

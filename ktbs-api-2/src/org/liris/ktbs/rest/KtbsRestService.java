@@ -1,6 +1,7 @@
 package org.liris.ktbs.rest;
 
-import org.liris.ktbs.core.api.KtbsResource;
+import org.liris.ktbs.core.pojo.ResourcePojo;
+
 
 /**
  * 
@@ -38,7 +39,7 @@ public interface KtbsRestService {
 //	 */
 //	public KtbsResponse createBase(String rootURI, String baseLocalName, String label);
 
-	public KtbsResponse post(KtbsResource resource);
+	public KtbsResponse post(ResourcePojo resource);
 	
 //	/**
 //	 * Perform a POST request and creates a KTBS method
@@ -166,5 +167,5 @@ public interface KtbsRestService {
 	 */
 	public KtbsResponse delete(String resourceURI);
 
-	public KtbsResponse update(KtbsResource resource, String etag);
+	public KtbsResponse update(ResourcePojo resource, String etag);
 }

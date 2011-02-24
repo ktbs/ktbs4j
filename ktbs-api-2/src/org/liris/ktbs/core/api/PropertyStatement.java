@@ -8,18 +8,11 @@ package org.liris.ktbs.core.api;
 public interface PropertyStatement {
 	
 	/**
-	 * Give the uri of the subject in this statement.
-	 * 
-	 * @return the uri of the subject
-	 */
-	public String getResourceUri();
-	
-	/**
 	 * Give the uri of the predicate in this statement.
 	 * 
 	 * @return the uri of the predicate.
 	 */
-	public String getPropertyName();
+	public String getProperty();
 	
 	/**
 	 * Give the object defined in this statement.
@@ -27,5 +20,5 @@ public interface PropertyStatement {
 	 * @return the object of this statement as a KtbsResource if it 
 	 * is a KTBS resource, or as a mapped Java object if it is a literal
 	 */
-	public Object getPropertyValue();
+	public Object getValue();
 }

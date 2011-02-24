@@ -13,20 +13,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.AttributeType;
-import org.liris.ktbs.core.api.Base;
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.KtbsResource;
-import org.liris.ktbs.core.api.Method;
 import org.liris.ktbs.core.api.MethodParameter;
-import org.liris.ktbs.core.api.Obsel;
-import org.liris.ktbs.core.api.ObselType;
-import org.liris.ktbs.core.api.RelationType;
-import org.liris.ktbs.core.api.Root;
-import org.liris.ktbs.core.api.StoredTrace;
-import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.TraceModel;
 import org.liris.ktbs.core.api.share.SimpleMethodParameter;
+import org.liris.ktbs.core.pojo.AttributeTypePojo;
+import org.liris.ktbs.core.pojo.BasePojo;
+import org.liris.ktbs.core.pojo.ComputedTracePojo;
+import org.liris.ktbs.core.pojo.MethodPojo;
+import org.liris.ktbs.core.pojo.ObselPojo;
+import org.liris.ktbs.core.pojo.ObselTypePojo;
+import org.liris.ktbs.core.pojo.RelationTypePojo;
+import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.pojo.RootPojo;
+import org.liris.ktbs.core.pojo.StoredTracePojo;
+import org.liris.ktbs.core.pojo.TraceModelPojo;
+import org.liris.ktbs.core.pojo.TracePojo;
 
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -69,25 +69,25 @@ public class KtbsUtils {
 	 * @return the Java class that is associated to that rdf type, null if 
 	 * the rdf type does not defined a KTBS resource
 	 */
-	public static Class<? extends KtbsResource> getJavaClass(String rdfType) {
+	public static Class<? extends ResourcePojo> getJavaClass(String rdfType) {
 		if(rdfType.equals(KtbsConstants.ROOT)) 
-			return Root.class;
+			return RootPojo.class;
 		else if(rdfType.equals(KtbsConstants.BASE)) 
-			return Base.class;
+			return BasePojo.class;
 		else if(rdfType.equals(KtbsConstants.STORED_TRACE)) 
-			return StoredTrace.class;
+			return StoredTracePojo.class;
 		else if(rdfType.equals(KtbsConstants.COMPUTED_TRACE)) 
-			return ComputedTrace.class;
+			return ComputedTracePojo.class;
 		else if(rdfType.equals(KtbsConstants.ATTRIBUTE_TYPE)) 
-			return AttributeType.class;
+			return AttributeTypePojo.class;
 		else if(rdfType.equals(KtbsConstants.RELATION_TYPE)) 
-			return RelationType.class;
+			return RelationTypePojo.class;
 		else if(rdfType.equals(KtbsConstants.OBSEL_TYPE)) 
-			return ObselType.class;
+			return ObselTypePojo.class;
 		else if(rdfType.equals(KtbsConstants.TRACE_MODEL)) 
-			return TraceModel.class;
+			return TraceModelPojo.class;
 		else if(rdfType.equals(KtbsConstants.METHOD)) 
-			return Method.class;
+			return MethodPojo.class;
 		return null;
 
 	}
@@ -111,7 +111,7 @@ public class KtbsUtils {
 	 * URI of the resource from the resource itself.
 	 * 
 	 */
-	public static String getParentResource(KtbsResource resource) {
+	public static String getParentResource(ResourcePojo resource) {
 		return resolveParentURI(resource.getUri());
 	}
 
@@ -123,27 +123,27 @@ public class KtbsUtils {
 	 * @return the rdf type associated to that class of KTBS resource
 	 */
 	public static String getRDFType(Class<?> clazz) {
-		if(Root.class.isAssignableFrom(clazz)) 
+		if(RootPojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.ROOT;
-		else if(Base.class.isAssignableFrom(clazz)) 
+		else if(BasePojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.BASE;
-		else if(StoredTrace.class.isAssignableFrom(clazz)) 
+		else if(StoredTracePojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.STORED_TRACE;
-		else if(ComputedTrace.class.isAssignableFrom(clazz)) 
+		else if(ComputedTracePojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.COMPUTED_TRACE;
-		else if(Obsel.class.isAssignableFrom(clazz)) 
+		else if(ObselPojo.class.isAssignableFrom(clazz)) 
 			return null;
-		else if(ObselType.class.isAssignableFrom(clazz)) 
+		else if(ObselTypePojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.OBSEL_TYPE;
-		else if(AttributeType.class.isAssignableFrom(clazz)) 
+		else if(AttributeTypePojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.ATTRIBUTE_TYPE;
-		else if(RelationType.class.isAssignableFrom(clazz)) 
+		else if(RelationTypePojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.RELATION_TYPE;
-		else if(TraceModel.class.isAssignableFrom(clazz)) 
+		else if(TraceModelPojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.TRACE_MODEL;
-		else if(Method.class.isAssignableFrom(clazz)) 
+		else if(MethodPojo.class.isAssignableFrom(clazz)) 
 			return KtbsConstants.METHOD;
-		else if(Trace.class.isAssignableFrom(clazz)) 
+		else if(TracePojo.class.isAssignableFrom(clazz)) 
 			return null;
 		else
 			return null;
@@ -303,28 +303,28 @@ public class KtbsUtils {
 	 * @param c the input collection of KTBS resources
 	 * @return the collection of resource uris
 	 */
-	public static Collection<String> toUriCollection(Collection<? extends KtbsResource> c) {
+	public static Collection<String> toUriCollection(Collection<ResourcePojo> c) {
 		if( c == null)
 			return null;
 		Collection<String> uriCollection = new ArrayList<String>(c.size());
-		for(KtbsResource r:c)
+		for(ResourcePojo r:c)
 			uriCollection.add(r.getUri());
 		return uriCollection;
 	}
 
 	/**
 	 * Create an attribute map with attribute uris as keys
-	 * from an attribute map that has {@link AttributeType} object as keys
+	 * from an attribute map that has {@link AttributeTypePojo} object as keys
 	 * 
 	 * @param attributes the input attribute map
 	 * @return the created attribute map with attribute uris as keys
 	 */
 	public static Map<String, Object> toUriMap(
-			Map<AttributeType, Object> attributes) {
+			Map<AttributeTypePojo, Object> attributes) {
 		if(attributes == null)
 			return null;
 		Map<String, Object> m = new HashMap<String, Object>();
-		for(AttributeType att:attributes.keySet())
+		for(AttributeTypePojo att:attributes.keySet())
 			m.put(att.getUri(), attributes.get(att));
 		return m;
 	}
@@ -346,9 +346,9 @@ public class KtbsUtils {
 	}
 
 
-	public static String getRDFType(KtbsResource r) {
-		if(Obsel.class.isAssignableFrom(r.getClass()))
-			return ((Obsel)r).getObselType().getUri();
+	public static String getRDFType(ResourcePojo r) {
+		if(ObselPojo.class.isAssignableFrom(r.getClass()))
+			return ((ObselPojo)r).getObselType().getUri();
 		else
 			return getRDFType(r.getClass());
 	}

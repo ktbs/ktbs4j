@@ -1,12 +1,15 @@
 package org.liris.ktbs.core.api;
 
+import org.liris.ktbs.core.pojo.ObselPojo;
+import org.liris.ktbs.core.pojo.RelationTypePojo;
+
 
 
 /**
  * An inter-obsel relation between two obsels inside a KTBS.
  * 
  * @author Damien Cram
- * @see AttributePair
+ * @see AttributeStatement
  */
 public interface RelationStatement {
 	
@@ -15,19 +18,19 @@ public interface RelationStatement {
 	 * 
 	 * @return the source obsel
 	 */
-	public Obsel getFromObsel();
+	public ObselPojo getFromObsel();
 	
 	/**
 	 * Give the relation type of this relation.
 	 * 
 	 * @return the relation type
 	 */
-	public RelationType getRelation();
+	public RelationTypePojo getRelation();
 	
 	/**
 	 * Give the target obsel of this relation.
 	 * 
 	 * @return the target obsel
 	 */
-	public Obsel getToObsel();
+	public ObselPojo getToObsel();
 }

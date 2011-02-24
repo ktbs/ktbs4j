@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.liris.ktbs.core.api.MethodParameter;
 
-public class ComputedTracePojo extends TracePojo {
+public class ComputedTracePojo extends TracePojo implements WithParameters {
 
 	private MethodPojo method;
 	
@@ -27,18 +27,20 @@ public class ComputedTracePojo extends TracePojo {
 		this.sourceTraces = sourceTraces;
 	}
 	
-	private WithParametersPojo withMethodParameterDelegate = new WithParametersPojo();
+	private WithParameters withMethodParameterDelegate = new WithParametersPojo();
 	
+	@Override
 	public Set<MethodParameter> getMethodParameters() {
 		return withMethodParameterDelegate.getMethodParameters();
 	}
 
+	@Override
 	public void setMethodParameters(Set<MethodParameter> methodParameters) {
 		withMethodParameterDelegate.setMethodParameters(methodParameters);
 	}
 	
 	public void setWithMethodParameterDelegate(
-			WithParametersPojo withMethodParameterDelegate) {
+			WithParameters withMethodParameterDelegate) {
 		this.withMethodParameterDelegate = withMethodParameterDelegate;
 	}
 }

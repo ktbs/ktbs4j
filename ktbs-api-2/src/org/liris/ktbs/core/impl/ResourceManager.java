@@ -1,49 +1,47 @@
 package org.liris.ktbs.core.impl;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.liris.ktbs.core.api.AttributeType;
-import org.liris.ktbs.core.api.Base;
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.KtbsResource;
-import org.liris.ktbs.core.api.Method;
-import org.liris.ktbs.core.api.Obsel;
-import org.liris.ktbs.core.api.ObselType;
-import org.liris.ktbs.core.api.RelationType;
-import org.liris.ktbs.core.api.Root;
-import org.liris.ktbs.core.api.StoredTrace;
-import org.liris.ktbs.core.api.Trace;
-import org.liris.ktbs.core.api.TraceModel;
+import org.liris.ktbs.core.pojo.AttributeTypePojo;
+import org.liris.ktbs.core.pojo.BasePojo;
+import org.liris.ktbs.core.pojo.ComputedTracePojo;
+import org.liris.ktbs.core.pojo.MethodPojo;
+import org.liris.ktbs.core.pojo.ObselPojo;
+import org.liris.ktbs.core.pojo.ObselTypePojo;
+import org.liris.ktbs.core.pojo.RelationTypePojo;
+import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.pojo.StoredTracePojo;
+import org.liris.ktbs.core.pojo.TraceModelPojo;
 
 public interface ResourceManager {
 	
-	public KtbsResource getKtbsResource(String uri);
+	public ResourcePojo getKtbsResource(String uri);
+	public BasePojo newBase(String rootUri, String baseLocalName, String owner);
 
-	public StoredTrace newStoredTrace(Base base, String traceLocalName, TraceModel model, String origin);
+	public StoredTracePojo newStoredTrace(String baseUri, String traceLocalName, String model, String origin, String defaultSubject);
+	public ComputedTracePojo newComputedTrace(String baseUri, String traceLocalName, String methodUri, Set<String> sourceTraces);
+	public MethodPojo newMethod(String baseUri, String methodLocalName, String inheritedMethod, String etag);
+	public TraceModelPojo newTraceModel(String baseUri, String modelLocalName);
 
-	public ComputedTrace newComputedTrace(Base base,
-			String traceLocalName, Method method, Set<Trace> sources);
 
-	public Method newMethod(Base base, String methodLocalName,
-			String inheritedMethod);
+	public ObselPojo newObsel(
+			String storedTraceUri,
+			String obselLocalName,
+			String typeUri,
+			String beginDT,
+			String endDT,
+			BigInteger begin,
+			BigInteger end,
+			String subject,
+			Map<String, Object> attributes
+			);
 
-	public TraceModel newTraceModel(Base base, String modelLocalName);
+	public ObselTypePojo newObselType(String traceModelUri, String localName);
 
-	public Base newBase(Root root, String baseLocalName, String owner);
+	public RelationTypePojo newRelationType(String traceModelUri, String localName, Set<String> domains, Set<String> ranges);
+	public AttributeTypePojo newAttributeType(String traceModelUri, String localName, Collection<String> domainUris, Collection<String> rangeUris);
 
-	public Obsel newObsel(StoredTrace storedTrac,
-			String obselLocalName, ObselType type,
-			Map<AttributeType, Object> attributes);
-
-	public ObselType newObselType(TraceModel traceModel,
-			String localName);
-
-	public RelationType newRelationType(TraceModel traceModel,
-			String localName, Collection<ObselType> domains,
-			Collection<ObselType> ranges);
-
-	public AttributeType newAttributeType(TraceModel traceModel,
-			String localName, Collection<ObselType> domain);
 }

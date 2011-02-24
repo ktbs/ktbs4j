@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.liris.ktbs.core.api.MethodParameter;
 
-public class MethodPojo extends ResourcePojo {
+public class MethodPojo extends ResourcePojo implements WithParameters {
 
 	private String etag;
 	private String inherits;
@@ -25,18 +25,20 @@ public class MethodPojo extends ResourcePojo {
 		this.inherits = inherits;
 	}
 
-	private WithParametersPojo withMethodParameterDelegate = new WithParametersPojo();
+	private WithParameters withMethodParameterDelegate = new WithParametersPojo();
 
+	@Override
 	public Set<MethodParameter> getMethodParameters() {
 		return withMethodParameterDelegate.getMethodParameters();
 	}
 
+	@Override
 	public void setMethodParameters(Set<MethodParameter> methodParameters) {
 		withMethodParameterDelegate.setMethodParameters(methodParameters);
 	}
 	
 	public void setWithMethodParameterDelegate(
-			WithParametersPojo withMethodParameterDelegate) {
+			WithParameters withMethodParameterDelegate) {
 		this.withMethodParameterDelegate = withMethodParameterDelegate;
 	}
 }

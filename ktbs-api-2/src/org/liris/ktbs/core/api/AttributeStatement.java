@@ -1,5 +1,7 @@
 package org.liris.ktbs.core.api;
 
+import org.liris.ktbs.core.pojo.AttributeTypePojo;
+
 
 
 /**
@@ -9,19 +11,12 @@ package org.liris.ktbs.core.api;
  * @see RelationStatement
  *
  */
-public interface AttributePair {
+public interface AttributeStatement extends PropertyStatement {
 	
 	/**
 	 * Give the attribute type of this statement.
 	 * 
 	 * @return the attribute type
 	 */
-	public AttributeType getAttributeType();
-	
-	/**
-	 * Give the value of the attribute statement as a Java object.
-	 * 
-	 * @return the value of this statement
-	 */
-	public Object getValue();
+	public AttributeTypePojo getAttributeType();
 }

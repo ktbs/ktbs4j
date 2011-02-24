@@ -8,7 +8,7 @@ import org.liris.ktbs.rest.KtbsRestService;
  * @author Damien Cram
  *
  */
-public class KtbsUtil {
+public class KtbsClient {
 
 	/**
 	 * Give the repository factory object.
@@ -35,4 +35,5 @@ public class KtbsUtil {
 	public static KtbsRestService newRestService() {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
+	
 }

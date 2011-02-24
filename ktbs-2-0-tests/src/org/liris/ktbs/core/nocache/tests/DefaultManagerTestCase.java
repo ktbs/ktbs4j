@@ -4,13 +4,9 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
-import org.liris.ktbs.core.api.Base;
-import org.liris.ktbs.core.api.ComputedTrace;
-import org.liris.ktbs.core.api.Method;
-import org.liris.ktbs.core.api.Trace;
 import org.liris.ktbs.core.impl.ResourceManager;
 import org.liris.ktbs.core.nocache.DefaultManager;
-import org.liris.ktbs.tests.utils.ResourceProxy;
+import org.liris.ktbs.core.pojo.ComputedTracePojo;
 
 public class DefaultManagerTestCase extends TestCase {
 
@@ -30,18 +26,17 @@ public class DefaultManagerTestCase extends TestCase {
 	}
 
 	public void testNewComputedTrace() {
-		ComputedTrace trace = manager.newComputedTrace(
-				ResourceProxy.createProxy(Base.class, "http://localhost:8001/base1/"), 
+		ComputedTracePojo trace = manager.newComputedTrace(
+				"http://localhost:8001/base1/", 
 				"t1", 
-				ResourceProxy.createProxy(Method.class, "http://localhost:8001/base1/method1/"), 
-				new HashSet<Trace>());
+				"http://localhost:8001/base1/method1/", 
+				new HashSet<String>());
 		
 		System.out.println(trace.getUri());
 		trace.addLabel("teozifhcz");
 		System.out.println(trace.getLabel());
 		System.out.println(trace.getOrigin());
 		System.out.println(trace.getLocalName());
-		System.out.println(trace.getParentResource().getUri());
 	}
 
 	public void testNewMethod() {

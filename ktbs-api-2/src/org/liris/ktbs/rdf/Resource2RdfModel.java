@@ -4,24 +4,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.MethodParameter;
-import org.liris.ktbs.core.api.PropertyStatement;
-import org.liris.ktbs.core.pojo.AttributePairPojo;
-import org.liris.ktbs.core.pojo.AttributeTypePojo;
-import org.liris.ktbs.core.pojo.BasePojo;
-import org.liris.ktbs.core.pojo.ComputedTracePojo;
-import org.liris.ktbs.core.pojo.MethodPojo;
-import org.liris.ktbs.core.pojo.ObselPojo;
-import org.liris.ktbs.core.pojo.RelationStatementPojo;
-import org.liris.ktbs.core.pojo.RelationTypePojo;
-import org.liris.ktbs.core.pojo.ResourcePojo;
-import org.liris.ktbs.core.pojo.RootPojo;
-import org.liris.ktbs.core.pojo.StoredTracePojo;
-import org.liris.ktbs.core.pojo.TraceModelPojo;
-import org.liris.ktbs.core.pojo.TracePojo;
-import org.liris.ktbs.core.pojo.WithDomain;
-import org.liris.ktbs.core.pojo.WithParameters;
-import org.liris.ktbs.core.pojo.WithRange;
+import org.liris.ktbs.core.domain.AttributePair;
+import org.liris.ktbs.core.domain.AttributeType;
+import org.liris.ktbs.core.domain.Base;
+import org.liris.ktbs.core.domain.ComputedTrace;
+import org.liris.ktbs.core.domain.KtbsResource;
+import org.liris.ktbs.core.domain.Method;
+import org.liris.ktbs.core.domain.MethodParameter;
+import org.liris.ktbs.core.domain.Obsel;
+import org.liris.ktbs.core.domain.PropertyStatement;
+import org.liris.ktbs.core.domain.RelationStatement;
+import org.liris.ktbs.core.domain.RelationType;
+import org.liris.ktbs.core.domain.Root;
+import org.liris.ktbs.core.domain.StoredTrace;
+import org.liris.ktbs.core.domain.Trace;
+import org.liris.ktbs.core.domain.TraceModel;
+import org.liris.ktbs.core.domain.WithDomain;
+import org.liris.ktbs.core.domain.WithParameters;
+import org.liris.ktbs.core.domain.WithRange;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -33,17 +33,17 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class Resource2RdfModel {
 
-	private ResourcePojo resource;
+	private KtbsResource resource;
 	private Model model;
 	private SerializationOptions options = new SerializationOptions();
 
-	public Resource2RdfModel(ResourcePojo resource) {
+	public Resource2RdfModel(KtbsResource resource) {
 		super();
 		this.resource = resource;
 		this.model = ModelFactory.createDefaultModel();
 	}
 
-	public Resource2RdfModel(ResourcePojo resource, SerializationOptions options) {
+	public Resource2RdfModel(KtbsResource resource, SerializationOptions options) {
 		this(resource);
 		this.options = options;
 	}
@@ -65,7 +65,7 @@ public class Resource2RdfModel {
 		return model;
 	}
 
-	private void put(ResourcePojo r) {
+	private void put(KtbsResource r) {
 		/*
 		 * Should never be called since there are specialized put/1 methods
 		 * for each type of supported resource.
@@ -98,7 +98,7 @@ public class Resource2RdfModel {
 				model.getResource(objectUri));
 	}
 
-	private void putResource(String uri, String pName, ResourcePojo objectResource) {
+	private void putResource(String uri, String pName, KtbsResource objectResource) {
 		if(objectResource == null)
 			return;
 		else
@@ -107,7 +107,7 @@ public class Resource2RdfModel {
 					model.getResource(objectResource.getUri()));
 	}
 
-	private void putGenericResource(ResourcePojo r) {
+	private void putGenericResource(KtbsResource r) {
 		// Avoid cycles
 		if(alreadyProcessed.contains(r.getUri()))
 			return;
@@ -156,15 +156,15 @@ public class Resource2RdfModel {
 	//------------------------------------------------------------------------------
 	// SPECIALIZED METHODS
 	//------------------------------------------------------------------------------
-	private void put(RootPojo root) {
+	private void put(Root root) {
 
 		putGenericResource(root);
 
 		if(withContainedResource()) {
-			for(BasePojo base:root.getBases())
+			for(Base base:root.getBases())
 				put(base);
 		} else if(withContainedResourceURI()) {
-			for(BasePojo base:root.getBases()) {
+			for(Base base:root.getBases()) {
 				putResource(root.getUri(), KtbsConstants.P_HAS_BASE, base);
 				if(withContainedResourceType())
 					putResource(base.getUri(), RDF.type.getURI(), KtbsConstants.BASE);
@@ -172,7 +172,7 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void put(BasePojo base) {
+	private void put(Base base) {
 		putGenericResource(base);
 
 		putLiteral(base.getUri(), KtbsConstants.P_HAS_OWNER, base.getOwner());
@@ -183,8 +183,8 @@ public class Resource2RdfModel {
 		putBaseChildren(base, base.getTraceModels());
 	}
 
-	private void putBaseChildren(BasePojo base, Set<? extends ResourcePojo> set) {
-		for(ResourcePojo child:set) {
+	private void putBaseChildren(Base base, Set<? extends KtbsResource> set) {
+		for(KtbsResource child:set) {
 			if(withContainedResource())
 				put(child);
 			else if (withContainedResourceURI()) {
@@ -199,8 +199,8 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void putTraceModelChildren(TraceModelPojo tm, Set<? extends ResourcePojo> set) {
-		for(ResourcePojo child:set) {
+	private void putTraceModelChildren(TraceModel tm, Set<? extends KtbsResource> set) {
+		for(KtbsResource child:set) {
 			if(withContainedResource())
 				put(child);
 			else if (withContainedResourceURI() || withContainedResourceType()) 
@@ -210,14 +210,14 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void put(StoredTracePojo trace) {
+	private void put(StoredTrace trace) {
 		putGenericResource(trace);
 		putTraceResource(trace);
 
 		putLiteral(trace.getUri(), KtbsConstants.P_HAS_SUBJECT, trace.getDefaultSubject());
 	}
 
-	private void put(TraceModelPojo traceModel) {
+	private void put(TraceModel traceModel) {
 		putGenericResource(traceModel);
 		
 		putTraceModelChildren(traceModel, traceModel.getAttributeTypes());
@@ -225,7 +225,7 @@ public class Resource2RdfModel {
 		putTraceModelChildren(traceModel, traceModel.getObselTypes());
 	}
 
-	private void put(AttributeTypePojo attType) {
+	private void put(AttributeType attType) {
 		putGenericResource(attType);
 		putWithDomainResource(attType, KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN);
 		putWithStringRangeResource(attType, KtbsConstants.P_HAS_ATTRIBUTE_RANGE);
@@ -233,23 +233,23 @@ public class Resource2RdfModel {
 	
 	private void putWithStringRangeResource(WithRange<String> r, String rangePropName) {
 		for(String s:r.getRanges()) 
-			model.getResource(((ResourcePojo)r).getUri()).addLiteral(
+			model.getResource(((KtbsResource)r).getUri()).addLiteral(
 					model.getProperty(rangePropName),
 					model.getResource(s));
 	}
 
-	private void put(RelationTypePojo relType) {
+	private void put(RelationType relType) {
 		putGenericResource(relType);
 		putWithDomainResource(relType, KtbsConstants.P_HAS_RELATION_DOMAIN);
 		putWithRangeResource(relType, KtbsConstants.P_HAS_RELATION_RANGE);
 	}
 
-	private void putWithDomainResource(WithDomain<? extends ResourcePojo> r, String domainPropName) {
-		for(ResourcePojo domain:r.getDomains()) {
+	private void putWithDomainResource(WithDomain<? extends KtbsResource> r, String domainPropName) {
+		for(KtbsResource domain:r.getDomains()) {
 			if(withLinkedResource())
 				put(domain);
 			
-			model.getResource(((ResourcePojo)r).getUri()).addProperty(
+			model.getResource(((KtbsResource)r).getUri()).addProperty(
 					model.getProperty(domainPropName),
 					model.getResource(domain.getUri()));
 			
@@ -257,12 +257,12 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void putWithRangeResource(WithRange<? extends ResourcePojo> r , String rangePropName) {
-		for(ResourcePojo range:r.getRanges()) {
+	private void putWithRangeResource(WithRange<? extends KtbsResource> r , String rangePropName) {
+		for(KtbsResource range:r.getRanges()) {
 			if(withLinkedResource())
 				put(range);
 			
-			model.getResource(((ResourcePojo)r).getUri()).addProperty(
+			model.getResource(((KtbsResource)r).getUri()).addProperty(
 					model.getProperty(rangePropName),
 					model.getResource(range.getUri()));
 			
@@ -270,14 +270,14 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void put(ComputedTracePojo trace) {
+	private void put(ComputedTrace trace) {
 		putGenericResource(trace);
 		putTraceResource(trace);
 		putTransformationResource(trace, trace.getUri());
 
 		if(withLinkedResource()) {
 			put(trace.getMethod());
-			for(TracePojo sourceTrace:trace.getSourceTraces()) 
+			for(Trace sourceTrace:trace.getSourceTraces()) 
 				put(trace);
 		}
 
@@ -285,14 +285,14 @@ public class Resource2RdfModel {
 			model.getResource(trace.getUri()).addProperty(
 					model.getProperty(KtbsConstants.P_HAS_METHOD),
 					model.getResource(trace.getMethod().getUri()));
-			for(TracePojo sourceTrace:trace.getSourceTraces()) 
+			for(Trace sourceTrace:trace.getSourceTraces()) 
 				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE),
 						model.getResource(sourceTrace.getUri()));
 		}
 	}
 
-	private void put(MethodPojo method) {
+	private void put(Method method) {
 		putGenericResource(method);
 		putTransformationResource(method, method.getUri());
 
@@ -300,7 +300,7 @@ public class Resource2RdfModel {
 		putLiteral(method.getUri(), KtbsConstants.P_HAS_ETAG, method.getEtag());
 	}
 
-	private void put(ObselPojo obsel) {
+	private void put(Obsel obsel) {
 		putGenericResource(obsel);
 
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
@@ -309,11 +309,11 @@ public class Resource2RdfModel {
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_END, obsel.getEnd());
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT, obsel.getSubject());
 
-		for(AttributePairPojo pair:obsel.getAttributePairs()) {
+		for(AttributePair pair:obsel.getAttributePairs()) {
 			putLiteral(obsel.getUri(), pair.getAttributeType().getUri(), pair.getValue());
 		}
 
-		for(RelationStatementPojo stmt:obsel.getOutgoingRelations()) {
+		for(RelationStatement stmt:obsel.getOutgoingRelations()) {
 			if(withLinkedResource()) 
 				put(stmt.getToObsel());
 
@@ -330,7 +330,7 @@ public class Resource2RdfModel {
 				);
 		}
 
-		for(RelationStatementPojo stmt:obsel.getIncomingRelations()) {
+		for(RelationStatement stmt:obsel.getIncomingRelations()) {
 			if(withLinkedResource()) 
 				put(stmt.getFromObsel());
 
@@ -353,7 +353,7 @@ public class Resource2RdfModel {
 			putLiteral(uri, KtbsConstants.P_HAS_PARAMETER, param.getName()+"="+param.getValue());
 	}
 
-	private void putTraceResource(TracePojo trace) {
+	private void putTraceResource(Trace trace) {
 		putLiteral(trace.getUri(), KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
 		putLiteral(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliesWithModel());
 
@@ -367,7 +367,7 @@ public class Resource2RdfModel {
 					model.getProperty(KtbsConstants.P_HAS_MODEL), 
 					model.getResource(trace.getTraceModel().getUri()));
 
-			for(ResourcePojo child:trace.getTransformedTraces())
+			for(KtbsResource child:trace.getTransformedTraces())
 				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE), 
 						model.getResource(child.getUri()));
@@ -377,7 +377,7 @@ public class Resource2RdfModel {
 			model.getResource(trace.getTraceModel().getUri()).addProperty(
 					RDF.type, 
 					model.getResource(KtbsConstants.TRACE_MODEL));
-			for(ResourcePojo child:trace.getTransformedTraces())
+			for(KtbsResource child:trace.getTransformedTraces())
 				model.getResource(child.getUri()).addProperty(
 						RDF.type, 
 						model.getResource(KtbsUtils.getRDFType(child)));
@@ -386,7 +386,7 @@ public class Resource2RdfModel {
 		if(withContainedResource()) {
 			addResourceListToModel(trace.getObsels());
 		} else if(withContainedResourceURI()) {
-			for(ObselPojo obsel:trace.getObsels()) {
+			for(Obsel obsel:trace.getObsels()) {
 				model.getResource(obsel.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_TRACE), 
 						model.getResource(trace.getUri()));
@@ -404,8 +404,8 @@ public class Resource2RdfModel {
 	// -------------------------------------------------------------------------
 	// SHORTCUT METHOD
 	// -------------------------------------------------------------------------
-	private void addResourceListToModel(Set<? extends ResourcePojo> set) {
-		for(ResourcePojo child:set)
+	private void addResourceListToModel(Set<? extends KtbsResource> set) {
+		for(KtbsResource child:set)
 			put(child);
 	}
 }

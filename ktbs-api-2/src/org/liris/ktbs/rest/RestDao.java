@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
@@ -33,7 +33,7 @@ public class RestDao implements ResourceDao {
 	}
 
 	@Override
-	public ResourcePojo get(String uri) {
+	public KtbsResource get(String uri) {
 		KtbsResponse response = service.get(uri);
 		if(!response.hasSucceeded())
 			return null;
@@ -43,7 +43,7 @@ public class RestDao implements ResourceDao {
 			else
 				log.warn("No etag was attached to the resource \""+uri+"\".");
 			
-			ResourcePojo resource = new RdfResourceSerializer().deserialize(
+			KtbsResource resource = new RdfResourceSerializer().deserialize(
 					uri,
 					new StringReader(response.getBodyAsString()), 
 					response.getMimeType());
@@ -52,7 +52,7 @@ public class RestDao implements ResourceDao {
 	}
 
 	@Override
-	public boolean create(ResourcePojo resource) {
+	public boolean create(KtbsResource resource) {
 		StringWriter writer = new StringWriter();
 		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
 		KtbsResponse response = service.post(resource);
@@ -65,7 +65,7 @@ public class RestDao implements ResourceDao {
 	}
 
 	@Override
-	public boolean save(ResourcePojo resource) {
+	public boolean save(KtbsResource resource) {
 		StringWriter writer = new StringWriter();
 		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
 		String etag = etags.get(resource.getUri());

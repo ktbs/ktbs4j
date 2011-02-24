@@ -6,15 +6,15 @@ import java.math.BigInteger;
 import junit.framework.TestCase;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.pojo.AttributeTypePojo;
-import org.liris.ktbs.core.pojo.BasePojo;
-import org.liris.ktbs.core.pojo.ObselPojo;
-import org.liris.ktbs.core.pojo.ObselTypePojo;
-import org.liris.ktbs.core.pojo.RelationTypePojo;
-import org.liris.ktbs.core.pojo.ResourcePojo;
-import org.liris.ktbs.core.pojo.StoredTracePojo;
-import org.liris.ktbs.core.pojo.TraceModelPojo;
-import org.liris.ktbs.core.pojo.UriResourceImpl;
+import org.liris.ktbs.core.domain.AttributeType;
+import org.liris.ktbs.core.domain.Base;
+import org.liris.ktbs.core.domain.KtbsResource;
+import org.liris.ktbs.core.domain.Obsel;
+import org.liris.ktbs.core.domain.ObselType;
+import org.liris.ktbs.core.domain.RelationType;
+import org.liris.ktbs.core.domain.StoredTrace;
+import org.liris.ktbs.core.domain.TraceModel;
+import org.liris.ktbs.core.domain.UriResourceImpl;
 import org.liris.ktbs.rdf.Rdf2Pojo;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -34,9 +34,9 @@ public class Model2ResourceMapperTestCase extends TestCase {
 	
 	public void testReadBase() throws Exception {
 		model.read(new FileInputStream("turtle/base1.ttl"), "", KtbsConstants.JENA_TURTLE);
-		ResourcePojo pojo = mapper.getResource("http://localhost:8001/base1/");
-		assertTrue(BasePojo.class.isAssignableFrom(pojo.getClass()));
-		BasePojo base = (BasePojo)pojo;
+		KtbsResource pojo = mapper.getResource("http://localhost:8001/base1/");
+		assertTrue(Base.class.isAssignableFrom(pojo.getClass()));
+		Base base = (Base)pojo;
 		assertEquals(1, base.getLabels().size());
 		assertEquals("A trace base", base.getLabels().iterator().next());
 		assertEquals(1, base.getStoredTraces().size());
@@ -47,54 +47,54 @@ public class Model2ResourceMapperTestCase extends TestCase {
 	
 	public void testReadStoredTrace() throws Exception {
 		model.read(new FileInputStream("turtle/t01-info.ttl"), "", KtbsConstants.JENA_TURTLE);
-		ResourcePojo pojo = mapper.getResource("http://localhost:8001/base1/t01/");
+		KtbsResource pojo = mapper.getResource("http://localhost:8001/base1/t01/");
 		
-		assertTrue(StoredTracePojo.class.isAssignableFrom(pojo.getClass()));
-		StoredTracePojo trace = (StoredTracePojo)pojo;
+		assertTrue(StoredTrace.class.isAssignableFrom(pojo.getClass()));
+		StoredTrace trace = (StoredTrace)pojo;
 		assertEquals(0, trace.getObsels().size());
 		assertEquals("2010-04-28T18:09:00Z", trace.getOrigin());
 		assertEquals("Damien Cram", trace.getDefaultSubject());
 		assertEquals("yes", trace.getCompliesWithModel());
 		
 		assertEquals(new UriResourceImpl("http://localhost:8001/base1/model1/"), trace.getTraceModel());
-		assertEquals(TraceModelPojo.class, trace.getTraceModel().getClass());
+		assertEquals(TraceModel.class, trace.getTraceModel().getClass());
 		
 		assertEquals(3, trace.getTransformedTraces().size());
 
 		model.read(new FileInputStream("turtle/t01-obsels-and-info.ttl"), "", KtbsConstants.JENA_TURTLE);
 		pojo = mapper.getResource("http://localhost:8001/base1/t01/");
-		assertTrue(StoredTracePojo.class.isAssignableFrom(pojo.getClass()));
-		trace = (StoredTracePojo)pojo;
+		assertTrue(StoredTrace.class.isAssignableFrom(pojo.getClass()));
+		trace = (StoredTrace)pojo;
 		assertEquals(4, trace.getObsels().size());
 	}
 	
 	public void testReadTraceModel() throws Exception {
 		model.read(new FileInputStream("turtle/gra_model1.ttl"), "", KtbsConstants.JENA_TURTLE);
-		ResourcePojo pojo = mapper.readResource("http://localhost:8001/base1/model1/", TraceModelPojo.class);
-		assertTrue(TraceModelPojo.class.isAssignableFrom(pojo.getClass()));
-		TraceModelPojo traceModel = (TraceModelPojo) pojo;
+		KtbsResource pojo = mapper.readResource("http://localhost:8001/base1/model1/", TraceModel.class);
+		assertTrue(TraceModel.class.isAssignableFrom(pojo.getClass()));
+		TraceModel traceModel = (TraceModel) pojo;
 
 		assertEquals(3, traceModel.getAttributeTypes().size());
 		assertEquals(2, traceModel.getRelationTypes().size());
 		assertEquals(6, traceModel.getObselTypes().size());
 
 		pojo = mapper.getResource("http://localhost:8001/base1/model1/SendMsg");
-		assertTrue(ObselTypePojo.class.isAssignableFrom(pojo.getClass()));
-		ObselTypePojo obsType = (ObselTypePojo)pojo;
+		assertTrue(ObselType.class.isAssignableFrom(pojo.getClass()));
+		ObselType obsType = (ObselType)pojo;
 		assertEquals(1, obsType.getSuperObselTypes().size());
 		assertEquals(new UriResourceImpl("http://localhost:8001/base1/model1/AbstractMsg"), obsType.getSuperObselTypes().iterator().next());
-		assertEquals(ObselTypePojo.class, obsType.getSuperObselTypes().iterator().next().getClass());
+		assertEquals(ObselType.class, obsType.getSuperObselTypes().iterator().next().getClass());
 
 		pojo = mapper.getResource("http://localhost:8001/base1/model1/from");
-		assertTrue(AttributeTypePojo.class.isAssignableFrom(pojo.getClass()));
-		AttributeTypePojo attType = (AttributeTypePojo)pojo;
+		assertTrue(AttributeType.class.isAssignableFrom(pojo.getClass()));
+		AttributeType attType = (AttributeType)pojo;
 		assertEquals(1, attType.getDomains().size());
 		assertEquals(new UriResourceImpl("http://localhost:8001/base1/model1/RecvMsg"), attType.getDomains().iterator().next());
 		assertEquals(0, attType.getRanges().size());
 
 		pojo = mapper.getResource("http://localhost:8001/base1/model1/closes");
-		assertTrue(RelationTypePojo.class.isAssignableFrom(pojo.getClass()));
-		RelationTypePojo relType = (RelationTypePojo)pojo;
+		assertTrue(RelationType.class.isAssignableFrom(pojo.getClass()));
+		RelationType relType = (RelationType)pojo;
 		assertEquals(1, relType.getDomains().size());
 		assertEquals(new UriResourceImpl("http://localhost:8001/base1/model1/CloseChat"), relType.getDomains().iterator().next());
 		assertEquals(0, relType.getRanges().size());
@@ -106,15 +106,15 @@ public class Model2ResourceMapperTestCase extends TestCase {
 	
 	public void testReadObsel() throws Exception {
 		model.read(new FileInputStream("turtle/t01-obsels-and-info.ttl"), "", KtbsConstants.JENA_TURTLE);
-		ResourcePojo pojo = mapper.getResource("http://localhost:8001/base1/t01/");
-		assertTrue(StoredTracePojo.class.isAssignableFrom(pojo.getClass()));
-		StoredTracePojo trace = (StoredTracePojo)pojo;
+		KtbsResource pojo = mapper.getResource("http://localhost:8001/base1/t01/");
+		assertTrue(StoredTrace.class.isAssignableFrom(pojo.getClass()));
+		StoredTrace trace = (StoredTrace)pojo;
 		assertEquals(4, trace.getObsels().size());
 		
 		// obs1
-		ResourcePojo pojo1 = mapper.getResource("http://localhost:8001/base1/t01/obs1");
-		assertTrue(ObselPojo.class.isAssignableFrom(pojo1.getClass()));
-		ObselPojo o1 = (ObselPojo)pojo1;
+		KtbsResource pojo1 = mapper.getResource("http://localhost:8001/base1/t01/obs1");
+		assertTrue(Obsel.class.isAssignableFrom(pojo1.getClass()));
+		Obsel o1 = (Obsel)pojo1;
 		assertEquals(1, o1.getAttributePairs().size());
 		assertEquals(3, o1.getIncomingRelations().size());
 		assertEquals(0, o1.getOutgoingRelations().size());
@@ -129,27 +129,27 @@ public class Model2ResourceMapperTestCase extends TestCase {
 		
 		
 		// obs1
-		ResourcePojo pojo2 = mapper.getResource("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f");
-		assertTrue(ObselPojo.class.isAssignableFrom(pojo2.getClass()));
-		ObselPojo o2 = (ObselPojo)pojo2;
+		KtbsResource pojo2 = mapper.getResource("http://localhost:8001/base1/t01/017885b093580cee5e01573953fbd26f");
+		assertTrue(Obsel.class.isAssignableFrom(pojo2.getClass()));
+		Obsel o2 = (Obsel)pojo2;
 		assertEquals(1, o2.getOutgoingRelations().size());
 		assertEquals(0, o2.getIncomingRelations().size());
 		assertEquals(1, o2.getAttributePairs().size());
 		assertEquals(new UriResourceImpl("http://localhost:8001/base1/t01/"), o2.getTrace());
 		
 		// obs1
-		ResourcePojo pojo3 = mapper.getResource("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
-		assertTrue(ObselPojo.class.isAssignableFrom(pojo3.getClass()));
-		ObselPojo o3 = (ObselPojo)pojo3;
+		KtbsResource pojo3 = mapper.getResource("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
+		assertTrue(Obsel.class.isAssignableFrom(pojo3.getClass()));
+		Obsel o3 = (Obsel)pojo3;
 		assertEquals(1, o3.getOutgoingRelations().size());
 		assertEquals(0, o3.getIncomingRelations().size());
 		assertEquals(2, o3.getAttributePairs().size());
 		assertEquals(new UriResourceImpl("http://localhost:8001/base1/t01/"), o3.getTrace());
 		
 		// obs1
-		ResourcePojo pojo4 = mapper.getResource("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
-		assertTrue(ObselPojo.class.isAssignableFrom(pojo4.getClass()));
-		ObselPojo o4 = (ObselPojo)pojo4;
+		KtbsResource pojo4 = mapper.getResource("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
+		assertTrue(Obsel.class.isAssignableFrom(pojo4.getClass()));
+		Obsel o4 = (Obsel)pojo4;
 		assertEquals(1, o4.getOutgoingRelations().size());
 		assertEquals(0, o4.getIncomingRelations().size());
 		assertEquals(0, o4.getAttributePairs().size());

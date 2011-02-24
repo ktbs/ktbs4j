@@ -1,10 +1,10 @@
 package org.liris.ktbs.dao;
 
-import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.domain.KtbsResource;
 
 public interface ResourceDao {
-	public ResourcePojo get(String uri);
-	public boolean create(ResourcePojo resource);
-	public boolean save(ResourcePojo resource);
+	public KtbsResource get(String uri);
+	public boolean create(KtbsResource resource);
+	public boolean save(KtbsResource resource);
 	public boolean delete(String uri);
 }

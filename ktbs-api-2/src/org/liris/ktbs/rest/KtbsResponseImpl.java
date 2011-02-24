@@ -10,7 +10,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.domain.KtbsResource;
 
 
 
@@ -19,13 +19,13 @@ public class KtbsResponseImpl implements KtbsResponse {
 
 	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
 
-	private ResourcePojo resource;
+	private KtbsResource resource;
 	private boolean executedWithSuccess;
 	private KtbsResponseStatus ktbsResponseStatus;
 	private HttpResponse httpResponse;
 	private String contentAsString;
 
-	public KtbsResponseImpl(ResourcePojo resource, String body, boolean executedWithSuccess,
+	public KtbsResponseImpl(KtbsResource resource, String body, boolean executedWithSuccess,
 			KtbsResponseStatus ktbsResponseStatus,
 			HttpResponse httpResponse) {
 		super();

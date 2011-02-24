@@ -9,25 +9,24 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.api.MethodParameter;
-import org.liris.ktbs.core.api.share.SimpleMethodParameter;
-import org.liris.ktbs.core.api.share.SimplePropertyStatement;
-import org.liris.ktbs.core.pojo.AttributePairPojo;
-import org.liris.ktbs.core.pojo.AttributeTypePojo;
-import org.liris.ktbs.core.pojo.BasePojo;
-import org.liris.ktbs.core.pojo.ComputedTracePojo;
-import org.liris.ktbs.core.pojo.MethodPojo;
-import org.liris.ktbs.core.pojo.ObselPojo;
-import org.liris.ktbs.core.pojo.ObselTypePojo;
-import org.liris.ktbs.core.pojo.RelationStatementPojo;
-import org.liris.ktbs.core.pojo.RelationTypePojo;
-import org.liris.ktbs.core.pojo.ResourcePojo;
-import org.liris.ktbs.core.pojo.RootPojo;
-import org.liris.ktbs.core.pojo.StoredTracePojo;
-import org.liris.ktbs.core.pojo.TraceModelPojo;
-import org.liris.ktbs.core.pojo.TracePojo;
-import org.liris.ktbs.core.pojo.WithParameters;
-import org.liris.ktbs.core.pojo.WithParametersPojo;
+import org.liris.ktbs.core.domain.AttributePair;
+import org.liris.ktbs.core.domain.AttributeType;
+import org.liris.ktbs.core.domain.Base;
+import org.liris.ktbs.core.domain.ComputedTrace;
+import org.liris.ktbs.core.domain.KtbsResource;
+import org.liris.ktbs.core.domain.Method;
+import org.liris.ktbs.core.domain.MethodParameter;
+import org.liris.ktbs.core.domain.Obsel;
+import org.liris.ktbs.core.domain.ObselType;
+import org.liris.ktbs.core.domain.PropertyStatement;
+import org.liris.ktbs.core.domain.RelationStatement;
+import org.liris.ktbs.core.domain.RelationType;
+import org.liris.ktbs.core.domain.Root;
+import org.liris.ktbs.core.domain.StoredTrace;
+import org.liris.ktbs.core.domain.Trace;
+import org.liris.ktbs.core.domain.TraceModel;
+import org.liris.ktbs.core.domain.WithParameters;
+import org.liris.ktbs.core.domain.WithParametersDelegate;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -57,45 +56,45 @@ public class Rdf2Pojo {
 		this.options = options;
 	}
 
-	public ResourcePojo getResource(String uri) {
+	public KtbsResource getResource(String uri) {
 		alreadyReadResources.clear();
 		Class<?> cls = guessType(uri);
 		return readResource(uri, cls);
 	}
 
-	public ResourcePojo readResource(String uri, Class<?> cls) {
-		if(RootPojo.class.isAssignableFrom(cls)) 
+	public KtbsResource readResource(String uri, Class<?> cls) {
+		if(Root.class.isAssignableFrom(cls)) 
 			return readRoot(uri);
-		else if(BasePojo.class.isAssignableFrom(cls)) 
+		else if(Base.class.isAssignableFrom(cls)) 
 			return readBase(uri);
-		else if(StoredTracePojo.class.isAssignableFrom(cls)) 
+		else if(StoredTrace.class.isAssignableFrom(cls)) 
 			return readStoredTrace(uri);
-		else if(ComputedTracePojo.class.isAssignableFrom(cls)) 
+		else if(ComputedTrace.class.isAssignableFrom(cls)) 
 			return readComputedTrace(uri);
-		else if(ObselPojo.class.isAssignableFrom(cls)) 
+		else if(Obsel.class.isAssignableFrom(cls)) 
 			return readObsel(uri);
-		else if(ObselTypePojo.class.isAssignableFrom(cls)) 
+		else if(ObselType.class.isAssignableFrom(cls)) 
 			return readObselType(uri);
-		else if(AttributeTypePojo.class.isAssignableFrom(cls)) 
+		else if(AttributeType.class.isAssignableFrom(cls)) 
 			return readAttributeType(uri);
-		else if(RelationTypePojo.class.isAssignableFrom(cls)) 
+		else if(RelationType.class.isAssignableFrom(cls)) 
 			return readRelationType(uri);
-		else if(TraceModelPojo.class.isAssignableFrom(cls)) 
+		else if(TraceModel.class.isAssignableFrom(cls)) 
 			return readTraceModel(uri);
-		else if(MethodPojo.class.isAssignableFrom(cls)) 
+		else if(Method.class.isAssignableFrom(cls)) 
 			return readMethod(uri);
-		else if(TracePojo.class.isAssignableFrom(cls)) 
+		else if(Trace.class.isAssignableFrom(cls)) 
 			return readTrace(uri);
 		else 
 			throw new IllegalStateException("Should never be invoked since specified method are defined for each resource");
 	}
 
 	// Read a method
-	private MethodPojo readMethod(String uri) {
+	private Method readMethod(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (MethodPojo) alreadyReadResources.get(uri);
+			return (Method) alreadyReadResources.get(uri);
 
-		MethodPojo method = new MethodPojo();
+		Method method = new Method();
 		method.setURI(uri);
 		method.setWithMethodParameterDelegate(readResourceWithParameters(method.getUri()));
 
@@ -113,11 +112,11 @@ public class Rdf2Pojo {
 	}
 
 	// Read a root
-	private RootPojo readRoot(String uri) {
+	private Root readRoot(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (RootPojo) alreadyReadResources.get(uri);
+			return (Root) alreadyReadResources.get(uri);
 
-		RootPojo root = new RootPojo();
+		Root root = new Root();
 		root.setURI(uri);
 		fillResource(root);
 
@@ -134,11 +133,11 @@ public class Rdf2Pojo {
 		return root;
 	}
 
-	private BasePojo readBase(String uri) {
+	private Base readBase(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (BasePojo) alreadyReadResources.get(uri);
+			return (Base) alreadyReadResources.get(uri);
 
-		BasePojo base = new BasePojo();
+		Base base = new Base();
 		base.setURI(uri);
 		fillResource(base);
 
@@ -166,11 +165,11 @@ public class Rdf2Pojo {
 		return base;
 	}
 
-	private ComputedTracePojo readComputedTrace(String uri) {
+	private ComputedTrace readComputedTrace(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (ComputedTracePojo) alreadyReadResources.get(uri);
+			return (ComputedTrace) alreadyReadResources.get(uri);
 
-		ComputedTracePojo trace = new ComputedTracePojo();
+		ComputedTrace trace = new ComputedTrace();
 		trace.setURI(uri);
 		fillTrace(trace);
 		trace.setWithMethodParameterDelegate(readResourceWithParameters(trace.getUri()));
@@ -190,7 +189,7 @@ public class Rdf2Pojo {
 	}
 
 	private WithParameters readResourceWithParameters(String uri) {
-		WithParameters withParametersPojo = new WithParametersPojo();
+		WithParameters withParametersPojo = new WithParametersDelegate();
 
 		StmtIterator it = model.listStatements(
 				model.getResource(uri), 
@@ -199,7 +198,7 @@ public class Rdf2Pojo {
 		while (it.hasNext()) {
 			Statement statement = (Statement) it.next();
 			MethodParameter methodParameter = KtbsUtils.parseMethodParameter(statement.getObject().asLiteral().getString());
-			withParametersPojo.getMethodParameters().add(new SimpleMethodParameter(
+			withParametersPojo.getMethodParameters().add(new MethodParameter(
 					methodParameter.getName(),
 					methodParameter.getValue()
 			));
@@ -207,9 +206,9 @@ public class Rdf2Pojo {
 		return withParametersPojo;
 	}
 
-	private Map<String, ResourcePojo> alreadyReadResources = new HashMap<String, ResourcePojo>();
+	private Map<String, KtbsResource> alreadyReadResources = new HashMap<String, KtbsResource>();
 
-	private void fillResource(ResourcePojo resource) {
+	private void fillResource(KtbsResource resource) {
 
 		alreadyReadResources.put(resource.getUri(), resource);
 
@@ -234,7 +233,7 @@ public class Rdf2Pojo {
 			)
 				continue;
 			else
-				resource.getProperties().add(new SimplePropertyStatement(
+				resource.getProperties().add(new PropertyStatement(
 						getRdfObjectAsJavaObject(statement.getObject()), 
 						statement.getPredicate().getURI()));
 		}
@@ -250,7 +249,7 @@ public class Rdf2Pojo {
 		return null;
 	}
 
-	private void fillTrace(TracePojo trace) {
+	private void fillTrace(Trace trace) {
 		fillResource(trace);
 
 		// the traceformed traces
@@ -290,11 +289,11 @@ public class Rdf2Pojo {
 
 	}
 
-	private ObselPojo readObsel(String uri) {
+	private Obsel readObsel(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (ObselPojo) alreadyReadResources.get(uri);
+			return (Obsel) alreadyReadResources.get(uri);
 
-		ObselPojo obsel = new ObselPojo();
+		Obsel obsel = new Obsel();
 		obsel.setURI(uri);
 		fillResource(obsel);
 
@@ -346,7 +345,7 @@ public class Rdf2Pojo {
 		// incoming relations
 		Set<Statement> incomingSourceObselStatement = findIncomingSourceObselStatements(obsel.getUri());
 		for(Statement stmt:incomingSourceObselStatement) {
-			obsel.getIncomingRelations().add(new RelationStatementPojo(
+			obsel.getIncomingRelations().add(new RelationStatement(
 					readObsel(stmt.getSubject().getURI()), 
 					readRelationType(stmt.getPredicate().getURI()), 
 					obsel));
@@ -355,7 +354,7 @@ public class Rdf2Pojo {
 		// outgoing relations
 		Set<Statement> outgoingTargetObselStatements = findOutgoingTargetObselStatements(obsel.getUri());
 		for(Statement stmt:outgoingTargetObselStatements) {
-			obsel.getOutgoingRelations().add(new RelationStatementPojo(
+			obsel.getOutgoingRelations().add(new RelationStatement(
 					obsel, 
 					readRelationType(stmt.getPredicate().getURI()),
 					readObsel(stmt.getObject().asResource().getURI())));
@@ -365,7 +364,7 @@ public class Rdf2Pojo {
 		// attributes
 		Set<Statement> attributeStatements = findAttributeStatements(obsel.getUri());
 		for(Statement stmt:attributeStatements) {
-			obsel.getAttributePairs().add(new AttributePairPojo(
+			obsel.getAttributePairs().add(new AttributePair(
 					readAttributeType(stmt.getPredicate().getURI()),
 					stmt.getObject().asLiteral().getValue()
 			));
@@ -451,11 +450,11 @@ public class Rdf2Pojo {
 
 	}
 
-	private AttributeTypePojo readAttributeType(String uri) {
+	private AttributeType readAttributeType(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (AttributeTypePojo) alreadyReadResources.get(uri);
+			return (AttributeType) alreadyReadResources.get(uri);
 
-		AttributeTypePojo attType = new AttributeTypePojo();
+		AttributeType attType = new AttributeType();
 		attType.setURI(uri);
 		fillResource(attType);
 
@@ -483,11 +482,11 @@ public class Rdf2Pojo {
 		return attType;
 	}
 
-	private RelationTypePojo readRelationType(String uri) {
+	private RelationType readRelationType(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (RelationTypePojo) alreadyReadResources.get(uri);
+			return (RelationType) alreadyReadResources.get(uri);
 
-		RelationTypePojo relType = new RelationTypePojo();
+		RelationType relType = new RelationType();
 		relType.setURI(uri);
 		fillResource(relType);
 
@@ -526,11 +525,11 @@ public class Rdf2Pojo {
 	}
 
 
-	private ObselTypePojo readObselType(String uri) {
+	private ObselType readObselType(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (ObselTypePojo) alreadyReadResources.get(uri);
+			return (ObselType) alreadyReadResources.get(uri);
 
-		ObselTypePojo obselType = new ObselTypePojo();
+		ObselType obselType = new ObselType();
 		obselType.setURI(uri);
 		fillResource(obselType);
 
@@ -552,12 +551,12 @@ public class Rdf2Pojo {
 	 * Read a trace from the model without knowing in advance if 
 	 * its a stored trace or a computed trace
 	 */
-	private TracePojo readTrace(String uri) {
+	private Trace readTrace(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (TracePojo) alreadyReadResources.get(uri);
+			return (Trace) alreadyReadResources.get(uri);
 		String rdfType = getRdfType(uri);
 		if(rdfType == null) {
-			TracePojo trace = new TracePojo();
+			Trace trace = new Trace();
 			fillTrace(trace);
 			return trace;
 		} else if(rdfType.equals(KtbsConstants.STORED_TRACE))
@@ -569,11 +568,11 @@ public class Rdf2Pojo {
 
 	}
 
-	private StoredTracePojo readStoredTrace(String uri) {
+	private StoredTrace readStoredTrace(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (StoredTracePojo) alreadyReadResources.get(uri);
+			return (StoredTrace) alreadyReadResources.get(uri);
 
-		StoredTracePojo trace = new StoredTracePojo();
+		StoredTrace trace = new StoredTrace();
 		trace.setURI(uri);
 		fillTrace(trace);
 
@@ -584,12 +583,12 @@ public class Rdf2Pojo {
 		return trace;
 	}
 
-	private TraceModelPojo readTraceModel(String uri) {
+	private TraceModel readTraceModel(String uri) {
 		if(alreadyReadResources.containsKey(uri))
-			return (TraceModelPojo) alreadyReadResources.get(uri);
+			return (TraceModel) alreadyReadResources.get(uri);
 
 
-		TraceModelPojo traceModel = new TraceModelPojo();
+		TraceModel traceModel = new TraceModel();
 		traceModel.setURI(uri);
 		fillResource(traceModel);
 
@@ -672,7 +671,7 @@ public class Rdf2Pojo {
 					throw new IllegalStateException("There are more than one ktbs:hasTrace property for the resource " + uri);
 
 				// this is an obsel
-				cls = ObselPojo.class;
+				cls = Obsel.class;
 			} 
 		}
 

@@ -1,10 +1,8 @@
 package org.liris.ktbs.core;
 
-import org.liris.ktbs.core.impl.ResourceManager;
-import org.liris.ktbs.core.nocache.DefaultManager;
-import org.liris.ktbs.core.pojo.BasePojo;
-import org.liris.ktbs.core.pojo.StoredTracePojo;
-import org.liris.ktbs.core.pojo.TraceModelPojo;
+import org.liris.ktbs.core.domain.Base;
+import org.liris.ktbs.core.domain.StoredTrace;
+import org.liris.ktbs.core.domain.TraceModel;
 
 import com.ibm.icu.util.Calendar;
 
@@ -13,18 +11,18 @@ public class UserCollectSession {
 	private ResourceManager manager;
 	private String user;
 	private String baseUri;
-	private StoredTracePojo currentTrace;
+	private StoredTrace currentTrace;
 	private String defaultTraceModelUri;
 
 	// should be access only throw getBase
-	private BasePojo _base;
+	private Base _base;
 
 	public void setDefaultTraceModelUri(String defaultTraceModelUri) {
 		this.defaultTraceModelUri = defaultTraceModelUri;
 	}
 
-	public TraceModelPojo getDefaultTraceModel() {
-		return (TraceModelPojo)manager.getKtbsResource(defaultTraceModelUri);
+	public TraceModel getDefaultTraceModel() {
+		return (TraceModel)manager.getKtbsResource(defaultTraceModelUri);
 	}
 
 	public UserCollectSession(String user, String baseUri) {
@@ -38,14 +36,14 @@ public class UserCollectSession {
 		return user;
 	}
 
-	public StoredTracePojo getCurrentStoredTrace(String user) {
+	public StoredTrace getCurrentStoredTrace(String user) {
 		if(currentTrace == null)
 			startNewStoredTrace(user, defaultTraceModelUri);
 		return currentTrace;
 	}
 
 
-	public StoredTracePojo startNewStoredTrace(String user, String traceLocalName) {
+	public StoredTrace startNewStoredTrace(String user, String traceLocalName) {
 		return startNewStoredTrace(user, traceLocalName, defaultTraceModelUri, getDefaultOrigin());
 	}
 
@@ -53,15 +51,15 @@ public class UserCollectSession {
 		return Calendar.getInstance().toString();
 	}
 
-	public StoredTracePojo startNewStoredTrace(String user, String origin, String traceLocalName) {
+	public StoredTrace startNewStoredTrace(String user, String origin, String traceLocalName) {
 		return startNewStoredTrace(user, traceLocalName, defaultTraceModelUri, origin);
 	}
 
-	public StoredTracePojo startNewStoredTrace(String user, String traceLocalName, String traceModelUri, String origin) {
+	public StoredTrace startNewStoredTrace(String user, String traceLocalName, String traceModelUri, String origin) {
 		if(traceModelUri == null)
 			throw new IllegalStateException("A non null trace model uri must be specified");
 		else {
-			StoredTracePojo trace = manager.newStoredTrace(
+			StoredTrace trace = manager.newStoredTrace(
 					getBase().getUri(),
 					traceLocalName, 
 					traceModelUri, 
@@ -76,9 +74,9 @@ public class UserCollectSession {
 		return currentTrace;
 	}
 
-	private BasePojo getBase() {
+	private Base getBase() {
 		if(_base == null)
-			_base = (BasePojo) manager.getKtbsResource(baseUri);
+			_base = (Base) manager.getKtbsResource(baseUri);
 		return _base;
 	}
 

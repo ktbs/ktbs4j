@@ -4,9 +4,9 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
-import org.liris.ktbs.core.impl.ResourceManager;
-import org.liris.ktbs.core.nocache.DefaultManager;
-import org.liris.ktbs.core.pojo.ComputedTracePojo;
+import org.liris.ktbs.core.DefaultManager;
+import org.liris.ktbs.core.ResourceManager;
+import org.liris.ktbs.core.domain.ComputedTrace;
 
 public class DefaultManagerTestCase extends TestCase {
 
@@ -26,7 +26,7 @@ public class DefaultManagerTestCase extends TestCase {
 	}
 
 	public void testNewComputedTrace() {
-		ComputedTracePojo trace = manager.newComputedTrace(
+		ComputedTrace trace = manager.newComputedTrace(
 				"http://localhost:8001/base1/", 
 				"t1", 
 				"http://localhost:8001/base1/method1/", 

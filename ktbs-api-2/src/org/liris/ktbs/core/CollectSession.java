@@ -8,9 +8,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.liris.ktbs.core.impl.ResourceManager;
-import org.liris.ktbs.core.pojo.RootPojo;
-import org.liris.ktbs.core.pojo.TraceModelPojo;
+import org.liris.ktbs.core.domain.Root;
+import org.liris.ktbs.core.domain.TraceModel;
 
 import com.ibm.icu.util.Calendar;
 
@@ -35,7 +34,7 @@ public class CollectSession {
 	
 	private Timer timer;
 	
-	private RootPojo root;
+	private Root root;
 	
 	// the init method
 	public void init() {
@@ -107,7 +106,7 @@ public class CollectSession {
 		this.defaultUser = defaultUser;
 	}
 	
-	public TraceModelPojo getDefaultTraceModel() {
+	public TraceModel getDefaultTraceModel() {
 		UserCollectSession session = getDefaultSession();
 		return session.getDefaultTraceModel();
 	}
@@ -119,9 +118,9 @@ public class CollectSession {
 		return session;
 	}
 	
-	public RootPojo getRoot() {
+	public Root getRoot() {
 		if(root == null)
-			root = (RootPojo)manager.getKtbsResource(rootUri);
+			root = (Root)manager.getKtbsResource(rootUri);
 		return root;
 	}
 	

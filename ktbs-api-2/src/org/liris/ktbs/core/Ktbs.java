@@ -3,7 +3,7 @@ package org.liris.ktbs.core;
 import java.io.Reader;
 import java.io.Writer;
 
-import org.liris.ktbs.core.pojo.RootPojo;
+import org.liris.ktbs.core.domain.Root;
 
 /**
  * 
@@ -20,7 +20,7 @@ public interface Ktbs {
 	 * in order to get the root of the repository.
 	 *  
 	 */
-	public RootPojo getRoot();
+	public Root getRoot();
 	
 	/**
 	 * Do the authentication.

@@ -3,7 +3,7 @@ package org.liris.ktbs.serial;
 import java.io.Reader;
 import java.io.Writer;
 
-import org.liris.ktbs.core.pojo.ResourcePojo;
+import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.rdf.Resource2RdfModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -12,12 +12,12 @@ import com.hp.hpl.jena.rdf.model.Model;
 public class RdfResourceSerializer implements KtbsResourceSerializer {
 
 	@Override
-	public ResourcePojo deserialize(String uri, Reader reader, String mimeFormat) {
+	public KtbsResource deserialize(String uri, Reader reader, String mimeFormat) {
 		return null;
 	}
 
 	@Override
-	public void serialize(Writer writer, ResourcePojo resource,
+	public void serialize(Writer writer, KtbsResource resource,
 			String mimeFormat) {
 		
 		Resource2RdfModel mapper = new Resource2RdfModel(resource);

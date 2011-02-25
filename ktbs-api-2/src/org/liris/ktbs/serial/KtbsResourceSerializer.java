@@ -3,7 +3,7 @@ package org.liris.ktbs.serial;
 import java.io.Reader;
 import java.io.Writer;
 
-import org.liris.ktbs.core.domain.KtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 
 public interface KtbsResourceSerializer {
 	
@@ -15,7 +15,7 @@ public interface KtbsResourceSerializer {
 	 * @param mimeFormat
 	 * @return
 	 */
-	public KtbsResource deserialize(String uri, Reader reader, String mimeFormat);
-	public void serialize(Writer writer, KtbsResource resource, String mimeFormat);
+	public IKtbsResource deserialize(String uri, Reader reader, String mimeFormat);
+	public void serialize(Writer writer, IKtbsResource resource, String mimeFormat);
 	public void setOptions(SerializationOptions options);
 }

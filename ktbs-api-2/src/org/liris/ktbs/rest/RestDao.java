@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.domain.KtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
@@ -33,7 +34,7 @@ public class RestDao implements ResourceDao {
 	}
 
 	@Override
-	public KtbsResource get(String uri) {
+	public IKtbsResource get(String uri) {
 		KtbsResponse response = service.get(uri);
 		if(!response.hasSucceeded())
 			return null;
@@ -43,7 +44,7 @@ public class RestDao implements ResourceDao {
 			else
 				log.warn("No etag was attached to the resource \""+uri+"\".");
 			
-			KtbsResource resource = new RdfResourceSerializer().deserialize(
+			IKtbsResource resource = new RdfResourceSerializer().deserialize(
 					uri,
 					new StringReader(response.getBodyAsString()), 
 					response.getMimeType());

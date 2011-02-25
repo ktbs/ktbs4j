@@ -5,20 +5,31 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class Root extends ResourceContainer<Base> {
+import org.liris.ktbs.core.domain.interfaces.IBase;
+import org.liris.ktbs.core.domain.interfaces.IRoot;
 
-	private Set<Base> bases = new HashSet<Base>();
+public class Root extends ResourceContainer<IBase> implements IRoot {
 
-	public Set<Base> getBases() {
+	private Set<IBase> bases = new HashSet<IBase>();
+
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRoot#getBases()
+	 */
+	@Override
+	public Set<IBase> getBases() {
 		return bases;
 	}
 
-	public void setBases(Set<Base> bases) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRoot#setBases(java.util.Set)
+	 */
+	@Override
+	public void setBases(Set<IBase> bases) {
 		this.bases = bases;
 	}
 
-	protected Collection<Collection<Base>> getContainedResourceCollections() {
-		Collection<Collection<Base>> c = new LinkedList<Collection<Base>>();
+	protected Collection<Collection<IBase>> getContainedResourceCollections() {
+		Collection<Collection<IBase>> c = new LinkedList<Collection<IBase>>();
 		c.add(bases);
 		return c;
 	}

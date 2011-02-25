@@ -3,20 +3,24 @@ package org.liris.ktbs.core.domain;
 import java.util.Collection;
 import java.util.Iterator;
 
-public abstract class ResourceContainer<T extends KtbsResource> extends KtbsResource {
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IResourceContainer;
 
-	private class ConcatenatingIterator<X> implements Iterator<X> {
+public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsResource implements IResourceContainer<T> {
 
-		private Iterator<X> currentIterator;
-		private Iterator<Collection<X>> collectionIterator;
+	private class ConcatenatingIterator implements Iterator<T> {
 
-		public ConcatenatingIterator(Collection<Collection<X>> c) {
+		private Iterator<? extends T> currentIterator;
+		private Iterator<? extends Collection<? extends T>> collectionIterator;
+
+		public ConcatenatingIterator(Collection<? extends Collection<? extends T>> c) {
 			super();
 			collectionIterator = c.iterator();
 			currentIterator = collectionIterator.next().iterator();
 		}
 
-		private X next;
+
+		private T next;
 
 		private void doNext() {
 			if(!currentIterator.hasNext()) {
@@ -36,10 +40,10 @@ public abstract class ResourceContainer<T extends KtbsResource> extends KtbsReso
 		}
 
 		@Override
-		public X next() {
-			X x = next;
+		public T next() {
+			T t = next;
 			doNext();
-			return x;
+			return t;
 		}
 
 		@Override
@@ -48,21 +52,29 @@ public abstract class ResourceContainer<T extends KtbsResource> extends KtbsReso
 		}
 	};
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IResourceContainer#get(java.lang.String)
+	 */
+	@Override
 	public T get(String resourceURI) {
 		Iterator<T> it = iterator();
 		while (it.hasNext()) {
-			T t = (T) it.next();
+			T t = it.next();
 			if(t.getUri().equals(resourceURI)) 
 				return t;
 		}
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IResourceContainer#delete(java.lang.String)
+	 */
+	@Override
 	public boolean delete(String resourceURI) {
 		boolean delete = false;
 		Iterator<T> it = iterator();
 		while (it.hasNext()) {
-			T t = (T) it.next();
+			T t = it.next();
 			if(t.getUri().equals(resourceURI)) {
 				it.remove();
 				delete = true;
@@ -71,14 +83,18 @@ public abstract class ResourceContainer<T extends KtbsResource> extends KtbsReso
 		return delete;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IResourceContainer#listResources()
+	 */
+	@Override
 	public Iterator<T> listResources() {
 		return iterator();
 	}
 
-	private ConcatenatingIterator<T> iterator() {
-		return new ConcatenatingIterator<T>(getContainedResourceCollections());
+	private ConcatenatingIterator iterator() {
+		return new ConcatenatingIterator(getContainedResourceCollections());
 	}
 
-	protected abstract Collection<Collection<T>> getContainedResourceCollections();
+	protected abstract Collection<? extends Collection<? extends T>> getContainedResourceCollections();
 
 }

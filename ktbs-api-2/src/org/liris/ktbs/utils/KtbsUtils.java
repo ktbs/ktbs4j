@@ -26,6 +26,9 @@ import org.liris.ktbs.core.domain.Root;
 import org.liris.ktbs.core.domain.StoredTrace;
 import org.liris.ktbs.core.domain.Trace;
 import org.liris.ktbs.core.domain.TraceModel;
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
+import org.liris.ktbs.core.domain.interfaces.IObsel;
 
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -91,7 +94,7 @@ public class KtbsUtils {
 
 	}
 	
-	public static MethodParameter parseMethodParameter(String string) {
+	public static IMethodParameter parseMethodParameter(String string) {
 		int index = string.indexOf("=");
 		String key = string.substring(0, index);
 		String value = string.substring(index+1, string.length());
@@ -336,18 +339,24 @@ public class KtbsUtils {
 	 * @param childURI the uri, either relative or absolute, of the child.
 	 * @return the absolute child URI
 	 */
-	public static String resolveAbsoluteChildURI(String parentURI, String childURI) {
+	public static String makeChildURI(String parentURI, String childURI, boolean leaf) {
 		URI child = URI.create(childURI);
+		String uri;
 		if(child.isAbsolute())
-			return child.toString();
+			uri = child.normalize().toString();
 		else 
-			return URI.create(parentURI).resolve(child).toString();
+			uri = URI.create(parentURI).resolve(child).normalize().toString();
+		if(leaf && uri.endsWith("/"))
+			return replaceLast(uri, "/", "");
+		if(!leaf && !uri.endsWith("/"))
+			return uri+"/";
+		return uri;
 	}
 
 
-	public static String getRDFType(KtbsResource r) {
+	public static String getRDFType(IKtbsResource r) {
 		if(Obsel.class.isAssignableFrom(r.getClass()))
-			return ((Obsel)r).getObselType().getUri();
+			return ((IObsel)r).getObselType().getUri();
 		else
 			return getRDFType(r.getClass());
 	}

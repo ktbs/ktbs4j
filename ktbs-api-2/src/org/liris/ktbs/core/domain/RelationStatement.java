@@ -1,48 +1,73 @@
 package org.liris.ktbs.core.domain;
 
+import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IRelationStatement;
+import org.liris.ktbs.core.domain.interfaces.IRelationType;
 
-public class RelationStatement {
+
+public class RelationStatement implements IRelationStatement {
 	
 	
-	private Obsel fromObsel;
-	private RelationType relation;
-	private Obsel toObsel;
+	private IObsel fromObsel;
+	private IRelationType relation;
+	private IObsel toObsel;
 	
-	public Obsel getFromObsel() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationStatement#getFromObsel()
+	 */
+	@Override
+	public IObsel getFromObsel() {
 		return fromObsel;
 	}
-	public void setFromObsel(Obsel fromObsel) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationStatement#setFromObsel(org.liris.ktbs.core.domain.Obsel)
+	 */
+	@Override
+	public void setFromObsel(IObsel fromObsel) {
 		this.fromObsel = fromObsel;
 	}
-	public RelationType getRelation() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationStatement#getRelation()
+	 */
+	@Override
+	public IRelationType getRelation() {
 		return relation;
 	}
-	public void setRelation(RelationType relation) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationStatement#setRelation(org.liris.ktbs.core.domain.RelationType)
+	 */
+	@Override
+	public void setRelation(IRelationType relation) {
 		this.relation = relation;
 	}
-	public Obsel getToObsel() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationStatement#getToObsel()
+	 */
+	@Override
+	public IObsel getToObsel() {
 		return toObsel;
 	}
 	
-	public void setToObsel(Obsel toObsel) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationStatement#setToObsel(org.liris.ktbs.core.domain.Obsel)
+	 */
+	@Override
+	public void setToObsel(IObsel toObsel) {
 		this.toObsel = toObsel;
 	}
 	
-	public RelationStatement(Obsel fromObsel,
-			RelationType relation, Obsel toObsel) {
+	public RelationStatement(IObsel fromObsel,
+			IRelationType relation, IObsel toObsel) {
 		super();
 		this.fromObsel = fromObsel;
 		this.relation = relation;
 		this.toObsel = toObsel;
 	}
 	
-	public RelationStatement() {
-	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RelationStatement) {
-			RelationStatement rel = (RelationStatement) obj;
+			IRelationStatement rel = (IRelationStatement) obj;
 			return rel.getFromObsel().equals(fromObsel)
 					&& rel.getToObsel().equals(toObsel)
 					&& rel.getRelation().equals(relation);

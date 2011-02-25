@@ -3,38 +3,49 @@ package org.liris.ktbs.core.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RelationType extends KtbsResource implements WithDomain<ObselType>, WithRange<ObselType> {
-	
-	private Set<RelationType> superRelationTypes = new HashSet<RelationType>();
+import org.liris.ktbs.core.domain.interfaces.IObselType;
+import org.liris.ktbs.core.domain.interfaces.IRelationType;
 
-	private Set<ObselType> domains = new HashSet<ObselType>();
-	private Set<ObselType> ranges = new HashSet<ObselType>();
+public class RelationType extends KtbsResource implements IRelationType {
 	
-	public Set<RelationType> getSuperRelationTypes() {
+	private Set<IRelationType> superRelationTypes = new HashSet<IRelationType>();
+
+	private Set<IObselType> domains = new HashSet<IObselType>();
+	private Set<IObselType> ranges = new HashSet<IObselType>();
+	
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationType#getSuperRelationTypes()
+	 */
+	@Override
+	public Set<IRelationType> getSuperRelationTypes() {
 		return superRelationTypes;
 	}
 	
-	public void setSuperRelationTypes(Set<RelationType> superRelationTypes) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IRelationType#setSuperRelationTypes(java.util.Set)
+	 */
+	@Override
+	public void setSuperRelationTypes(Set<IRelationType> superRelationTypes) {
 		this.superRelationTypes = superRelationTypes;
 	}
 	
 	@Override
-	public Set<ObselType> getDomains() {
+	public Set<IObselType> getDomains() {
 		return domains;
 	}
 	
 	@Override
-	public void setDomains(Set<ObselType> domains) {
+	public void setDomains(Set<IObselType> domains) {
 		this.domains = domains;
 	}
 	
 	@Override
-	public Set<ObselType> getRanges() {
+	public Set<IObselType> getRanges() {
 		return ranges;
 	}
 	
 	@Override
-	public void setRanges(Set<ObselType> ranges) {
+	public void setRanges(Set<IObselType> ranges) {
 		this.ranges = ranges;
 	}
 }

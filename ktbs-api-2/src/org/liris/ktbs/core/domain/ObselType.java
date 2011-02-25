@@ -3,15 +3,25 @@ package org.liris.ktbs.core.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ObselType extends KtbsResource {
-	
-	private Set<ObselType> superObselTypes = new HashSet<ObselType>();
+import org.liris.ktbs.core.domain.interfaces.IObselType;
 
-	public Set<ObselType> getSuperObselTypes() {
+public class ObselType extends KtbsResource implements IObselType {
+	
+	private Set<IObselType> superObselTypes = new HashSet<IObselType>();
+
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObselType#getSuperObselTypes()
+	 */
+	@Override
+	public Set<IObselType> getSuperObselTypes() {
 		return superObselTypes;
 	}
 
-	public void setSuperObselTypes(Set<ObselType> superObselTypes) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObselType#setSuperObselTypes(java.util.Set)
+	 */
+	@Override
+	public void setSuperObselTypes(Set<IObselType> superObselTypes) {
 		this.superObselTypes = superObselTypes;
 	}
 }

@@ -1,8 +1,8 @@
 package org.liris.ktbs.core;
 
 import org.liris.ktbs.core.domain.Base;
-import org.liris.ktbs.core.domain.StoredTrace;
-import org.liris.ktbs.core.domain.TraceModel;
+import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 import com.ibm.icu.util.Calendar;
 
@@ -11,7 +11,7 @@ public class UserCollectSession {
 	private ResourceManager manager;
 	private String user;
 	private String baseUri;
-	private StoredTrace currentTrace;
+	private IStoredTrace currentTrace;
 	private String defaultTraceModelUri;
 
 	// should be access only throw getBase
@@ -21,8 +21,8 @@ public class UserCollectSession {
 		this.defaultTraceModelUri = defaultTraceModelUri;
 	}
 
-	public TraceModel getDefaultTraceModel() {
-		return (TraceModel)manager.getKtbsResource(defaultTraceModelUri);
+	public ITraceModel getDefaultTraceModel() {
+		return (ITraceModel)manager.getKtbsResource(defaultTraceModelUri);
 	}
 
 	public UserCollectSession(String user, String baseUri) {
@@ -36,14 +36,14 @@ public class UserCollectSession {
 		return user;
 	}
 
-	public StoredTrace getCurrentStoredTrace(String user) {
+	public IStoredTrace getCurrentStoredTrace(String user) {
 		if(currentTrace == null)
 			startNewStoredTrace(user, defaultTraceModelUri);
 		return currentTrace;
 	}
 
 
-	public StoredTrace startNewStoredTrace(String user, String traceLocalName) {
+	public IStoredTrace startNewStoredTrace(String user, String traceLocalName) {
 		return startNewStoredTrace(user, traceLocalName, defaultTraceModelUri, getDefaultOrigin());
 	}
 
@@ -51,15 +51,15 @@ public class UserCollectSession {
 		return Calendar.getInstance().toString();
 	}
 
-	public StoredTrace startNewStoredTrace(String user, String origin, String traceLocalName) {
+	public IStoredTrace startNewStoredTrace(String user, String origin, String traceLocalName) {
 		return startNewStoredTrace(user, traceLocalName, defaultTraceModelUri, origin);
 	}
 
-	public StoredTrace startNewStoredTrace(String user, String traceLocalName, String traceModelUri, String origin) {
+	public IStoredTrace startNewStoredTrace(String user, String traceLocalName, String traceModelUri, String origin) {
 		if(traceModelUri == null)
 			throw new IllegalStateException("A non null trace model uri must be specified");
 		else {
-			StoredTrace trace = manager.newStoredTrace(
+			IStoredTrace trace = manager.newStoredTrace(
 					getBase().getUri(),
 					traceLocalName, 
 					traceModelUri, 

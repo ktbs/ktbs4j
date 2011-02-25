@@ -2,37 +2,63 @@ package org.liris.ktbs.core.domain;
 
 import java.util.Set;
 
+import org.liris.ktbs.core.domain.interfaces.IMethod;
+import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
+import org.liris.ktbs.core.domain.interfaces.WithParameters;
 
-public class Method extends KtbsResource implements WithParameters {
+
+public class Method extends KtbsResource implements IMethod {
 
 	private String etag;
 	private String inherits;
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IMethod#getEtag()
+	 */
+	@Override
 	public String getEtag() {
 		return etag;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IMethod#setEtag(java.lang.String)
+	 */
+	@Override
 	public void setEtag(String etag) {
 		this.etag = etag;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IMethod#getInherits()
+	 */
+	@Override
 	public String getInherits() {
 		return inherits;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IMethod#setInherits(java.lang.String)
+	 */
+	@Override
 	public void setInherits(String inherits) {
 		this.inherits = inherits;
 	}
 
 	private WithParameters withMethodParameterDelegate = new WithParametersDelegate();
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IMethod#getMethodParameters()
+	 */
 	@Override
-	public Set<MethodParameter> getMethodParameters() {
+	public Set<IMethodParameter> getMethodParameters() {
 		return withMethodParameterDelegate.getMethodParameters();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IMethod#setMethodParameters(java.util.Set)
+	 */
 	@Override
-	public void setMethodParameters(Set<MethodParameter> methodParameters) {
+	public void setMethodParameters(Set<IMethodParameter> methodParameters) {
 		withMethodParameterDelegate.setMethodParameters(methodParameters);
 	}
 	

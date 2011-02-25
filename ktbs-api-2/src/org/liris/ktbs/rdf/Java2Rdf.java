@@ -4,24 +4,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.domain.AttributePair;
-import org.liris.ktbs.core.domain.AttributeType;
-import org.liris.ktbs.core.domain.Base;
-import org.liris.ktbs.core.domain.ComputedTrace;
 import org.liris.ktbs.core.domain.KtbsResource;
-import org.liris.ktbs.core.domain.Method;
-import org.liris.ktbs.core.domain.MethodParameter;
-import org.liris.ktbs.core.domain.Obsel;
-import org.liris.ktbs.core.domain.PropertyStatement;
-import org.liris.ktbs.core.domain.RelationStatement;
-import org.liris.ktbs.core.domain.RelationType;
-import org.liris.ktbs.core.domain.Root;
-import org.liris.ktbs.core.domain.StoredTrace;
-import org.liris.ktbs.core.domain.Trace;
-import org.liris.ktbs.core.domain.TraceModel;
-import org.liris.ktbs.core.domain.WithDomain;
-import org.liris.ktbs.core.domain.WithParameters;
-import org.liris.ktbs.core.domain.WithRange;
+import org.liris.ktbs.core.domain.interfaces.IAttributePair;
+import org.liris.ktbs.core.domain.interfaces.IAttributeType;
+import org.liris.ktbs.core.domain.interfaces.IBase;
+import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IMethod;
+import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
+import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IPropertyStatement;
+import org.liris.ktbs.core.domain.interfaces.IRelationStatement;
+import org.liris.ktbs.core.domain.interfaces.IRelationType;
+import org.liris.ktbs.core.domain.interfaces.IRoot;
+import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.core.domain.interfaces.ITrace;
+import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.core.domain.interfaces.WithDomain;
+import org.liris.ktbs.core.domain.interfaces.WithParameters;
+import org.liris.ktbs.core.domain.interfaces.WithRange;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -31,19 +32,19 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-public class Resource2RdfModel {
+public class Java2Rdf {
 
-	private KtbsResource resource;
+	private IKtbsResource resource;
 	private Model model;
 	private SerializationOptions options = new SerializationOptions();
 
-	public Resource2RdfModel(KtbsResource resource) {
+	public Java2Rdf(IKtbsResource resource) {
 		super();
 		this.resource = resource;
 		this.model = ModelFactory.createDefaultModel();
 	}
 
-	public Resource2RdfModel(KtbsResource resource, SerializationOptions options) {
+	public Java2Rdf(IKtbsResource resource, SerializationOptions options) {
 		this(resource);
 		this.options = options;
 	}
@@ -65,7 +66,7 @@ public class Resource2RdfModel {
 		return model;
 	}
 
-	private void put(KtbsResource r) {
+	private void put(IKtbsResource r) {
 		/*
 		 * Should never be called since there are specialized put/1 methods
 		 * for each type of supported resource.
@@ -98,7 +99,7 @@ public class Resource2RdfModel {
 				model.getResource(objectUri));
 	}
 
-	private void putResource(String uri, String pName, KtbsResource objectResource) {
+	private void putResource(String uri, String pName, IKtbsResource objectResource) {
 		if(objectResource == null)
 			return;
 		else
@@ -107,7 +108,7 @@ public class Resource2RdfModel {
 					model.getResource(objectResource.getUri()));
 	}
 
-	private void putGenericResource(KtbsResource r) {
+	private void putGenericResource(IKtbsResource r) {
 		// Avoid cycles
 		if(alreadyProcessed.contains(r.getUri()))
 			return;
@@ -121,7 +122,7 @@ public class Resource2RdfModel {
 		for(String label:r.getLabels())
 			putLiteral(r.getUri(), RDFS.label.getURI(), label);
 
-		for(PropertyStatement stmt:r.getProperties())
+		for(IPropertyStatement stmt:r.getProperties())
 			putLiteral(r.getUri(), stmt.getProperty(), stmt.getValue());
 
 	}
@@ -156,15 +157,15 @@ public class Resource2RdfModel {
 	//------------------------------------------------------------------------------
 	// SPECIALIZED METHODS
 	//------------------------------------------------------------------------------
-	private void put(Root root) {
+	private void put(IRoot root) {
 
 		putGenericResource(root);
 
 		if(withContainedResource()) {
-			for(Base base:root.getBases())
+			for(IBase base:root.getBases())
 				put(base);
 		} else if(withContainedResourceURI()) {
-			for(Base base:root.getBases()) {
+			for(IBase base:root.getBases()) {
 				putResource(root.getUri(), KtbsConstants.P_HAS_BASE, base);
 				if(withContainedResourceType())
 					putResource(base.getUri(), RDF.type.getURI(), KtbsConstants.BASE);
@@ -172,7 +173,7 @@ public class Resource2RdfModel {
 		}
 	}
 
-	private void put(Base base) {
+	private void put(IBase base) {
 		putGenericResource(base);
 
 		putLiteral(base.getUri(), KtbsConstants.P_HAS_OWNER, base.getOwner());
@@ -183,54 +184,57 @@ public class Resource2RdfModel {
 		putBaseChildren(base, base.getTraceModels());
 	}
 
-	private void putBaseChildren(Base base, Set<? extends KtbsResource> set) {
-		for(KtbsResource child:set) {
+	private void putBaseChildren(IBase base, Set<? extends IKtbsResource> set) {
+		for(IKtbsResource child:set) {
 			if(withContainedResource())
 				put(child);
-			else if (withContainedResourceURI()) {
+			
+			if (withContainedResourceURI()) 
 				model.getResource(base.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_OWNS), 
 						model.getResource(child.getUri()));
-				if (withContainedResourceType()) 
-					model.getResource(child.getUri()).addProperty(
-							RDF.type, 
-							model.getResource(KtbsUtils.getRDFType(child)));
-			}
+			
+			if (withContainedResourceType()) 
+				model.getResource(child.getUri()).addProperty(
+						RDF.type, 
+						model.getResource(KtbsUtils.getRDFType(child)));
+
 		}
 	}
 
-	private void putTraceModelChildren(TraceModel tm, Set<? extends KtbsResource> set) {
-		for(KtbsResource child:set) {
+	private void putTraceModelChildren(ITraceModel tm, Set<? extends IKtbsResource> set) {
+		for(IKtbsResource child:set) {
 			if(withContainedResource())
 				put(child);
-			else if (withContainedResourceURI() || withContainedResourceType()) 
-					model.getResource(child.getUri()).addProperty(
-							RDF.type, 
-							model.getResource(KtbsUtils.getRDFType(child)));
+			
+			if (withContainedResourceURI() || withContainedResourceType()) 
+				model.getResource(child.getUri()).addProperty(
+						RDF.type, 
+						model.getResource(KtbsUtils.getRDFType(child)));
 		}
 	}
 
-	private void put(StoredTrace trace) {
+	private void put(IStoredTrace trace) {
 		putGenericResource(trace);
 		putTraceResource(trace);
 
 		putLiteral(trace.getUri(), KtbsConstants.P_HAS_SUBJECT, trace.getDefaultSubject());
 	}
 
-	private void put(TraceModel traceModel) {
+	private void put(ITraceModel traceModel) {
 		putGenericResource(traceModel);
-		
+
 		putTraceModelChildren(traceModel, traceModel.getAttributeTypes());
 		putTraceModelChildren(traceModel, traceModel.getRelationTypes());
 		putTraceModelChildren(traceModel, traceModel.getObselTypes());
 	}
 
-	private void put(AttributeType attType) {
+	private void put(IAttributeType attType) {
 		putGenericResource(attType);
 		putWithDomainResource(attType, KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN);
 		putWithStringRangeResource(attType, KtbsConstants.P_HAS_ATTRIBUTE_RANGE);
 	}
-	
+
 	private void putWithStringRangeResource(WithRange<String> r, String rangePropName) {
 		for(String s:r.getRanges()) 
 			model.getResource(((KtbsResource)r).getUri()).addLiteral(
@@ -238,61 +242,61 @@ public class Resource2RdfModel {
 					model.getResource(s));
 	}
 
-	private void put(RelationType relType) {
+	private void put(IRelationType relType) {
 		putGenericResource(relType);
 		putWithDomainResource(relType, KtbsConstants.P_HAS_RELATION_DOMAIN);
 		putWithRangeResource(relType, KtbsConstants.P_HAS_RELATION_RANGE);
 	}
 
-	private void putWithDomainResource(WithDomain<? extends KtbsResource> r, String domainPropName) {
-		for(KtbsResource domain:r.getDomains()) {
+	private void putWithDomainResource(WithDomain<? extends IKtbsResource> r, String domainPropName) {
+		for(IKtbsResource domain:r.getDomains()) {
 			if(withLinkedResource())
 				put(domain);
-			
+
 			model.getResource(((KtbsResource)r).getUri()).addProperty(
 					model.getProperty(domainPropName),
 					model.getResource(domain.getUri()));
-			
+
 			// ignore other options
 		}
 	}
 
-	private void putWithRangeResource(WithRange<? extends KtbsResource> r , String rangePropName) {
-		for(KtbsResource range:r.getRanges()) {
+	private void putWithRangeResource(WithRange<? extends IKtbsResource> r , String rangePropName) {
+		for(IKtbsResource range:r.getRanges()) {
 			if(withLinkedResource())
 				put(range);
-			
+
 			model.getResource(((KtbsResource)r).getUri()).addProperty(
 					model.getProperty(rangePropName),
 					model.getResource(range.getUri()));
-			
+
 			// ignore other options
 		}
 	}
 
-	private void put(ComputedTrace trace) {
+	private void put(IComputedTrace trace) {
 		putGenericResource(trace);
 		putTraceResource(trace);
 		putTransformationResource(trace, trace.getUri());
 
 		if(withLinkedResource()) {
 			put(trace.getMethod());
-			for(Trace sourceTrace:trace.getSourceTraces()) 
-				put(trace);
+			for(ITrace sourceTrace:trace.getSourceTraces()) 
+				put(sourceTrace);
 		}
 
 		if(withLinkedResourceURI()) {
 			model.getResource(trace.getUri()).addProperty(
 					model.getProperty(KtbsConstants.P_HAS_METHOD),
 					model.getResource(trace.getMethod().getUri()));
-			for(Trace sourceTrace:trace.getSourceTraces()) 
+			for(ITrace sourceTrace:trace.getSourceTraces()) 
 				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE),
 						model.getResource(sourceTrace.getUri()));
 		}
 	}
 
-	private void put(Method method) {
+	private void put(IMethod method) {
 		putGenericResource(method);
 		putTransformationResource(method, method.getUri());
 
@@ -300,7 +304,7 @@ public class Resource2RdfModel {
 		putLiteral(method.getUri(), KtbsConstants.P_HAS_ETAG, method.getEtag());
 	}
 
-	private void put(Obsel obsel) {
+	private void put(IObsel obsel) {
 		putGenericResource(obsel);
 
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
@@ -309,11 +313,11 @@ public class Resource2RdfModel {
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_END, obsel.getEnd());
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT, obsel.getSubject());
 
-		for(AttributePair pair:obsel.getAttributePairs()) {
+		for(IAttributePair pair:obsel.getAttributePairs()) {
 			putLiteral(obsel.getUri(), pair.getAttributeType().getUri(), pair.getValue());
 		}
 
-		for(RelationStatement stmt:obsel.getOutgoingRelations()) {
+		for(IRelationStatement stmt:obsel.getOutgoingRelations()) {
 			if(withLinkedResource()) 
 				put(stmt.getToObsel());
 
@@ -330,7 +334,7 @@ public class Resource2RdfModel {
 				);
 		}
 
-		for(RelationStatement stmt:obsel.getIncomingRelations()) {
+		for(IRelationStatement stmt:obsel.getIncomingRelations()) {
 			if(withLinkedResource()) 
 				put(stmt.getFromObsel());
 
@@ -349,11 +353,11 @@ public class Resource2RdfModel {
 	}
 
 	private void putTransformationResource(WithParameters r, String uri) {
-		for(MethodParameter param:r.getMethodParameters()) 
+		for(IMethodParameter param:r.getMethodParameters()) 
 			putLiteral(uri, KtbsConstants.P_HAS_PARAMETER, param.getName()+"="+param.getValue());
 	}
 
-	private void putTraceResource(Trace trace) {
+	private void putTraceResource(ITrace trace) {
 		putLiteral(trace.getUri(), KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
 		putLiteral(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliesWithModel());
 
@@ -367,7 +371,7 @@ public class Resource2RdfModel {
 					model.getProperty(KtbsConstants.P_HAS_MODEL), 
 					model.getResource(trace.getTraceModel().getUri()));
 
-			for(KtbsResource child:trace.getTransformedTraces())
+			for(IKtbsResource child:trace.getTransformedTraces())
 				model.getResource(trace.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_SOURCE), 
 						model.getResource(child.getUri()));
@@ -377,7 +381,7 @@ public class Resource2RdfModel {
 			model.getResource(trace.getTraceModel().getUri()).addProperty(
 					RDF.type, 
 					model.getResource(KtbsConstants.TRACE_MODEL));
-			for(KtbsResource child:trace.getTransformedTraces())
+			for(IKtbsResource child:trace.getTransformedTraces())
 				model.getResource(child.getUri()).addProperty(
 						RDF.type, 
 						model.getResource(KtbsUtils.getRDFType(child)));
@@ -386,7 +390,7 @@ public class Resource2RdfModel {
 		if(withContainedResource()) {
 			addResourceListToModel(trace.getObsels());
 		} else if(withContainedResourceURI()) {
-			for(Obsel obsel:trace.getObsels()) {
+			for(IObsel obsel:trace.getObsels()) {
 				model.getResource(obsel.getUri()).addProperty(
 						model.getProperty(KtbsConstants.P_HAS_TRACE), 
 						model.getResource(trace.getUri()));
@@ -404,8 +408,8 @@ public class Resource2RdfModel {
 	// -------------------------------------------------------------------------
 	// SHORTCUT METHOD
 	// -------------------------------------------------------------------------
-	private void addResourceListToModel(Set<? extends KtbsResource> set) {
-		for(KtbsResource child:set)
+	private void addResourceListToModel(Set<? extends IKtbsResource> set) {
+		for(IKtbsResource child:set)
 			put(child);
 	}
 }

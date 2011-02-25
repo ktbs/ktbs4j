@@ -2,18 +2,18 @@ package org.liris.ktbs.core.domain;
 
 import java.net.URI;
 
-import org.liris.ktbs.core.UriResource;
+import org.liris.ktbs.core.IUriResource;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class UriResourceImpl implements UriResource {
+public class UriResource implements IUriResource {
 
 	private String uri;
 	
-	public UriResourceImpl() {
+	public UriResource() {
 		super();
 	}
 
-	public UriResourceImpl(String uri) {
+	public UriResource(String uri) {
 		super();
 		setURI(uri);
 	}
@@ -29,8 +29,8 @@ public class UriResourceImpl implements UriResource {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof UriResourceImpl) {
-			UriResourceImpl r = (UriResourceImpl) obj;
+		if (obj instanceof UriResource) {
+			UriResource r = (UriResource) obj;
 			return uri.equals(r.uri);
 		} else 
 			return false;
@@ -42,7 +42,7 @@ public class UriResourceImpl implements UriResource {
 	}
 
 	@Override
-	public int compareTo(UriResource o) {
+	public int compareTo(IUriResource o) {
 		return uri.compareTo(o.getUri());
 	}
 	

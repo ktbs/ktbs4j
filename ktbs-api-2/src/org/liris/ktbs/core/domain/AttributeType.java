@@ -3,18 +3,21 @@ package org.liris.ktbs.core.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AttributeType extends KtbsResource implements WithDomain<ObselType>, WithRange<String> {
+import org.liris.ktbs.core.domain.interfaces.IAttributeType;
+import org.liris.ktbs.core.domain.interfaces.IObselType;
 
-	private Set<ObselType> domains = new HashSet<ObselType>();
+public class AttributeType extends KtbsResource implements IAttributeType {
+
+	private Set<IObselType> domains = new HashSet<IObselType>();
 	private Set<String> ranges = new HashSet<String>();
 	
 	@Override
-	public Set<ObselType> getDomains() {
+	public Set<IObselType> getDomains() {
 		return domains;
 	}
 	
 	@Override
-	public void setDomains(Set<ObselType> domains) {
+	public void setDomains(Set<IObselType> domains) {
 		this.domains = domains;
 	}
 	

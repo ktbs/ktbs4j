@@ -4,11 +4,17 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Obsel extends KtbsResource {
+import org.liris.ktbs.core.domain.interfaces.IAttributePair;
+import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IObselType;
+import org.liris.ktbs.core.domain.interfaces.IRelationStatement;
+import org.liris.ktbs.core.domain.interfaces.ITrace;
+
+public class Obsel extends KtbsResource implements IObsel {
 	
-	private ObselType obselType;
+	private IObselType obselType;
 	
-	private Trace trace;
+	private ITrace trace;
 
 	private String subject;
 	private BigInteger begin;
@@ -16,98 +22,186 @@ public class Obsel extends KtbsResource {
 	private String beginDT;
 	private String endDT;
 	
-	private Set<Obsel> sourceObsels = new HashSet<Obsel>();
-	private Set<RelationStatement> incomingRelations = new HashSet<RelationStatement>();
-	private Set<RelationStatement> outgoingRelations = new HashSet<RelationStatement>();
+	private Set<IObsel> sourceObsels = new HashSet<IObsel>();
+	private Set<IRelationStatement> incomingRelations = new HashSet<IRelationStatement>();
+	private Set<IRelationStatement> outgoingRelations = new HashSet<IRelationStatement>();
 
-	private Set<AttributePair> 	attributePairs = new HashSet<AttributePair>();
+	private Set<IAttributePair> 	attributePairs = new HashSet<IAttributePair>();
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getSubject()
+	 */
+	@Override
 	public String getSubject() {
 		return subject;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setSubject(java.lang.String)
+	 */
+	@Override
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getBegin()
+	 */
+	@Override
 	public BigInteger getBegin() {
 		return begin;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setBegin(java.math.BigInteger)
+	 */
+	@Override
 	public void setBegin(BigInteger begin) {
 		this.begin = begin;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getEnd()
+	 */
+	@Override
 	public BigInteger getEnd() {
 		return end;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setEnd(java.math.BigInteger)
+	 */
+	@Override
 	public void setEnd(BigInteger end) {
 		this.end = end;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getBeginDT()
+	 */
+	@Override
 	public String getBeginDT() {
 		return beginDT;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setBeginDT(java.lang.String)
+	 */
+	@Override
 	public void setBeginDT(String beginDT) {
 		this.beginDT = beginDT;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getEndDT()
+	 */
+	@Override
 	public String getEndDT() {
 		return endDT;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setEndDT(java.lang.String)
+	 */
+	@Override
 	public void setEndDT(String endDT) {
 		this.endDT = endDT;
 	}
 
-	public Set<Obsel> getSourceObsels() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getSourceObsels()
+	 */
+	@Override
+	public Set<IObsel> getSourceObsels() {
 		return sourceObsels;
 	}
 
-	public void setSourceObsels(Set<Obsel> sourceObsels) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setSourceObsels(java.util.Set)
+	 */
+	@Override
+	public void setSourceObsels(Set<IObsel> sourceObsels) {
 		this.sourceObsels = sourceObsels;
 	}
 
 
-	public Set<AttributePair> getAttributePairs() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getAttributePairs()
+	 */
+	@Override
+	public Set<IAttributePair> getAttributePairs() {
 		return attributePairs;
 	}
 
-	public void setAttributePairs(Set<AttributePair> attributePairs) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setAttributePairs(java.util.Set)
+	 */
+	@Override
+	public void setAttributePairs(Set<IAttributePair> attributePairs) {
 		this.attributePairs = attributePairs;
 	}
 
-	public void setObselType(ObselType obselType) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setObselType(org.liris.ktbs.core.domain.ObselType)
+	 */
+	@Override
+	public void setObselType(IObselType obselType) {
 		this.obselType = obselType;
 	}
 
-	public ObselType getObselType() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getObselType()
+	 */
+	@Override
+	public IObselType getObselType() {
 		return obselType;
 	}
 
-	public void setIncomingRelations(Set<RelationStatement> incomingRelations) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setIncomingRelations(java.util.Set)
+	 */
+	@Override
+	public void setIncomingRelations(Set<IRelationStatement> incomingRelations) {
 		this.incomingRelations = incomingRelations;
 	}
 
-	public Set<RelationStatement> getIncomingRelations() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getIncomingRelations()
+	 */
+	@Override
+	public Set<IRelationStatement> getIncomingRelations() {
 		return incomingRelations;
 	}
 
-	public void setOutgoingRelations(Set<RelationStatement> outgoingRelations) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setOutgoingRelations(java.util.Set)
+	 */
+	@Override
+	public void setOutgoingRelations(Set<IRelationStatement> outgoingRelations) {
 		this.outgoingRelations = outgoingRelations;
 	}
 
-	public Set<RelationStatement> getOutgoingRelations() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getOutgoingRelations()
+	 */
+	@Override
+	public Set<IRelationStatement> getOutgoingRelations() {
 		return outgoingRelations;
 	}
 	
-	public Trace getTrace() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#getTrace()
+	 */
+	@Override
+	public ITrace getTrace() {
 		return trace;
 	}
 	
-	public void setTrace(Trace trace) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IObsel#setTrace(org.liris.ktbs.core.domain.ITrace)
+	 */
+	@Override
+	public void setTrace(ITrace trace) {
 		this.trace = trace;
 	}
 }

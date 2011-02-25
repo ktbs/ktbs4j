@@ -1,4 +1,4 @@
-package org.liris.ktbs.core.domain;
+package org.liris.ktbs.core.domain.interfaces;
 
 import java.util.Set;
 

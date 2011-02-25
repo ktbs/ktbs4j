@@ -10,7 +10,7 @@ public class ResourceProxy {
 	private ResourceManager manager;
 
 	private class ProxyResourceInvokationHandler implements InvocationHandler {
-		private UriResource resource;
+		private IUriResource resource;
 
 		private ResourceManager manager;
 		private String uri;
@@ -35,11 +35,11 @@ public class ResourceProxy {
 		}
 	};
 
-	public UriResource newProxy(String uri) {
+	public IUriResource newProxy(String uri) {
 		Class<?>[] interfaces = new Class<?>[1];
-		interfaces[0] = UriResource.class;
+		interfaces[0] = IUriResource.class;
 
-		return (UriResource)Proxy.newProxyInstance(
+		return (IUriResource)Proxy.newProxyInstance(
 				ResourceProxy.class.getClassLoader(), 
 				interfaces, 
 				new ProxyResourceInvokationHandler(manager, uri));

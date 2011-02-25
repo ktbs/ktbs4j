@@ -25,8 +25,10 @@ import org.liris.ktbs.core.domain.Root;
 import org.liris.ktbs.core.domain.StoredTrace;
 import org.liris.ktbs.core.domain.Trace;
 import org.liris.ktbs.core.domain.TraceModel;
-import org.liris.ktbs.core.domain.WithParameters;
 import org.liris.ktbs.core.domain.WithParametersDelegate;
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
+import org.liris.ktbs.core.domain.interfaces.WithParameters;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -38,31 +40,31 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-public class Rdf2Pojo {
+public class Rdf2Java {
 
-	private static final Log log = LogFactory.getLog(Rdf2Pojo.class);
+	private static final Log log = LogFactory.getLog(Rdf2Java.class);
 
 	private Model model;
 	private SerializationOptions options = new SerializationOptions();
 
-	public Rdf2Pojo(Model model) {
+	public Rdf2Java(Model model) {
 		super();
 		this.model = model;
 	}
 
-	public Rdf2Pojo(Model model, SerializationOptions options) {
+	public Rdf2Java(Model model, SerializationOptions options) {
 		super();
 		this.model = model;
 		this.options = options;
 	}
 
-	public KtbsResource getResource(String uri) {
+	public IKtbsResource getResource(String uri) {
 		alreadyReadResources.clear();
 		Class<?> cls = guessType(uri);
 		return readResource(uri, cls);
 	}
 
-	public KtbsResource readResource(String uri, Class<?> cls) {
+	public IKtbsResource readResource(String uri, Class<?> cls) {
 		if(Root.class.isAssignableFrom(cls)) 
 			return readRoot(uri);
 		else if(Base.class.isAssignableFrom(cls)) 
@@ -197,7 +199,7 @@ public class Rdf2Pojo {
 				(RDFNode)null);
 		while (it.hasNext()) {
 			Statement statement = (Statement) it.next();
-			MethodParameter methodParameter = KtbsUtils.parseMethodParameter(statement.getObject().asLiteral().getString());
+			IMethodParameter methodParameter = KtbsUtils.parseMethodParameter(statement.getObject().asLiteral().getString());
 			withParametersPojo.getMethodParameters().add(new MethodParameter(
 					methodParameter.getName(),
 					methodParameter.getValue()

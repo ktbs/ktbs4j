@@ -34,6 +34,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.domain.KtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
 public class KtbsRestServiceImpl implements KtbsRestService {
@@ -160,7 +161,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		get.addHeader(HttpHeaders.ACCEPT, getGETMimeType());
 
 		HttpResponse response = null;
-		KtbsResource ktbsResource = null;
+		IKtbsResource ktbsResource = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
 
 		String body = null;

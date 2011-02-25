@@ -5,26 +5,45 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IPropertyStatement;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsResource extends UriResourceImpl {
+public class KtbsResource extends UriResource implements IKtbsResource {
 
 	private Set<String> labels = new HashSet<String>();
-	private Set<PropertyStatement> properties = new HashSet<PropertyStatement>();
+	private Set<IPropertyStatement> properties = new HashSet<IPropertyStatement>();
 	
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#getLabels()
+	 */
+	@Override
 	public Set<String> getLabels() {
 		return labels;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#setLabels(java.util.Set)
+	 */
+	@Override
 	public void setLabels(Set<String> labels) {
 		this.labels = labels;
 	}
 	
-	public Set<PropertyStatement> getProperties() {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#getProperties()
+	 */
+	@Override
+	public Set<IPropertyStatement> getProperties() {
 		return properties;
 	}
 	
-	public void setProperties(Set<PropertyStatement> properties) {
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#setProperties(java.util.Set)
+	 */
+	@Override
+	public void setProperties(Set<IPropertyStatement> properties) {
 		this.properties = properties;
 	}
 
@@ -35,50 +54,82 @@ public class KtbsResource extends UriResourceImpl {
 			return c.iterator().next();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#getLabel()
+	 */
+	@Override
 	public String getLabel() {
 		return getFirstOrNull(labels);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#addLabel(java.lang.String)
+	 */
+	@Override
 	public void addLabel(String label) {
 		labels.add(label);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#getPropertyValues(java.lang.String)
+	 */
+	@Override
 	public Collection<Object> getPropertyValues(String propertyName) {
 		Collection<Object> values = new HashSet<Object>();
-		for(PropertyStatement stmt:getProperties()) {
+		for(IPropertyStatement stmt:getProperties()) {
 			if(stmt.getProperty().equals(propertyName))
 				values.add(stmt.getValue());
 		}
 		return values;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#getPropertyValue(java.lang.String)
+	 */
+	@Override
 	public Object getPropertyValue(String propertyName) {
-		PropertyStatement firstProperty = getFirstOrNull(properties);
+		IPropertyStatement firstProperty = getFirstOrNull(properties);
 		return firstProperty==null?
 				null:
 					firstProperty.getValue();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#addProperty(java.lang.String, java.lang.Object)
+	 */
+	@Override
 	public void addProperty(final String propertyName, final Object value) {
 		properties.add(new PropertyStatement(value, propertyName));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#removeProperty(java.lang.String)
+	 */
+	@Override
 	public void removeProperty(String propertyName) {
-		Iterator<PropertyStatement> it = getProperties().iterator();
+		Iterator<IPropertyStatement> it = getProperties().iterator();
 		while (it.hasNext()) {
-			PropertyStatement propertyStatement = (PropertyStatement) it.next();
+			IPropertyStatement propertyStatement = it.next();
 			if(propertyName.equals(propertyStatement.getProperty()))
 				it.remove();
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#getLocalName()
+	 */
+	@Override
 	public String getLocalName() {
 		return KtbsUtils.resolveLocalName(getUri());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.IKtbsResource#getTypeUri()
+	 */
+	@Override
 	public String getTypeUri() {
-		if (this instanceof Obsel) {
-			Obsel obsel = (Obsel) this;
+		if (this instanceof IObsel) {
+			IObsel obsel = (IObsel) this;
 			return obsel.getObselType().getUri();
 		} else
 			return KtbsUtils.getRDFType(this.getClass());

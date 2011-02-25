@@ -1,6 +1,6 @@
 package org.liris.ktbs.core;
 
-import org.liris.ktbs.rest.KtbsRestService;
+import org.liris.ktbs.rest.KtbsRestClient;
 
 /**
  * The entry point of the KTBS Java API.
@@ -21,7 +21,7 @@ public class KtbsClient {
 
 	/**
 	 * 
-	 * Creates a new {@link KtbsRestService} object that will
+	 * Creates a new {@link KtbsRestClient} object that will
 	 * allow to communicate with remote KTBS through the KTBS REST API.
 	 * 
 	 * <p>
@@ -32,7 +32,7 @@ public class KtbsClient {
 	 * @return a new instance of that service, with a new empty cache.
 	 * 
 	 */
-	public static KtbsRestService newRestService() {
+	public static KtbsRestClient newRestService() {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	

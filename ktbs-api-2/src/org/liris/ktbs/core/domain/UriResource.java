@@ -2,7 +2,7 @@ package org.liris.ktbs.core.domain;
 
 import java.net.URI;
 
-import org.liris.ktbs.core.IUriResource;
+import org.liris.ktbs.core.domain.interfaces.IUriResource;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class UriResource implements IUriResource {

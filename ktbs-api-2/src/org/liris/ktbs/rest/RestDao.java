@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.serial.RdfResourceSerializer;
@@ -21,7 +20,7 @@ public class RestDao implements ResourceDao {
 	private static String receiveMimeType = KtbsConstants.MIME_NTRIPLES;
 	
 	private Map<String, String> etags = new HashMap<String, String>();
-	private KtbsRestService service;
+	private KtbsRestClient service;
 	
 	private String rootUri;
 	
@@ -30,7 +29,7 @@ public class RestDao implements ResourceDao {
 	}
 	
 	public void init(String user, String password) {
-		service = new KtbsRestServiceImpl(rootUri);
+		service = new ApacheKtbsRestClient(rootUri);
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class RestDao implements ResourceDao {
 	}
 
 	@Override
-	public boolean create(KtbsResource resource) {
+	public boolean create(IKtbsResource resource) {
 		StringWriter writer = new StringWriter();
 		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
 		KtbsResponse response = service.post(resource);
@@ -66,7 +65,7 @@ public class RestDao implements ResourceDao {
 	}
 
 	@Override
-	public boolean save(KtbsResource resource) {
+	public boolean save(IKtbsResource resource) {
 		StringWriter writer = new StringWriter();
 		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
 		String etag = etags.get(resource.getUri());
@@ -87,5 +86,10 @@ public class RestDao implements ResourceDao {
 	@Override
 	public boolean delete(String uri) {
 		return service.delete(uri).hasSucceeded();
+	}
+
+	@Override
+	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
+		return cls.cast(get(uri));
 	}
 }

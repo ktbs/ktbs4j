@@ -13,11 +13,9 @@ import org.apache.http.util.EntityUtils;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 
 
-
-
 public class KtbsResponseImpl implements KtbsResponse {
 
-	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
+	private static Log log = LogFactory.getLog(ApacheKtbsRestClient.class);
 
 	private IKtbsResource resource;
 	private boolean executedWithSuccess;

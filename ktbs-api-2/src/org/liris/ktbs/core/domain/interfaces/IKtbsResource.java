@@ -3,7 +3,6 @@ package org.liris.ktbs.core.domain.interfaces;
 import java.util.Collection;
 import java.util.Set;
 
-import org.liris.ktbs.core.IUriResource;
 
 public interface IKtbsResource extends IUriResource {
 

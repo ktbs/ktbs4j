@@ -2,47 +2,43 @@ package org.liris.ktbs.core;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
+import org.liris.ktbs.core.domain.UriResource;
+import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IUriResource;
+import org.liris.ktbs.dao.ResourceDao;
 
-public class ResourceProxy {
+public class ResourceProxy<T extends IKtbsResource> implements InvocationHandler {
+	
+	private IUriResource resource;
+	private ResourceDao dao;
+	private Class<T> cls;
 
-	private ResourceManager manager;
-
-	private class ProxyResourceInvokationHandler implements InvocationHandler {
-		private IUriResource resource;
-
-		private ResourceManager manager;
-		private String uri;
-
-		public ProxyResourceInvokationHandler(ResourceManager manager,
-				String uri) {
-			super();
-			this.manager = manager;
-			this.uri = uri;
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args)
-		throws Throwable {
-			if(resource == null) {
-				if(method.getName().equals("getUri"))
-					return uri;
-				else 
-					resource = manager.getKtbsResource(uri);
-			} 
-			return method.invoke(resource, args);
-		}
-	};
-
-	public IUriResource newProxy(String uri) {
-		Class<?>[] interfaces = new Class<?>[1];
-		interfaces[0] = IUriResource.class;
-
-		return (IUriResource)Proxy.newProxyInstance(
-				ResourceProxy.class.getClassLoader(), 
-				interfaces, 
-				new ProxyResourceInvokationHandler(manager, uri));
+	public ResourceProxy(
+			ResourceDao dao,
+			String uri,
+			Class<T> cls
+			) {
+		super();
+		this.cls = cls;
+		this.dao = dao;
+		this.resource = new UriResource(uri);
 	}
 
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args)
+	throws Throwable {
+		if(resource == null) {
+			if(method.getName().equals("getUri") 
+					|| method.getName().equals("equals")
+					|| method.getName().equals("hashCode")
+					|| method.getName().equals("compareTo")
+					)
+				return method.invoke(resource, args);
+			else {
+				resource = dao.get(resource.getUri(), cls);
+			}
+		} 
+		return method.invoke(resource, args);
+	}
 }

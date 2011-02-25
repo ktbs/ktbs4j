@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 
 import org.liris.ktbs.core.DefaultManager;
 import org.liris.ktbs.core.ResourceManager;
-import org.liris.ktbs.core.domain.ComputedTrace;
+import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 
 public class DefaultManagerTestCase extends TestCase {
 
@@ -26,7 +26,7 @@ public class DefaultManagerTestCase extends TestCase {
 	}
 
 	public void testNewComputedTrace() {
-		ComputedTrace trace = manager.newComputedTrace(
+		IComputedTrace trace = manager.newComputedTrace(
 				"http://localhost:8001/base1/", 
 				"t1", 
 				"http://localhost:8001/base1/method1/", 

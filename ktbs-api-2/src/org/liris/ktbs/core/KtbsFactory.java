@@ -1,6 +1,6 @@
 package org.liris.ktbs.core;
 
-import org.liris.ktbs.rest.KtbsRestService;
+import org.liris.ktbs.rest.KtbsRestClient;
 
 /**
  * A factory that creates KTBS repositories.
@@ -26,7 +26,7 @@ public interface KtbsFactory {
 	 * stored an a remote KTBS server. 
 	 * <p>
 	 * To communicate with the remote KTBS server, this repository makes use
-	 * of a {@link KtbsRestService} that uses native HTTP caching to optimize 
+	 * of a {@link KtbsRestClient} that uses native HTTP caching to optimize 
 	 * the communication.
 	 * </p>
 	 * 

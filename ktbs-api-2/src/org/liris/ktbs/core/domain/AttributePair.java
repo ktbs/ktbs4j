@@ -8,6 +8,11 @@ public class AttributePair implements IAttributePair {
 	private IAttributeType attributeType;
 	private Object value;
 	
+	public AttributePair(IAttributeType attributeType, Object value) {
+		super();
+		this.attributeType = attributeType;
+		this.value = value;
+	}
 	/* (non-Javadoc)
 	 * @see org.liris.ktbs.core.domain.IAttributePair#getAttributeType()
 	 */
@@ -36,13 +41,9 @@ public class AttributePair implements IAttributePair {
 	public void setValue(Object value) {
 		this.value = value;
 	}
+	
 	public AttributePair() {
 		super();
-	}
-	public AttributePair(AttributeType attributeType, Object value) {
-		super();
-		this.attributeType = attributeType;
-		this.value = value;
 	}
 	
 	@Override

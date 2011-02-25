@@ -33,21 +33,19 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
-public class KtbsRestServiceImpl implements KtbsRestService {
+public class ApacheKtbsRestClient implements KtbsRestClient {
 
 	public static final String MESSAGE_DELETE_NOT_SUPPORTED = "DELETE method are not supported by the KTBS server in the current version";
 	private static final String MESSAGE_CLIENT_NOT_STARTED = "The HTTP client is not started. Please call KtbsClient.startSession() before calling any KTBS remote service.";
 
-	private static Log log = LogFactory.getLog(KtbsRestServiceImpl.class);
-
+	private static Log log = LogFactory.getLog(ApacheKtbsRestClient.class);
 
 	private URI ktbsRootURI;
 
-	KtbsRestServiceImpl(String ktbsRootURI) {
+	ApacheKtbsRestClient(String ktbsRootURI) {
 		this.ktbsRootURI = URI.create(ktbsRootURI);
 	}
 
@@ -85,7 +83,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 		// determine the release version from packaged version info
 		final VersionInfo vi = VersionInfo.loadVersionInfo(
 				"org.apache.http.client", 
-				KtbsRestServiceImpl.class.getClassLoader());
+				ApacheKtbsRestClient.class.getClassLoader());
 		final String release = (vi != null) ? vi.getRelease() : VersionInfo.UNAVAILABLE;
 		HttpProtocolParams.setUserAgent(httpParams, "KTBS Client, based on Apache-HttpClient/" + release + " (java 1.5)");
 
@@ -332,10 +330,8 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 				response);
 	}
 
-	
-
 	@Override
-	public KtbsResponse post(KtbsResource resource) {
+	public KtbsResponse post(IKtbsResource resource) {
 		checkStarted(); 
 		
 		String postURI = resource.getUri();
@@ -399,7 +395,7 @@ public class KtbsRestServiceImpl implements KtbsRestService {
 	}
 
 	@Override
-	public KtbsResponse update(KtbsResource resource, String etag) {
+	public KtbsResponse update(IKtbsResource resource, String etag) {
 		final String putURI = resource.getUri();
 
 		checkStarted(); 

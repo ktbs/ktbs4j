@@ -13,7 +13,6 @@ import org.liris.ktbs.core.domain.AttributePair;
 import org.liris.ktbs.core.domain.AttributeType;
 import org.liris.ktbs.core.domain.Base;
 import org.liris.ktbs.core.domain.ComputedTrace;
-import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.core.domain.Method;
 import org.liris.ktbs.core.domain.MethodParameter;
 import org.liris.ktbs.core.domain.Obsel;
@@ -26,8 +25,19 @@ import org.liris.ktbs.core.domain.StoredTrace;
 import org.liris.ktbs.core.domain.Trace;
 import org.liris.ktbs.core.domain.TraceModel;
 import org.liris.ktbs.core.domain.WithParametersDelegate;
+import org.liris.ktbs.core.domain.interfaces.IAttributeType;
+import org.liris.ktbs.core.domain.interfaces.IBase;
+import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IMethod;
 import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
+import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IObselType;
+import org.liris.ktbs.core.domain.interfaces.IRelationType;
+import org.liris.ktbs.core.domain.interfaces.IRoot;
+import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.core.domain.interfaces.ITrace;
+import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 import org.liris.ktbs.core.domain.interfaces.WithParameters;
 import org.liris.ktbs.serial.SerializationOptions;
 import org.liris.ktbs.utils.KtbsUtils;
@@ -65,34 +75,34 @@ public class Rdf2Java {
 	}
 
 	public IKtbsResource readResource(String uri, Class<?> cls) {
-		if(Root.class.isAssignableFrom(cls)) 
+		if(IRoot.class.isAssignableFrom(cls)) 
 			return readRoot(uri);
-		else if(Base.class.isAssignableFrom(cls)) 
+		else if(IBase.class.isAssignableFrom(cls)) 
 			return readBase(uri);
-		else if(StoredTrace.class.isAssignableFrom(cls)) 
+		else if(IStoredTrace.class.isAssignableFrom(cls)) 
 			return readStoredTrace(uri);
-		else if(ComputedTrace.class.isAssignableFrom(cls)) 
+		else if(IComputedTrace.class.isAssignableFrom(cls)) 
 			return readComputedTrace(uri);
-		else if(Obsel.class.isAssignableFrom(cls)) 
+		else if(IObsel.class.isAssignableFrom(cls)) 
 			return readObsel(uri);
-		else if(ObselType.class.isAssignableFrom(cls)) 
+		else if(IObselType.class.isAssignableFrom(cls)) 
 			return readObselType(uri);
-		else if(AttributeType.class.isAssignableFrom(cls)) 
+		else if(IAttributeType.class.isAssignableFrom(cls)) 
 			return readAttributeType(uri);
-		else if(RelationType.class.isAssignableFrom(cls)) 
+		else if(IRelationType.class.isAssignableFrom(cls)) 
 			return readRelationType(uri);
-		else if(TraceModel.class.isAssignableFrom(cls)) 
+		else if(ITraceModel.class.isAssignableFrom(cls)) 
 			return readTraceModel(uri);
-		else if(Method.class.isAssignableFrom(cls)) 
+		else if(IMethod.class.isAssignableFrom(cls)) 
 			return readMethod(uri);
-		else if(Trace.class.isAssignableFrom(cls)) 
+		else if(ITrace.class.isAssignableFrom(cls)) 
 			return readTrace(uri);
 		else 
 			throw new IllegalStateException("Should never be invoked since specified method are defined for each resource");
 	}
 
 	// Read a method
-	private Method readMethod(String uri) {
+	private IMethod readMethod(String uri) {
 		if(alreadyReadResources.containsKey(uri))
 			return (Method) alreadyReadResources.get(uri);
 
@@ -114,7 +124,7 @@ public class Rdf2Java {
 	}
 
 	// Read a root
-	private Root readRoot(String uri) {
+	private IRoot readRoot(String uri) {
 		if(alreadyReadResources.containsKey(uri))
 			return (Root) alreadyReadResources.get(uri);
 
@@ -135,7 +145,7 @@ public class Rdf2Java {
 		return root;
 	}
 
-	private Base readBase(String uri) {
+	private IBase readBase(String uri) {
 		if(alreadyReadResources.containsKey(uri))
 			return (Base) alreadyReadResources.get(uri);
 
@@ -167,7 +177,7 @@ public class Rdf2Java {
 		return base;
 	}
 
-	private ComputedTrace readComputedTrace(String uri) {
+	private IComputedTrace readComputedTrace(String uri) {
 		if(alreadyReadResources.containsKey(uri))
 			return (ComputedTrace) alreadyReadResources.get(uri);
 
@@ -208,9 +218,9 @@ public class Rdf2Java {
 		return withParametersPojo;
 	}
 
-	private Map<String, KtbsResource> alreadyReadResources = new HashMap<String, KtbsResource>();
+	private Map<String, IKtbsResource> alreadyReadResources = new HashMap<String, IKtbsResource>();
 
-	private void fillResource(KtbsResource resource) {
+	private void fillResource(IKtbsResource resource) {
 
 		alreadyReadResources.put(resource.getUri(), resource);
 
@@ -251,7 +261,7 @@ public class Rdf2Java {
 		return null;
 	}
 
-	private void fillTrace(Trace trace) {
+	private void fillTrace(ITrace trace) {
 		fillResource(trace);
 
 		// the traceformed traces
@@ -553,7 +563,7 @@ public class Rdf2Java {
 	 * Read a trace from the model without knowing in advance if 
 	 * its a stored trace or a computed trace
 	 */
-	private Trace readTrace(String uri) {
+	private ITrace readTrace(String uri) {
 		if(alreadyReadResources.containsKey(uri))
 			return (Trace) alreadyReadResources.get(uri);
 		String rdfType = getRdfType(uri);
@@ -570,7 +580,7 @@ public class Rdf2Java {
 
 	}
 
-	private StoredTrace readStoredTrace(String uri) {
+	private IStoredTrace readStoredTrace(String uri) {
 		if(alreadyReadResources.containsKey(uri))
 			return (StoredTrace) alreadyReadResources.get(uri);
 
@@ -585,7 +595,7 @@ public class Rdf2Java {
 		return trace;
 	}
 
-	private TraceModel readTraceModel(String uri) {
+	private ITraceModel readTraceModel(String uri) {
 		if(alreadyReadResources.containsKey(uri))
 			return (TraceModel) alreadyReadResources.get(uri);
 

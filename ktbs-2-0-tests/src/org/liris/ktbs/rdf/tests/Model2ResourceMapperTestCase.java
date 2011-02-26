@@ -21,15 +21,13 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class Model2ResourceMapperTestCase extends TestCase {
-	Model model;
-	Rdf2Java mapper;
+	private Model model;
+	private Rdf2Java mapper;
 	
 	@Override
 	protected void setUp() throws Exception {
 		model = ModelFactory.createDefaultModel();
 		mapper = new Rdf2Java(model);
-		
-		
 	}
 	
 	public void testReadBase() throws Exception {
@@ -70,15 +68,13 @@ public class Model2ResourceMapperTestCase extends TestCase {
 	
 	public void testReadTraceModel() throws Exception {
 		model.read(new FileInputStream("turtle/gra_model1.ttl"), "", KtbsConstants.JENA_TURTLE);
-		IKtbsResource pojo = mapper.readResource("http://localhost:8001/base1/model1/", ITraceModel.class);
-		assertTrue(pojo instanceof ITraceModel);
-		ITraceModel traceModel = (ITraceModel) pojo;
+		ITraceModel traceModel = mapper.getResource("http://localhost:8001/base1/model1/", ITraceModel.class);
 
 		assertEquals(3, traceModel.getAttributeTypes().size());
 		assertEquals(2, traceModel.getRelationTypes().size());
 		assertEquals(6, traceModel.getObselTypes().size());
 
-		pojo = mapper.getResource("http://localhost:8001/base1/model1/SendMsg");
+		IKtbsResource pojo = mapper.getResource("http://localhost:8001/base1/model1/SendMsg");
 		assertTrue(IObselType.class.isAssignableFrom(pojo.getClass()));
 		IObselType obsType = (IObselType)pojo;
 		assertEquals(1, obsType.getSuperObselTypes().size());
@@ -100,7 +96,7 @@ public class Model2ResourceMapperTestCase extends TestCase {
 		assertEquals(0, relType.getRanges().size());
 		assertEquals(1, relType.getSuperRelationTypes().size());
 		assertEquals(new UriResource("http://localhost:8001/base1/model1/onChannel"), relType.getSuperRelationTypes().iterator().next());
-//		assertEquals(1, attType.get)
+		
 		
 	}
 	
@@ -155,6 +151,19 @@ public class Model2ResourceMapperTestCase extends TestCase {
 		assertEquals(0, o4.getAttributePairs().size());
 		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o4.getTrace());
 		
+		
+		//
+		IObselType type = o4.getObselType();
+		try {
+			type.getLabel();
+			fail("NullPointerException expected");
+		} catch(NullPointerException e) {
+			/*
+			 * Ok, the dao is null and the lazy loading fails
+			 */
+		} catch(Exception e) {
+			fail("Unexpected exception: " + e.toString());
+		}
 		
 	}
 }

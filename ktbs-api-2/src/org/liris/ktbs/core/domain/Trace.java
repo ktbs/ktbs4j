@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
@@ -14,7 +15,7 @@ public class Trace extends ResourceContainer<IObsel> implements ITrace {
 	private String compliesWithModel;
 	private ITraceModel traceModel;
 	
-	private Set<ITrace> transformedTraces = new HashSet<ITrace>();
+	private Set<IComputedTrace> transformedTraces = new HashSet<IComputedTrace>();
 	private Set<IObsel> obsels = new HashSet<IObsel>();
 
 	/* (non-Javadoc)
@@ -69,7 +70,7 @@ public class Trace extends ResourceContainer<IObsel> implements ITrace {
 	 * @see org.liris.ktbs.core.domain.ITrace#getTransformedTraces()
 	 */
 	@Override
-	public Set<ITrace> getTransformedTraces() {
+	public Set<IComputedTrace> getTransformedTraces() {
 		return transformedTraces;
 	}
 
@@ -77,7 +78,7 @@ public class Trace extends ResourceContainer<IObsel> implements ITrace {
 	 * @see org.liris.ktbs.core.domain.ITrace#setTransformedTraces(java.util.Set)
 	 */
 	@Override
-	public void setTransformedTraces(Set<ITrace> transformedTraces) {
+	public void setTransformedTraces(Set<IComputedTrace> transformedTraces) {
 		this.transformedTraces = transformedTraces;
 	}
 

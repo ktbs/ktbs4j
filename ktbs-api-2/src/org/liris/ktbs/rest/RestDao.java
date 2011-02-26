@@ -8,7 +8,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
+import org.liris.ktbs.core.ResultSet;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.serial.RdfResourceSerializer;
 
@@ -43,10 +45,15 @@ public class RestDao implements ResourceDao {
 			else
 				log.warn("No etag was attached to the resource \""+uri+"\".");
 			
-			IKtbsResource resource = new RdfResourceSerializer().deserialize(
+			IKtbsResource resource = new RdfResourceSerializer().deserializeResource(
 					uri,
 					new StringReader(response.getBodyAsString()), 
 					response.getMimeType());
+			
+			if (resource instanceof ITrace) {
+				ITrace trace = (ITrace) resource;
+				
+			}
 			return resource;
 		}
 	}
@@ -91,5 +98,12 @@ public class RestDao implements ResourceDao {
 	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
 		return cls.cast(get(uri));
+	}
+
+	@Override
+	public <T extends IKtbsResource> ResultSet<T> query(String request,
+			Class<T> cls) {
+		
+		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 }

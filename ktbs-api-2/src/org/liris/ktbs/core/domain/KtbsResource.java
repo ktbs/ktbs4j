@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IObselType;
 import org.liris.ktbs.core.domain.interfaces.IPropertyStatement;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -130,7 +131,8 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 	public String getTypeUri() {
 		if (this instanceof IObsel) {
 			IObsel obsel = (IObsel) this;
-			return obsel.getObselType().getUri();
+			IObselType obselType = obsel.getObselType();
+			return obselType==null?null:obselType.getUri();
 		} else
 			return KtbsUtils.getRDFType(this.getClass());
 	}

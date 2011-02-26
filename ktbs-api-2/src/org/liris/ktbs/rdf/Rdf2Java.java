@@ -9,6 +9,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
+import org.liris.ktbs.core.ProxyFactory;
+import org.liris.ktbs.core.ResultSet;
 import org.liris.ktbs.core.domain.AttributePair;
 import org.liris.ktbs.core.domain.AttributeType;
 import org.liris.ktbs.core.domain.Base;
@@ -17,6 +19,7 @@ import org.liris.ktbs.core.domain.Method;
 import org.liris.ktbs.core.domain.MethodParameter;
 import org.liris.ktbs.core.domain.Obsel;
 import org.liris.ktbs.core.domain.ObselType;
+import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.PropertyStatement;
 import org.liris.ktbs.core.domain.RelationStatement;
 import org.liris.ktbs.core.domain.RelationType;
@@ -33,18 +36,21 @@ import org.liris.ktbs.core.domain.interfaces.IMethod;
 import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IObselType;
+import org.liris.ktbs.core.domain.interfaces.IRelationStatement;
 import org.liris.ktbs.core.domain.interfaces.IRelationType;
 import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 import org.liris.ktbs.core.domain.interfaces.WithParameters;
-import org.liris.ktbs.serial.SerializationOptions;
+import org.liris.ktbs.serial.DeserializationConfig;
+import org.liris.ktbs.serial.DeserializationMode;
+import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.utils.KtbsUtils;
+import org.liris.ktbs.utils.ThreeKeyedMap;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -54,49 +60,105 @@ public class Rdf2Java {
 
 	private static final Log log = LogFactory.getLog(Rdf2Java.class);
 
+	private ProxyFactory proxyFactory;
+	private PojoFactory pojoFactory;
+
+	private DeserializationConfig config;
+
 	private Model model;
-	private SerializationOptions options = new SerializationOptions();
+	private Map<String, IKtbsResource> alreadyReadResources = new HashMap<String, IKtbsResource>();
 
 	public Rdf2Java(Model model) {
 		super();
 		this.model = model;
+		this.config = new DeserializationConfig();
 	}
 
-	public Rdf2Java(Model model, SerializationOptions options) {
+	public Rdf2Java(Model model, DeserializationConfig config) {
 		super();
 		this.model = model;
-		this.options = options;
+		this.config = config;
 	}
 
-	public IKtbsResource getResource(String uri) {
-		alreadyReadResources.clear();
-		Class<?> cls = guessType(uri);
+	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls) {
+		reset();
 		return readResource(uri, cls);
 	}
 
-	public IKtbsResource readResource(String uri, Class<?> cls) {
+	private void reset() {
+		alreadyReadResources.clear();
+		obselRelations.clear();
+	}
+
+	public IKtbsResource getResource(String uri) {
+		reset();
+		Class<? extends IKtbsResource> cls = guessType(uri);
+		return readResource(uri, cls);
+	}
+
+	public <T extends IKtbsResource> ResultSet<T> getResourceSet(Class<T> cls) {
+		reset();
+		return readAllResources(cls);
+	}
+
+	private <T extends IKtbsResource> ResultSet<T> readAllResources(Class<T> cls) {
+		ResultSet<T> resultSet = new ResultSet<T>();
+
+		Set<String> uris = guessResultUris(cls);
+
+		for(String uri:uris) {
+			resultSet.add(readResource(uri, cls));
+		}
+
+		return resultSet;
+	}
+
+	private Set<String> guessResultUris(Class<?> cls) {
+
+		Set<String> uris = new HashSet<String>();
+
+		String rdfType = KtbsUtils.getRDFType(cls);
+
+		StmtIterator it;
+		if(rdfType == null) {
+			// we assume this is an obsel
+			it = model.listStatements(null, model.getProperty(KtbsConstants.P_HAS_TRACE), (RDFNode)null);
+		} else {
+			it = model.listStatements(null, RDF.type, model.getResource(rdfType));
+		}
+
+		while (it.hasNext()) {
+			Statement statement = (Statement) it.next();
+			uris.add(statement.getSubject().getURI());
+		}
+
+		return uris;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends IKtbsResource> T readResource(String uri, Class<T> cls) {
 		if(IRoot.class.isAssignableFrom(cls)) 
-			return readRoot(uri);
+			return (T) readRoot(uri);
 		else if(IBase.class.isAssignableFrom(cls)) 
-			return readBase(uri);
+			return (T) readBase(uri);
 		else if(IStoredTrace.class.isAssignableFrom(cls)) 
-			return readStoredTrace(uri);
+			return (T) readStoredTrace(uri);
 		else if(IComputedTrace.class.isAssignableFrom(cls)) 
-			return readComputedTrace(uri);
+			return (T) readComputedTrace(uri);
 		else if(IObsel.class.isAssignableFrom(cls)) 
-			return readObsel(uri);
+			return (T) readObsel(uri);
 		else if(IObselType.class.isAssignableFrom(cls)) 
-			return readObselType(uri);
+			return (T) readObselType(uri);
 		else if(IAttributeType.class.isAssignableFrom(cls)) 
-			return readAttributeType(uri);
+			return (T) readAttributeType(uri);
 		else if(IRelationType.class.isAssignableFrom(cls)) 
-			return readRelationType(uri);
+			return (T) readRelationType(uri);
 		else if(ITraceModel.class.isAssignableFrom(cls)) 
-			return readTraceModel(uri);
+			return (T) readTraceModel(uri);
 		else if(IMethod.class.isAssignableFrom(cls)) 
-			return readMethod(uri);
+			return (T) readMethod(uri);
 		else if(ITrace.class.isAssignableFrom(cls)) 
-			return readTrace(uri);
+			return (T) readTrace(uri);
 		else 
 			throw new IllegalStateException("Should never be invoked since specified method are defined for each resource");
 	}
@@ -110,15 +172,8 @@ public class Rdf2Java {
 		method.setURI(uri);
 		method.setWithMethodParameterDelegate(readResourceWithParameters(method.getUri()));
 
-		// etag
-		Object etag = getValue(method.getUri(), KtbsConstants.P_HAS_ETAG);
-		if(etag != null)
-			method.setEtag((String)etag);
-
-		// inherits
-		Object inherits = getValue(method.getUri(), KtbsConstants.P_INHERITS);
-		if(inherits != null)
-			method.setInherits((String)inherits);
+		method.setEtag(getLiteralOrNull(method.getUri(), KtbsConstants.P_HAS_ETAG, String.class));
+		method.setInherits(getLiteralOrNull(method.getUri(), KtbsConstants.P_INHERITS, String.class));
 
 		return method;
 	}
@@ -128,22 +183,132 @@ public class Rdf2Java {
 		if(alreadyReadResources.containsKey(uri))
 			return (Root) alreadyReadResources.get(uri);
 
-		Root root = new Root();
-		root.setURI(uri);
-		fillResource(root);
+		IRoot root = pojoFactory.createResource(uri, IRoot.class);
 
-		StmtIterator it = model.listStatements(
-				model.getResource(uri), 
-				model.getProperty(KtbsConstants.P_HAS_BASE), 
-				(RDFNode)null);
-
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			root.getBases().add(readBase(statement.getObject().asResource().getURI()));
-		}
+		fillGenericResource(root);
+		fillChildren(uri, KtbsConstants.P_HAS_BASE, root.getBases(), false, IBase.class);
 
 		return root;
 	}
+
+	private <T extends IKtbsResource> void fillChildren(
+			String parentUri, 
+			String parentChildRelation, Set<T> childrenSet, boolean inverse, Class<T> cls) {
+
+		if(config.getMode(LinkAxis.CHILD) == DeserializationMode.NULL)
+			return;
+
+		StmtIterator it;
+		if(inverse) {
+			it = model.listStatements(
+					null, 
+					model.getProperty(parentChildRelation), 
+					model.getResource(parentUri)
+			);
+		} else {
+			it = model.listStatements(
+					model.getResource(parentUri), 
+					model.getProperty(parentChildRelation), 
+					(RDFNode)null);
+		}
+
+		Set<String> childrenUris = new HashSet<String>();
+
+		while (it.hasNext()) {
+			Statement statement = (Statement) it.next();
+			childrenUris.add(
+					inverse?
+							statement.getSubject().getURI():
+								statement.getObject().asResource().getURI());	
+		}
+
+		for(String childUri:childrenUris) {
+			T resource = null;
+			if(config.getMode(LinkAxis.CHILD) == DeserializationMode.PROXY) {
+				resource = proxyFactory.createResourceProxy(childUri, cls);
+			} else if(config.getMode(LinkAxis.CHILD) == DeserializationMode.URI_IN_PLAIN) {
+				resource = pojoFactory.createResource(childUri, cls);
+			} else if(config.getMode(LinkAxis.CHILD) == DeserializationMode.CASCADE) {
+				resource = readResource(childUri, cls);
+			}
+
+			childrenSet.add(resource);
+		}
+	}
+
+
+	private <T extends IKtbsResource> T readLinkedResource(String uri, String pName, boolean inverse, Class<T> cls) {
+		LinkAxis axis = LinkAxis.LINKED;
+		return readLinkedResourceOnAxis(uri, pName, inverse, cls, axis);
+	}
+
+	private <T extends IKtbsResource> Set<T> readLinkedResourceSet(String uri, String pName,
+			boolean inverse, Class<T> cls) {
+		return readLinkedResourceSetOnAxis(uri, pName, inverse, cls, LinkAxis.LINKED);
+	}
+
+	private <T extends IKtbsResource> Set<T> readLinkedResourceSetSameType(String uri, String pName,
+			boolean inverse, Class<T> cls) {
+		return readLinkedResourceSetOnAxis(uri, pName, inverse, cls, LinkAxis.LINKED_SAME_TYPE);
+	}
+
+	private <T extends IKtbsResource> Set<T> readLinkedResourceSetOnAxis(String uri, String pName,
+			boolean inverse, Class<T> cls, LinkAxis axis) {
+
+		if(config.getMode(axis) == DeserializationMode.NULL)
+			return null;
+
+		Set<String> linkedResourceUris = new HashSet<String>();
+		if(inverse) {
+			StmtIterator it = model.listStatements(null, model.getProperty(pName), model.getResource(uri));
+			while(it.hasNext()) {
+				linkedResourceUris.add(it.next().getSubject().getURI());
+			}
+		} else {
+			StmtIterator it = model.listStatements(model.getResource(uri), model.getProperty(pName), (RDFNode)null);
+			while(it.hasNext()) {
+				linkedResourceUris.add(it.next().getObject().asResource().getURI());
+			}
+		}
+
+		Set<T> resourceSet = new HashSet<T>();
+		for(String linkedResourceUri:linkedResourceUris) {
+			if(config.getMode(axis) == DeserializationMode.PROXY) 
+				resourceSet.add(proxyFactory.createResourceProxy(linkedResourceUri, cls));
+			else if(config.getMode(axis) == DeserializationMode.URI_IN_PLAIN)
+				resourceSet.add(pojoFactory.createResource(linkedResourceUri, cls));
+			else if(config.getMode(axis) == DeserializationMode.CASCADE)
+				resourceSet.add(readResource(linkedResourceUri, cls));
+			else 
+				log.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
+		} 
+
+		return resourceSet;
+	}
+
+	private <T extends IKtbsResource> T readLinkedResourceOnAxis(String uri, String pName,
+			boolean inverse, Class<T> cls, LinkAxis axis) {
+		if(config.getMode(axis) == DeserializationMode.NULL)
+			return null;
+
+		String linkedResourceuri;
+		if(inverse) {
+			linkedResourceuri = model.listStatements(null, model.getProperty(pName), model.getResource(uri)).next().getSubject().getURI();
+		} else {
+			linkedResourceuri = model.getResource(uri).getProperty(model.getProperty(pName)).getObject().asResource().getURI();
+		}
+
+		if(config.getMode(axis) == DeserializationMode.PROXY) 
+			return proxyFactory.createResourceProxy(linkedResourceuri, cls);
+		else if(config.getMode(axis) == DeserializationMode.URI_IN_PLAIN)
+			return pojoFactory.createResource(linkedResourceuri, cls);
+		else if(config.getMode(axis) == DeserializationMode.CASCADE)
+			return readResource(linkedResourceuri, cls);
+
+		log.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
+		return null;
+	}
+
 
 	private IBase readBase(String uri) {
 		if(alreadyReadResources.containsKey(uri))
@@ -151,28 +316,12 @@ public class Rdf2Java {
 
 		Base base = new Base();
 		base.setURI(uri);
-		fillResource(base);
+		fillGenericResource(base);
 
-		StmtIterator it = model.listStatements(
-				model.getResource(uri), 
-				model.getProperty(KtbsConstants.P_OWNS), 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			String uri2 = statement.getResource().getURI();
-			if (getRdfType(uri2) == null) {
-				log.warn("The base " + uri + " owns a resource of an unknown type: " + uri2);
-				continue;
-			} else if(getRdfType(uri2).equals(KtbsConstants.TRACE_MODEL)) {
-				base.getTraceModels().add(readTraceModel(uri2));
-			} else if(getRdfType(uri2).equals(KtbsConstants.STORED_TRACE)) {
-				base.getStoredTraces().add(readStoredTrace(uri2));
-			} else if(getRdfType(uri2).equals(KtbsConstants.COMPUTED_TRACE)) {
-				base.getComputedTraces().add(readComputedTrace(uri2));
-			} else if(getRdfType(uri2).equals(KtbsConstants.METHOD)) {
-				base.getMethods().add(readMethod(uri2));
-			}
-		}
+		fillChildren(uri, KtbsConstants.P_OWNS, base.getStoredTraces(), false, IStoredTrace.class);
+		fillChildren(uri, KtbsConstants.P_OWNS, base.getComputedTraces(), false, IComputedTrace.class);
+		fillChildren(uri, KtbsConstants.P_OWNS, base.getTraceModels(), false, ITraceModel.class);
+		fillChildren(uri, KtbsConstants.P_OWNS, base.getMethods(), false, IMethod.class);
 
 		return base;
 	}
@@ -185,18 +334,7 @@ public class Rdf2Java {
 		trace.setURI(uri);
 		fillTrace(trace);
 		trace.setWithMethodParameterDelegate(readResourceWithParameters(trace.getUri()));
-
-		StmtIterator it = model.listStatements(
-				model.getResource(uri), 
-				model.getProperty(KtbsConstants.P_HAS_SOURCE), 
-				(RDFNode)null);
-
-		while (it.hasNext()) {
-			Statement stmt = it.next();
-			trace.getSourceTraces().add(readTrace(stmt.getObject().asResource().getURI()));
-		}
-
-
+		trace.setSourceTraces(readLinkedResourceSetSameType(uri, KtbsConstants.P_HAS_SOURCE, false, ITrace.class));
 		return trace;
 	}
 
@@ -218,30 +356,21 @@ public class Rdf2Java {
 		return withParametersPojo;
 	}
 
-	private Map<String, IKtbsResource> alreadyReadResources = new HashMap<String, IKtbsResource>();
 
-	private void fillResource(IKtbsResource resource) {
+	private void fillGenericResource(IKtbsResource resource) {
 
 		alreadyReadResources.put(resource.getUri(), resource);
 
 		StmtIterator it = model.listStatements(
-				model.getResource(resource.getUri()), 
-				RDFS.label, 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			resource.getLabels().add(statement.getObject().asLiteral().getString());
-		}
-
-
-		it = model.listStatements(
 				model.getResource(resource.getUri()), 
 				null, 
 				(RDFNode)null);
 
 		while (it.hasNext()) {
 			Statement statement = (Statement) it.next();
-			if(KtbsUtils.hasReservedNamespace(statement.getPredicate().getURI())
+			if(statement.getPredicate().equals(RDFS.label))
+				resource.getLabels().add(statement.getObject().asLiteral().getString());
+			else if(KtbsUtils.hasReservedNamespace(statement.getPredicate().getURI())
 			)
 				continue;
 			else
@@ -262,42 +391,28 @@ public class Rdf2Java {
 	}
 
 	private void fillTrace(ITrace trace) {
-		fillResource(trace);
+		fillGenericResource(trace);
 
 		// the traceformed traces
-		StmtIterator it = model.listStatements(
-				null, 
-				model.getProperty(KtbsConstants.P_HAS_SOURCE), 
-				model.getResource(trace.getUri()));
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			trace.getTransformedTraces().add(readComputedTrace(statement.getSubject().getURI()));
-		}
+		trace.setTransformedTraces(
+				readLinkedResourceSetSameType(trace.getUri(), 
+						KtbsConstants.P_HAS_SOURCE, 
+						true, 
+						IComputedTrace.class));
 
 		// the obsels
-		it = model.listStatements(
-				null, 
-				model.getProperty(KtbsConstants.P_HAS_TRACE), 
-				model.getResource(trace.getUri()));
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			trace.getObsels().add(readObsel(statement.getSubject().asResource().getURI()));
-		}
+		fillChildren(trace.getUri(), KtbsConstants.P_HAS_TRACE, trace.getObsels(), true, IObsel.class);
+
 
 		// origin
-		Object origin = getValue(trace.getUri(), KtbsConstants.P_HAS_ORIGIN);
-		if(origin != null)
-			trace.setOrigin(origin.toString());
+		trace.setOrigin(getLiteralOrNull(trace.getUri(), KtbsConstants.P_HAS_ORIGIN, String.class));
 
 		// complies with model
-		Object yesNoValue = getValue(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL);
-		if(yesNoValue != null)
-			trace.setCompliesWithModel((String)yesNoValue);
+		trace.setCompliesWithModel(getLiteralOrNull(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, String.class));
 
 		// the trace model
-		String traceModelUri = getResourceUri(trace.getUri(), KtbsConstants.P_HAS_MODEL);
-		if(traceModelUri != null)
-			trace.setTraceModel(readTraceModel(traceModelUri));
+		ITraceModel model = readLinkedResource(trace.getUri(), KtbsConstants.P_HAS_MODEL, false, ITraceModel.class);
+		trace.setTraceModel(model);
 
 	}
 
@@ -307,77 +422,66 @@ public class Rdf2Java {
 
 		Obsel obsel = new Obsel();
 		obsel.setURI(uri);
-		fillResource(obsel);
+		fillGenericResource(obsel);
 
 		// the obsel type
-		String obselTypeUri = getResourceUri(uri, RDF.type.getURI());
-		if(obselTypeUri != null)
-			obsel.setObselType(readObselType(obselTypeUri));
+		obsel.setObselType(readLinkedResource(uri, RDF.type.getURI(), false, IObselType.class));
 
 		// begin
-		Object begin = getValue(obsel.getUri(), KtbsConstants.P_HAS_BEGIN);
+		Object begin = getLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN);
 		if(begin != null)
 			obsel.setBegin(new BigInteger(begin.toString()));
 
 		// end
-		Object end = getValue(obsel.getUri(), KtbsConstants.P_HAS_END);
+		Object end = getLiteral(obsel.getUri(), KtbsConstants.P_HAS_END);
 		if(end != null)
 			obsel.setEnd(new BigInteger(end.toString()));
 
 		// beginDT
-		Object beginDT = getValue(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT);
-		if(beginDT != null)
-			obsel.setBeginDT(beginDT.toString());
+		obsel.setBeginDT(getLiteralOrNull(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, String.class));
 
 		// endDT
-		Object endDT = getValue(obsel.getUri(), KtbsConstants.P_HAS_END_DT);
-		if(endDT != null)
-			obsel.setEndDT(endDT.toString());
+		obsel.setEndDT(getLiteralOrNull(obsel.getUri(), KtbsConstants.P_HAS_END_DT, String.class));
 
 		// subject
-		Object subject = getValue(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT);
-		if(subject!= null)
-			obsel.setSubject((String)subject);
+		obsel.setSubject(getLiteralOrNull(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT, String.class));
 
 		// parent trace
-		obsel.setTrace(readTrace(getResourceUri(uri, KtbsConstants.P_HAS_TRACE)));
+		obsel.setTrace(
+				readLinkedResource(uri, KtbsConstants.P_HAS_TRACE, false, ITrace.class));
 
 
 		// source obsels (transformation source obsels)
-		StmtIterator it = model.listStatements(
-				model.getResource(obsel.getUri()), 
-				model.getProperty(KtbsConstants.P_HAS_SOURCE_OBSEL), 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			obsel.getSourceObsels().add(readObsel(statement.getObject().asResource().getURI()));
-		}
+		obsel.setSourceObsels(readLinkedResourceSetSameType(uri, KtbsConstants.P_HAS_SOURCE_OBSEL, false, IObsel.class));
 
 
 		// incoming relations
 		Set<Statement> incomingSourceObselStatement = findIncomingSourceObselStatements(obsel.getUri());
 		for(Statement stmt:incomingSourceObselStatement) {
-			obsel.getIncomingRelations().add(new RelationStatement(
-					readObsel(stmt.getSubject().getURI()), 
-					readRelationType(stmt.getPredicate().getURI()), 
-					obsel));
+			IObsel sourceObsel = createObselFromRelation(stmt.getSubject().getURI());
+			if(sourceObsel != null)
+				obsel.getIncomingRelations().add(readRelationStatement(
+						sourceObsel, 
+						stmt.getPredicate().getURI(), 
+						obsel));
 		}
 
 		// outgoing relations
 		Set<Statement> outgoingTargetObselStatements = findOutgoingTargetObselStatements(obsel.getUri());
 		for(Statement stmt:outgoingTargetObselStatements) {
-			obsel.getOutgoingRelations().add(new RelationStatement(
-					obsel, 
-					readRelationType(stmt.getPredicate().getURI()),
-					readObsel(stmt.getObject().asResource().getURI())));
+			IObsel targetObsel = createObselFromRelation(stmt.getObject().asResource().getURI());
+			if(targetObsel != null)
+				obsel.getOutgoingRelations().add(readRelationStatement(
+						obsel, 
+						stmt.getPredicate().getURI(), 
+						targetObsel));
 		}
-
 
 		// attributes
 		Set<Statement> attributeStatements = findAttributeStatements(obsel.getUri());
 		for(Statement stmt:attributeStatements) {
 			obsel.getAttributePairs().add(new AttributePair(
-					readAttributeType(stmt.getPredicate().getURI()),
+					proxyFactory.createResourceProxy(stmt.getPredicate().getURI(), IAttributeType.class),
 					stmt.getObject().asLiteral().getValue()
 			));
 		}
@@ -385,8 +489,38 @@ public class Rdf2Java {
 		return obsel;
 	}
 
+	private IObsel createObselFromRelation(String obselUri) {
+		IObsel obsel = null;
+		if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.NULL)
+			return null;
+		else if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.URI_IN_PLAIN) 
+			obsel = pojoFactory.createResource(obselUri, IObsel.class);
+		else if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.PROXY) 
+			obsel = proxyFactory.createResourceProxy(obselUri, IObsel.class);
+		else if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.CASCADE) 
+			obsel = readObsel(obselUri);
+		else
+			log.warn("Unknown deserialisation option: " + config.getMode(LinkAxis.LINKED_SAME_TYPE));
+		return obsel;
+	}
 
+	private ThreeKeyedMap<IRelationStatement> obselRelations = new ThreeKeyedMap<IRelationStatement>();
 
+	private IRelationStatement readRelationStatement(IObsel sourceObsel,
+			String relUri, IObsel targetObsel) {
+		IRelationStatement rel = obselRelations.get(sourceObsel.getUri(), relUri, targetObsel.getUri());
+		if(rel != null)
+			return rel;
+		else {
+			rel = new RelationStatement(
+					sourceObsel, 
+					proxyFactory.createResourceProxy(relUri, IRelationType.class), 
+					targetObsel);
+
+			obselRelations.put(sourceObsel.getUri(), relUri, targetObsel.getUri(), rel);
+			return rel;
+		}
+	}
 
 	/*
 	 * Find in the model all the attribute statements of an obsel.
@@ -436,7 +570,6 @@ public class Rdf2Java {
 		return targetObselUris;
 	}
 
-
 	/*
 	 * Find the set of all obsel uris that are the source of 
 	 * an inter obsel relation with the target whose uri is given as parameter.
@@ -459,8 +592,12 @@ public class Rdf2Java {
 		}
 
 		return incomingSourceObselUris;
-
 	}
+
+
+	/*
+	 *  READ TRACE MODEL RESOURCES
+	 */
 
 	private AttributeType readAttributeType(String uri) {
 		if(alreadyReadResources.containsKey(uri))
@@ -468,21 +605,18 @@ public class Rdf2Java {
 
 		AttributeType attType = new AttributeType();
 		attType.setURI(uri);
-		fillResource(attType);
+		fillGenericResource(attType);
 
-		// domains
-		StmtIterator it = model.listStatements(
-				model.getResource(attType.getUri()), 
-				model.getProperty(KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN), 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			attType.getDomains().add(readObselType(statement.getObject().asResource().getURI()));
-		}
-		
-		
+
+		attType.setDomains(readLinkedResourceSet(
+				uri, 
+				KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, 
+				false, 
+				IObselType.class));
+
+
 		// ranges
-		it = model.listStatements(
+		StmtIterator it = model.listStatements(
 				model.getResource(attType.getUri()), 
 				model.getProperty(KtbsConstants.P_HAS_ATTRIBUTE_RANGE), 
 				(RDFNode)null);
@@ -490,7 +624,7 @@ public class Rdf2Java {
 			Statement statement = (Statement) it.next();
 			attType.getRanges().add(statement.getObject().asLiteral().getString());
 		}
-		
+
 		return attType;
 	}
 
@@ -500,38 +634,28 @@ public class Rdf2Java {
 
 		RelationType relType = new RelationType();
 		relType.setURI(uri);
-		fillResource(relType);
+		fillGenericResource(relType);
 
 		// super relation types
-		StmtIterator it = model.listStatements(
-				model.getResource(relType.getUri()), 
-				model.getProperty(KtbsConstants.P_HAS_SUPER_RELATION_TYPE), 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			relType.getSuperRelationTypes().add(readRelationType(statement.getObject().asResource().getURI()));
-		}
+		relType.setSuperRelationTypes(readLinkedResourceSetSameType(
+				uri, 
+				KtbsConstants.P_HAS_SUPER_RELATION_TYPE, 
+				false, 
+				IRelationType.class));
 
 		// domains
-		it = model.listStatements(
-				model.getResource(relType.getUri()), 
-				model.getProperty(KtbsConstants.P_HAS_RELATION_DOMAIN), 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			relType.getDomains().add(readObselType(statement.getObject().asResource().getURI()));
-		}
-		
-		// domains
-		it = model.listStatements(
-				model.getResource(relType.getUri()), 
-				model.getProperty(KtbsConstants.P_HAS_RELATION_RANGE), 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			relType.getRanges().add(readObselType(statement.getObject().asResource().getURI()));
-		}
+		relType.setDomains(readLinkedResourceSet(
+				uri, 
+				KtbsConstants.P_HAS_RELATION_DOMAIN, 
+				false, 
+				IObselType.class));
 
+		// ranges
+		relType.setRanges(readLinkedResourceSet(
+				uri, 
+				KtbsConstants.P_HAS_RELATION_RANGE, 
+				false, 
+				IObselType.class));
 
 		return relType;
 	}
@@ -543,18 +667,13 @@ public class Rdf2Java {
 
 		ObselType obselType = new ObselType();
 		obselType.setURI(uri);
-		fillResource(obselType);
+		fillGenericResource(obselType);
 
-		// source obsels (transformation source obsels)
-		StmtIterator it = model.listStatements(
-				model.getResource(obselType.getUri()), 
-				model.getProperty(KtbsConstants.P_HAS_SUPER_OBSEL_TYPE), 
-				(RDFNode)null);
-		while (it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			obselType.getSuperObselTypes().add(readObselType(statement.getObject().asResource().getURI()));
-		}
-
+		obselType.setSuperObselTypes(readLinkedResourceSetSameType(
+				uri, 
+				KtbsConstants.P_HAS_SUPER_OBSEL_TYPE, 
+				false, 
+				IObselType.class));
 
 		return obselType;
 	}
@@ -588,9 +707,7 @@ public class Rdf2Java {
 		trace.setURI(uri);
 		fillTrace(trace);
 
-		Object value = getValue(uri, KtbsConstants.P_HAS_SUBJECT);
-		if(value != null)
-			trace.setDefaultSubject((String) value);
+		trace.setDefaultSubject(getLiteralOrNull(uri, KtbsConstants.P_HAS_SUBJECT, String.class));
 
 		return trace;
 	}
@@ -602,13 +719,17 @@ public class Rdf2Java {
 
 		TraceModel traceModel = new TraceModel();
 		traceModel.setURI(uri);
-		fillResource(traceModel);
+		fillGenericResource(traceModel);
+
+		if(config.getChildMode() == DeserializationMode.NULL)
+			return traceModel;
 
 		StmtIterator it = model.listStatements(
 				null,
 				RDF.type, 
 				(RDFNode)null 
 		);
+
 		while (it.hasNext()) {
 			Statement stmt = it.next();
 			String uri2 = stmt.getSubject().getURI();
@@ -617,17 +738,43 @@ public class Rdf2Java {
 				continue;
 
 			String objectResource = stmt.getObject().asResource().getURI();
-			if(objectResource.equals(KtbsConstants.RELATION_TYPE))
-				traceModel.getRelationTypes().add(readRelationType(uri2));
-			else if(objectResource.equals(KtbsConstants.OBSEL_TYPE))
-				traceModel.getObselTypes().add(readObselType(uri2));
-			else if(objectResource.equals(KtbsConstants.ATTRIBUTE_TYPE))
-				traceModel.getAttributeTypes().add(readAttributeType(uri2));
-			else
+			if(objectResource.equals(KtbsConstants.RELATION_TYPE)) {
+				IRelationType relType = readTraceModelChild(uri2, IRelationType.class);
+				if(relType == null)
+					continue;
+				traceModel.getRelationTypes().add(relType);
+			} else if(objectResource.equals(KtbsConstants.OBSEL_TYPE)) {
+
+				IObselType obsType = readTraceModelChild(uri2, IObselType.class);
+				if(obsType == null)
+					continue;
+				traceModel.getObselTypes().add(obsType);
+			} else if(objectResource.equals(KtbsConstants.ATTRIBUTE_TYPE))  {
+				IAttributeType attType = readTraceModelChild(uri2, IAttributeType.class);
+				if(attType == null)
+					continue;
+				traceModel.getAttributeTypes().add(attType);
+			} else
 				log.warn("The resource "+uri2+" has the same prefix than the trace model but is of unkown type: " + objectResource);
 		}
-
 		return traceModel;
+	}
+
+
+	private <T extends IKtbsResource> T readTraceModelChild(String childUri, Class<T> cls) {
+
+		if(config.getChildMode() == DeserializationMode.NULL)
+			return null;
+		else if(config.getChildMode() == DeserializationMode.PROXY) 
+			return proxyFactory.createResourceProxy(childUri, cls);
+		else if(config.getChildMode() == DeserializationMode.URI_IN_PLAIN)
+			return pojoFactory.createResource(childUri, cls);
+		else if(config.getChildMode() == DeserializationMode.CASCADE)
+			return readResource(childUri, cls);
+		else {
+			log.warn("Unknown deserialization mode for the child axis: " + config.getChildMode());
+			return null;
+		}
 	}
 
 	private String getRdfType(String uri) {
@@ -638,18 +785,18 @@ public class Rdf2Java {
 			return type;
 	}
 
-	private String getResourceUri(String uri, String pName) {
-		Resource object = model.getResource(uri).getPropertyResourceValue(model.getProperty(pName));
-		if(object!=null)
-			return object.getURI();
-		else
+	private <T> T getLiteralOrNull(String uri, String pName, Class<T> cls) {
+		Object literal = getLiteral(uri, pName);
+		if(literal == null)
 			return null;
+		else
+			return cls.cast(literal);
 	}
 
 	/*
 	 * Return null if there is not such property set for that resource
 	 */
-	private Object getValue(String uri, String pName) {
+	private Object getLiteral(String uri, String pName) {
 		Statement stmt = model.getResource(uri).getProperty(model.getProperty(pName));
 		if(stmt == null)
 			return null;
@@ -660,12 +807,12 @@ public class Rdf2Java {
 			return null;
 	}
 
-	private Class<?> guessType(String uri) {
-		Class<?> cls = null;
+	private Class<? extends IKtbsResource> guessType(String uri) {
+		Class<? extends IKtbsResource> cls = null;
 
 		StmtIterator it = model.listStatements(model.getResource(uri), RDF.type, (RDFNode)null);
 		if(!it.hasNext())
-			throw new IllegalStateException("There is no rdf:type defined for the resource " + uri);
+			throw new IllegalStateException("Cannot guess the type of resource. There is no rdf:type defined for the resource " + uri);
 		if(it.hasNext()) {
 			Statement statement = (Statement) it.next();
 			String rdfType = statement.getObject().asResource().getURI();

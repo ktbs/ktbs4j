@@ -62,7 +62,7 @@ public class DefaultManager implements ResourceManager {
 		trace.setURI(KtbsUtils.makeChildURI(baseUri, traceLocalName, false));
 		trace.setOrigin(origin);
 		trace.setDefaultSubject(defaultSubject);
-		trace.setTraceModel(proxyFactory.createResourceProxy(model, ITraceModel.class, dao));
+		trace.setTraceModel(proxyFactory.createResourceProxy(model, ITraceModel.class));
 
 		return createAndReturn(trace);
 	}
@@ -72,19 +72,19 @@ public class DefaultManager implements ResourceManager {
 			String traceLocalName, String methodUri, Set<String> sourceTraces) {
 		ComputedTrace trace = new ComputedTrace();
 		trace.setURI(KtbsUtils.makeChildURI(baseUri, traceLocalName, false));
-		trace.setMethod(proxyFactory.createResourceProxy(methodUri, IMethod.class, dao));
+		trace.setMethod(proxyFactory.createResourceProxy(methodUri, IMethod.class));
 
-		trace.setSourceTraces(createProxySet(sourceTraces, ITrace.class));
+		trace.setSourceTraces(convertToSetOfProxies(sourceTraces, ITrace.class));
 		
 		return createAndReturn(trace);
 	}
 
-	private <T extends IKtbsResource> Set<T> createProxySet(Set<String> resourceUris, Class<T> cls) {
+	private <T extends IKtbsResource> Set<T> convertToSetOfProxies(Set<String> resourceUris, Class<T> cls) {
 		Set<T> proxySet = new HashSet<T>();
 		if(resourceUris == null)
 			return proxySet;
 		for(String sourceTraceUri:resourceUris) 
-			proxySet.add(proxyFactory.createResourceProxy(sourceTraceUri, cls, dao));
+			proxySet.add(proxyFactory.createResourceProxy(sourceTraceUri, cls));
 		return proxySet;
 	}
 
@@ -126,7 +126,7 @@ public class DefaultManager implements ResourceManager {
 		if(attributes != null) {
 			for(String key:attributes.keySet()) 
 				pairs.add(new AttributePair(
-						proxyFactory.createResourceProxy(key, IAttributeType.class, dao), 
+						proxyFactory.createResourceProxy(key, IAttributeType.class), 
 						attributes.get(key)
 				));
 			obsel.setAttributePairs(pairs);
@@ -149,8 +149,8 @@ public class DefaultManager implements ResourceManager {
 		
 		RelationType relType = new RelationType();
 		relType.setURI(KtbsUtils.makeChildURI(traceModelUri, localName, true));
-		relType.setDomains(createProxySet(domains, IObselType.class));
-		relType.setRanges(createProxySet(ranges, IObselType.class));
+		relType.setDomains(convertToSetOfProxies(domains, IObselType.class));
+		relType.setRanges(convertToSetOfProxies(ranges, IObselType.class));
 		
 		return createAndReturn(relType);
 	}
@@ -162,7 +162,7 @@ public class DefaultManager implements ResourceManager {
 
 		AttributeType attType = new AttributeType();
 		attType.setURI(KtbsUtils.makeChildURI(traceModelUri, localName, true));
-		attType.setDomains(createProxySet(domainUris, IObselType.class));
+		attType.setDomains(convertToSetOfProxies(domainUris, IObselType.class));
 		attType.setRanges(ranges);
 		
 		return createAndReturn(attType);

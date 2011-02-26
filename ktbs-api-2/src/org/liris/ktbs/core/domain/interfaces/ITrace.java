@@ -17,9 +17,9 @@ public interface ITrace extends IKtbsResource, IResourceContainer<IObsel> {
 
 	public void setTraceModel(ITraceModel traceModel);
 
-	public Set<ITrace> getTransformedTraces();
+	public Set<IComputedTrace> getTransformedTraces();
 
-	public void setTransformedTraces(Set<ITrace> transformedTraces);
+	public void setTransformedTraces(Set<IComputedTrace> transformedTraces);
 
 	public Set<IObsel> getObsels();
 

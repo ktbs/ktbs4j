@@ -24,11 +24,20 @@ import org.liris.ktbs.core.domain.ObselType;
 import org.liris.ktbs.core.domain.RelationType;
 import org.liris.ktbs.core.domain.Root;
 import org.liris.ktbs.core.domain.StoredTrace;
-import org.liris.ktbs.core.domain.Trace;
 import org.liris.ktbs.core.domain.TraceModel;
+import org.liris.ktbs.core.domain.interfaces.IAttributeType;
+import org.liris.ktbs.core.domain.interfaces.IBase;
+import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.core.domain.interfaces.IMethod;
 import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IObselType;
+import org.liris.ktbs.core.domain.interfaces.IRelationType;
+import org.liris.ktbs.core.domain.interfaces.IRoot;
+import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.core.domain.interfaces.ITrace;
+import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -121,31 +130,31 @@ public class KtbsUtils {
 	 * Give the rdf type that is used to represent a KTBS resource of a 
 	 * given Java type in RDF, according to KTBS specifications.
 	 * 
-	 * @param clazz the type of KTBS resource
+	 * @param cls the type of KTBS resource
 	 * @return the rdf type associated to that class of KTBS resource
 	 */
-	public static String getRDFType(Class<?> clazz) {
-		if(Root.class.isAssignableFrom(clazz)) 
+	public static String getRDFType(Class<?> cls) {
+		if(IRoot.class.isAssignableFrom(cls)) 
 			return KtbsConstants.ROOT;
-		else if(Base.class.isAssignableFrom(clazz)) 
+		else if(IBase.class.isAssignableFrom(cls)) 
 			return KtbsConstants.BASE;
-		else if(StoredTrace.class.isAssignableFrom(clazz)) 
+		else if(IStoredTrace.class.isAssignableFrom(cls)) 
 			return KtbsConstants.STORED_TRACE;
-		else if(ComputedTrace.class.isAssignableFrom(clazz)) 
+		else if(IComputedTrace.class.isAssignableFrom(cls)) 
 			return KtbsConstants.COMPUTED_TRACE;
-		else if(Obsel.class.isAssignableFrom(clazz)) 
+		else if(IObsel.class.isAssignableFrom(cls)) 
 			return null;
-		else if(ObselType.class.isAssignableFrom(clazz)) 
+		else if(IObselType.class.isAssignableFrom(cls)) 
 			return KtbsConstants.OBSEL_TYPE;
-		else if(AttributeType.class.isAssignableFrom(clazz)) 
+		else if(IAttributeType.class.isAssignableFrom(cls)) 
 			return KtbsConstants.ATTRIBUTE_TYPE;
-		else if(RelationType.class.isAssignableFrom(clazz)) 
+		else if(IRelationType.class.isAssignableFrom(cls)) 
 			return KtbsConstants.RELATION_TYPE;
-		else if(TraceModel.class.isAssignableFrom(clazz)) 
+		else if(ITraceModel.class.isAssignableFrom(cls)) 
 			return KtbsConstants.TRACE_MODEL;
-		else if(Method.class.isAssignableFrom(clazz)) 
+		else if(IMethod.class.isAssignableFrom(cls)) 
 			return KtbsConstants.METHOD;
-		else if(Trace.class.isAssignableFrom(clazz)) 
+		else if(ITrace.class.isAssignableFrom(cls)) 
 			return null;
 		else
 			return null;

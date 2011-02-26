@@ -14,7 +14,7 @@ public class ProxyFactory {
 	public <T extends IKtbsResource> T createResourceProxy(String uri, Class<T> cls) {
 		Class<?>[] interfaces = new Class<?>[]{cls};
 		return (T) Proxy.newProxyInstance(
-				dao.getClass().getClassLoader(), 
+				ProxyFactory.class.getClassLoader(), 
 				interfaces, 
 				new ResourceProxy<T>(dao, uri, cls));
 	}
@@ -23,7 +23,7 @@ public class ProxyFactory {
 	public <T extends IKtbsResource> Set<T> createResourceSetProxy(String request, Class<T> cls) {
 		Class<?>[] interfaces = new Class<?>[]{Set.class};
 		return (Set<T>) Proxy.newProxyInstance(
-				dao.getClass().getClassLoader(), 
+				ProxyFactory.class.getClass().getClassLoader(), 
 				interfaces, 
 				new ResourceSetProxy<T>(dao, request, cls));
 	}

@@ -1,11 +1,14 @@
 package org.liris.ktbs.rdf.tests;
 
 import java.io.FileInputStream;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
 import org.liris.ktbs.core.KtbsConstants;
+import org.liris.ktbs.core.ProxyFactory;
+import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.UriResource;
 import org.liris.ktbs.core.domain.interfaces.IAttributeType;
 import org.liris.ktbs.core.domain.interfaces.IBase;
@@ -20,7 +23,7 @@ import org.liris.ktbs.rdf.Rdf2Java;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-public class Model2ResourceMapperTestCase extends TestCase {
+public class Rdf2JavaTestCase extends TestCase {
 	private Model model;
 	private Rdf2Java mapper;
 	
@@ -28,6 +31,14 @@ public class Model2ResourceMapperTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		model = ModelFactory.createDefaultModel();
 		mapper = new Rdf2Java(model);
+		Field proxyFactoryField = Rdf2Java.class.getDeclaredField("proxyFactory");
+		proxyFactoryField.setAccessible(true);
+		proxyFactoryField.set(mapper, new ProxyFactory());
+			
+		Field pojoFactoryField = Rdf2Java.class.getDeclaredField("pojoFactory");
+		pojoFactoryField.setAccessible(true);
+		pojoFactoryField.set(mapper, new PojoFactory());
+		
 	}
 	
 	public void testReadBase() throws Exception {
@@ -162,6 +173,7 @@ public class Model2ResourceMapperTestCase extends TestCase {
 			 * Ok, the dao is null and the lazy loading fails
 			 */
 		} catch(Exception e) {
+			e.printStackTrace();
 			fail("Unexpected exception: " + e.toString());
 		}
 		

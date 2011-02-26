@@ -186,14 +186,18 @@ public class Rdf2Java {
 		IRoot root = pojoFactory.createResource(uri, IRoot.class);
 
 		fillGenericResource(root);
-		fillChildren(uri, KtbsConstants.P_HAS_BASE, root.getBases(), false, IBase.class);
+		fillChildren(false, uri, KtbsConstants.P_HAS_BASE, root.getBases(), false, IBase.class);
 
 		return root;
 	}
 
 	private <T extends IKtbsResource> void fillChildren(
+			boolean asBaseChildren, 
 			String parentUri, 
-			String parentChildRelation, Set<T> childrenSet, boolean inverse, Class<T> cls) {
+			String parentChildRelation, 
+			Set<T> childrenSet, 
+			boolean inverse, 
+			Class<T> cls) {
 
 		if(config.getMode(LinkAxis.CHILD) == DeserializationMode.NULL)
 			return;
@@ -216,10 +220,18 @@ public class Rdf2Java {
 
 		while (it.hasNext()) {
 			Statement statement = (Statement) it.next();
-			childrenUris.add(
-					inverse?
-							statement.getSubject().getURI():
-								statement.getObject().asResource().getURI());	
+
+			String childUri = inverse?
+					statement.getSubject().getURI():
+						statement.getObject().asResource().getURI();
+			
+			if(asBaseChildren) {
+				// must check the child type first
+				Statement typeStmt = model.getResource(childUri).getProperty(RDF.type);
+				if(typeStmt != null && typeStmt.getObject().asResource().getURI().equals(KtbsUtils.getRDFType(cls)))
+					childrenUris.add(childUri);	
+			} else 
+				childrenUris.add(childUri);	
 		}
 
 		for(String childUri:childrenUris) {
@@ -318,10 +330,10 @@ public class Rdf2Java {
 		base.setURI(uri);
 		fillGenericResource(base);
 
-		fillChildren(uri, KtbsConstants.P_OWNS, base.getStoredTraces(), false, IStoredTrace.class);
-		fillChildren(uri, KtbsConstants.P_OWNS, base.getComputedTraces(), false, IComputedTrace.class);
-		fillChildren(uri, KtbsConstants.P_OWNS, base.getTraceModels(), false, ITraceModel.class);
-		fillChildren(uri, KtbsConstants.P_OWNS, base.getMethods(), false, IMethod.class);
+		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getStoredTraces(), false, IStoredTrace.class);
+		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getComputedTraces(), false, IComputedTrace.class);
+		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getTraceModels(), false, ITraceModel.class);
+		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getMethods(), false, IMethod.class);
 
 		return base;
 	}
@@ -401,11 +413,13 @@ public class Rdf2Java {
 						IComputedTrace.class));
 
 		// the obsels
-		fillChildren(trace.getUri(), KtbsConstants.P_HAS_TRACE, trace.getObsels(), true, IObsel.class);
+		fillChildren(false, trace.getUri(), KtbsConstants.P_HAS_TRACE, trace.getObsels(), true, IObsel.class);
 
 
 		// origin
-		trace.setOrigin(getLiteralOrNull(trace.getUri(), KtbsConstants.P_HAS_ORIGIN, String.class));
+		Object origin = getLiteral(trace.getUri(), KtbsConstants.P_HAS_ORIGIN);
+		if(origin != null)
+			trace.setOrigin(origin.toString());
 
 		// complies with model
 		trace.setCompliesWithModel(getLiteralOrNull(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, String.class));
@@ -438,10 +452,15 @@ public class Rdf2Java {
 			obsel.setEnd(new BigInteger(end.toString()));
 
 		// beginDT
-		obsel.setBeginDT(getLiteralOrNull(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, String.class));
+		Object beginDT = getLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT);
+		if(beginDT != null)
+			obsel.setBeginDT(beginDT.toString());
+
 
 		// endDT
-		obsel.setEndDT(getLiteralOrNull(obsel.getUri(), KtbsConstants.P_HAS_END_DT, String.class));
+		Object endDT = getLiteral(obsel.getUri(), KtbsConstants.P_HAS_END_DT);
+		if(beginDT != null)
+			obsel.setEndDT(endDT.toString());
 
 		// subject
 		obsel.setSubject(getLiteralOrNull(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT, String.class));

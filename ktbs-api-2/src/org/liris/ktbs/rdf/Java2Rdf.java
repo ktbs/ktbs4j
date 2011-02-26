@@ -37,6 +37,10 @@ public class Java2Rdf {
 	private Model model;
 	private SerializationConfig config = new SerializationConfig();
 
+	public void setConfig(SerializationConfig config) {
+		this.config = config;
+	}
+	
 	public Java2Rdf(IKtbsResource resource) {
 		super();
 		this.resource = resource;
@@ -66,11 +70,30 @@ public class Java2Rdf {
 	}
 
 	private void put(IKtbsResource r) {
-		/*
-		 * Should never be called since there are specialized put/1 methods
-		 * for each type of supported resource.
-		 */
-		throw new IllegalStateException("Unkown resource class: " + r.getClass().getCanonicalName());
+		if(IRoot.class.isAssignableFrom(r.getClass())) 
+			putRoot((IRoot) r);
+		else if(IBase.class.isAssignableFrom(r.getClass())) 
+			putBase((IBase) r);
+		else if(IStoredTrace.class.isAssignableFrom(r.getClass())) 
+			putStoredTrace((IStoredTrace) r);
+		else if(IComputedTrace.class.isAssignableFrom(r.getClass())) 
+			putComputedTrace((IComputedTrace) r);
+		else if(IObsel.class.isAssignableFrom(r.getClass())) 
+			putObsel((IObsel) r);
+		else if(IObselType.class.isAssignableFrom(r.getClass())) 
+			putObselType((IObselType) r);
+		else if(IAttributeType.class.isAssignableFrom(r.getClass())) 
+			putAttributeType((IAttributeType) r);
+		else if(IRelationType.class.isAssignableFrom(r.getClass())) 
+			putRelationType((IRelationType) r);
+		else if(ITraceModel.class.isAssignableFrom(r.getClass())) 
+			putTraceModel((ITraceModel) r);
+		else if(IMethod.class.isAssignableFrom(r.getClass())) 
+			putMethod((IMethod) r);
+		else if(ITrace.class.isAssignableFrom(r.getClass())) 
+			putTrace((ITrace) r);
+		else 
+			throw new IllegalStateException("Should never be invoked since specified method are defined for each resource");
 	}
 
 	
@@ -78,13 +101,13 @@ public class Java2Rdf {
 	//------------------------------------------------------------------------------
 	// PUT RESOURCES
 	//------------------------------------------------------------------------------
-	private void put(IRoot root) {
+	private void putRoot(IRoot root) {
 		putGenericResource(root);
 		putChildren(root.getUri(), KtbsConstants.P_HAS_BASE, root.getBases(), false);
 
 	}
 
-	private void put(IBase base) {
+	private void putBase(IBase base) {
 		putGenericResource(base);
 
 		putLiteral(base.getUri(), KtbsConstants.P_HAS_OWNER, base.getOwner());
@@ -95,14 +118,14 @@ public class Java2Rdf {
 		putChildren(base.getUri(), KtbsConstants.P_OWNS, base.getMethods(), false);
 	}
 
-	private void put(IStoredTrace trace) {
+	private void putStoredTrace(IStoredTrace trace) {
 		putGenericResource(trace);
 		putTrace(trace);
 
 		putLiteral(trace.getUri(), KtbsConstants.P_HAS_SUBJECT, trace.getDefaultSubject());
 	}
 
-	private void put(IComputedTrace trace) {
+	private void putComputedTrace(IComputedTrace trace) {
 		putGenericResource(trace);
 		putTrace(trace);
 		putTransformationResource(trace, trace.getUri());
@@ -110,14 +133,14 @@ public class Java2Rdf {
 		putLinkedResource(trace.getUri(), KtbsConstants.P_HAS_METHOD, trace.getMethod(), false);
 	}
 
-	private void put(IMethod method) {
+	private void putMethod(IMethod method) {
 		putGenericResource(method);
 		putTransformationResource(method, method.getUri());
 		putResource(method.getUri(), KtbsConstants.P_INHERITS, method.getInherits());
 		putLiteral(method.getUri(), KtbsConstants.P_HAS_ETAG, method.getEtag());
 	}
 
-	private void put(IObsel obsel) {
+	private void putObsel(IObsel obsel) {
 		putGenericResource(obsel);
 
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
@@ -144,7 +167,7 @@ public class Java2Rdf {
 			putLiteral(uri, KtbsConstants.P_HAS_PARAMETER, param.getName()+"="+param.getValue());
 	}
 	
-	private void put(ITraceModel traceModel) {
+	private void putTraceModel(ITraceModel traceModel) {
 		putGenericResource(traceModel);
 
 		putChildren(traceModel.getUri(), null, traceModel.getAttributeTypes(), false);
@@ -152,18 +175,18 @@ public class Java2Rdf {
 		putChildren(traceModel.getUri(), null, traceModel.getObselTypes(), false);
 	}
 
-	private void put(IAttributeType attType) {
+	private void putAttributeType(IAttributeType attType) {
 		putGenericResource(attType);
 		putLinkedResourceSet(attType.getUri(), KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, attType.getDomains(), false);
 		putLiteralSet(attType.getUri(), KtbsConstants.P_HAS_ATTRIBUTE_RANGE, attType.getRanges());
 	}
 
-	private void put(IObselType obsType) {
+	private void putObselType(IObselType obsType) {
 		putGenericResource(obsType);
 		putLinkedResourceSetSameType(obsType.getUri(), KtbsConstants.P_HAS_SUPER_OBSEL_TYPE, obsType.getSuperObselTypes(), false);
 	}
 	
-	private void put(IRelationType relType) {
+	private void putRelationType(IRelationType relType) {
 		putGenericResource(relType);
 		putLinkedResourceSet(relType.getUri(), KtbsConstants.P_HAS_RELATION_DOMAIN, relType.getDomains(), false);
 		putLinkedResourceSet(relType.getUri(), KtbsConstants.P_HAS_RELATION_RANGE, relType.getRanges(), false);

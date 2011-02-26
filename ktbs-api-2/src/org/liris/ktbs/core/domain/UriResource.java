@@ -29,9 +29,9 @@ public class UriResource implements IUriResource {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof UriResource) {
-			UriResource r = (UriResource) obj;
-			return uri.equals(r.uri);
+		if (obj instanceof IUriResource) {
+			IUriResource r = (IUriResource) obj;
+			return uri.equals(r.getUri());
 		} else 
 			return false;
 	}

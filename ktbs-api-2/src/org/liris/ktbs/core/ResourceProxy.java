@@ -28,7 +28,7 @@ public class ResourceProxy<T extends IKtbsResource> implements InvocationHandler
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 	throws Throwable {
-		if(resource == null) {
+		if(resource.getClass().equals(UriResource.class)) {
 			if(method.getName().equals("getUri") 
 					|| method.getName().equals("equals")
 					|| method.getName().equals("hashCode")

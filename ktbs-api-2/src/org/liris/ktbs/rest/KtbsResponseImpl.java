@@ -3,8 +3,6 @@ package org.liris.ktbs.rest;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -14,8 +12,6 @@ import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 
 
 public class KtbsResponseImpl implements KtbsResponse {
-
-	private static Log log = LogFactory.getLog(ApacheKtbsRestClient.class);
 
 	private IKtbsResource resource;
 	private boolean executedWithSuccess;

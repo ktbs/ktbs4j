@@ -2,6 +2,7 @@ package org.liris.ktbs.serial;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Set;
 
 import org.liris.ktbs.core.ResultSet;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
@@ -67,15 +68,24 @@ public class RdfResourceSerializer implements KtbsResourceSerializer {
 	}
 
 	@Override
-	public void serialize(Writer writer, IKtbsResource resource,
+	public void serializeResource(Writer writer, IKtbsResource resource,
 			String mimeFormat) {
 		
-		Java2Rdf mapper = new Java2Rdf(resource);
-		Model model = mapper.getModel();
+		Java2Rdf mapper = new Java2Rdf();
+		Model model = mapper.getModel(resource);
 		
 		model.write(writer, KtbsUtils.getJenaSyntax(mimeFormat), "");
 	}
 
+	@Override
+	public void serializeResourceSet(Writer writer,
+			Set<? extends IKtbsResource> resourceSet, String mimeFormat) {
+		
+		Java2Rdf mapper = new Java2Rdf();
+		Model model = mapper.getModel(resourceSet);
+		model.write(writer, KtbsUtils.getJenaSyntax(mimeFormat), "");
+	}
+	
 	@Override
 	public <T extends IKtbsResource> T deserializeResource(String uri,
 			Reader reader, String mimeFormat, Class<T> cls) {

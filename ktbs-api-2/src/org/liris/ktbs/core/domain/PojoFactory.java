@@ -1,7 +1,5 @@
 package org.liris.ktbs.core.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.domain.interfaces.IAttributeType;
 import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
@@ -16,8 +14,6 @@ import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 public class PojoFactory {
 
-	private static final Log log = LogFactory.getLog(PojoFactory.class);
-	
 	public <T extends IKtbsResource> T createResource(String uri, Class<T> cls) {
 		
 		KtbsResource resource;

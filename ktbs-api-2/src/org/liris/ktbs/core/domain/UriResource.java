@@ -53,4 +53,9 @@ public class UriResource implements IUriResource {
 	public String getParentUri() {
 		return KtbsUtils.resolveParentURI(uri);
 	}
+	
+	@Override
+	public String toString() {
+		return uri;
+	}
 }

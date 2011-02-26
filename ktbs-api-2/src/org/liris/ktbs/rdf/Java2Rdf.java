@@ -33,22 +33,19 @@ import com.hp.hpl.jena.vocabulary.XSD;
 
 public class Java2Rdf {
 
-	private IKtbsResource resource;
 	private Model model;
 	private SerializationConfig config = new SerializationConfig();
 
 	public void setConfig(SerializationConfig config) {
 		this.config = config;
 	}
-	
-	public Java2Rdf(IKtbsResource resource) {
+
+	public Java2Rdf() {
 		super();
-		this.resource = resource;
 		this.model = ModelFactory.createDefaultModel();
 	}
 
-	public Java2Rdf(IKtbsResource resource, SerializationConfig config) {
-		this(resource);
+	public Java2Rdf(SerializationConfig config) {
 		this.config = config;
 	}
 
@@ -59,13 +56,24 @@ public class Java2Rdf {
 	 */
 	private Set<String> alreadyProcessed = new HashSet<String>();
 
-	public Model getModel() {
+	public Model getModel(IKtbsResource resource) {
+		initModel();
+		put(resource);
+		return model;
+	}
+
+	private void initModel() {
 		alreadyProcessed.clear();
 		model = ModelFactory.createDefaultModel();
 		model.setNsPrefix("ktbs",KtbsConstants.NAMESPACE);
 		model.setNsPrefix("xsd",XSD.getURI());
 		model.setNsPrefix("rdfs",RDFS.getURI());
-		put(resource);
+	}
+
+	public Model getModel(Set<? extends IKtbsResource> resourceSet) {
+		initModel();
+		for(IKtbsResource resource:resourceSet)
+			put(resource);
 		return model;
 	}
 
@@ -96,18 +104,26 @@ public class Java2Rdf {
 			throw new IllegalStateException("Should never be invoked since specified method are defined for each resource");
 	}
 
-	
+
 
 	//------------------------------------------------------------------------------
 	// PUT RESOURCES
 	//------------------------------------------------------------------------------
 	private void putRoot(IRoot root) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(root.getUri()))
+			return;
+
 		putGenericResource(root);
 		putChildren(root.getUri(), KtbsConstants.P_HAS_BASE, root.getBases(), false);
 
 	}
 
 	private void putBase(IBase base) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(base.getUri()))
+			return;
+
 		putGenericResource(base);
 
 		putLiteral(base.getUri(), KtbsConstants.P_HAS_OWNER, base.getOwner());
@@ -119,6 +135,10 @@ public class Java2Rdf {
 	}
 
 	private void putStoredTrace(IStoredTrace trace) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(trace.getUri()))
+			return;
+
 		putGenericResource(trace);
 		putTrace(trace);
 
@@ -126,6 +146,9 @@ public class Java2Rdf {
 	}
 
 	private void putComputedTrace(IComputedTrace trace) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(trace.getUri()))
+			return;
 		putGenericResource(trace);
 		putTrace(trace);
 		putTransformationResource(trace, trace.getUri());
@@ -134,6 +157,9 @@ public class Java2Rdf {
 	}
 
 	private void putMethod(IMethod method) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(method.getUri()))
+			return;
 		putGenericResource(method);
 		putTransformationResource(method, method.getUri());
 		putResource(method.getUri(), KtbsConstants.P_INHERITS, method.getInherits());
@@ -141,6 +167,9 @@ public class Java2Rdf {
 	}
 
 	private void putObsel(IObsel obsel) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(obsel.getUri()))
+			return;
 		putGenericResource(obsel);
 
 		putLiteral(obsel.getUri(), KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
@@ -152,22 +181,73 @@ public class Java2Rdf {
 		// Other option : can be added as same type obsels
 		putLinkedResourceSet(obsel.getUri(), KtbsConstants.P_HAS_SOURCE_OBSEL, obsel.getSourceObsels(), false);
 
-		for(IAttributePair pair:obsel.getAttributePairs()) 
-			putLiteral(obsel.getUri(), pair.getAttributeType().getUri(), pair.getValue());
+		for(IAttributePair pair:obsel.getAttributePairs()) {
+			if(config.getLinkMode() == SerializationMode.NOTHING) {
+				// Ok, do nothing
+			} else if(config.getLinkMode() == SerializationMode.POJO_PROPERTY) {
+				throw new UnsupportedOperationException("Not yet implemented");
+			} else if(config.getLinkMode() == SerializationMode.URI) {
+				// Ok, do nothing
+			} else if(config.getLinkMode() == SerializationMode.URI_AND_TYPE) {
+				putRdfType(pair.getAttributeType().getUri(), KtbsConstants.ATTRIBUTE_TYPE);
+			} else if(config.getLinkMode() == SerializationMode.CASCADE) {
+				putAttributeType(pair.getAttributeType());
+			}
+			String attUri = pair.getAttributeType().getUri();
+			putLiteral(obsel.getUri(), attUri, pair.getValue());
+		}
 
-		for(IRelationStatement stmt:obsel.getOutgoingRelations())
+		for(IRelationStatement stmt:obsel.getOutgoingRelations()) {
+			putRelation(stmt);
 			putLinkedResourceSameType(obsel.getUri(), stmt.getRelation().getUri(), stmt.getToObsel(), false);
+		}
 
-		for(IRelationStatement stmt:obsel.getIncomingRelations()) 
-			putLinkedResourceSameType(obsel.getUri(), stmt.getRelation().getUri(), stmt.getFromObsel(), true);
+		for(IRelationStatement stmt:obsel.getIncomingRelations()) {
+			putRelation(stmt);
+			
+			// put the connected obsel 
+			// (cannot use putLinkedResourceSameType for that, order is reverse)
+			if(config.getLinkMode() == SerializationMode.NOTHING) {
+				// Ok, do nothing
+			} else if(config.getLinkMode() == SerializationMode.POJO_PROPERTY) {
+				throw new UnsupportedOperationException("Not yet implemented");
+			} else if(config.getLinkMode() == SerializationMode.URI) {
+				// Ok, do nothing (the obsel uri will be put later together with the triple)
+			} else if(config.getLinkMode() == SerializationMode.URI_AND_TYPE) {
+				putRdfType(stmt.getFromObsel().getUri(), stmt.getFromObsel().getObselType().getUri());
+			} else if(config.getLinkMode() == SerializationMode.CASCADE) {
+				putObsel(stmt.getFromObsel());
+			}
+			
+			model.getResource(stmt.getFromObsel().getUri()).addProperty(
+					model.getProperty(stmt.getRelation().getUri()),
+					model.getResource(obsel.getUri()));
+		}
+	}
+
+	private void putRelation(IRelationStatement stmt) {
+		if(config.getLinkMode() == SerializationMode.NOTHING) {
+			// Ok, do nothing
+		} else if(config.getLinkMode() == SerializationMode.POJO_PROPERTY) {
+			throw new UnsupportedOperationException("Not yet implemented");
+		} else if(config.getLinkMode() == SerializationMode.URI) {
+			// Ok, do nothing
+		} else if(config.getLinkMode() == SerializationMode.URI_AND_TYPE) {
+			putRdfType(stmt.getRelation().getUri(), KtbsConstants.RELATION_TYPE);
+		} else if(config.getLinkMode() == SerializationMode.CASCADE) {
+			putRelationType(stmt.getRelation());
+		}
 	}
 
 	private void putTransformationResource(WithParameters r, String uri) {
 		for(IMethodParameter param:r.getMethodParameters()) 
 			putLiteral(uri, KtbsConstants.P_HAS_PARAMETER, param.getName()+"="+param.getValue());
 	}
-	
+
 	private void putTraceModel(ITraceModel traceModel) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(traceModel.getUri()))
+			return;
 		putGenericResource(traceModel);
 
 		putChildren(traceModel.getUri(), null, traceModel.getAttributeTypes(), false);
@@ -176,6 +256,9 @@ public class Java2Rdf {
 	}
 
 	private void putAttributeType(IAttributeType attType) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(attType.getUri()))
+			return;
 		putGenericResource(attType);
 		putLinkedResourceSet(attType.getUri(), KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, attType.getDomains(), false);
 		putLiteralSet(attType.getUri(), KtbsConstants.P_HAS_ATTRIBUTE_RANGE, attType.getRanges());
@@ -185,8 +268,11 @@ public class Java2Rdf {
 		putGenericResource(obsType);
 		putLinkedResourceSetSameType(obsType.getUri(), KtbsConstants.P_HAS_SUPER_OBSEL_TYPE, obsType.getSuperObselTypes(), false);
 	}
-	
+
 	private void putRelationType(IRelationType relType) {
+		// Avoid cycles
+		if(alreadyProcessed.contains(relType.getUri()))
+			return;
 		putGenericResource(relType);
 		putLinkedResourceSet(relType.getUri(), KtbsConstants.P_HAS_RELATION_DOMAIN, relType.getDomains(), false);
 		putLinkedResourceSet(relType.getUri(), KtbsConstants.P_HAS_RELATION_RANGE, relType.getRanges(), false);
@@ -199,11 +285,9 @@ public class Java2Rdf {
 		putLinkedResource(trace.getUri(), KtbsConstants.P_HAS_MODEL, trace.getTraceModel(), false);
 		putChildren(trace.getUri(), KtbsConstants.P_HAS_TRACE, trace.getObsels(), true);
 	}
-	
+
 	private void putGenericResource(IKtbsResource r) {
-		// Avoid cycles
-		if(alreadyProcessed.contains(r.getUri()))
-			return;
+
 		alreadyProcessed.add(r.getUri());
 
 
@@ -267,7 +351,7 @@ public class Java2Rdf {
 		} else if(config.getMode(axis) == SerializationMode.POJO_PROPERTY) 
 			throw new UnsupportedOperationException("Not yet supported");
 	}
-	
+
 	private <T extends IKtbsResource> void putChildren(String parentUri, String parentChildProperty, Set<T> children, boolean inverse) {
 		if(config.getChildMode() == SerializationMode.NOTHING) {
 			return;
@@ -287,7 +371,7 @@ public class Java2Rdf {
 		} else if(config.getChildMode() == SerializationMode.POJO_PROPERTY) 
 			throw new UnsupportedOperationException("Not yet supported");
 	}
-	
+
 	/*
 	 * Put a literal in a model if it exists
 	 */
@@ -298,7 +382,7 @@ public class Java2Rdf {
 				model.getProperty(pName), 
 				value);
 	}
-	
+
 	private void putRdfType(String subjectUri, String typeUri) {
 		putProperty(subjectUri, RDF.type.getURI(), typeUri, false);
 	}

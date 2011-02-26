@@ -61,7 +61,7 @@ public class RestDao implements ResourceDao {
 	@Override
 	public boolean create(IKtbsResource resource) {
 		StringWriter writer = new StringWriter();
-		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
+		new RdfResourceSerializer().serializeResource(writer, resource, sendMimeType);
 		KtbsResponse response = service.post(resource);
 		if(response.hasSucceeded()) {
 			if(!response.getHTTPLocation().equals(resource.getUri()))
@@ -74,7 +74,7 @@ public class RestDao implements ResourceDao {
 	@Override
 	public boolean save(IKtbsResource resource) {
 		StringWriter writer = new StringWriter();
-		new RdfResourceSerializer().serialize(writer, resource, sendMimeType);
+		new RdfResourceSerializer().serializeResource(writer, resource, sendMimeType);
 		String etag = etags.get(resource.getUri());
 		if(etag == null)
 			// should update the etag

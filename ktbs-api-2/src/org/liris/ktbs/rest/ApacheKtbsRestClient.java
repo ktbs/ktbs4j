@@ -208,127 +208,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 				response);
 	}
 
-	private KtbsResponse updateResource(String postURI,
-			String stringRepresentation,
-			String eTag,
-			String... traceAspects) {
 
-		checkStarted(); 
-
-		HttpPut put = new HttpPut(postURI);
-		put.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
-		put.addHeader(HttpHeaders.IF_MATCH, eTag);
-
-		HttpResponse response = null;
-		KtbsResponseStatus ktbsResponseStatus = null;
-
-		try {
-			put.setEntity(new StringEntity(stringRepresentation, HTTP.UTF_8));
-		} catch (UnsupportedEncodingException e) {
-			log.warn("Cannot decode the content of the response sent by the KTBS", e);
-			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
-		}
-
-		String body = null;
-		
-		try {
-			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
-			if(log.isDebugEnabled()) {
-				log.debug("PUT body: "+stringRepresentation);
-			}
-
-			response = httpClient.execute(put);
-			if(response == null)
-				ktbsResponseStatus=KtbsResponseStatus.CLIENT_ERR0R;
-			else {
-				int sc = response.getStatusLine().getStatusCode();
-				ktbsResponseStatus = sc==HttpStatus.SC_CREATED ?
-						KtbsResponseStatus.RESOURCE_CREATED:
-							((sc==HttpStatus.SC_OK ||sc==HttpStatus.SC_NO_CONTENT)?
-									KtbsResponseStatus.RESOURCE_UPDATED:
-										KtbsResponseStatus.REQUEST_FAILED);
-			}
-
-			body = EntityUtils.toString(response.getEntity());
-			
-			if(log.isDebugEnabled()) {
-				log.debug("Response header:" + response.getStatusLine());
-				log.debug("Response body:\n" + body);
-			}
-
-				/*
-				 * Cannot read the resource returned since it is written in POST syntax (i.e. turtle) and there 
-				 * is a bug reading resource in turtle send by the server.
-				 */
-				EntityUtils.consume(response.getEntity());
-		} catch (ClientProtocolException e) {
-			log.error("An error occured when communicating with the KTBS", e);
-			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
-		} catch (IOException e) {
-			log.error("An exception occurred when reading the content of the HTTP response", e);
-			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
-		}
-
-		return new KtbsResponseImpl(
-				null, 
-				body, 
-				(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_UPDATED || ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED), 
-				ktbsResponseStatus, 
-				response);
-	}
-
-	private KtbsResponse postResource(String postURI, String string) {
-		checkStarted(); 
-
-		HttpPost post = new HttpPost(postURI);
-		post.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
-
-		HttpResponse response = null;
-		KtbsResponseStatus ktbsResponseStatus = null;
-
-		try {
-
-			log.info("POST Request content: \n" + string);
-			post.setEntity(new StringEntity(string, HTTP.UTF_8));
-
-		} catch (UnsupportedEncodingException e) {
-			log.warn("Cannot decode the content of the response sent by the KTBS", e);
-			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
-		}
-
-		String body = null;
-		
-		try {
-			log.info("Sending POST request to the KTBS: "+post.getRequestLine());
-			response = httpClient.execute(post);
-			if(response == null)
-				ktbsResponseStatus=KtbsResponseStatus.CLIENT_ERR0R;
-			else {
-				ktbsResponseStatus = response.getStatusLine().getStatusCode()==HttpStatus.SC_CREATED ?
-						KtbsResponseStatus.RESOURCE_CREATED:
-							KtbsResponseStatus.REQUEST_FAILED;
-			}
-
-			body = EntityUtils.toString(response.getEntity());
-			if(log.isDebugEnabled()) {
-				log.debug("Response header:" + response.getStatusLine());
-				log.debug("Response body:\n" + body);
-			}
-		} catch (ClientProtocolException e) {
-			log.error("An error occured when communicating with the KTBS", e);
-			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
-		} catch (IOException e) {
-			log.error("An exception occurred when reading the content of the HTTP response", e);
-			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
-		}
-
-		return new KtbsResponseImpl(
-				null, 
-				body,
-				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED, 
-				ktbsResponseStatus, 
-				response);
-	}
 
 	@Override
 	public KtbsResponse post(IKtbsResource resource) {
@@ -344,7 +224,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		try {
 			StringWriter writer = new StringWriter();
-			new RdfResourceSerializer().serialize(writer, resource, getPOSTMimeType());
+			new RdfResourceSerializer().serializeResource(writer, resource, getPOSTMimeType());
 			String string = writer.toString();
 			
 			log.info("POST Request content: \n" + string);
@@ -411,7 +291,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		try {
 			
 			StringWriter writer = new StringWriter();
-			new RdfResourceSerializer().serialize(writer, resource, getPOSTMimeType());
+			new RdfResourceSerializer().serializeResource(writer, resource, getPOSTMimeType());
 			String string = writer.toString();
 			
 			put.setEntity(new StringEntity(string, HTTP.UTF_8));

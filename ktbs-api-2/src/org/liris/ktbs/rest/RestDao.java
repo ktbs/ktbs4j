@@ -9,34 +9,85 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.ResultSet;
+import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.dao.ResourceDao;
-import org.liris.ktbs.serial.RdfResourceSerializer;
+import org.liris.ktbs.serial.Deserializer;
+import org.liris.ktbs.serial.Serializer;
+import org.liris.ktbs.utils.RelativeURITurtleReader;
 
 public class RestDao implements ResourceDao {
-	
+
 	private static final Log log = LogFactory.getLog(RestDao.class);
-	
+
 	private static String sendMimeType = KtbsConstants.MIME_TURTLE;
-	private static String receiveMimeType = KtbsConstants.MIME_NTRIPLES;
-	
+	private static String receiveMimeType = KtbsConstants.MIME_TURTLE;
+
 	private Map<String, String> etags = new HashMap<String, String>();
-	private KtbsRestClient service;
+	private KtbsRestClient client;
+
+	private Serializer serializer;
+	private Deserializer deserializer;
 	
-	private String rootUri;
-	
-	public RestDao(String rootUri) {
-		this.rootUri = rootUri;
+	public void setSerializer(Serializer serializer) {
+		this.serializer = serializer;
 	}
 	
-	public void init(String user, String password) {
-		service = new ApacheKtbsRestClient(rootUri);
+	public void setDeserializer(Deserializer deserializer) {
+		this.deserializer = deserializer;
+	}
+	
+	private ResourceFactory proxyFactory;
+	private ResourceFactory pojoFactory;
+	
+	public void setLinkedResourceFactory(ResourceFactory linkedResourceFactory) {
+		this.proxyFactory = linkedResourceFactory;
+	}
+	
+	public void setResourceFactory(ResourceFactory resourceFactory) {
+		this.pojoFactory = resourceFactory;
+	}
+	
+	private String username;
+	private String passwd;
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public void setPasswd(String passwd) {
+		this.passwd = passwd;
+	}
+	
+	private boolean requireAuthentication = false;
+
+	public void setRequireAuthentication(String required) {
+		this.requireAuthentication = required!=null && required.equals("required");
+	}
+
+	public void setClient(KtbsRestClient client) {
+		this.client = client;
+	}
+	
+	public void destroy() {
+		client.endSession();
+	}
+
+	public void init() {
+		if(requireAuthentication)
+			client.startSession(username, passwd);
+		else
+			client.startSession(null,null);
+
 	}
 
 	@Override
-	public IKtbsResource get(String uri) {
-		KtbsResponse response = service.get(uri);
+	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
+//		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith("@about"))
+//			uri+="@about";
+		
+		KtbsResponse response = client.get(uri);
 		if(!response.hasSucceeded())
 			return null;
 		else {
@@ -44,29 +95,36 @@ public class RestDao implements ResourceDao {
 				etags.put(uri, response.getHTTPETag());
 			else
 				log.warn("No etag was attached to the resource \""+uri+"\".");
+
+			String bodyAsString = response.getBodyAsString();
+			String mimeType = response.getMimeType();
+			if(mimeType.equals(KtbsConstants.MIME_TURTLE)) {
+				log.info("Resolving relative uris for parsing turtle syntax against the base uri " + uri);
+				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, uri);
+			}
 			
-			IKtbsResource resource = new RdfResourceSerializer().deserializeResource(
+			IKtbsResource resource = deserializer.deserializeResource(
 					uri,
-					new StringReader(response.getBodyAsString()), 
-					response.getMimeType());
-			
+					new StringReader(bodyAsString), 
+					mimeType);
+
 			if (resource instanceof ITrace) {
 				ITrace trace = (ITrace) resource;
-				
+
 			}
-			return resource;
+			return cls.cast(resource);
 		}
 	}
 
 	@Override
 	public boolean create(IKtbsResource resource) {
 		StringWriter writer = new StringWriter();
-		new RdfResourceSerializer().serializeResource(writer, resource, sendMimeType);
-		KtbsResponse response = service.post(resource);
+		serializer.serializeResource(writer, resource, sendMimeType);
+		KtbsResponse response = client.post(resource);
 		if(response.hasSucceeded()) {
 			if(!response.getHTTPLocation().equals(resource.getUri()))
 				log.warn("The resource has been created but in a diffrent uri location than expected.");
-				return true;
+			return true;
 		} else
 			return false;
 	}
@@ -74,36 +132,32 @@ public class RestDao implements ResourceDao {
 	@Override
 	public boolean save(IKtbsResource resource) {
 		StringWriter writer = new StringWriter();
-		new RdfResourceSerializer().serializeResource(writer, resource, sendMimeType);
+		serializer.serializeResource(writer, resource, sendMimeType);
 		String etag = etags.get(resource.getUri());
 		if(etag == null)
 			// should update the etag
-			get(resource.getUri());
-		
+			get(resource.getUri(), resource.getClass());
+
 		etag = etags.get(resource.getUri());
 		if(etag == null) {
 			log.warn("Could not find an etag for the resource \""+resource.getUri()+"\".");
 			return false;
 		}
-		
-		KtbsResponse response = service.update(resource, etag);
+
+		KtbsResponse response = client.update(resource, etag);
 		return response.hasSucceeded();
 	}
 
 	@Override
 	public boolean delete(String uri) {
-		return service.delete(uri).hasSucceeded();
+		return client.delete(uri).hasSucceeded();
 	}
 
-	@Override
-	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
-		return cls.cast(get(uri));
-	}
 
 	@Override
 	public <T extends IKtbsResource> ResultSet<T> query(String request,
 			Class<T> cls) {
-		
+
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 }

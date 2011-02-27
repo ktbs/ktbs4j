@@ -12,8 +12,12 @@ import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
-public class PojoFactory {
+public class PojoFactory implements ResourceFactory {
 
+	/* (non-Javadoc)
+	 * @see org.liris.ktbs.core.domain.ResourceFactory#createResource(java.lang.String, java.lang.Class)
+	 */
+	@Override
 	public <T extends IKtbsResource> T createResource(String uri, Class<T> cls) {
 		
 		KtbsResource resource;

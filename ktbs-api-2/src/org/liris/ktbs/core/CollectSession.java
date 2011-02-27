@@ -24,7 +24,7 @@ public class CollectSession {
 	private ResourceManager manager;
 	
 	private String defaultUser = "default";
-	private String defaultPassword = "defaultPwd";
+	private String defaultPassword = "default";
 
 	// timeout in minutes;
 	private int timeout = 150;
@@ -120,7 +120,7 @@ public class CollectSession {
 	
 	public IRoot getRoot() {
 		if(root == null)
-			root = (IRoot)manager.getKtbsResource(rootUri);
+			root = manager.getKtbsResource(rootUri, IRoot.class);
 		return root;
 	}
 	

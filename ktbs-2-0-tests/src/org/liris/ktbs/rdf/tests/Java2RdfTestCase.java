@@ -34,7 +34,6 @@ public class Java2RdfTestCase extends TestCase {
 		System.out.println("\tt01 root (default mode)");
 		model = mapper.getModel(Examples.getRoot());
 		writeModel();
-		
 	}
 	
 	public void testSerializeBase() {
@@ -48,6 +47,7 @@ public class Java2RdfTestCase extends TestCase {
 		model = mapper.getModel(Examples.getStoredTrace1());
 		writeModel();
 	}
+	
 	public void testSerializeT01InfoAndObsels() {
 		System.out.println("\tt01 info and obsels");
 		SerializationConfig config = new SerializationConfig();

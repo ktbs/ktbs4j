@@ -111,4 +111,5 @@ public class KtbsResponseImpl implements KtbsResponse {
 		else 
 			return contentType.getValue();
 	}
+
 }

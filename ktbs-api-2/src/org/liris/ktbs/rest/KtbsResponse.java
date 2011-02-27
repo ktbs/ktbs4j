@@ -47,7 +47,7 @@ public interface KtbsResponse {
 	 * of the created resource, null if none.
 	 */
 	public String getHTTPLocation();
-	
+
 	/**
 	 * The body of the HTTP response as a Java string.
 	 * 

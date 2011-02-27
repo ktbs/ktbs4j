@@ -3,15 +3,21 @@ package org.liris.ktbs.core;
 import java.lang.reflect.Proxy;
 import java.util.Set;
 
+import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.dao.ResourceDao;
 
-public class ProxyFactory {
+public class ProxyFactory implements ResourceFactory{
 	
 	private ResourceDao dao;
 	
+	public void setDao(ResourceDao dao) {
+		this.dao = dao;
+	}
+	
 	@SuppressWarnings("unchecked")
-	public <T extends IKtbsResource> T createResourceProxy(String uri, Class<T> cls) {
+	@Override
+	public <T extends IKtbsResource> T createResource(String uri, Class<T> cls) {
 		Class<?>[] interfaces = new Class<?>[]{cls};
 		return (T) Proxy.newProxyInstance(
 				ProxyFactory.class.getClassLoader(), 

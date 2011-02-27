@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.ProxyFactory;
 import org.liris.ktbs.core.ResultSet;
 import org.liris.ktbs.core.domain.AttributePair;
 import org.liris.ktbs.core.domain.AttributeType;
@@ -19,10 +18,10 @@ import org.liris.ktbs.core.domain.Method;
 import org.liris.ktbs.core.domain.MethodParameter;
 import org.liris.ktbs.core.domain.Obsel;
 import org.liris.ktbs.core.domain.ObselType;
-import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.PropertyStatement;
 import org.liris.ktbs.core.domain.RelationStatement;
 import org.liris.ktbs.core.domain.RelationType;
+import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.Root;
 import org.liris.ktbs.core.domain.StoredTrace;
 import org.liris.ktbs.core.domain.Trace;
@@ -56,28 +55,26 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+
+
 public class Rdf2Java {
 
 	private static final Log log = LogFactory.getLog(Rdf2Java.class);
 
-	private ProxyFactory proxyFactory;
-	private PojoFactory pojoFactory;
+	private ResourceFactory proxyFactory;
+	private ResourceFactory pojoFactory;
 
 	private DeserializationConfig config;
 
 	private Model model;
 	private Map<String, IKtbsResource> alreadyReadResources = new HashMap<String, IKtbsResource>();
 
-	public Rdf2Java(Model model) {
-		super();
-		this.model = model;
-		this.config = new DeserializationConfig();
-	}
-
-	public Rdf2Java(Model model, DeserializationConfig config) {
+	public Rdf2Java(Model model, DeserializationConfig config, ResourceFactory pojoFactory, ResourceFactory proxyFactory) {
 		super();
 		this.model = model;
 		this.config = config;
+		this.pojoFactory = pojoFactory;
+		this.proxyFactory = proxyFactory;
 	}
 
 	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls) {
@@ -237,7 +234,7 @@ public class Rdf2Java {
 		for(String childUri:childrenUris) {
 			T resource = null;
 			if(config.getMode(LinkAxis.CHILD) == DeserializationMode.PROXY) {
-				resource = proxyFactory.createResourceProxy(childUri, cls);
+				resource = proxyFactory.createResource(childUri, cls);
 			} else if(config.getMode(LinkAxis.CHILD) == DeserializationMode.URI_IN_PLAIN) {
 				resource = pojoFactory.createResource(childUri, cls);
 			} else if(config.getMode(LinkAxis.CHILD) == DeserializationMode.CASCADE) {
@@ -286,7 +283,7 @@ public class Rdf2Java {
 		Set<T> resourceSet = new HashSet<T>();
 		for(String linkedResourceUri:linkedResourceUris) {
 			if(config.getMode(axis) == DeserializationMode.PROXY) 
-				resourceSet.add(proxyFactory.createResourceProxy(linkedResourceUri, cls));
+				resourceSet.add(proxyFactory.createResource(linkedResourceUri, cls));
 			else if(config.getMode(axis) == DeserializationMode.URI_IN_PLAIN)
 				resourceSet.add(pojoFactory.createResource(linkedResourceUri, cls));
 			else if(config.getMode(axis) == DeserializationMode.CASCADE)
@@ -311,7 +308,7 @@ public class Rdf2Java {
 		}
 
 		if(config.getMode(axis) == DeserializationMode.PROXY) 
-			return proxyFactory.createResourceProxy(linkedResourceuri, cls);
+			return proxyFactory.createResource(linkedResourceuri, cls);
 		else if(config.getMode(axis) == DeserializationMode.URI_IN_PLAIN)
 			return pojoFactory.createResource(linkedResourceuri, cls);
 		else if(config.getMode(axis) == DeserializationMode.CASCADE)
@@ -500,7 +497,7 @@ public class Rdf2Java {
 		Set<Statement> attributeStatements = findAttributeStatements(obsel.getUri());
 		for(Statement stmt:attributeStatements) {
 			obsel.getAttributePairs().add(new AttributePair(
-					proxyFactory.createResourceProxy(stmt.getPredicate().getURI(), IAttributeType.class),
+					proxyFactory.createResource(stmt.getPredicate().getURI(), IAttributeType.class),
 					stmt.getObject().asLiteral().getValue()
 			));
 		}
@@ -515,7 +512,7 @@ public class Rdf2Java {
 		else if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.URI_IN_PLAIN) 
 			obsel = pojoFactory.createResource(obselUri, IObsel.class);
 		else if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.PROXY) 
-			obsel = proxyFactory.createResourceProxy(obselUri, IObsel.class);
+			obsel = proxyFactory.createResource(obselUri, IObsel.class);
 		else if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.CASCADE) 
 			obsel = readObsel(obselUri);
 		else
@@ -533,7 +530,7 @@ public class Rdf2Java {
 		else {
 			rel = new RelationStatement(
 					sourceObsel, 
-					proxyFactory.createResourceProxy(relUri, IRelationType.class), 
+					proxyFactory.createResource(relUri, IRelationType.class), 
 					targetObsel);
 
 			obselRelations.put(sourceObsel.getUri(), relUri, targetObsel.getUri(), rel);
@@ -785,7 +782,7 @@ public class Rdf2Java {
 		if(config.getChildMode() == DeserializationMode.NULL)
 			return null;
 		else if(config.getChildMode() == DeserializationMode.PROXY) 
-			return proxyFactory.createResourceProxy(childUri, cls);
+			return proxyFactory.createResource(childUri, cls);
 		else if(config.getChildMode() == DeserializationMode.URI_IN_PLAIN)
 			return pojoFactory.createResource(childUri, cls);
 		else if(config.getChildMode() == DeserializationMode.CASCADE)
@@ -829,6 +826,10 @@ public class Rdf2Java {
 	private Class<? extends IKtbsResource> guessType(String uri) {
 		Class<? extends IKtbsResource> cls = null;
 
+		if(log.isDebugEnabled()) {
+			log.debug("There are " + model.size() + " statements in the model.");
+		}
+		
 		StmtIterator it = model.listStatements(model.getResource(uri), RDF.type, (RDFNode)null);
 		if(!it.hasNext())
 			throw new IllegalStateException("Cannot guess the type of resource. There is no rdf:type defined for the resource " + uri);

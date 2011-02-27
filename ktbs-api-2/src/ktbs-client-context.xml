@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+  <property name="locations" value="classpath:ktbs-client.properties"/>
+</bean>
+
+	<bean id="rdfSerializer" class="org.liris.ktbs.serial.RdfSerializer">
+	</bean>
+
+	<bean id="rdfDeserializer" class="org.liris.ktbs.serial.RdfDeserializer">
+		<property name="proxyFactory" ref="proxyFactory" />
+		<property name="pojoFactory" ref="pojoFactory" />
+	</bean>
+	
+	<bean id="defaultProxyingManager" class="org.liris.ktbs.core.DefaultManager">
+		<property name="dao" ref="restDao" />
+		<property name="proxyFactory" ref="proxyFactory" />
+		<property name="pojoFactory" ref="pojoFactory" />
+	</bean>
+
+	<bean id="pojoFactory" class="org.liris.ktbs.core.domain.PojoFactory">
+	</bean>
+
+	<bean id="proxyFactory" class="org.liris.ktbs.core.ProxyFactory">
+		<property name="dao" ref="restDao" />
+	</bean>
+
+	<bean 	id="restDao" 
+			class="org.liris.ktbs.rest.RestDao"
+			init-method="init">
+		<property name="client" ref="restClient" />
+		<property name="username" value="${ktbs.username}" />
+		<property name="passwd" value="${ktbs.passwd}" />
+		<property name="requireAuthentication" value="${ktbs.authentication}" />
+		<property name="serializer" ref="rdfSerializer" />
+		<property name="deserializer" ref="rdfDeserializer" />
+	</bean>
+
+	<bean 	id="restClient" 
+			class="org.liris.ktbs.rest.ApacheKtbsRestClient"
+			destroy-method="endSession">
+		<property name="rootUri" value="${ktbs.root.uri}" />
+	</bean>
+
+</beans>

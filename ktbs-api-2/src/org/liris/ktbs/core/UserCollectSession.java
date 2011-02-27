@@ -1,6 +1,6 @@
 package org.liris.ktbs.core;
 
-import org.liris.ktbs.core.domain.Base;
+import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
@@ -15,14 +15,14 @@ public class UserCollectSession {
 	private String defaultTraceModelUri;
 
 	// should be access only throw getBase
-	private Base _base;
+	private IBase _base;
 
 	public void setDefaultTraceModelUri(String defaultTraceModelUri) {
 		this.defaultTraceModelUri = defaultTraceModelUri;
 	}
 
 	public ITraceModel getDefaultTraceModel() {
-		return (ITraceModel)manager.getKtbsResource(defaultTraceModelUri);
+		return manager.getKtbsResource(defaultTraceModelUri, ITraceModel.class);
 	}
 
 	public UserCollectSession(String user, String baseUri) {
@@ -74,9 +74,9 @@ public class UserCollectSession {
 		return currentTrace;
 	}
 
-	private Base getBase() {
+	private IBase getBase() {
 		if(_base == null)
-			_base = (Base) manager.getKtbsResource(baseUri);
+			_base = manager.getKtbsResource(baseUri, IBase.class);
 		return _base;
 	}
 

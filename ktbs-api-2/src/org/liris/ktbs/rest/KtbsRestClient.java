@@ -27,6 +27,21 @@ public interface KtbsRestClient {
 	 */
 	public KtbsResponse get(String resourceURI);
 
+	public void setRootUri(String ktbsRootURI);
+	
+	
+	/**
+	 * Init the http client with no athentication
+	 */
+	public void startSession();
+	public void endSession();
+	
+	/**
+	 * Init the http client classes and do authentication
+	 */
+	public void startSession(String user, String password);
+	
+	
 	public KtbsResponse post(IKtbsResource resource);
 	
 

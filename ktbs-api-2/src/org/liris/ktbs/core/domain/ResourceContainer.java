@@ -2,9 +2,13 @@ package org.liris.ktbs.core.domain;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IResourceContainer;
+import org.liris.ktbs.core.domain.interfaces.ITrace;
+import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.utils.KtbsUtils;
 
 public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsResource implements IResourceContainer<T> {
 
@@ -17,6 +21,7 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 			super();
 			collectionIterator = c.iterator();
 			currentIterator = collectionIterator.next().iterator();
+			doNext();
 		}
 
 
@@ -41,6 +46,8 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 
 		@Override
 		public T next() {
+			if(next == null)
+				throw new NoSuchElementException();
 			T t = next;
 			doNext();
 			return t;
@@ -57,13 +64,19 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 	 */
 	@Override
 	public T get(String resourceURI) {
+		String absoluteUri = KtbsUtils.makeChildURI(getUri(), resourceURI, isChildALeaf());
+		
 		Iterator<T> it = iterator();
 		while (it.hasNext()) {
 			T t = it.next();
-			if(t.getUri().equals(resourceURI)) 
+			if(t.getUri().equals(absoluteUri)) 
 				return t;
 		}
 		return null;
+	}
+
+	private boolean isChildALeaf() {
+		return ITrace.class.isAssignableFrom(getClass()) && ITraceModel.class.isAssignableFrom(getClass());
 	}
 
 	/* (non-Javadoc)

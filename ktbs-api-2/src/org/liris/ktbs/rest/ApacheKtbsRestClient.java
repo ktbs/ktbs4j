@@ -34,7 +34,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
-import org.liris.ktbs.serial.RdfResourceSerializer;
+import org.liris.ktbs.serial.RdfSerializer;
 
 public class ApacheKtbsRestClient implements KtbsRestClient {
 
@@ -43,18 +43,19 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 	private static Log log = LogFactory.getLog(ApacheKtbsRestClient.class);
 
-	private URI ktbsRootURI;
+	private String rootUri;
 
-	ApacheKtbsRestClient(String ktbsRootURI) {
-		this.ktbsRootURI = URI.create(ktbsRootURI);
+	@Override
+	public void setRootUri(String rootUri) {
+		this.rootUri = rootUri;
 	}
-
+	
 	private HttpClient httpClient;
 	private boolean started = false;
 
 	private HttpParams httpParams;
 
-
+	@Override
 	public void startSession() {
 		startSession(null, null);
 	}
@@ -63,9 +64,10 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	 * Starts the underlying HTTP client with default parameters for caching 
 	 * and general HTTP protocol matters, and loads Jena classes.
 	 */
+	@Override
 	public void startSession(String user, String password) {
 
-		log.info("Starting KtbsClient session for the KTBS root URI \""+ktbsRootURI+"\".");
+		log.info("Starting KtbsClient session for the KTBS root URI \""+rootUri+"\".");
 
 		
 		CacheConfig cacheConfig = new CacheConfig();  
@@ -90,11 +92,12 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		log.debug("Creating the caching HTTP client.");
 		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(httpParams);
 		if(user != null) {
+			URI asJavaUri = URI.create(rootUri);
 			log.info("Sarting Http authentication");
 			HttpHost targetHost = new HttpHost(
-					ktbsRootURI.getHost(), 
-					ktbsRootURI.getPort()==-1?80:ktbsRootURI.getPort(),
-							ktbsRootURI.getScheme()); 
+					asJavaUri.getHost(), 
+					asJavaUri.getPort()==-1?80:asJavaUri.getPort(),
+							asJavaUri.getScheme()); 
 			
 			defaultHttpClient.getCredentialsProvider().setCredentials(
 					new AuthScope(targetHost.getHostName(), targetHost.getPort()), 
@@ -121,18 +124,12 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	/**
 	 * Shuts down the connection manager of the underlying HTTP client.
 	 */
-	public void closeSession() {
-		log.info("Closing KtbsClient session for the KTBS root URI \""+ktbsRootURI+"\".");
+	public void endSession() {
+		log.info("Closing KtbsClient session for the KTBS root URI \""+rootUri+"\".");
 		if(httpClient != null) 
 			httpClient.getConnectionManager().shutdown();
 		this.started = false;
 		log.info("Session closed.");
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		closeSession();
-		super.finalize();
 	}
 
 	private void checkStarted() {
@@ -145,7 +142,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	}
 
 	private String getGETMimeType() {
-		return KtbsConstants.MIME_NTRIPLES;
+		return KtbsConstants.MIME_RDF_XML;
 	}
 	private String getPOSTMimeType() {
 		return KtbsConstants.MIME_TURTLE;
@@ -224,7 +221,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		try {
 			StringWriter writer = new StringWriter();
-			new RdfResourceSerializer().serializeResource(writer, resource, getPOSTMimeType());
+			new RdfSerializer().serializeResource(writer, resource, getPOSTMimeType());
 			String string = writer.toString();
 			
 			log.info("POST Request content: \n" + string);
@@ -291,7 +288,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		try {
 			
 			StringWriter writer = new StringWriter();
-			new RdfResourceSerializer().serializeResource(writer, resource, getPOSTMimeType());
+			new RdfSerializer().serializeResource(writer, resource, getPOSTMimeType());
 			String string = writer.toString();
 			
 			put.setEntity(new StringEntity(string, HTTP.UTF_8));

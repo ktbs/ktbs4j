@@ -13,6 +13,7 @@ import org.liris.ktbs.core.domain.Method;
 import org.liris.ktbs.core.domain.Obsel;
 import org.liris.ktbs.core.domain.ObselType;
 import org.liris.ktbs.core.domain.RelationType;
+import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.StoredTrace;
 import org.liris.ktbs.core.domain.TraceModel;
 import org.liris.ktbs.core.domain.interfaces.IAttributePair;
@@ -38,10 +39,23 @@ public class DefaultManager implements ResourceManager {
 	 */
 	private ResourceDao dao;
 	private ProxyFactory proxyFactory;
+	private ResourceFactory pojoFactory;
+	
+	public void setDao(ResourceDao dao) {
+		this.dao = dao;
+	}
+	
+	public void setPojoFactory(ResourceFactory pojoFactory) {
+		this.pojoFactory = pojoFactory;
+	}
+	
+	public void setProxyFactory(ProxyFactory proxyFactory) {
+		this.proxyFactory = proxyFactory;
+	}
 
 	@Override
-	public IKtbsResource getKtbsResource(String uri) {
-		IKtbsResource ktbsResource = dao.get(uri);
+	public <T extends IKtbsResource> T getKtbsResource(String uri, Class<T> cls) {
+		T ktbsResource = dao.get(uri,cls);
 		return ktbsResource;
 	}
 
@@ -62,7 +76,7 @@ public class DefaultManager implements ResourceManager {
 		trace.setURI(KtbsUtils.makeChildURI(baseUri, traceLocalName, false));
 		trace.setOrigin(origin);
 		trace.setDefaultSubject(defaultSubject);
-		trace.setTraceModel(proxyFactory.createResourceProxy(model, ITraceModel.class));
+		trace.setTraceModel(proxyFactory.createResource(model, ITraceModel.class));
 
 		return createAndReturn(trace);
 	}
@@ -72,7 +86,7 @@ public class DefaultManager implements ResourceManager {
 			String traceLocalName, String methodUri, Set<String> sourceTraces) {
 		ComputedTrace trace = new ComputedTrace();
 		trace.setURI(KtbsUtils.makeChildURI(baseUri, traceLocalName, false));
-		trace.setMethod(proxyFactory.createResourceProxy(methodUri, IMethod.class));
+		trace.setMethod(proxyFactory.createResource(methodUri, IMethod.class));
 
 		trace.setSourceTraces(convertToSetOfProxies(sourceTraces, ITrace.class));
 		
@@ -84,7 +98,7 @@ public class DefaultManager implements ResourceManager {
 		if(resourceUris == null)
 			return proxySet;
 		for(String sourceTraceUri:resourceUris) 
-			proxySet.add(proxyFactory.createResourceProxy(sourceTraceUri, cls));
+			proxySet.add(proxyFactory.createResource(sourceTraceUri, cls));
 		return proxySet;
 	}
 
@@ -126,7 +140,7 @@ public class DefaultManager implements ResourceManager {
 		if(attributes != null) {
 			for(String key:attributes.keySet()) 
 				pairs.add(new AttributePair(
-						proxyFactory.createResourceProxy(key, IAttributeType.class), 
+						proxyFactory.createResource(key, IAttributeType.class), 
 						attributes.get(key)
 				));
 			obsel.setAttributePairs(pairs);

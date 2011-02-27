@@ -17,7 +17,8 @@ import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 public interface ResourceManager {
 	
-	public IKtbsResource getKtbsResource(String uri);
+	public <T extends IKtbsResource> T getKtbsResource(String uri, Class<T> cls);
+	
 	public IBase newBase(String rootUri, String baseLocalName, String owner);
 	public IStoredTrace newStoredTrace(String baseUri, String traceLocalName, String model, String origin, String defaultSubject);
 	public IComputedTrace newComputedTrace(String baseUri, String traceLocalName, String methodUri, Set<String> sourceTraces);

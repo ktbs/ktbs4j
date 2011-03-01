@@ -75,7 +75,11 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		cacheConfig.setMaxObjectSizeBytes(10000);
 
 		httpParams = new BasicHttpParams();
-		httpParams.setParameter(ClientPNames.HANDLE_REDIRECTS, true);
+		
+		/*
+		 * In order to always being aware of what resource was requested from the uri
+		 */
+		httpParams.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
 		HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
 		HttpProtocolParams.setContentCharset(httpParams, HTTP.DEFAULT_CONTENT_CHARSET);
@@ -144,6 +148,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	private String getGETMimeType() {
 		return KtbsConstants.MIME_RDF_XML;
 	}
+	
 	private String getPOSTMimeType() {
 		return KtbsConstants.MIME_TURTLE;
 	}

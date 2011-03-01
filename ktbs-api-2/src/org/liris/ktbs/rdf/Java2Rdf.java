@@ -65,7 +65,7 @@ public class Java2Rdf {
 	private void initModel() {
 		alreadyProcessed.clear();
 		model = ModelFactory.createDefaultModel();
-		model.setNsPrefix("ktbs",KtbsConstants.NAMESPACE);
+		model.setNsPrefix("ktbs",KtbsConstants.NAMESPACE_KTBS);
 		model.setNsPrefix("xsd",XSD.getURI());
 		model.setNsPrefix("rdfs",RDFS.getURI());
 	}

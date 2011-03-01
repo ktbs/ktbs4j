@@ -28,7 +28,6 @@ public class RdfDeserializer implements Deserializer {
 	private DeserializationConfig deserializationConfig = new DeserializationConfig();
 	
 	private ResourceFactory pojoFactory;
-	
 	private ResourceFactory proxyFactory;
 	
 	@Override
@@ -38,10 +37,35 @@ public class RdfDeserializer implements Deserializer {
 	
 	@Override
 	public IKtbsResource deserializeResource(String uri, Reader reader, String mimeFormat) {
+		return deserializeResource(uri, reader, "", mimeFormat);
+	}
+
+	private Rdf2Java createMapper(Reader reader, String mimeFormat, String baseUri) {
+		Model model = ModelFactory.createDefaultModel();
+		model.read(reader, baseUri, KtbsUtils.getJenaSyntax(mimeFormat));
+		Rdf2Java rdf2Java = new Rdf2Java(model, deserializationConfig, pojoFactory, proxyFactory);
+		return rdf2Java;
+	}
+
+	@Override
+	public <T extends IKtbsResource> ResultSet<T> deserializeResourceSet(Class<T> cls, Reader reader, String baseUri, String mimeFormat) {
+		Rdf2Java rdf2Java = createMapper(reader, mimeFormat, baseUri);
+		return rdf2Java.getResourceSet(cls);
+	}
+
+	@Override
+	public <T extends IKtbsResource> T deserializeResource(String uri,
+			Reader reader, String mimeFormat, Class<T> cls) {
+		return cls.cast(deserializeResource(uri, reader, mimeFormat));
+	}
+
+	@Override
+	public IKtbsResource deserializeResource(String uri, Reader reader,
+			String baseUri, String mimeType) {
 		log.info("Deserializing the resource " + uri);
 		long start = System.currentTimeMillis();
 		
-		Rdf2Java rdf2Java = createMapper(reader, mimeFormat);
+		Rdf2Java rdf2Java = createMapper(reader, mimeType, baseUri);
 		IKtbsResource resource = rdf2Java.getResource(uri);
 		if(log.isDebugEnabled()) {
 			long end = System.currentTimeMillis();
@@ -51,23 +75,19 @@ public class RdfDeserializer implements Deserializer {
 		return resource;
 	}
 
-	private Rdf2Java createMapper(Reader reader, String mimeFormat) {
-		Model model = ModelFactory.createDefaultModel();
-		model.read(reader, "", KtbsUtils.getJenaSyntax(mimeFormat));
-		Rdf2Java rdf2Java = new Rdf2Java(model, deserializationConfig, pojoFactory, proxyFactory);
-		return rdf2Java;
-	}
-
-	@Override
-	public <T extends IKtbsResource> ResultSet<T> deserializeResourceSet(Class<T> cls, Reader reader, String mimeFormat) {
-		Rdf2Java rdf2Java = createMapper(reader, mimeFormat);
-		return rdf2Java.getResourceSet(cls);
-	}
-
 	@Override
 	public <T extends IKtbsResource> T deserializeResource(String uri,
-			Reader reader, String mimeFormat, Class<T> cls) {
-		return cls.cast(deserializeResource(uri, reader, mimeFormat));
+			Reader reader, String baseUri, String mimeFormat, Class<T> cls) {
+		log.info("Deserializing the resource " + uri);
+		long start = System.currentTimeMillis();
+		
+		Rdf2Java rdf2Java = createMapper(reader, mimeFormat, baseUri);
+		T resource = rdf2Java.getResource(uri, cls);
+		if(log.isDebugEnabled()) {
+			long end = System.currentTimeMillis();
+			log.debug("Resource deserialized in " + (end-start) + "ms.");
+		}
+		
+		return resource;
 	}
-	
 }

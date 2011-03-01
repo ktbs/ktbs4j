@@ -31,58 +31,60 @@ public interface KtbsConstants {
 	
 	
 	// KTBS vocabulary
-	public static final String NAMESPACE = "http://liris.cnrs.fr/silex/2009/ktbs#";
+	public static final String NAMESPACE_KTBS = "http://liris.cnrs.fr/silex/2009/ktbs#";
+	public static final String NAMESPACE_RDFREST = "http://liris.cnrs.fr/silex/2009/rdfrest#";
 
 	// KTBS Root concepts and properties
-	public static final String ROOT = NAMESPACE + "KtbsRoot";
-	public static final String P_HAS_BASE = NAMESPACE + "hasBase";
+	public static final String ROOT = NAMESPACE_KTBS + "KtbsRoot";
+	public static final String P_HAS_BASE = NAMESPACE_KTBS + "hasBase";
 
 	// Base concepts and properties
-	public static final String BASE = NAMESPACE + "Base";
-	public static final String P_OWNS = NAMESPACE + "owns";
-	public static final String STORED_TRACE = NAMESPACE + "StoredTrace";
-	public static final String COMPUTED_TRACE = NAMESPACE + "ComputedTrace";
-	public static final String METHOD = NAMESPACE + "Method";
-	public static final String TRACE_MODEL = NAMESPACE + "TraceModel";
+	public static final String BASE = NAMESPACE_KTBS + "Base";
+	public static final String P_OWNS = NAMESPACE_KTBS + "owns";
+	public static final String STORED_TRACE = NAMESPACE_KTBS + "StoredTrace";
+	public static final String COMPUTED_TRACE = NAMESPACE_KTBS + "ComputedTrace";
+	public static final String METHOD = NAMESPACE_KTBS + "Method";
+	public static final String TRACE_MODEL = NAMESPACE_KTBS + "TraceModel";
 
 	// Trace properties
-	public static final String P_HAS_ORIGIN = NAMESPACE + "hasOrigin";
-	public static final String P_DESCRIPTION_OF = NAMESPACE + "descriptionOf";
-	public static final String P_COMPLIES_WITH_MODEL = NAMESPACE + "compliesWithModel";
-	public static final String P_HAS_MODEL = NAMESPACE + "hasModel";
-	public static final String P_HAS_SOURCE = NAMESPACE + "hasSource";
+	public static final String P_HAS_ORIGIN = NAMESPACE_KTBS + "hasOrigin";
+	public static final String P_DESCRIPTION_OF = NAMESPACE_KTBS + "descriptionOf";
+	public static final String P_COMPLIES_WITH_MODEL = NAMESPACE_KTBS + "compliesWithModel";
+	public static final String P_HAS_MODEL = NAMESPACE_KTBS + "hasModel";
+	public static final String P_HAS_SOURCE = NAMESPACE_KTBS + "hasSource";
 
 	// Trace model concepts and properties
-	public static final String RELATION_TYPE = NAMESPACE + "RelationType";
-	public static final String ATTRIBUTE_TYPE = NAMESPACE + "AttributeType";
-	public static final String OBSEL_TYPE = NAMESPACE + "ObselType";
-	public static final String P_HAS_ATTRIBUTE_DOMAIN = NAMESPACE + "hasAttributeDomain";
-	public static final String P_HAS_ATTRIBUTE_RANGE = NAMESPACE + "hasAttributeRange";
-	public static final String P_HAS_RELATION_DOMAIN = NAMESPACE + "hasRelationDomain";
-	public static final String P_HAS_RELATION_RANGE = NAMESPACE + "hasRelationRange";
-	public static final String P_HAS_SUPER_RELATION_TYPE = NAMESPACE + "hasSuperRelationType";
-	public static final String P_HAS_SUPER_OBSEL_TYPE = NAMESPACE + "hasSuperObselType";
+	public static final String RELATION_TYPE = NAMESPACE_KTBS + "RelationType";
+	public static final String ATTRIBUTE_TYPE = NAMESPACE_KTBS + "AttributeType";
+	public static final String OBSEL_TYPE = NAMESPACE_KTBS + "ObselType";
+	public static final String P_HAS_ATTRIBUTE_DOMAIN = NAMESPACE_KTBS + "hasAttributeDomain";
+	public static final String P_HAS_ATTRIBUTE_RANGE = NAMESPACE_KTBS + "hasAttributeRange";
+	public static final String P_HAS_RELATION_DOMAIN = NAMESPACE_KTBS + "hasRelationDomain";
+	public static final String P_HAS_RELATION_RANGE = NAMESPACE_KTBS + "hasRelationRange";
+	public static final String P_HAS_SUPER_RELATION_TYPE = NAMESPACE_KTBS + "hasSuperRelationType";
+	public static final String P_HAS_SUPER_OBSEL_TYPE = NAMESPACE_KTBS + "hasSuperObselType";
 	
 	
 	// Obsel Properties
-	public static final String P_HAS_BEGIN = NAMESPACE + "hasBegin";
-	public static final String P_HAS_END = NAMESPACE + "hasEnd";
-	public static final String P_HAS_BEGIN_DT = NAMESPACE + "hasBeginDT";
-	public static final String P_HAS_END_DT = NAMESPACE + "hasEndDT";
-	public static final String P_HAS_SUBJECT = NAMESPACE + "hasSubject";
-	public static final String P_HAS_TRACE = NAMESPACE + "hasTrace";
-	public static final String P_HAS_METHOD = NAMESPACE + "hasMethod";
-	public static final String P_HAS_OWNER = NAMESPACE + "hasOwner";
-	public static final String P_HAS_ETAG = NAMESPACE + "hasETag";
+	public static final String P_HAS_BEGIN = NAMESPACE_KTBS + "hasBegin";
+	public static final String P_HAS_END = NAMESPACE_KTBS + "hasEnd";
+	public static final String P_HAS_BEGIN_DT = NAMESPACE_KTBS + "hasBeginDT";
+	public static final String P_HAS_END_DT = NAMESPACE_KTBS + "hasEndDT";
+	public static final String P_HAS_SUBJECT = NAMESPACE_KTBS + "hasSubject";
+	public static final String P_HAS_TRACE = NAMESPACE_KTBS + "hasTrace";
+	public static final String P_HAS_METHOD = NAMESPACE_KTBS + "hasMethod";
+	public static final String P_HAS_OWNER = NAMESPACE_KTBS + "hasOwner";
+	
+	public static final String P_HAS_ETAG = NAMESPACE_RDFREST + "hasETag";
 	
 	// Method Properties
-	public static final String P_HAS_PARAMETER = NAMESPACE + "hasParameter";
-	public static final String P_INHERITS = NAMESPACE + "inherits";
-	public static final String SCRIPT_PYTHON = NAMESPACE + "script-python";
-	public static final String P_HAS_SOURCE_OBSEL =  NAMESPACE + "hasSourceObsel";
-	public static final String FILTER = NAMESPACE + "filter";
-	public static final String FUSION = NAMESPACE + "fusion";
-	public static final String SPARQL = NAMESPACE + "sparql";
+	public static final String P_HAS_PARAMETER = NAMESPACE_KTBS + "hasParameter";
+	public static final String P_INHERITS = NAMESPACE_KTBS + "inherits";
+	public static final String SCRIPT_PYTHON = NAMESPACE_KTBS + "script-python";
+	public static final String P_HAS_SOURCE_OBSEL =  NAMESPACE_KTBS + "hasSourceObsel";
+	public static final String FILTER = NAMESPACE_KTBS + "filter";
+	public static final String FUSION = NAMESPACE_KTBS + "fusion";
+	public static final String SPARQL = NAMESPACE_KTBS + "sparql";
 	
 	
 }

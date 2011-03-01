@@ -38,6 +38,8 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="requireAuthentication" value="${ktbs.authentication}" />
 		<property name="serializer" ref="rdfSerializer" />
 		<property name="deserializer" ref="rdfDeserializer" />
+		<property name="linkedResourceFactory" ref="proxyFactory" />
+		<property name="resourceFactory" ref="pojoFactory" />
 	</bean>
 
 	<bean 	id="restClient" 

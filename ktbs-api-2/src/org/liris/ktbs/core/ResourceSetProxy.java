@@ -10,6 +10,7 @@ import org.liris.ktbs.dao.ResourceDao;
 
 public class ResourceSetProxy<T extends IKtbsResource> implements InvocationHandler {
 
+	private boolean loaded;
 	private String request;
 	private ResourceDao dao;
 	private Set<T> resources = new HashSet<T>();
@@ -29,10 +30,11 @@ public class ResourceSetProxy<T extends IKtbsResource> implements InvocationHand
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 	throws Throwable {
-		if(resources == null) {
+		if(!loaded) {
 			ResultSet<T> results =  dao.query(request, cls);
 			resources = new HashSet<T>();
 			resources.addAll(results);
+			loaded = true;
 		}
 
 		return method.invoke(resources, args);

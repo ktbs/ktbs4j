@@ -170,7 +170,10 @@ public class Rdf2Java {
 		method.setWithMethodParameterDelegate(readResourceWithParameters(method.getUri()));
 
 		method.setEtag(getLiteralOrNull(method.getUri(), KtbsConstants.P_HAS_ETAG, String.class));
-		method.setInherits(getLiteralOrNull(method.getUri(), KtbsConstants.P_INHERITS, String.class));
+		
+		Statement stmt = model.getResource(method.getUri()).getProperty(model.getProperty(KtbsConstants.P_INHERITS));
+		if(stmt != null)
+			method.setInherits(getRdfObjectAsJavaObject(stmt.getObject()).toString());
 
 		return method;
 	}

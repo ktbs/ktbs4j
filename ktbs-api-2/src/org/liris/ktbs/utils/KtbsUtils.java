@@ -67,7 +67,7 @@ public class KtbsUtils {
 	 * @return
 	 */
 	public static boolean hasReservedNamespace(String pName) {
-		return pName.startsWith(KtbsConstants.NAMESPACE)
+		return pName.startsWith(KtbsConstants.NAMESPACE_KTBS)
 				|| pName.startsWith(RDFS.getURI())
 				|| pName.startsWith(RDF.getURI());
 	}

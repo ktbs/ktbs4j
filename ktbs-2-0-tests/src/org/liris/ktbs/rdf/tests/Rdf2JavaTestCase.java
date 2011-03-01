@@ -19,6 +19,7 @@ import org.liris.ktbs.core.domain.interfaces.IRelationType;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 import org.liris.ktbs.rdf.Rdf2Java;
+import org.liris.ktbs.serial.DeserializationConfig;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -30,14 +31,7 @@ public class Rdf2JavaTestCase extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		model = ModelFactory.createDefaultModel();
-		mapper = new Rdf2Java(model);
-		Field proxyFactoryField = Rdf2Java.class.getDeclaredField("proxyFactory");
-		proxyFactoryField.setAccessible(true);
-		proxyFactoryField.set(mapper, new ProxyFactory());
-			
-		Field pojoFactoryField = Rdf2Java.class.getDeclaredField("pojoFactory");
-		pojoFactoryField.setAccessible(true);
-		pojoFactoryField.set(mapper, new PojoFactory());
+		mapper = new Rdf2Java(model, new DeserializationConfig(), new PojoFactory(), new ProxyFactory());
 		
 	}
 	

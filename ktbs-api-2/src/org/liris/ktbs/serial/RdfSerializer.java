@@ -12,34 +12,45 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfSerializer implements Serializer {
 
-	private SerializationConfig serializationConfig = new SerializationConfig();
+	private SerializationConfig defaultConfig = new SerializationConfig();
 
 	@Override
 	public void setSerializationConfig(SerializationConfig serializationConfig) {
-		this.serializationConfig = serializationConfig;
+		this.defaultConfig = serializationConfig;
 	}
 
 	@Override
 	public void serializeResource(Writer writer, IKtbsResource resource,
 			String mimeFormat) {
-		
-		Java2Rdf mapper = createMapper();
-		Model model = mapper.getModel(resource);
-		
-		model.write(writer, KtbsUtils.getJenaSyntax(mimeFormat), "");
+		serializeResource(writer, resource, mimeFormat, defaultConfig);
 	}
 
-	private Java2Rdf createMapper() {
-		Java2Rdf mapper = new Java2Rdf(serializationConfig);
-		mapper.setConfig(serializationConfig);
+	private Java2Rdf createMapper(SerializationConfig config) {
+		Java2Rdf mapper = new Java2Rdf(config);
 		return mapper;
 	}
 
 	@Override
 	public void serializeResourceSet(Writer writer,
 			Set<? extends IKtbsResource> resourceSet, String mimeFormat) {
+		serializeResourceSet(writer, resourceSet, mimeFormat, defaultConfig);
+	}
+
+	@Override
+	public void serializeResource(Writer writer, IKtbsResource resource,
+			String mimeFormat, SerializationConfig config) {
+		Java2Rdf mapper = createMapper(config);
+		Model model = mapper.getModel(resource);
 		
-		Java2Rdf mapper = createMapper();
+		model.write(writer, KtbsUtils.getJenaSyntax(mimeFormat), "");
+	}
+
+	@Override
+	public void serializeResourceSet(Writer writer,
+			Set<? extends IKtbsResource> resourceSet, String mimeFormat,
+			SerializationConfig config) {
+		
+		Java2Rdf mapper = createMapper(config);
 		Model model = mapper.getModel(resourceSet);
 		model.write(writer, KtbsUtils.getJenaSyntax(mimeFormat), "");
 	}

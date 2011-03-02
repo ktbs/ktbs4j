@@ -58,8 +58,8 @@ public interface ResourceManager {
 	
 	public IAttributeType newAttributeType(String traceModelUri, String localName, Set<String> domainUris, Set<String> rangeUris);
 
-	public boolean saveKtbsResource(IKtbsResource resource, boolean cascadeLinked, boolean cascadeChildren);
 
 	public boolean deleteKtbsResource(String uri, boolean cascadeLinked, boolean cascadeChildren);
 
+	public boolean saveKtbsResource(IKtbsResource resource);
 }

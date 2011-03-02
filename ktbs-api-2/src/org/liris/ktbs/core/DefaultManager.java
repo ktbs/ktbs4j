@@ -223,9 +223,8 @@ public class DefaultManager implements ResourceManager {
 	}
 
 	@Override
-	public boolean saveKtbsResource(IKtbsResource resource,
-			boolean cascadeLinked, boolean cascadeChildren) {
-		throw new UnsupportedOperationException("Not yet implemented");
+	public boolean saveKtbsResource(IKtbsResource resource) {
+		return dao.save(resource);
 	}
 
 	@Override
@@ -233,4 +232,5 @@ public class DefaultManager implements ResourceManager {
 			boolean cascadeLinked, boolean cascadeChildren) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
+
 }

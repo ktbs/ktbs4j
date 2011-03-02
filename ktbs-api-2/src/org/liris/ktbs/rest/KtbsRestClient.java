@@ -1,6 +1,5 @@
 package org.liris.ktbs.rest;
 
-import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 
 /**
  * 
@@ -54,5 +53,5 @@ public interface KtbsRestClient {
 	 */
 	public KtbsResponse delete(String resourceURI);
 
-	public KtbsResponse update(IKtbsResource resource, String etag);
+	public KtbsResponse update(String updateUri, String resourceAsString, String etag);
 }

@@ -8,7 +8,6 @@ import org.liris.ktbs.core.domain.interfaces.IAttributePair;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IObselType;
 import org.liris.ktbs.core.domain.interfaces.IRelationStatement;
-import org.liris.ktbs.core.domain.interfaces.ITrace;
 
 public class Obsel extends KtbsResource implements IObsel {
 	

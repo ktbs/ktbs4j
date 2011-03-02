@@ -1,7 +1,6 @@
 package org.liris.ktbs.rest;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
@@ -34,7 +33,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
-import org.liris.ktbs.serial.RdfSerializer;
 
 public class ApacheKtbsRestClient implements KtbsRestClient {
 
@@ -276,12 +274,11 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	}
 
 	@Override
-	public KtbsResponse update(IKtbsResource resource, String etag) {
-		final String putURI = resource.getUri();
+	public KtbsResponse update(String updateUri, String resourceAsString, String etag) {
 
 		checkStarted(); 
 
-		HttpPut put = new HttpPut(putURI);
+		HttpPut put = new HttpPut(updateUri);
 		put.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
 		put.addHeader(HttpHeaders.IF_MATCH, etag);
 
@@ -291,16 +288,13 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		try {
 			
-			StringWriter writer = new StringWriter();
-			new RdfSerializer().serializeResource(writer, resource, getPOSTMimeType());
-			String string = writer.toString();
 			
-			put.setEntity(new StringEntity(string, HTTP.UTF_8));
+			put.setEntity(new StringEntity(resourceAsString, HTTP.UTF_8));
 
 		
 			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
 			if(log.isDebugEnabled()) {
-				log.debug("PUT body: "+string);
+				log.debug("PUT body: "+resourceAsString);
 			}
 
 			response = httpClient.execute(put);

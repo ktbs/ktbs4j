@@ -4,6 +4,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,9 +17,17 @@ import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.rdf.Java2Rdf;
 import org.liris.ktbs.serial.Deserializer;
+import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.Serializer;
+import org.liris.ktbs.utils.KtbsUtils;
 import org.liris.ktbs.utils.RelativeURITurtleReader;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RestDao implements ResourceDao {
 
@@ -138,8 +148,12 @@ public class RestDao implements ResourceDao {
 
 	@Override
 	public boolean save(IKtbsResource resource) {
-		StringWriter writer = new StringWriter();
-		serializer.serializeResource(writer, resource, sendMimeType);
+		/*
+		 * Manage special case if obsel or trace model element.
+		 * If stored trace or trace model, cascade to children automatically
+		 */
+		
+		
 		String etag = etags.get(resource.getUri());
 		if(etag == null)
 			// should update the etag
@@ -151,8 +165,53 @@ public class RestDao implements ResourceDao {
 			return false;
 		}
 
-		KtbsResponse response = client.update(resource, etag);
+
+		String updateUri = resource.getUri();
+
+		if(ITrace.class.isAssignableFrom(resource.getClass()) && !resource.getUri().endsWith(KtbsConstants.ABOUT_ASPECT))
+			updateUri+=KtbsConstants.ABOUT_ASPECT;
+
+		
+		StringWriter writer = new StringWriter();
+
+		/*
+		 * KTBS FIX should use the serializer when KTBS is debugged for update resource: 
+		 * 
+		 * serializer.serializeResource(writer, resource, sendMimeType, config);
+		 */
+		temporaryFix(resource, new SerializationConfig(), writer);
+		/*
+		 * END of fix
+		 */
+		
+
+		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
 		return response.hasSucceeded();
+	}
+
+	private void temporaryFix(IKtbsResource resource,
+			SerializationConfig config, StringWriter writer) {
+		Java2Rdf java2Rdf = new Java2Rdf(config);
+		Model model = java2Rdf.getModel(resource);
+		Model editableModel = getEditable(model, resource.getUri(), resource.getClass());
+		if(editableModel != null) {
+			Set<String> editableProperties = new TreeSet<String>();
+			StmtIterator it = editableModel.listStatements();
+			while (it.hasNext()) {
+				Statement statement = (Statement) it.next();
+				editableProperties.add(statement.getPredicate().getURI());
+			}
+
+			it = model.listStatements();
+			while (it.hasNext()) {
+				Statement statement = (Statement) it.next();
+				if(!editableProperties.contains(statement.getPredicate().getURI())) {
+					log.warn("A non-editable statement has been removed from the rdf sent to KTBS: " + statement);
+					it.remove();
+				}
+			}
+		}
+		model.write(writer, KtbsUtils.getJenaSyntax(sendMimeType), "");
 	}
 
 	@Override
@@ -193,6 +252,40 @@ public class RestDao implements ResourceDao {
 			}
 			return resultSet;
 		}
+	}
+
+	/*
+	 * Temporary fix for the KTBS not accepting property in reserved namespace to be saved.
+	 * 
+	 */
+	private Model getEditable(Model model, String uri, Class<?> cls) {
+		String uriWothAspect = uri;
+
+		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
+			uriWothAspect+=KtbsConstants.ABOUT_ASPECT;
+
+
+		KtbsResponse response = client.get(uriWothAspect+"?editable");
+		if(!response.hasSucceeded()) {
+			log.warn("Could not get the editable properties from uri: " + uri);
+			return null;
+		} else {
+			String modelAsString = response.getBodyAsString();
+			Model editableModel = ModelFactory.createDefaultModel();
+			try {
+				String uriWithoutAspect = uriWothAspect.replaceAll(KtbsConstants.ABOUT_ASPECT, "").replaceAll(KtbsConstants.OBSELS_ASPECT, "");
+
+				editableModel.read(new StringReader(modelAsString), uriWothAspect, KtbsUtils.getJenaSyntax(response.getMimeType()));
+
+
+
+			} catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			return editableModel;
+		}
+
 	}
 
 	private void connectObselsQueryToTrace(ITrace trace) {

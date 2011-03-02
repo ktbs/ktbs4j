@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.liris.ktbs.core.ResultSet;
-import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IRoot;

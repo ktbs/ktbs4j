@@ -7,7 +7,9 @@ import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 
 public interface Serializer {
 	
+	public void serializeResource(Writer writer, IKtbsResource resource, String mimeFormat, SerializationConfig config);
 	public void serializeResource(Writer writer, IKtbsResource resource, String mimeFormat);
+	public void serializeResourceSet(Writer writer, Set<? extends IKtbsResource> resourceSet, String mimeFormat, SerializationConfig config);
 	public void serializeResourceSet(Writer writer, Set<? extends IKtbsResource> resourceSet, String mimeFormat);
 	
 	public void setSerializationConfig(SerializationConfig config);

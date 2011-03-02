@@ -13,11 +13,12 @@ public class KtbsClient {
 
 	public static ResourceManager getDefaultRestManager() {
 		ApplicationContext context = new ClassPathXmlApplicationContext("ktbs-client-context.xml");
-		return context.getBean("defaultProxyingManager", ResourceManager.class);
+		return context.getBean("defaultProxyingRestManager", ResourceManager.class);
 	}
 
 	public static ResourceManager getDefaultInMemoryManager() {
-		throw new UnsupportedOperationException("Not yet implemented");
+		ApplicationContext context = new ClassPathXmlApplicationContext("ktbs-client-context.xml");
+		return context.getBean("defaultMemoryProxyingManager", ResourceManager.class);
 	}
 	
 	public static CollectSession getCollectSession() {

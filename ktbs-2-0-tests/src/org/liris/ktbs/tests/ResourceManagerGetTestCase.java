@@ -20,7 +20,7 @@ import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.WithParameters;
 
-public class KtbsClientTestCase extends TestCase {
+public class ResourceManagerGetTestCase extends TestCase {
 
 	private ResourceManager manager;
 	
@@ -50,13 +50,13 @@ public class KtbsClientTestCase extends TestCase {
 		displayStoredTrace(trace1);
 	}
 
-	private void displayStoredTrace(IStoredTrace trace1) {
+	public static void displayStoredTrace(IStoredTrace trace1) {
 		displayResource(trace1);
 		displayTrace(trace1);
 		
 	}
 
-	private void displayTrace(ITrace trace1) {
+	public static void displayTrace(ITrace trace1) {
 		display("Origin",trace1.getOrigin());
 		display("Trace model",trace1.getTraceModel().getUri());
 		display("Complies with model",trace1.getCompliesWithModel());
@@ -71,7 +71,7 @@ public class KtbsClientTestCase extends TestCase {
 		}
 	}
 
-	private void displayObsel(IObsel obsel) {
+	public static void displayObsel(IObsel obsel) {
 		displayResource(obsel);
 		display("beginDT", obsel.getBeginDT());
 		display("endDT", obsel.getEndDT());
@@ -92,28 +92,28 @@ public class KtbsClientTestCase extends TestCase {
 		}
 	}
 
-	private void display(IRelationStatement rel) {
+	public static void display(IRelationStatement rel) {
 		System.out.println("\t" + rel.getFromObsel().getLocalName() + " --- " + rel.getRelation().getLocalName() + " ---> " + rel.getToObsel().getLocalName());
 		
 	}
 
-	private void display(IAttributePair pair) {
+	public static void display(IAttributePair pair) {
 		System.out.println("\t" + pair.getAttributeType().getLocalName() + ":\t " + pair.getValue());
 		
 	}
 
-	private void delim() {
+	public static void delim() {
 		System.out.println("-------------------------------------------------------------------");
 	}
 
-	private void displayMethod(IMethod method) {
+	private  static void displayMethod(IMethod method) {
 		displayResource(method);
 		display("Etag", method.getEtag());
 		display("Inherits", method.getInherits());
 		displayParameters(method);
 	}
 	
-	private void displayParameters(WithParameters r) {
+	public static void displayParameters(WithParameters r) {
 		System.out.println("Method parameters: ");
 		for(IMethodParameter param:r.getMethodParameters()) {
 			System.out.println("\t - "+param.getName()+":\t " + param.getValue());
@@ -121,11 +121,11 @@ public class KtbsClientTestCase extends TestCase {
 		
 	}
 
-	private void display(String prop, Object value) {
+	public static void display(String prop, Object value) {
 		System.out.println(prop+":\t " + value);		
 	}
 
-	private void displayResource(IKtbsResource r) {
+	public static void displayResource(IKtbsResource r) {
 
 		System.out.println(r.getUri() + "\t (" + r.getTypeUri() + ")");
 		System.out.println(" - local name: " + r.getLocalName());

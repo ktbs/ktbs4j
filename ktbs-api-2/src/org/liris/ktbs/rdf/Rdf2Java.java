@@ -14,6 +14,7 @@ import org.liris.ktbs.core.domain.AttributePair;
 import org.liris.ktbs.core.domain.AttributeType;
 import org.liris.ktbs.core.domain.Base;
 import org.liris.ktbs.core.domain.ComputedTrace;
+import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.core.domain.Method;
 import org.liris.ktbs.core.domain.MethodParameter;
 import org.liris.ktbs.core.domain.Obsel;
@@ -166,14 +167,16 @@ public class Rdf2Java {
 			return (Method) alreadyReadResources.get(uri);
 
 		Method method = new Method();
-		method.setURI(uri);
+		method.setUri(uri);
 		method.setWithMethodParameterDelegate(readResourceWithParameters(method.getUri()));
 
 		method.setEtag(getLiteralOrNull(method.getUri(), KtbsConstants.P_HAS_ETAG, String.class));
-		
+
 		Statement stmt = model.getResource(method.getUri()).getProperty(model.getProperty(KtbsConstants.P_INHERITS));
 		if(stmt != null)
 			method.setInherits(getRdfObjectAsJavaObject(stmt.getObject()).toString());
+
+		((KtbsResource)method).setParentResource(readParent(method, KtbsConstants.P_OWNS, true, IBase.class));
 
 		return method;
 	}
@@ -198,6 +201,8 @@ public class Rdf2Java {
 			Set<T> childrenSet, 
 			boolean inverse, 
 			Class<T> cls) {
+		// Never invoked on a trace model, so the parent-child relation name should never be null
+
 
 		if(config.getMode(LinkAxis.CHILD) == DeserializationMode.NULL)
 			return;
@@ -224,14 +229,14 @@ public class Rdf2Java {
 			String childUri = inverse?
 					statement.getSubject().getURI():
 						statement.getObject().asResource().getURI();
-			
-			if(asBaseChildren) {
-				// must check the child type first
-				Statement typeStmt = model.getResource(childUri).getProperty(RDF.type);
-				if(typeStmt != null && typeStmt.getObject().asResource().getURI().equals(KtbsUtils.getRDFType(cls)))
-					childrenUris.add(childUri);	
-			} else 
-				childrenUris.add(childUri);	
+
+					if(asBaseChildren) {
+						// must check the child type first
+						Statement typeStmt = model.getResource(childUri).getProperty(RDF.type);
+						if(typeStmt != null && typeStmt.getObject().asResource().getURI().equals(KtbsUtils.getRDFType(cls)))
+							childrenUris.add(childUri);	
+					} else 
+						childrenUris.add(childUri);	
 		}
 
 		for(String childUri:childrenUris) {
@@ -305,9 +310,15 @@ public class Rdf2Java {
 
 		String linkedResourceuri;
 		if(inverse) {
-			linkedResourceuri = model.listStatements(null, model.getProperty(pName), model.getResource(uri)).next().getSubject().getURI();
+			StmtIterator it = model.listStatements(null, model.getProperty(pName), model.getResource(uri));
+			if(!it.hasNext())
+				return null;
+			linkedResourceuri = it.next().getSubject().getURI();
 		} else {
-			linkedResourceuri = model.getResource(uri).getProperty(model.getProperty(pName)).getObject().asResource().getURI();
+			Statement property = model.getResource(uri).getProperty(model.getProperty(pName));
+			if(property == null)
+				return null;
+			linkedResourceuri = property.getObject().asResource().getURI();
 		}
 
 		if(config.getMode(axis) == DeserializationMode.PROXY) 
@@ -327,13 +338,15 @@ public class Rdf2Java {
 			return (Base) alreadyReadResources.get(uri);
 
 		Base base = new Base();
-		base.setURI(uri);
+		base.setUri(uri);
 		fillGenericResource(base);
 
 		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getStoredTraces(), false, IStoredTrace.class);
 		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getComputedTraces(), false, IComputedTrace.class);
 		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getTraceModels(), false, ITraceModel.class);
 		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getMethods(), false, IMethod.class);
+
+		((KtbsResource)base).setParentResource(readParent(base, KtbsConstants.P_HAS_BASE, true, IRoot.class));
 
 		return base;
 	}
@@ -343,10 +356,14 @@ public class Rdf2Java {
 			return (ComputedTrace) alreadyReadResources.get(uri);
 
 		ComputedTrace trace = new ComputedTrace();
-		trace.setURI(uri);
+		trace.setUri(uri);
 		fillTrace(trace);
 		trace.setWithMethodParameterDelegate(readResourceWithParameters(trace.getUri()));
 		trace.setSourceTraces(readLinkedResourceSetSameType(uri, KtbsConstants.P_HAS_SOURCE, false, ITrace.class));
+		trace.setMethod(readLinkedResource(uri, KtbsConstants.P_HAS_METHOD, false, IMethod.class));
+
+		((KtbsResource)trace).setParentResource(readParent(trace, KtbsConstants.P_OWNS, true, IBase.class));
+
 		return trace;
 	}
 
@@ -435,7 +452,7 @@ public class Rdf2Java {
 			return (Obsel) alreadyReadResources.get(uri);
 
 		Obsel obsel = new Obsel();
-		obsel.setURI(uri);
+		obsel.setUri(uri);
 		fillGenericResource(obsel);
 
 		// the obsel type
@@ -466,8 +483,7 @@ public class Rdf2Java {
 		obsel.setSubject(getLiteralOrNull(obsel.getUri(), KtbsConstants.P_HAS_SUBJECT, String.class));
 
 		// parent trace
-		obsel.setTrace(
-				readLinkedResource(uri, KtbsConstants.P_HAS_TRACE, false, ITrace.class));
+		((KtbsResource)obsel).setParentResource(readParent(obsel, KtbsConstants.P_HAS_TRACE, false, ITrace.class));
 
 
 		// source obsels (transformation source obsels)
@@ -506,6 +522,14 @@ public class Rdf2Java {
 		}
 
 		return obsel;
+	}
+
+	/*
+	 * inverse is true when 'parent pName child'
+	 * inverse is false when 'child pName parent'
+	 */
+	private <T extends IKtbsResource> T readParent(IKtbsResource child, String pParentChildRel, boolean inverse, Class<T> cls) {
+		return readLinkedResourceOnAxis(child.getUri(), pParentChildRel, inverse, cls, LinkAxis.PARENT);
 	}
 
 	private IObsel createObselFromRelation(String obselUri) {
@@ -623,7 +647,7 @@ public class Rdf2Java {
 			return (AttributeType) alreadyReadResources.get(uri);
 
 		AttributeType attType = new AttributeType();
-		attType.setURI(uri);
+		attType.setUri(uri);
 		fillGenericResource(attType);
 
 
@@ -644,6 +668,10 @@ public class Rdf2Java {
 			attType.getRanges().add(statement.getObject().asLiteral().getString());
 		}
 
+		// always cascade the deserialization to the parent trace model for a trace model child
+		// TODO change this properly with the generic putParent method when the rdf format changes
+		((KtbsResource)attType).setParentResource(readTraceModel(KtbsUtils.resolveParentURI(attType.getUri())));
+
 		return attType;
 	}
 
@@ -652,7 +680,7 @@ public class Rdf2Java {
 			return (RelationType) alreadyReadResources.get(uri);
 
 		RelationType relType = new RelationType();
-		relType.setURI(uri);
+		relType.setUri(uri);
 		fillGenericResource(relType);
 
 		// super relation types
@@ -676,6 +704,11 @@ public class Rdf2Java {
 				false, 
 				IObselType.class));
 
+		// always cascade the deserialization to the parent trace model for a trace model child
+		// TODO change this properly with the generic putParent method when the rdf format changes
+		((KtbsResource)relType).setParentResource(readTraceModel(KtbsUtils.resolveParentURI(relType.getUri())));
+
+
 		return relType;
 	}
 
@@ -685,7 +718,7 @@ public class Rdf2Java {
 			return (ObselType) alreadyReadResources.get(uri);
 
 		ObselType obselType = new ObselType();
-		obselType.setURI(uri);
+		obselType.setUri(uri);
 		fillGenericResource(obselType);
 
 		obselType.setSuperObselTypes(readLinkedResourceSetSameType(
@@ -693,6 +726,11 @@ public class Rdf2Java {
 				KtbsConstants.P_HAS_SUPER_OBSEL_TYPE, 
 				false, 
 				IObselType.class));
+
+		// always cascade the deserialization to the parent trace model for a trace model child
+		// TODO change this properly with the generic putParent method when the rdf format changes
+		((KtbsResource)obselType).setParentResource(readTraceModel(KtbsUtils.resolveParentURI(obselType.getUri())));
+
 
 		return obselType;
 	}
@@ -723,10 +761,12 @@ public class Rdf2Java {
 			return (StoredTrace) alreadyReadResources.get(uri);
 
 		StoredTrace trace = new StoredTrace();
-		trace.setURI(uri);
+		trace.setUri(uri);
 		fillTrace(trace);
 
 		trace.setDefaultSubject(getLiteralOrNull(uri, KtbsConstants.P_HAS_SUBJECT, String.class));
+
+		((KtbsResource)trace).setParentResource(readParent(trace, KtbsConstants.P_OWNS, true, IBase.class));
 
 		return trace;
 	}
@@ -737,7 +777,7 @@ public class Rdf2Java {
 
 
 		TraceModel traceModel = new TraceModel();
-		traceModel.setURI(uri);
+		traceModel.setUri(uri);
 		fillGenericResource(traceModel);
 
 		if(config.getChildMode() == DeserializationMode.NULL)
@@ -776,6 +816,9 @@ public class Rdf2Java {
 			} else
 				log.warn("The resource "+uri2+" has the same prefix than the trace model but is of unkown type: " + objectResource);
 		}
+
+		((KtbsResource)traceModel).setParentResource(readParent(traceModel, KtbsConstants.P_OWNS, true, IBase.class));
+
 		return traceModel;
 	}
 
@@ -832,7 +875,7 @@ public class Rdf2Java {
 		if(log.isDebugEnabled()) {
 			log.debug("There are " + model.size() + " statements in the model.");
 		}
-		
+
 		StmtIterator it = model.listStatements(model.getResource(uri), RDF.type, (RDFNode)null);
 		if(!it.hasNext())
 			throw new IllegalStateException("Cannot guess the type of resource. There is no rdf:type defined for the resource " + uri);

@@ -126,16 +126,14 @@ public class RestDao implements ResourceDao {
 	}
 
 	@Override
-	public boolean create(IKtbsResource resource) {
+	public <T extends IKtbsResource> T create(T resource) {
 		StringWriter writer = new StringWriter();
 		serializer.serializeResource(writer, resource, sendMimeType);
-		KtbsResponse response = client.post(resource);
+		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
 		if(response.hasSucceeded()) {
-			if(!response.getHTTPLocation().equals(resource.getUri()))
-				log.warn("The resource has been created but in a diffrent uri location than expected.");
-			return true;
+			return get(response.getHTTPLocation(), (Class<T>)resource.getClass());
 		} else
-			return false;
+			return null;
 	}
 
 	@Override

@@ -33,4 +33,14 @@ public class ProxyFactory implements ResourceFactory{
 				interfaces, 
 				new ResourceSetProxy<T>(dao, request, cls));
 	}
+
+	@Override
+	public <T extends IKtbsResource> T createResource(Class<T> cls) {
+		throw new IllegalStateException("Cannot create an anonym proxy resource");
+	}
+
+	@Override
+	public IKtbsResource createResource(String uri) {
+		return createResource(uri, IKtbsResource.class);
+	}
 }

@@ -11,6 +11,7 @@ public class DeserializationConfig {
 		modes.put(LinkAxis.CHILD, DeserializationMode.PROXY);
 		modes.put(LinkAxis.LINKED, DeserializationMode.PROXY);
 		modes.put(LinkAxis.LINKED_SAME_TYPE, DeserializationMode.PROXY);
+		modes.put(LinkAxis.PARENT, DeserializationMode.PROXY);
 	}
 	
 	public DeserializationMode getMode(LinkAxis axis) {

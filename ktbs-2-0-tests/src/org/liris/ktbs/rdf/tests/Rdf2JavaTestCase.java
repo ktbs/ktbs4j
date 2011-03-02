@@ -125,7 +125,7 @@ public class Rdf2JavaTestCase extends TestCase {
 		assertEquals("béa", o1.getSubject());
 		assertEquals(0, o1.getSourceObsels().size());
 		assertEquals(1, o1.getAttributePairs().size());
-		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o1.getTrace());
+		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o1.getParentResource());
 		
 		
 		// obs1
@@ -135,7 +135,7 @@ public class Rdf2JavaTestCase extends TestCase {
 		assertEquals(1, o2.getOutgoingRelations().size());
 		assertEquals(0, o2.getIncomingRelations().size());
 		assertEquals(1, o2.getAttributePairs().size());
-		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o2.getTrace());
+		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o2.getParentResource());
 		
 		// obs1
 		IKtbsResource pojo3 = mapper.getResource("http://localhost:8001/base1/t01/91eda250f267fa93e4ece8f3ed659139");
@@ -144,7 +144,7 @@ public class Rdf2JavaTestCase extends TestCase {
 		assertEquals(1, o3.getOutgoingRelations().size());
 		assertEquals(0, o3.getIncomingRelations().size());
 		assertEquals(2, o3.getAttributePairs().size());
-		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o3.getTrace());
+		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o3.getParentResource());
 		
 		// obs1
 		IKtbsResource pojo4 = mapper.getResource("http://localhost:8001/base1/t01/a08667b20cfe4079d02f2f5ad9239575");
@@ -153,7 +153,7 @@ public class Rdf2JavaTestCase extends TestCase {
 		assertEquals(1, o4.getOutgoingRelations().size());
 		assertEquals(0, o4.getIncomingRelations().size());
 		assertEquals(0, o4.getAttributePairs().size());
-		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o4.getTrace());
+		assertEquals(new UriResource("http://localhost:8001/base1/t01/"), o4.getParentResource());
 		
 		
 		//

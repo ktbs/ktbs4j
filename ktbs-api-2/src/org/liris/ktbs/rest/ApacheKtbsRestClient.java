@@ -217,24 +217,19 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 
 	@Override
-	public KtbsResponse post(IKtbsResource resource) {
+	public KtbsResponse post(String uri, String resourceAsString) {
 		checkStarted(); 
 		
-		String postURI = resource.getUri();
-		
-		HttpPost post = new HttpPost(postURI);
+		HttpPost post = new HttpPost(uri);
 		post.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
 
 		HttpResponse response = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
 
 		try {
-			StringWriter writer = new StringWriter();
-			new RdfSerializer().serializeResource(writer, resource, getPOSTMimeType());
-			String string = writer.toString();
 			
-			log.info("POST Request content: \n" + string);
-			post.setEntity(new StringEntity(string, HTTP.UTF_8));
+			log.info("POST Request content: \n" + resourceAsString);
+			post.setEntity(new StringEntity(resourceAsString, HTTP.UTF_8));
 
 		} catch (UnsupportedEncodingException e) {
 			log.warn("Cannot decode the content of the response sent by the KTBS", e);

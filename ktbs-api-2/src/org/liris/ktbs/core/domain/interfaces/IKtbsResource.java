@@ -26,6 +26,7 @@ public interface IKtbsResource extends IUriResource {
 
 	public void removeProperty(String propertyName);
 
+	public IKtbsResource getParentResource();
 
 	public String getTypeUri();
 

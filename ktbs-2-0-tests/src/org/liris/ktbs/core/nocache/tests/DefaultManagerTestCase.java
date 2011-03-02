@@ -1,12 +1,9 @@
 package org.liris.ktbs.core.nocache.tests;
 
-import java.util.HashSet;
-
 import junit.framework.TestCase;
 
 import org.liris.ktbs.core.DefaultManager;
 import org.liris.ktbs.core.ResourceManager;
-import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 
 public class DefaultManagerTestCase extends TestCase {
 
@@ -26,17 +23,7 @@ public class DefaultManagerTestCase extends TestCase {
 	}
 
 	public void testNewComputedTrace() {
-		IComputedTrace trace = manager.newComputedTrace(
-				"http://localhost:8001/base1/", 
-				"t1", 
-				"http://localhost:8001/base1/method1/", 
-				new HashSet<String>());
-		
-		System.out.println(trace.getUri());
-		trace.addLabel("teozifhcz");
-		System.out.println(trace.getLabel());
-		System.out.println(trace.getOrigin());
-		System.out.println(trace.getLocalName());
+		fail("Not yet implemented");
 	}
 
 	public void testNewMethod() {

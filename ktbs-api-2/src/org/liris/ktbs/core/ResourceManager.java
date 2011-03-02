@@ -21,8 +21,23 @@ public interface ResourceManager {
 	
 	public IBase newBase(String rootUri, String baseLocalName, String owner);
 	public IStoredTrace newStoredTrace(String baseUri, String traceLocalName, String model, String origin, String defaultSubject);
-	public IComputedTrace newComputedTrace(String baseUri, String traceLocalName, String methodUri, Set<String> sourceTraces);
-	public IMethod newMethod(String baseUri, String methodLocalName, String inheritedMethod, String etag);
+	
+	public IComputedTrace newComputedTrace(
+			String baseUri, 
+			String traceLocalName, 
+			String methodUri, 
+			Set<String> sourceTraces,
+			Map<String,String> parameters
+			);
+	
+	public IMethod newMethod(
+			String baseUri, 
+			String methodLocalName, 
+			String inheritedMethod, 
+			String etag,
+			Map<String,String> parameters
+			);
+	
 	public ITraceModel newTraceModel(String baseUri, String modelLocalName);
 
 	public IObsel newObsel(

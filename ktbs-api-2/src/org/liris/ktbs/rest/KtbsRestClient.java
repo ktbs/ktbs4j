@@ -42,7 +42,7 @@ public interface KtbsRestClient {
 	public void startSession(String user, String password);
 	
 	
-	public KtbsResponse post(IKtbsResource resource);
+	public KtbsResponse post(String uri, String resourceAsString);
 	
 
 	/**

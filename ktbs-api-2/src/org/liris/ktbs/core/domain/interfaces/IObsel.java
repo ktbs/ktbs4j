@@ -45,8 +45,4 @@ public interface IObsel extends IKtbsResource {
 
 	public Set<IRelationStatement> getOutgoingRelations();
 
-	public ITrace getTrace();
-
-	public void setTrace(ITrace trace);
-
 }

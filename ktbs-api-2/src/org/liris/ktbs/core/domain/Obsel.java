@@ -14,8 +14,6 @@ public class Obsel extends KtbsResource implements IObsel {
 	
 	private IObselType obselType;
 	
-	private ITrace trace;
-
 	private String subject;
 	private BigInteger begin;
 	private BigInteger end;
@@ -189,19 +187,4 @@ public class Obsel extends KtbsResource implements IObsel {
 		return outgoingRelations;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.liris.ktbs.core.domain.IObsel#getTrace()
-	 */
-	@Override
-	public ITrace getTrace() {
-		return trace;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.liris.ktbs.core.domain.IObsel#setTrace(org.liris.ktbs.core.domain.ITrace)
-	 */
-	@Override
-	public void setTrace(ITrace trace) {
-		this.trace = trace;
-	}
 }

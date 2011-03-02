@@ -15,7 +15,7 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 
 	private Set<String> labels = new HashSet<String>();
 	private Set<IPropertyStatement> properties = new HashSet<IPropertyStatement>();
-	
+
 	/* (non-Javadoc)
 	 * @see org.liris.ktbs.core.domain.IKtbsResource#getLabels()
 	 */
@@ -23,7 +23,7 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 	public Set<String> getLabels() {
 		return labels;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.liris.ktbs.core.domain.IKtbsResource#setLabels(java.util.Set)
 	 */
@@ -31,7 +31,7 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 	public void setLabels(Set<String> labels) {
 		this.labels = labels;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.liris.ktbs.core.domain.IKtbsResource#getProperties()
 	 */
@@ -39,7 +39,7 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 	public Set<IPropertyStatement> getProperties() {
 		return properties;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.liris.ktbs.core.domain.IKtbsResource#setProperties(java.util.Set)
 	 */
@@ -116,7 +116,7 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 		}
 	}
 
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.liris.ktbs.core.domain.IKtbsResource#getTypeUri()
@@ -129,5 +129,25 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 			return obselType==null?null:obselType.getUri();
 		} else
 			return KtbsUtils.getRDFType(this.getClass());
+	}
+
+	private IKtbsResource parentResource;
+
+	@Override
+	public IKtbsResource getParentResource() {
+		return parentResource;
+	}
+
+	public void setParentResource(IKtbsResource parentResource) {
+		this.parentResource = parentResource;
+	}
+
+	@Override
+	public String getParentUri() {
+		IKtbsResource p = getParentResource();
+		if(p != null)
+			return p.getUri();
+		else
+			return super.getParentUri();
 	}
 }

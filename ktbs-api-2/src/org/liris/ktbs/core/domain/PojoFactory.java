@@ -14,12 +14,15 @@ import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 public class PojoFactory implements ResourceFactory {
 
-	/* (non-Javadoc)
-	 * @see org.liris.ktbs.core.domain.ResourceFactory#createResource(java.lang.String, java.lang.Class)
-	 */
 	@Override
 	public <T extends IKtbsResource> T createResource(String uri, Class<T> cls) {
-		
+		T resource = createResource(cls);
+		((UriResource)resource).setUri(uri);
+		return cls.cast(resource);
+	}
+
+	@Override
+	public <T extends IKtbsResource> T createResource(Class<T> cls) {
 		KtbsResource resource;
 		if(IRoot.class.isAssignableFrom(cls))
 			resource = new Root();
@@ -41,9 +44,15 @@ public class PojoFactory implements ResourceFactory {
 			resource = new RelationType();
 		else if(IObselType.class.isAssignableFrom(cls))
 			resource = new ObselType();
+		else if(IKtbsResource.class.isAssignableFrom(cls))
+			resource = new KtbsResource();
 		else
 			throw new IllegalStateException("Cannot create a resource of the unknown type: " + cls.getCanonicalName());
-		resource.setURI(uri);
 		return cls.cast(resource);
+	}
+
+	@Override
+	public IKtbsResource createResource(String uri) {
+		return createResource(uri, IKtbsResource.class);
 	}
 }

@@ -12,7 +12,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 public class RdfSerializer implements Serializer {
 
-	private SerializationConfig serializationConfig;
+	private SerializationConfig serializationConfig = new SerializationConfig();
 
 	@Override
 	public void setSerializationConfig(SerializationConfig serializationConfig) {
@@ -30,7 +30,7 @@ public class RdfSerializer implements Serializer {
 	}
 
 	private Java2Rdf createMapper() {
-		Java2Rdf mapper = new Java2Rdf();
+		Java2Rdf mapper = new Java2Rdf(serializationConfig);
 		mapper.setConfig(serializationConfig);
 		return mapper;
 	}

@@ -12,6 +12,7 @@ public class SerializationConfig {
 		modes.put(LinkAxis.CHILD, SerializationMode.URI);
 		modes.put(LinkAxis.LINKED, SerializationMode.URI);
 		modes.put(LinkAxis.LINKED_SAME_TYPE, SerializationMode.URI);
+		modes.put(LinkAxis.PARENT, SerializationMode.URI);
 	}
 	
 	public SerializationMode getMode(LinkAxis axis) {

@@ -383,4 +383,5 @@ public class KtbsUtils {
 		else
 			throw new IllegalArgumentException("This mime type cannot be mapped to an rdf syntax: " + mimeFormat);
 	}
+
 }

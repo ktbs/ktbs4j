@@ -6,28 +6,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.liris.ktbs.core.domain.AttributePair;
-import org.liris.ktbs.core.domain.AttributeType;
-import org.liris.ktbs.core.domain.Base;
-import org.liris.ktbs.core.domain.ComputedTrace;
-import org.liris.ktbs.core.domain.Method;
-import org.liris.ktbs.core.domain.Obsel;
-import org.liris.ktbs.core.domain.ObselType;
-import org.liris.ktbs.core.domain.RelationType;
+import org.liris.ktbs.core.domain.KtbsResource;
+import org.liris.ktbs.core.domain.MethodParameter;
 import org.liris.ktbs.core.domain.ResourceFactory;
-import org.liris.ktbs.core.domain.StoredTrace;
-import org.liris.ktbs.core.domain.TraceModel;
 import org.liris.ktbs.core.domain.interfaces.IAttributePair;
 import org.liris.ktbs.core.domain.interfaces.IAttributeType;
 import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IMethod;
+import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IObselType;
 import org.liris.ktbs.core.domain.interfaces.IRelationType;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.core.domain.interfaces.WithParameters;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -40,15 +35,15 @@ public class DefaultManager implements ResourceManager {
 	private ResourceDao dao;
 	private ProxyFactory proxyFactory;
 	private ResourceFactory pojoFactory;
-	
+
 	public void setDao(ResourceDao dao) {
 		this.dao = dao;
 	}
-	
+
 	public void setPojoFactory(ResourceFactory pojoFactory) {
 		this.pojoFactory = pojoFactory;
 	}
-	
+
 	public void setProxyFactory(ProxyFactory proxyFactory) {
 		this.proxyFactory = proxyFactory;
 	}
@@ -61,9 +56,18 @@ public class DefaultManager implements ResourceManager {
 
 	@Override
 	public IBase newBase(String rootUri, String baseLocalName, String owner) {
-		Base base = new Base();
-		base.setURI(KtbsUtils.makeChildURI(rootUri, baseLocalName, false));
-		base.setOwner(owner);
+		IBase base = createResource(rootUri, baseLocalName, IBase.class, false);
+
+		/*
+		 * No ktbs:owner property defined yet in the RDF format.
+		 * Put a label instead
+		 */
+		if(owner != null)
+			base.getLabels().add("owner: " + owner);
+
+		/*
+		 * base.setOwner(owner);
+		 */
 
 		return createAndReturn(base);
 	}
@@ -72,10 +76,20 @@ public class DefaultManager implements ResourceManager {
 	public IStoredTrace newStoredTrace(String baseUri,
 			String traceLocalName, String model, String origin,
 			String defaultSubject) {
-		StoredTrace trace = new StoredTrace();
-		trace.setURI(KtbsUtils.makeChildURI(baseUri, traceLocalName, false));
+		IStoredTrace trace = createResource(baseUri, traceLocalName, IStoredTrace.class, false);
 		trace.setOrigin(origin);
-		trace.setDefaultSubject(defaultSubject);
+
+		/*
+		 * No ktbs:hasSubject property defined yet in the RDF format for a StoredTrace.
+		 * Put a label instead
+		 */
+		if(defaultSubject != null)
+			trace.getLabels().add("subject: " + defaultSubject);
+
+		/*
+		 * trace.setDefaultSubject(defaultSubject);
+		 */
+
 		trace.setTraceModel(proxyFactory.createResource(model, ITraceModel.class));
 
 		return createAndReturn(trace);
@@ -83,13 +97,15 @@ public class DefaultManager implements ResourceManager {
 
 	@Override
 	public IComputedTrace newComputedTrace(String baseUri,
-			String traceLocalName, String methodUri, Set<String> sourceTraces) {
-		ComputedTrace trace = new ComputedTrace();
-		trace.setURI(KtbsUtils.makeChildURI(baseUri, traceLocalName, false));
+			String traceLocalName, String methodUri, Set<String> sourceTraces, Map<String,String> parameters) {
+		
+		IComputedTrace trace = createResource(baseUri, traceLocalName, IComputedTrace.class, false);
 		trace.setMethod(proxyFactory.createResource(methodUri, IMethod.class));
 
 		trace.setSourceTraces(convertToSetOfProxies(sourceTraces, ITrace.class));
-		
+
+		setParameters(trace, parameters);
+
 		return createAndReturn(trace);
 	}
 
@@ -104,22 +120,31 @@ public class DefaultManager implements ResourceManager {
 
 	@Override
 	public IMethod newMethod(String baseUri, String methodLocalName,
-			String inheritedMethod, String etag) {
+			String inheritedMethod, String etag, Map<String,String> parameters) {
 
-		Method method = new Method();
-		method.setURI(KtbsUtils.makeChildURI(baseUri, methodLocalName, false));
+		IMethod method = createResource(baseUri, methodLocalName, IMethod.class, false);
 		method.setEtag(etag);
 		method.setInherits(inheritedMethod);
 
+		setParameters(method, parameters);
+
 		return createAndReturn(method);
+	}
+
+	private void setParameters(WithParameters resource, Map<String, String> parameters) {
+		if(parameters != null) {
+			Set<IMethodParameter> p = new HashSet<IMethodParameter>();
+			for(String paramName:parameters.keySet()) 
+				p.add(new MethodParameter(paramName, parameters.get(paramName)));
+			resource.setMethodParameters(p);
+		}
 	}
 
 
 
 	@Override
 	public ITraceModel newTraceModel(String baseUri, String modelLocalName) {
-		TraceModel model = new TraceModel();
-		model.setURI(KtbsUtils.makeChildURI(baseUri, modelLocalName, false));
+		ITraceModel model = createResource(baseUri, modelLocalName, ITraceModel.class, false);
 
 		return createAndReturn(model);
 	}
@@ -129,8 +154,7 @@ public class DefaultManager implements ResourceManager {
 			String typeUri, String beginDT, String endDT, BigInteger begin,
 			BigInteger end, String subject, Map<String, Object> attributes) {
 
-		Obsel obsel = new Obsel();
-		obsel.setURI(KtbsUtils.makeChildURI(storedTraceUri, obselLocalName, true));
+		IObsel obsel = createResource(storedTraceUri, obselLocalName, IObsel.class, true);
 		obsel.setBeginDT(beginDT);
 		obsel.setEndDT(endDT);
 		obsel.setBegin(begin);
@@ -145,27 +169,39 @@ public class DefaultManager implements ResourceManager {
 				));
 			obsel.setAttributePairs(pairs);
 		} 
-		
+
 		return createAndReturn(obsel);
+	}
+
+	private <T extends IKtbsResource> T createResource(
+			String parentUri, 
+			String localName, 
+			Class<T> cls, 
+			boolean leaf) {
+		T resource;
+		if(localName == null)
+			resource = pojoFactory.createResource(cls);
+		else 			
+			resource = pojoFactory.createResource(KtbsUtils.makeChildURI(parentUri, localName, leaf), cls);
+		if(parentUri != null)
+			((KtbsResource)resource).setParentResource(pojoFactory.createResource(parentUri));
+		return resource;
 	}
 
 	@Override
 	public IObselType newObselType(String traceModelUri, String localName) {
-		ObselType type = new ObselType();
-		type.setURI(KtbsUtils.makeChildURI(traceModelUri, localName, true));
-		
-		return createAndReturn(type);
+		IObselType obsType = createResource(traceModelUri, localName, IObselType.class, true);
+		return createAndReturn(obsType);
 	}
 
 	@Override
 	public IRelationType newRelationType(String traceModelUri,
 			String localName, Set<String> domains, Set<String> ranges) {
-		
-		RelationType relType = new RelationType();
-		relType.setURI(KtbsUtils.makeChildURI(traceModelUri, localName, true));
+
+		IRelationType relType = createResource(traceModelUri, localName, IRelationType.class, true);
 		relType.setDomains(convertToSetOfProxies(domains, IObselType.class));
 		relType.setRanges(convertToSetOfProxies(ranges, IObselType.class));
-		
+
 		return createAndReturn(relType);
 	}
 
@@ -174,17 +210,16 @@ public class DefaultManager implements ResourceManager {
 			String localName, Set<String> domainUris,
 			Set<String> ranges) {
 
-		AttributeType attType = new AttributeType();
-		attType.setURI(KtbsUtils.makeChildURI(traceModelUri, localName, true));
+		IAttributeType attType = createResource(traceModelUri, localName, IAttributeType.class, true);
+		
 		attType.setDomains(convertToSetOfProxies(domainUris, IObselType.class));
 		attType.setRanges(ranges);
-		
+
 		return createAndReturn(attType);
 	}
 
 	private <T extends IKtbsResource> T createAndReturn(T resource) {
-		boolean created = dao.create(resource);
-		return created?resource:null;
+		return dao.create(resource);
 	}
 
 	@Override

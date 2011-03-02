@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.liris.ktbs.core.domain.AttributePair;
+import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.RelationStatement;
 import org.liris.ktbs.core.domain.interfaces.IAttributeType;
@@ -285,7 +286,7 @@ public class Examples {
 		obs1.setBeginDT(cal(28,4,2010,18,9,1).getTime().toString());
 		obs1.setEndDT(cal(28,4,2010,18,9,1).getTime().toString());
 		obs1.setSubject("béa");
-		obs1.setTrace(getStoredTrace1());
+		((KtbsResource)obs1).setParentResource(getStoredTrace1());
 		obs1.setObselType(getOpenChat());
 		obs1.getIncomingRelations().add(getRelation(getObs2(), getOnChannel(), obs1));
 		obs1.getIncomingRelations().add(getRelation(getObs3(), getOnChannel(), obs1));
@@ -305,7 +306,7 @@ public class Examples {
 		obs2.setBeginDT(cal(28,4,2010,18,9,2).getTime().toString());
 		obs2.setEndDT(cal(28,4,2010,18,9,4).getTime().toString());
 		obs2.setSubject("béa");
-		obs2.setTrace(getStoredTrace1());
+		((KtbsResource)obs2).setParentResource(getStoredTrace1());
 		obs2.setObselType(getSendMsg());
 		obs2.getAttributePairs().add(new AttributePair(getMessage(), "hello world"));
 		obs2.getOutgoingRelations().add(getRelation(obs2, getOnChannel(), getObs1()));
@@ -323,7 +324,7 @@ public class Examples {
 		obs3.setBeginDT(cal(28,4,2010,18,9,5).getTime().toString());
 		obs3.setEndDT(cal(28,4,2010,18,9,5).getTime().toString());
 		obs3.setSubject("béa");
-		obs3.setTrace(getStoredTrace1());
+		((KtbsResource)obs3).setParentResource(getStoredTrace1());
 		obs3.setObselType(getRecvMsg());
 		obs3.getAttributePairs().add(new AttributePair(getMessage(), "hello world"));
 		obs3.getAttributePairs().add(new AttributePair(getFrom(), "world"));
@@ -342,7 +343,7 @@ public class Examples {
 		obs4.setBeginDT(cal(28,4,2010,18,9,7).getTime().toString());
 		obs4.setEndDT(cal(28,4,2010,18,9,7).getTime().toString());
 		obs4.setSubject("béa");
-		obs4.setTrace(getStoredTrace1());
+		((KtbsResource)obs4).setParentResource(getStoredTrace1());
 		obs4.setObselType(getCloseChat());
 		obs4.getOutgoingRelations().add(getRelation(obs4, getOnChannel(), getObs1()));
 		return obs4;

@@ -116,13 +116,7 @@ public class KtbsResource extends UriResource implements IKtbsResource {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.liris.ktbs.core.domain.IKtbsResource#getLocalName()
-	 */
-	@Override
-	public String getLocalName() {
-		return KtbsUtils.resolveLocalName(getUri());
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.liris.ktbs.core.domain.IKtbsResource#getTypeUri()

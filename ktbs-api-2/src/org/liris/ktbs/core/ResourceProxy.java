@@ -10,10 +10,11 @@ import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IUriResource;
 import org.liris.ktbs.dao.ResourceDao;
 
-
 public class ResourceProxy<T extends IKtbsResource> implements InvocationHandler {
 
 	private static final Log log = LogFactory.getLog(ResourceProxy.class);
+
+
 
 	private boolean loaded = false;
 	private IUriResource resource;
@@ -34,12 +35,14 @@ public class ResourceProxy<T extends IKtbsResource> implements InvocationHandler
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 	throws Throwable {
+		if(log.isDebugEnabled())
+			log.debug("Method invocation on  the proxy resource " + resource.getUri() +":\n" + method.toString());
+
 		if(!loaded) {
-			if(method.getName().equals("getUri") 
-					|| method.getName().equals("equals")
-					|| method.getName().equals("hashCode")
-					|| method.getName().equals("compareTo")
-			) {
+			if(method.getDeclaringClass().equals(Object.class)
+					|| method.getDeclaringClass().equals(IUriResource.class)
+					|| method.getDeclaringClass().equals(UriResource.class)
+					|| method.getDeclaringClass().equals(Comparable.class)) {
 				if(log.isDebugEnabled())
 					log.debug("The method "+ method.getName() +" is called on the proxy resource " + resource.getUri() + " (no need to retrieve content from the dao).");
 				return method.invoke(resource, args);
@@ -59,4 +62,5 @@ public class ResourceProxy<T extends IKtbsResource> implements InvocationHandler
 		} 
 		return method.invoke(resource, args);
 	}
+
 }

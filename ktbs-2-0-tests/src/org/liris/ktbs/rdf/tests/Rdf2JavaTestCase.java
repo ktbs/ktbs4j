@@ -1,7 +1,6 @@
 package org.liris.ktbs.rdf.tests;
 
 import java.io.FileInputStream;
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 
 import junit.framework.TestCase;

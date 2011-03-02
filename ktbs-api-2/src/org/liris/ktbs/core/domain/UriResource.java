@@ -46,10 +46,12 @@ public class UriResource implements IUriResource {
 		return uri.compareTo(o.getUri());
 	}
 	
+	@Override
 	public String getLocalName() {
 		return KtbsUtils.resolveLocalName(uri);
 	}
 
+	@Override
 	public String getParentUri() {
 		return KtbsUtils.resolveParentURI(uri);
 	}

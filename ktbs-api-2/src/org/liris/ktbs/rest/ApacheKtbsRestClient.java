@@ -179,14 +179,18 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 					log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+uri+"\".");
 					ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
 				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-					body = EntityUtils.toString(response.getEntity());
+					body = EntityUtils.toString(response.getEntity(), "UTF-8");
 					if(log.isDebugEnabled()) {
 						log.debug("Response header:" + response.getStatusLine());
 						log.debug("Response body:\n" + body);
 					}
 
 					ktbsResponseStatus=KtbsResponseStatus.RESOURCE_RETRIEVED;
-				} else 
+				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_SEE_OTHER) {
+					// redirect to the right URL
+					EntityUtils.consume(entity);
+					return get(response.getHeaders(HttpHeaders.LOCATION)[0].getValue());
+				} else
 					ktbsResponseStatus=KtbsResponseStatus.REQUEST_FAILED;
 
 				// Release the memory from the entity

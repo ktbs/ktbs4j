@@ -35,15 +35,8 @@ public interface KtbsRestClient {
 	public void startSession();
 	public void endSession();
 	
-	/**
-	 * Init the http client classes and do authentication
-	 */
-	public void startSession(String user, String password);
-	
-	
 	public KtbsResponse post(String uri, String resourceAsString);
 	
-
 	/**
 	 * Perform a DELETE request to remotely delete a KTBS resource
 	 * through the REST API.
@@ -54,4 +47,6 @@ public interface KtbsRestClient {
 	public KtbsResponse delete(String resourceURI);
 
 	public KtbsResponse update(String updateUri, String resourceAsString, String etag);
+
+	public void setCredentials(String username, String password);
 }

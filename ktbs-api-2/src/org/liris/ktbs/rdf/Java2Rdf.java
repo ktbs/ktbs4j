@@ -26,6 +26,7 @@ import org.liris.ktbs.core.domain.interfaces.WithParameters;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.SerializationMode;
+import org.liris.ktbs.utils.KtbsUtils;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -156,12 +157,26 @@ public class Java2Rdf {
 		putParent(base, KtbsConstants.P_HAS_BASE, false);
 	}
 
+	/*
+	 * Invole this method with parentChildPName when no parent relation is supposed to be done
+	 */
 	private void putParent(IKtbsResource child, String parentChildPName, boolean inverse) {
-		if(child.getParentResource() == null)
+		if(child.getParentUri() == null || parentChildPName == null)
 			return;
 		SerializationMode mode = config.getMode(LinkAxis.PARENT);
 		if(mode == SerializationMode.URI) {
-			putResource(child.getParentResource(), parentChildPName, child, inverse);
+			/*
+			 * Only the uri is required. The parent resource may be null 
+			 * and the parent uri still required in the trace model.
+			 */
+			String parentUri = child.getParentUri();
+			if(parentUri == null)
+				return;
+			if(inverse) {
+				getJenaResource(child).addProperty(model.getProperty(parentChildPName), model.getResource(parentUri));
+			} else {
+				model.getResource(parentUri).addProperty(model.getProperty(parentChildPName), getJenaResource(child));
+			}
 		} else if(mode == SerializationMode.NOTHING) {
 			// do nothing
 		} else if(mode == SerializationMode.CASCADE) {

@@ -61,4 +61,5 @@ public interface KtbsResponse {
 	 */
 	public String getBodyAsString();
 
+	public int getHttpStatusCode();
 }

@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.KtbsClient;
+import org.liris.ktbs.core.Ktbs;
 import org.liris.ktbs.core.KtbsConstants;
 import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
@@ -27,7 +27,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		manager = KtbsClient.getRestResourceService();
+		manager = Ktbs.getRestClient().getResourceService();
 		root = manager.getKtbsResource("http://localhost:8001/", IRoot.class);
 	}
 

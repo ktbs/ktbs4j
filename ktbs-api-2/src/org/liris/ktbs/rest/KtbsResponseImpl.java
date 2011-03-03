@@ -1,5 +1,7 @@
 package org.liris.ktbs.rest;
 
+import javax.xml.ws.Response;
+
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -94,6 +96,11 @@ public class KtbsResponseImpl implements KtbsResponse {
 			return null;
 		else 
 			return contentType.getValue();
+	}
+
+	@Override
+	public int getHttpStatusCode() {
+		return httpResponse.getStatusLine().getStatusCode();
 	}
 
 }

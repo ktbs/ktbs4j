@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import junit.framework.TestCase;
 
 import org.junit.Before;
-import org.liris.ktbs.core.KtbsClient;
+import org.liris.ktbs.core.Ktbs;
 import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.interfaces.IAttributeType;
 import org.liris.ktbs.core.domain.interfaces.IBase;
@@ -25,7 +25,7 @@ public class ResourceManagerSaveTestCase extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		manager = KtbsClient.getRestResourceService();
+		manager = Ktbs.getRestClient().getResourceService();
 		root = manager.getKtbsResource("http://localhost:8001/", IRoot.class);
 		factory = new PojoFactory();
 	}

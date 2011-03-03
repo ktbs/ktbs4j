@@ -86,5 +86,7 @@ public interface KtbsConstants {
 	public static final String FUSION = NAMESPACE_KTBS + "fusion";
 	public static final String SPARQL = NAMESPACE_KTBS + "sparql";
 	
+	public static final int HTTP_CODE_RESOURCE_NOT_FOUND = 404;
+	
 	
 }

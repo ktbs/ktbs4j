@@ -18,12 +18,14 @@ import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.dao.UserAwareDao;
 import org.liris.ktbs.rdf.Java2Rdf;
 import org.liris.ktbs.serial.Deserializer;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.SerializationMode;
 import org.liris.ktbs.serial.Serializer;
+import org.liris.ktbs.service.impl.ResourceNotFoundException;
 import org.liris.ktbs.utils.KtbsUtils;
 import org.liris.ktbs.utils.RelativeURITurtleReader;
 
@@ -32,7 +34,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-public class RestDao implements ResourceDao {
+public class RestDao implements ResourceDao, UserAwareDao {
 
 	private static final Log log = LogFactory.getLog(RestDao.class);
 
@@ -63,23 +65,6 @@ public class RestDao implements ResourceDao {
 		this.pojoFactory = resourceFactory;
 	}
 
-	private String username;
-	private String passwd;
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
-	}
-
-	private boolean requireAuthentication = false;
-
-	public void setRequireAuthentication(String required) {
-		this.requireAuthentication = required!=null && required.equals("required");
-	}
-
 	public void setClient(KtbsRestClient client) {
 		this.client = client;
 	}
@@ -89,11 +74,7 @@ public class RestDao implements ResourceDao {
 	}
 
 	public void init() {
-		if(requireAuthentication)
-			client.startSession(username, passwd);
-		else
-			client.startSession(null,null);
-
+		client.startSession();
 	}
 
 	@Override
@@ -139,15 +120,16 @@ public class RestDao implements ResourceDao {
 	public <T extends IKtbsResource> T create(T resource) {
 		if(KtbsUtils.isTraceModelElement(resource))
 			throw new DaoException("A trace model element cannot be created through the current " +
-					"Rest API. Modify and save its parent trace model instead.");
+			"Rest API. Modify and save its parent trace model instead.");
 		StringWriter writer = new StringWriter();
 		serializer.serializeResource(writer, resource, sendMimeType);
+		
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
 		if(response.hasSucceeded()) {
 			return get(response.getHTTPLocation(), (Class<T>)resource.getClass());
 		} else {
 			if(isUriAlreadyInUse(response)) {
-				throw new DaoException("The resource " + resource.getUri() + " already exists.");
+				throw new ResourceAlreadyExistException(resource.getUri());
 			} else
 				throw new DaoException("Could not create the resource " + resource.getUri() +". Message: " + response.getServerMessage() + " ["+response.getKtbsStatus()+"]");
 		}
@@ -156,14 +138,14 @@ public class RestDao implements ResourceDao {
 
 	private boolean isUriAlreadyInUse(KtbsResponse response) {
 		return response.getServerMessage() != null 
-				&& response.getServerMessage().matches("400 URI Already in Use");
+		&& response.getServerMessage().matches("400 URI Already in Use");
 	}
 
 	@Override
 	public boolean save(IKtbsResource resource, boolean cascadeChildren) {
 		SerializationConfig config = new SerializationConfig();
 		if(cascadeChildren) {
-			if(!KtbsUtils.isTrace(resource)) {
+			if(!KtbsUtils.isTrace(resource) && !KtbsUtils.isTraceModel(resource)) {
 				log.warn("Cascading save is not supported for a resource of type " + resource.getTypeUri());
 			} else
 				config.configure(LinkAxis.CHILD, SerializationMode.CASCADE);
@@ -174,24 +156,24 @@ public class RestDao implements ResourceDao {
 			" of the Rest API. Save the parent trace model with children cascading instead.");
 		} else if(KtbsUtils.isObsel(resource)) {
 			throw new DaoException("Saving an obsel is forbidden is the current version" +
-					" of the Rest API. Save the parent trace with children cascading instead.");
+			" of the Rest API. Save the parent trace with children cascading instead.");
 		} else if(KtbsUtils.isTraceModel(resource)) {
 			if(!cascadeChildren)
 				log.warn("Saving a trace model automatically cascade to children " +
-						"(obsel types, attribute types, and relation types)");
-			
+				"(obsel types, attribute types, and relation types)");
+
 			SerializationConfig tmConfig = new SerializationConfig(config);
 			tmConfig.configure(LinkAxis.CHILD, SerializationMode.CASCADE);
 			return save(resource.getUri(), resource, tmConfig);
 		} else if(KtbsUtils.isTrace(resource)) {
 			ITrace trace = (ITrace)resource;
-			
+
 			String aboutUri = resource.getUri() + KtbsConstants.ABOUT_ASPECT;
 			String obselsUri = resource.getUri() + KtbsConstants.OBSELS_ASPECT;
 
 			SerializationConfig aboutConfig = new SerializationConfig(config);
 			aboutConfig.configure(LinkAxis.CHILD, SerializationMode.NOTHING);
-			
+
 			boolean aboutSaved = save(aboutUri, trace, aboutConfig);
 			if(cascadeChildren) {
 				boolean obselsSaved = saveCollection(obselsUri, trace.getObsels());
@@ -220,11 +202,20 @@ public class RestDao implements ResourceDao {
 		 * END of fix
 		 */
 
+		if(etag == null)
+			throw new ResourceNotFoundException(updateUri);
 
 		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
 		saveEtag(updateUri, response);
-		
-		return response.hasSucceeded();
+
+		boolean hasSucceeded = response.hasSucceeded();
+		if(hasSucceeded)
+			return true;
+		else {
+			if(response.getHttpStatusCode() == KtbsConstants.HTTP_CODE_RESOURCE_NOT_FOUND)
+				throw new DaoException("Save failed for the resource "+ updateUri+". Resource does not exists.", true);
+		}
+		return hasSucceeded;
 	}
 
 	@Override
@@ -382,5 +373,8 @@ public class RestDao implements ResourceDao {
 		trace.setObsels(fac.createResourceSetProxy(obselsRequest, IObsel.class));
 	}
 
-
+	@Override
+	public void setCredentials(String username, String password) {
+		client.setCredentials(username, password);
+	}
 }

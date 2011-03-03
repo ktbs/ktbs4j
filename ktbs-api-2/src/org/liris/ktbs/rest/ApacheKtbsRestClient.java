@@ -15,6 +15,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -48,22 +49,18 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		this.rootUri = rootUri;
 	}
 	
+	private CredentialsProvider credentialsProvider;
 	private HttpClient httpClient;
 	private boolean started = false;
 
 	private HttpParams httpParams;
 
-	@Override
-	public void startSession() {
-		startSession(null, null);
-	}
-	
 	/**
 	 * Starts the underlying HTTP client with default parameters for caching 
 	 * and general HTTP protocol matters, and loads Jena classes.
 	 */
 	@Override
-	public void startSession(String user, String password) {
+	public void startSession() {
 
 		log.info("Starting KtbsClient session for the KTBS root URI \""+rootUri+"\".");
 
@@ -93,19 +90,8 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		log.debug("Creating the caching HTTP client.");
 		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(httpParams);
-		if(user != null) {
-			URI asJavaUri = URI.create(rootUri);
-			log.info("Sarting Http authentication");
-			HttpHost targetHost = new HttpHost(
-					asJavaUri.getHost(), 
-					asJavaUri.getPort()==-1?80:asJavaUri.getPort(),
-							asJavaUri.getScheme()); 
-			
-			defaultHttpClient.getCredentialsProvider().setCredentials(
-					new AuthScope(targetHost.getHostName(), targetHost.getPort()), 
-			        new UsernamePasswordCredentials(user, password)
-					);
-		}
+		this.credentialsProvider = defaultHttpClient.getCredentialsProvider();
+		
 		
 		httpClient = new CachingHttpClient(defaultHttpClient, cacheConfig);
 		
@@ -339,4 +325,20 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 				response);
 	}
 
+	@Override
+	public void setCredentials(String username, String password) {
+		if(username != null && credentialsProvider != null) {
+			URI asJavaUri = URI.create(rootUri);
+			log.info("Sarting Http authentication");
+			HttpHost targetHost = new HttpHost(
+					asJavaUri.getHost(), 
+					asJavaUri.getPort()==-1?80:asJavaUri.getPort(),
+							asJavaUri.getScheme()); 
+			
+			credentialsProvider.setCredentials(
+					new AuthScope(targetHost.getHostName(), targetHost.getPort()), 
+			        new UsernamePasswordCredentials(username, password)
+					);
+		}
+	}
 }

@@ -3,6 +3,8 @@ package org.liris.ktbs.service.impl;
 import java.io.Reader;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.interfaces.IAttributeType;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
@@ -10,7 +12,10 @@ import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IObselType;
 import org.liris.ktbs.core.domain.interfaces.IRelationType;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.rest.ResourceAlreadyExistException;
+import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.TraceModelService;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -26,10 +31,11 @@ public class TraceModelManager implements TraceModelService {
 		this.dao = dao;
 	}
 
-	@Override
-	public boolean save(ITraceModel model) {
-		return dao.save(model, true);
+	private ResourceService resourceService;
+	public void setResourceService(ResourceService resourceService) {
+		this.resourceService = resourceService;
 	}
+
 
 	@Override
 	public IAttributeType newAttributeType(ITraceModel model, String localName,
@@ -40,16 +46,18 @@ public class TraceModelManager implements TraceModelService {
 			attType.getDomains().add(domain);
 
 		Set<IAttributeType> elementSet = model.getAttributeTypes();
-		
+
 		return addAndSaveAndReturn(model, attType, elementSet);
 	}
+
+	private static final Log log = LogFactory.getLog(TraceModelManager.class);
 
 	private <T extends IKtbsResource> T addAndSaveAndReturn(ITraceModel model,
 			T element, Set<T> elementSet) {
 		boolean added = elementSet.add(element);
-		if(!added)
+		if(!added) 
 			// already present
-			return null;
+			log.warn("The attribute type is already is the local copy of the trace model.");
 
 		boolean save = save(model);
 		if(save)
@@ -69,13 +77,13 @@ public class TraceModelManager implements TraceModelService {
 	public IRelationType newRelationType(ITraceModel model, String localName,
 			IObselType domain, IObselType range) {
 		IRelationType relType = factory.createResource(KtbsUtils.makeChildURI(model.getUri(), localName, true), IRelationType.class);
-		
+
 		if(domain != null)
 			relType.getDomains().add(domain);
 		if(range != null)
 			relType.getRanges().add(range);
-		
-		
+
+
 		return addAndSaveAndReturn(model, relType, model.getRelationTypes());
 	}
 
@@ -88,10 +96,10 @@ public class TraceModelManager implements TraceModelService {
 	public IObselType newObselType(ITraceModel model, String localName,
 			IObsel superType) {
 		IObselType obsType = factory.createResource(KtbsUtils.makeChildURI(model.getUri(), localName, true), IObselType.class);
-		
+
 		if(superType != null)
 			obsType.getSuperObselTypes().add(obsType);
-		
+
 		return addAndSaveAndReturn(model, obsType, model.getObselTypes());
 	}
 
@@ -100,5 +108,44 @@ public class TraceModelManager implements TraceModelService {
 			Reader reader, String mimeType) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean save(ITraceModel model, boolean createIfDoesntExist) {
+		try {
+			return dao.save(model, true);
+		} catch(ResourceNotFoundException e) {
+			if(createIfDoesntExist)
+				return createTraceModel(model);
+			else
+				throw new RuntimeException(e);
+		}
+	}
+
+
+	/*
+	 * creates a trace model and save it
+	 */
+	private boolean createTraceModel(ITraceModel model) {
+		log.info("The trace model " + model + " may not exist. Trying to create it.");
+		createTraceModel(model);
+		return dao.save(model, true);
+	}
+
+	@Override
+	public boolean save(ITraceModel model) {
+		return save(model, false);
+	}
+
+	@Override
+	public ITraceModel createTraceModel(String modelUri) {
+		try {
+			return dao.create(factory.createResource(modelUri, ITraceModel.class));
+		} catch(ResourceAlreadyExistException e) {
+			return dao.get(modelUri, ITraceModel.class);
+		} catch(DaoException e) {
+			// try to get the resource
+			return dao.get(modelUri, ITraceModel.class);
+		}
 	}
 }

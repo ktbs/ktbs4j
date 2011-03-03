@@ -4,7 +4,7 @@ package org.liris.ktbs.tests;
 import junit.framework.TestCase;
 
 import org.junit.Before;
-import org.liris.ktbs.core.KtbsClient;
+import org.liris.ktbs.core.Ktbs;
 import org.liris.ktbs.core.domain.interfaces.IAttributePair;
 import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
@@ -27,7 +27,7 @@ public class ResourceManagerGetTestCase extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 		try {
-			manager = KtbsClient.getRestResourceService();
+			manager = Ktbs.getRestClient().getResourceService();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

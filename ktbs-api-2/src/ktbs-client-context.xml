@@ -4,10 +4,22 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-  <property name="locations" value="classpath:ktbs-client.properties"/>
-</bean>
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:ktbs-client.properties" />
+	</bean>
 
+	<bean id="ktbsRestClient" class="org.liris.ktbs.core.KtbsClientImpl">
+		<property name="dao" ref="restDao"/>
+		<property name="resourceService" ref="defaultRestManager"/>
+		<property name="traceModelService" ref="traceModelRestManager"/>
+	</bean>
+
+	<bean id="ktbsMemoryClient" class="org.liris.ktbs.core.KtbsClientImpl">
+		<property name="resourceService" ref="defaultMemoryProxyingManager"/>
+		<property name="traceModelService" ref="defaultMemoryTraceModelManager"/>
+	</bean>
+	
 	<bean id="rdfSerializer" class="org.liris.ktbs.serial.RdfSerializer">
 	</bean>
 
@@ -15,8 +27,8 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
 	</bean>
-	
-	<bean id="defaultProxyingRestManager" class="org.liris.ktbs.service.impl.DefaultManager">
+
+	<bean id="defaultRestManager" class="org.liris.ktbs.service.impl.DefaultManager">
 		<property name="dao" ref="restDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
@@ -29,39 +41,40 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="dao" ref="restDao" />
 	</bean>
 
-	<bean id="traceModelRestManager" class="org.liris.ktbs.service.impl.TraceModelManager">
-		<property name="dao" ref="restDao" />
+	<bean id="defaultMemoryTraceModelManager" class="org.liris.ktbs.service.impl.TraceModelManager">
+		<property name="dao" ref="memoryDao" />
 		<property name="factory" ref="pojoFactory" />
 	</bean>
 	
+	<bean id="traceModelRestManager" class="org.liris.ktbs.service.impl.TraceModelManager">
+		<property name="dao" ref="restDao" />
+		<property name="resourceService" ref="defaultRestManager" />
+		<property name="factory" ref="pojoFactory" />
+	</bean>
+
 	<bean id="defaultMemoryProxyingManager" class="org.liris.ktbs.service.impl.DefaultManager">
 		<property name="dao" ref="memoryDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
 	</bean>
 
-	<bean 	id="memoryDao" 
-			class="org.liris.ktbs.memory.MemoryDao" init-method="init">
+	<bean id="memoryDao" class="org.liris.ktbs.memory.MemoryDao"
+		init-method="init">
 		<property name="rootUri" value="${ktbs.root.uri}" />
 		<property name="factory" ref="pojoFactory" />
 	</bean>
-	
-	<bean 	id="restDao" 
-			class="org.liris.ktbs.rest.RestDao"
-			init-method="init">
+
+	<bean id="restDao" class="org.liris.ktbs.rest.RestDao"
+		init-method="init">
 		<property name="client" ref="restClient" />
-		<property name="username" value="${ktbs.username}" />
-		<property name="passwd" value="${ktbs.passwd}" />
-		<property name="requireAuthentication" value="${ktbs.authentication}" />
 		<property name="serializer" ref="rdfSerializer" />
 		<property name="deserializer" ref="rdfDeserializer" />
 		<property name="linkedResourceFactory" ref="proxyFactory" />
 		<property name="resourceFactory" ref="pojoFactory" />
 	</bean>
 
-	<bean 	id="restClient" 
-			class="org.liris.ktbs.rest.ApacheKtbsRestClient"
-			destroy-method="endSession">
+	<bean id="restClient" class="org.liris.ktbs.rest.ApacheKtbsRestClient"
+		destroy-method="endSession">
 		<property name="rootUri" value="${ktbs.root.uri}" />
 	</bean>
 

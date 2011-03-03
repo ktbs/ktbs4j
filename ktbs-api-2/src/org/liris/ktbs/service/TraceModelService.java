@@ -10,9 +10,13 @@ import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 public interface TraceModelService {
 	
+	public ITraceModel createTraceModel(String modelUri);
+	
 	public boolean importModel(String modelUri, boolean override, Reader reader, String mimeType);
 	
 	public boolean save(ITraceModel model);
+	
+	public boolean save(ITraceModel model, boolean createIfDoesntExist);
 
 	public IAttributeType newAttributeType(ITraceModel model, String localName, IObselType domain);
 	
@@ -21,4 +25,5 @@ public interface TraceModelService {
 	public IObselType newObselType(ITraceModel model, String localName);
 
 	public IObselType newObselType(ITraceModel model, String localName, IObsel superType);
+	
 }

@@ -7,6 +7,13 @@ public class SerializationConfig {
 
 	private Map<LinkAxis, SerializationMode> modes = new HashMap<LinkAxis, SerializationMode>();
 
+	public SerializationConfig(SerializationConfig config) {
+		super();
+		modes.put(LinkAxis.CHILD, config.getChildMode());
+		modes.put(LinkAxis.LINKED, config.getLinkMode());
+		modes.put(LinkAxis.LINKED_SAME_TYPE, config.getLinkSameTypeMode());
+		modes.put(LinkAxis.PARENT, config.getMode(LinkAxis.PARENT));
+	}
 	public SerializationConfig() {
 		super();
 		modes.put(LinkAxis.CHILD, SerializationMode.URI);

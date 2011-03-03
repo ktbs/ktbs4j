@@ -58,4 +58,9 @@ public class MemoryDao implements ResourceDao {
 		throw new UnsupportedOperationException("The memory Dao does not support any query language");
 	}
 
+	@Override
+	public boolean save(IKtbsResource resource, boolean cascadeChildren) {
+		return false;
+	}
+
 }

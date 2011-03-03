@@ -16,10 +16,13 @@ import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
+import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.rdf.Java2Rdf;
 import org.liris.ktbs.serial.Deserializer;
+import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
+import org.liris.ktbs.serial.SerializationMode;
 import org.liris.ktbs.serial.Serializer;
 import org.liris.ktbs.utils.KtbsUtils;
 import org.liris.ktbs.utils.RelativeURITurtleReader;
@@ -105,17 +108,14 @@ public class RestDao implements ResourceDao {
 		if(!response.hasSucceeded())
 			return null;
 		else {
-			if(response.getHTTPETag() != null)
-				etags.put(uri, response.getHTTPETag());
-			else
-				log.warn("No etag was attached to the resource \""+uri+"\".");
+			saveEtag(requestUri, response);
 
 			String bodyAsString = response.getBodyAsString();
 			String mimeType = response.getMimeType();
 
 			if(mimeType.equals(KtbsConstants.MIME_TURTLE)) {
-				log.info("Resolving relative uris for parsing turtle syntax against the base uri " + uri);
-				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, uri);
+				log.info("Resolving relative uris for parsing turtle syntax against the base uri " + requestUri);
+				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, requestUri);
 			}
 
 			T resource = deserializer.deserializeResource(
@@ -137,41 +137,77 @@ public class RestDao implements ResourceDao {
 
 	@Override
 	public <T extends IKtbsResource> T create(T resource) {
+		if(KtbsUtils.isTraceModelElement(resource))
+			throw new DaoException("A trace model element cannot be created through the current " +
+					"Rest API. Modify and save its parent trace model instead.");
 		StringWriter writer = new StringWriter();
 		serializer.serializeResource(writer, resource, sendMimeType);
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
 		if(response.hasSucceeded()) {
 			return get(response.getHTTPLocation(), (Class<T>)resource.getClass());
-		} else
-			return null;
+		} else {
+			if(isUriAlreadyInUse(response)) {
+				throw new DaoException("The resource " + resource.getUri() + " already exists.");
+			} else
+				throw new DaoException("Could not create the resource " + resource.getUri() +". Message: " + response.getServerMessage() + " ["+response.getKtbsStatus()+"]");
+		}
+	}
+
+
+	private boolean isUriAlreadyInUse(KtbsResponse response) {
+		return response.getServerMessage() != null 
+				&& response.getServerMessage().matches("400 URI Already in Use");
 	}
 
 	@Override
-	public boolean save(IKtbsResource resource) {
-		/*
-		 * Manage special case if obsel or trace model element.
-		 * If stored trace or trace model, cascade to children automatically
-		 */
-		
-		
-		String etag = etags.get(resource.getUri());
-		if(etag == null)
-			// should update the etag
-			get(resource.getUri(), resource.getClass());
-
-		etag = etags.get(resource.getUri());
-		if(etag == null) {
-			log.warn("Could not find an etag for the resource \""+resource.getUri()+"\".");
-			return false;
+	public boolean save(IKtbsResource resource, boolean cascadeChildren) {
+		SerializationConfig config = new SerializationConfig();
+		if(cascadeChildren) {
+			if(!KtbsUtils.isTrace(resource)) {
+				log.warn("Cascading save is not supported for a resource of type " + resource.getTypeUri());
+			} else
+				config.configure(LinkAxis.CHILD, SerializationMode.CASCADE);
 		}
 
+		if(KtbsUtils.isTraceModelElement(resource)) {
+			throw new DaoException("Saving an "+resource.getClass()+" is forbidden is the current version" +
+			" of the Rest API. Save the parent trace model with children cascading instead.");
+		} else if(KtbsUtils.isObsel(resource)) {
+			throw new DaoException("Saving an obsel is forbidden is the current version" +
+					" of the Rest API. Save the parent trace with children cascading instead.");
+		} else if(KtbsUtils.isTraceModel(resource)) {
+			if(!cascadeChildren)
+				log.warn("Saving a trace model automatically cascade to children " +
+						"(obsel types, attribute types, and relation types)");
+			
+			SerializationConfig tmConfig = new SerializationConfig(config);
+			tmConfig.configure(LinkAxis.CHILD, SerializationMode.CASCADE);
+			return save(resource.getUri(), resource, tmConfig);
+		} else if(KtbsUtils.isTrace(resource)) {
+			ITrace trace = (ITrace)resource;
+			
+			String aboutUri = resource.getUri() + KtbsConstants.ABOUT_ASPECT;
+			String obselsUri = resource.getUri() + KtbsConstants.OBSELS_ASPECT;
 
-		String updateUri = resource.getUri();
+			SerializationConfig aboutConfig = new SerializationConfig(config);
+			aboutConfig.configure(LinkAxis.CHILD, SerializationMode.NOTHING);
+			
+			boolean aboutSaved = save(aboutUri, trace, aboutConfig);
+			if(cascadeChildren) {
+				boolean obselsSaved = saveCollection(obselsUri, trace.getObsels());
+				return obselsSaved && aboutSaved;
+			} else
+				return aboutSaved;
+		} else 
+			return save(resource.getUri(), resource, config);
 
-		if(ITrace.class.isAssignableFrom(resource.getClass()) && !resource.getUri().endsWith(KtbsConstants.ABOUT_ASPECT))
-			updateUri+=KtbsConstants.ABOUT_ASPECT;
+	}
 
-		
+	private boolean save(String updateUri, IKtbsResource resourceToSave,
+			SerializationConfig config) {
+		String etag = getEtag(updateUri);
+
+
 		StringWriter writer = new StringWriter();
 
 		/*
@@ -179,14 +215,66 @@ public class RestDao implements ResourceDao {
 		 * 
 		 * serializer.serializeResource(writer, resource, sendMimeType, config);
 		 */
-		temporaryFix(resource, new SerializationConfig(), writer);
+		temporaryFix(resourceToSave, config, writer);
 		/*
 		 * END of fix
 		 */
-		
+
 
 		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
+		saveEtag(updateUri, response);
+		
 		return response.hasSucceeded();
+	}
+
+	@Override
+	public boolean save(IKtbsResource resource) {
+		return save(resource, false);
+	}
+
+	private boolean saveCollection(String uriToSave, Set<? extends IKtbsResource> collection) {
+		String etag = getEtag(uriToSave);
+		StringWriter writer = new StringWriter();
+
+		serializer.serializeResourceSet(writer, collection, sendMimeType);
+		KtbsResponse response = client.update(uriToSave, writer.toString(), etag);
+		if(response.hasSucceeded()) 
+			return saveEtag(uriToSave, response);
+		else
+			return false;
+	}
+
+	private boolean saveEtag(String uri, KtbsResponse response) {
+		String httpeTag = response.getHTTPETag();
+		if(httpeTag != null) {
+			String cachedEtag = etags.get(uri);
+			if(cachedEtag == null || !cachedEtag.equals(httpeTag)) {
+				//				String s = KtbsUtils.replaceLast(httpeTag, "\"", "").replaceFirst("\"", "");
+				etags.put(uri, httpeTag);
+				return true;
+			} else
+				return false;
+		}
+		else {
+			log.warn("No etag was attached to the resource \""+uri+"\".");
+			return false;
+		}
+	}
+
+	private String getEtag(String uriToSave) {
+		String etag = etags.get(uriToSave);
+		if(etag == null) {
+			// should update the etag
+			KtbsResponse response = client.get(uriToSave);
+
+			if(!response.hasSucceeded() || response.getHTTPETag() == null) {
+				log.warn("Could not find an etag for the resource \""+uriToSave+"\".");
+				return null;
+			} else 
+				saveEtag(uriToSave, response);
+		}
+
+		return etags.get(uriToSave);
 	}
 
 	private void temporaryFix(IKtbsResource resource,
@@ -231,7 +319,7 @@ public class RestDao implements ResourceDao {
 			return null;
 		else {
 			if(response.getHTTPETag() != null)
-				etags.put(request, response.getHTTPETag());
+				saveEtag(request, response);
 
 			String bodyAsString = response.getBodyAsString();
 			String mimeType = response.getMimeType();
@@ -293,4 +381,6 @@ public class RestDao implements ResourceDao {
 		String obselsRequest = trace.getUri()+KtbsConstants.OBSELS_ASPECT;
 		trace.setObsels(fac.createResourceSetProxy(obselsRequest, IObsel.class));
 	}
+
+
 }

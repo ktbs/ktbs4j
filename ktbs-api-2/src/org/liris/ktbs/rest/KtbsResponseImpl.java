@@ -1,10 +1,6 @@
 package org.liris.ktbs.rest;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -27,7 +23,7 @@ public class KtbsResponseImpl implements KtbsResponse {
 		this.executedWithSuccess = executedWithSuccess;
 		this.ktbsResponseStatus = ktbsResponseStatus;
 		this.httpResponse = httpResponse;
-		
+
 		this.contentAsString = body;
 	}
 
@@ -36,22 +32,10 @@ public class KtbsResponseImpl implements KtbsResponse {
 		return executedWithSuccess;
 	}
 
+
 	@Override
 	public String getServerMessage() {
-		HttpEntity entity = httpResponse.getEntity();
-		if(entity == null)
-			return "";
-		InputStream content;
-		try {
-			content = entity.getContent();
-			if (content == null) {
-				return "";
-			}
-			return EntityUtils.toString(entity);
-		} catch (IllegalStateException e) {
-		} catch (IOException e) {
-		}
-		return "";
+		return contentAsString;
 	}
 
 	@Override

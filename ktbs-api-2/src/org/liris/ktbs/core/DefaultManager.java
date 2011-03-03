@@ -17,8 +17,6 @@ import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IMethod;
 import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IObselType;
-import org.liris.ktbs.core.domain.interfaces.IRelationType;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
@@ -98,7 +96,7 @@ public class DefaultManager implements ResourceManager {
 	@Override
 	public IComputedTrace newComputedTrace(String baseUri,
 			String traceLocalName, String methodUri, Set<String> sourceTraces, Map<String,String> parameters) {
-		
+
 		IComputedTrace trace = createResource(baseUri, traceLocalName, IComputedTrace.class, false);
 		trace.setMethod(proxyFactory.createResource(methodUri, IMethod.class));
 
@@ -188,49 +186,25 @@ public class DefaultManager implements ResourceManager {
 		return resource;
 	}
 
-	@Override
-	public IObselType newObselType(String traceModelUri, String localName) {
-		IObselType obsType = createResource(traceModelUri, localName, IObselType.class, true);
-		return createAndReturn(obsType);
-	}
-
-	@Override
-	public IRelationType newRelationType(String traceModelUri,
-			String localName, Set<String> domains, Set<String> ranges) {
-
-		IRelationType relType = createResource(traceModelUri, localName, IRelationType.class, true);
-		relType.setDomains(convertToSetOfProxies(domains, IObselType.class));
-		relType.setRanges(convertToSetOfProxies(ranges, IObselType.class));
-
-		return createAndReturn(relType);
-	}
-
-	@Override
-	public IAttributeType newAttributeType(String traceModelUri,
-			String localName, Set<String> domainUris,
-			Set<String> ranges) {
-
-		IAttributeType attType = createResource(traceModelUri, localName, IAttributeType.class, true);
-		
-		attType.setDomains(convertToSetOfProxies(domainUris, IObselType.class));
-		attType.setRanges(ranges);
-
-		return createAndReturn(attType);
-	}
-
 	private <T extends IKtbsResource> T createAndReturn(T resource) {
 		return dao.create(resource);
 	}
 
 	@Override
 	public boolean saveKtbsResource(IKtbsResource resource) {
-		return dao.save(resource);
+		return saveKtbsResource(resource, false);
 	}
 
 	@Override
 	public boolean deleteKtbsResource(String uri,
 			boolean cascadeLinked, boolean cascadeChildren) {
 		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	@Override
+	public boolean saveKtbsResource(IKtbsResource resource,
+			boolean cascadeChildren) {
+		return dao.save(resource, cascadeChildren);
 	}
 
 }

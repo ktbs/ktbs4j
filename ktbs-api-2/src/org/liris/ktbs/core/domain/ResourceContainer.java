@@ -76,7 +76,9 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 	}
 
 	private boolean isChildALeaf() {
-		return ITrace.class.isAssignableFrom(getClass()) && ITraceModel.class.isAssignableFrom(getClass());
+		boolean isTrace = ITrace.class.isAssignableFrom(getClass());
+		boolean isTraceModel = ITraceModel.class.isAssignableFrom(getClass());
+		return isTrace || isTraceModel;
 	}
 
 	/* (non-Javadoc)

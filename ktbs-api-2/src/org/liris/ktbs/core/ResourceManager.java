@@ -4,14 +4,11 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.Set;
 
-import org.liris.ktbs.core.domain.interfaces.IAttributeType;
 import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IMethod;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IObselType;
-import org.liris.ktbs.core.domain.interfaces.IRelationType;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
@@ -52,14 +49,10 @@ public interface ResourceManager {
 			Map<String, Object> attributes
 			);
 
-	public IObselType newObselType(String traceModelUri, String localName);
-
-	public IRelationType newRelationType(String traceModelUri, String localName, Set<String> domains, Set<String> ranges);
-	
-	public IAttributeType newAttributeType(String traceModelUri, String localName, Set<String> domainUris, Set<String> rangeUris);
-
 
 	public boolean deleteKtbsResource(String uri, boolean cascadeLinked, boolean cascadeChildren);
 
 	public boolean saveKtbsResource(IKtbsResource resource);
+
+	public boolean saveKtbsResource(IKtbsResource resource, boolean cascadeChildren);
 }

@@ -43,7 +43,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class KtbsUtils {
-	
+
 	/**
 	 * Tell if a given property name is defined is a namespace reserved by the KTBS.
 	 * 
@@ -68,8 +68,8 @@ public class KtbsUtils {
 	 */
 	public static boolean hasReservedNamespace(String pName) {
 		return pName.startsWith(KtbsConstants.NAMESPACE_KTBS)
-				|| pName.startsWith(RDFS.getURI())
-				|| pName.startsWith(RDF.getURI());
+		|| pName.startsWith(RDFS.getURI())
+		|| pName.startsWith(RDF.getURI());
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class KtbsUtils {
 		return null;
 
 	}
-	
+
 	public static IMethodParameter parseMethodParameter(String string) {
 		int index = string.indexOf("=");
 		String key = string.substring(0, index);
@@ -382,6 +382,26 @@ public class KtbsUtils {
 			return KtbsConstants.JENA_N_TRIPLES;
 		else
 			throw new IllegalArgumentException("This mime type cannot be mapped to an rdf syntax: " + mimeFormat);
+	}
+
+	public static boolean isTraceModelElement(IKtbsResource resource) {
+		Class<? extends IKtbsResource> cls = resource.getClass();
+		return IAttributeType.class.isAssignableFrom(cls)
+			|| IRelationType.class.isAssignableFrom(cls)
+			|| IObselType.class.isAssignableFrom(cls);
+	}
+	public static boolean isObsel(IKtbsResource resource) {
+		Class<? extends IKtbsResource> cls = resource.getClass();
+		return IObsel.class.isAssignableFrom(cls);
+	}
+	public static boolean isTrace(IKtbsResource resource) {
+		Class<? extends IKtbsResource> cls = resource.getClass();
+		return ITrace.class.isAssignableFrom(cls);
+	}
+
+	public static boolean isTraceModel(IKtbsResource resource) {
+		Class<? extends IKtbsResource> cls = resource.getClass();
+		return ITraceModel.class.isAssignableFrom(cls);
 	}
 
 }

@@ -9,4 +9,5 @@ public interface ResourceDao {
 	public boolean delete(String uri);
 	public <T extends IKtbsResource> ResultSet<T> query(String request, Class<T> cls);
 	public boolean save(IKtbsResource resource);
+	boolean save(IKtbsResource resource, boolean cascadeChildren);
 }

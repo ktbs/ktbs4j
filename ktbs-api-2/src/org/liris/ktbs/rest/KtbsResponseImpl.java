@@ -1,7 +1,5 @@
 package org.liris.ktbs.rest;
 
-import javax.xml.ws.Response;
-
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;

@@ -56,13 +56,12 @@ public class UserCollectSession {
 	
 	public void startTransaction() {
 		inTransaction = true;
-		
-		
 	}
+	
+	
 	public void commit() {
 		inTransaction = false;
 		bufferedObsels.clear();
-		
 	}
 	
 	

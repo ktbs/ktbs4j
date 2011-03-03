@@ -1,4 +1,4 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.service;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,10 +10,11 @@ import java.util.TimerTask;
 
 import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.service.impl.UserCollectSession;
 
 import com.ibm.icu.util.Calendar;
 
-public class CollectSession {
+public class MultiUserCollectService {
 		
 	private Map<String, Calendar> lastAccess = new HashMap<String, Calendar>();
 	private Map<String, UserCollectSession> sessions = new HashMap<String, UserCollectSession>();
@@ -21,7 +22,7 @@ public class CollectSession {
 	private String defaultTraceModelUri;
 	private String rootUri;
 	
-	private ResourceManager manager;
+	private ResourceService manager;
 	
 	private String defaultUser = "default";
 	private String defaultPassword = "default";
@@ -42,7 +43,7 @@ public class CollectSession {
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				CollectSession.this.clean();
+				MultiUserCollectService.this.clean();
 			}
 		};
 		timer.schedule(task, cleanPeriod*60000l, cleanPeriod*60000l);

@@ -2,12 +2,12 @@ package org.liris.ktbs.core.nocache.tests;
 
 import junit.framework.TestCase;
 
-import org.liris.ktbs.core.DefaultManager;
-import org.liris.ktbs.core.ResourceManager;
+import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.service.impl.DefaultManager;
 
 public class DefaultManagerTestCase extends TestCase {
 
-	ResourceManager manager;
+	ResourceService manager;
 	
 	protected void setUp() throws Exception {
 		super.setUp();

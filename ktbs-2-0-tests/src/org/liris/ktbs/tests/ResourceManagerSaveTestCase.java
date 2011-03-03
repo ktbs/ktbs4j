@@ -6,7 +6,6 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.liris.ktbs.core.KtbsClient;
-import org.liris.ktbs.core.ResourceManager;
 import org.liris.ktbs.core.domain.PojoFactory;
 import org.liris.ktbs.core.domain.interfaces.IAttributeType;
 import org.liris.ktbs.core.domain.interfaces.IBase;
@@ -17,15 +16,16 @@ import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 import org.liris.ktbs.dao.DaoException;
+import org.liris.ktbs.service.ResourceService;
 
 public class ResourceManagerSaveTestCase extends TestCase {
-	private ResourceManager manager;
+	private ResourceService manager;
 	private PojoFactory factory;
 	private IRoot root;
 
 	@Before
 	public void setUp() throws Exception {
-		manager = KtbsClient.getDefaultRestManager();
+		manager = KtbsClient.getRestResourceService();
 		root = manager.getKtbsResource("http://localhost:8001/", IRoot.class);
 		factory = new PojoFactory();
 	}

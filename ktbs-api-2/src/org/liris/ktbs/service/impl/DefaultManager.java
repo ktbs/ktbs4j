@@ -1,10 +1,11 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.service.impl;
 
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.liris.ktbs.core.ProxyFactory;
 import org.liris.ktbs.core.domain.AttributePair;
 import org.liris.ktbs.core.domain.KtbsResource;
 import org.liris.ktbs.core.domain.MethodParameter;
@@ -22,10 +23,11 @@ import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 import org.liris.ktbs.core.domain.interfaces.WithParameters;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.utils.KtbsUtils;
 
 
-public class DefaultManager implements ResourceManager {
+public class DefaultManager implements ResourceService {
 
 	/*
 	 * Injected by Spring

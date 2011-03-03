@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.liris.ktbs.core.KtbsClient;
-import org.liris.ktbs.core.ResourceManager;
 import org.liris.ktbs.core.domain.interfaces.IAttributePair;
 import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
@@ -19,15 +18,16 @@ import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.WithParameters;
+import org.liris.ktbs.service.ResourceService;
 
 public class ResourceManagerGetTestCase extends TestCase {
 
-	private ResourceManager manager;
+	private ResourceService manager;
 	
 	@Before
 	public void setUp() throws Exception {
 		try {
-			manager = KtbsClient.getDefaultRestManager();
+			manager = KtbsClient.getRestResourceService();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

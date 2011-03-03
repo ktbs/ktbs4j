@@ -16,7 +16,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="pojoFactory" ref="pojoFactory" />
 	</bean>
 	
-	<bean id="defaultProxyingRestManager" class="org.liris.ktbs.core.DefaultManager">
+	<bean id="defaultProxyingRestManager" class="org.liris.ktbs.service.impl.DefaultManager">
 		<property name="dao" ref="restDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
@@ -29,7 +29,12 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="dao" ref="restDao" />
 	</bean>
 
-	<bean id="defaultMemoryProxyingManager" class="org.liris.ktbs.core.DefaultManager">
+	<bean id="traceModelRestManager" class="org.liris.ktbs.service.impl.TraceModelManager">
+		<property name="dao" ref="restDao" />
+		<property name="factory" ref="pojoFactory" />
+	</bean>
+	
+	<bean id="defaultMemoryProxyingManager" class="org.liris.ktbs.service.impl.DefaultManager">
 		<property name="dao" ref="memoryDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />

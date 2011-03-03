@@ -814,7 +814,11 @@ public class Rdf2Java {
 					continue;
 				traceModel.getAttributeTypes().add(attType);
 			} else
-				log.warn("The resource "+uri2+" has the same prefix than the trace model but is of unkown type: " + objectResource);
+				/*
+				 * In some cases, a statement [(attributeType|obselType|relationType)Uri, RDF.type, ktbs:TraceModel]
+				 * seems to be present in the model in addition to the expected rdf:type of the trace model element
+				 */
+				log.warn("The resource "+uri2+" has the same prefix than the trace model but is of unknown type: " + objectResource);
 		}
 
 		((KtbsResource)traceModel).setParentResource(readParent(traceModel, KtbsConstants.P_OWNS, true, IBase.class));

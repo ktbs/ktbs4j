@@ -1,14 +1,22 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.service.impl;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 import org.liris.ktbs.core.domain.interfaces.IBase;
+import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.service.StoredTraceService;
 
 import com.ibm.icu.util.Calendar;
 
 public class UserCollectSession {
 
-	private ResourceManager manager;
+	private ResourceService manager;
+	private StoredTraceService storedTraceService;
+	
 	private String user;
 	private String baseUri;
 	private IStoredTrace currentTrace;
@@ -42,7 +50,22 @@ public class UserCollectSession {
 		return currentTrace;
 	}
 
-
+	private boolean inTransaction = false;
+	private Deque<IObsel> bufferedObsels = new LinkedList<IObsel>();
+	
+	
+	public void startTransaction() {
+		inTransaction = true;
+		
+		
+	}
+	public void commit() {
+		inTransaction = false;
+		bufferedObsels.clear();
+		
+	}
+	
+	
 	public IStoredTrace startNewStoredTrace(String user, String traceLocalName) {
 		return startNewStoredTrace(user, traceLocalName, defaultTraceModelUri, getDefaultOrigin());
 	}

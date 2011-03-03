@@ -1,4 +1,4 @@
-package org.liris.ktbs.core;
+package org.liris.ktbs.service;
 
 import java.math.BigInteger;
 import java.util.Map;
@@ -12,7 +12,7 @@ import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
-public interface ResourceManager {
+public interface ResourceService {
 	
 	public <T extends IKtbsResource> T getKtbsResource(String uri, Class<T> cls);
 	

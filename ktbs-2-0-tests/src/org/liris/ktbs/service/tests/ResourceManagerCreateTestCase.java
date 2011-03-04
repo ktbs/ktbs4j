@@ -35,7 +35,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testCreateBase() {
-		IBase base2 = manager.newBase(root.getUri(), "base2", "Owner de la base 2");
+		IBase base2 = manager.newBase("base2", "Owner de la base 2");
 		IBase base2remote = manager.getResource("http://localhost:8001/base2/", IBase.class);
 		assertNotNull(base2remote);
 		assertEquals(base2, base2remote);

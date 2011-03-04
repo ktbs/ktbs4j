@@ -14,9 +14,16 @@ public class LoadTests extends TestCase {
 
 	public void testLoad() throws Exception {
 		KtbsRootClient restClient = Ktbs.getRestRootClient();
-		KtbsRootClient memoryClient = Ktbs.getMemoryRootClient();
-		MultiUserRootProvider provider = Ktbs.getMultiUserRestRootProvider();
+		restClient.getResourceService();
+		restClient.getStoredTraceService();
+		restClient.getTraceModelService();
 		
+		KtbsRootClient memoryClient = Ktbs.getMemoryRootClient();
+		memoryClient.getResourceService();
+		memoryClient.getStoredTraceService();
+		memoryClient.getTraceModelService();
+
+		MultiUserRootProvider provider = Ktbs.getMultiUserRestRootProvider();
 		provider.openClient("Damien", "");
 		KtbsRootClient client = provider.getClient("Damien");
 		ResourceService service = client.getResourceService();

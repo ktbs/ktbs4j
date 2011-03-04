@@ -2,11 +2,11 @@ package org.liris.ktbs.service;
 
 import java.io.Reader;
 
-import org.liris.ktbs.core.domain.interfaces.IAttributeType;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IObselType;
-import org.liris.ktbs.core.domain.interfaces.IRelationType;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.domain.interfaces.IAttributeType;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IObselType;
+import org.liris.ktbs.domain.interfaces.IRelationType;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 
 public interface TraceModelService {
 	

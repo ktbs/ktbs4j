@@ -1,8 +1,8 @@
 package org.liris.ktbs.service.impl;
 
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 
@@ -33,7 +33,7 @@ public class UserCollectSession {
 		super();
 		this.user = user;
 		this.baseUri = baseUri;
-		this.manager = new DefaultManager();
+		this.manager = new DefaultResourceManager();
 	}
 
 	public String getUser() {

@@ -9,39 +9,41 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="locations" value="classpath:**/ktbs-client.properties" />
 	</bean>
 
-	<bean id="ktbsRestClient" class="org.liris.ktbs.core.KtbsClientImpl">
+	<bean id="restRootClient" class="org.liris.ktbs.client.KtbsRootClientImpl">
+		<constructor-arg value="${ktbs.root.uri}"/>
 		<property name="dao" ref="restDao" />
-		<property name="resourceService" ref="defaultRestManager" />
+		<property name="resourceService" ref="defaultRestResourceManager" />
 		<property name="traceModelService" ref="traceModelRestManager" />
 	</bean>
 
-	<bean id="ktbsMemoryClient" class="org.liris.ktbs.core.KtbsClientImpl">
+	<bean id="memoryRootClient" class="org.liris.ktbs.client.KtbsRootClientImpl">
+		<constructor-arg value="${ktbs.root.uri}"/>
 		<property name="resourceService" ref="defaultMemoryProxyingManager" />
 		<property name="traceModelService" ref="defaultMemoryTraceModelManager" />
 	</bean>
 
-	<bean id="rdfSerializer" class="org.liris.ktbs.serial.RdfSerializer">
+	<bean id="rdfSerializer" class="org.liris.ktbs.serial.rdf.RdfSerializer">
 	</bean>
 
-	<bean id="rdfDeserializer" class="org.liris.ktbs.serial.RdfDeserializer">
+	<bean id="rdfDeserializer" class="org.liris.ktbs.serial.rdf.RdfDeserializer">
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
 	</bean>
 
-	<bean id="defaultRestManager" class="org.liris.ktbs.service.impl.DefaultManager">
+	<bean id="defaultRestResourceManager" class="org.liris.ktbs.service.impl.DefaultResourceManager">
 		<property name="dao" ref="restDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
 	</bean>
 
-	<bean id="pojoFactory" class="org.liris.ktbs.core.domain.PojoFactory">
+	<bean id="pojoFactory" class="org.liris.ktbs.domain.PojoFactory">
 	</bean>
 
-	<bean id="proxyFactory" class="org.liris.ktbs.core.ProxyFactory">
+	<bean id="proxyFactory" class="org.liris.ktbs.dao.ProxyFactory">
 		<property name="dao" ref="restDao" />
 	</bean>
 
-	<bean id="multiUserService" class="org.liris.ktbs.service.impl.MultiUserServiceImpl"
+	<bean id="multiUserRootProvider" class="org.liris.ktbs.service.impl.MultiUserServiceImpl"
 		init-method="init" destroy-method="destroy">
 		<property name="defaultRootUri" value="${ktbs.root.uri}" />
 	</bean>
@@ -53,25 +55,25 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="traceModelRestManager" class="org.liris.ktbs.service.impl.TraceModelManager">
 		<property name="dao" ref="restDao" />
-		<property name="resourceService" ref="defaultRestManager" />
+		<property name="resourceService" ref="defaultRestResourceManager" />
 		<property name="factory" ref="pojoFactory" />
 	</bean>
 
-	<bean id="defaultMemoryProxyingManager" class="org.liris.ktbs.service.impl.DefaultManager">
+	<bean id="defaultMemoryProxyingManager" class="org.liris.ktbs.service.impl.DefaultResourceManager">
 		<property name="dao" ref="memoryDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
 	</bean>
 
-	<bean id="memoryDao" class="org.liris.ktbs.memory.MemoryDao"
+	<bean id="memoryDao" class="org.liris.ktbs.dao.memory.MemoryDao"
 		init-method="init">
 		<property name="rootUri" value="${ktbs.root.uri}" />
 		<property name="factory" ref="pojoFactory" />
 	</bean>
 
-	<bean id="restDao" class="org.liris.ktbs.rest.RestDao"
+	<bean id="restDao" class="org.liris.ktbs.dao.rest.RestDao"
 		init-method="init">
-		<constructor-arg ref="restClient" />
+		<constructor-arg ref="apacheClient" />
 		<property name="rootUri" value="${ktbs.root.uri}" />
 		<property name="serializer" ref="rdfSerializer" />
 		<property name="deserializer" ref="rdfDeserializer" />
@@ -79,7 +81,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="resourceFactory" ref="pojoFactory" />
 	</bean>
 
-	<bean id="restClient" class="org.liris.ktbs.rest.ApacheKtbsRestClient"
+	<bean id="apacheClient" class="org.liris.ktbs.dao.rest.ApacheKtbsRestClient"
 		destroy-method="endSession">
 		<constructor-arg index="0" value="${ktbs.root.uri}" />
 	</bean>

@@ -8,22 +8,22 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.liris.ktbs.core.KtbsClient;
-import org.liris.ktbs.core.KtbsClientImpl;
-import org.liris.ktbs.core.MultiUserService;
-import org.liris.ktbs.core.ProxyFactory;
-import org.liris.ktbs.core.domain.PojoFactory;
-import org.liris.ktbs.rest.ApacheKtbsRestClient;
-import org.liris.ktbs.rest.RestDao;
-import org.liris.ktbs.serial.RdfDeserializer;
-import org.liris.ktbs.serial.RdfSerializer;
+import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.client.KtbsRootClientImpl;
+import org.liris.ktbs.dao.ProxyFactory;
+import org.liris.ktbs.dao.rest.ApacheKtbsRestClient;
+import org.liris.ktbs.dao.rest.RestDao;
+import org.liris.ktbs.domain.PojoFactory;
+import org.liris.ktbs.serial.rdf.RdfDeserializer;
+import org.liris.ktbs.serial.rdf.RdfSerializer;
+import org.liris.ktbs.service.MultiUserRootProvider;
 
 import com.ibm.icu.util.Calendar;
 
-public class MultiUserServiceImpl implements MultiUserService {
+public class MultiUserServiceImpl implements MultiUserRootProvider {
 		
 	private Map<String, Calendar> lastAccess;
-	private Map<String, KtbsClient> clients;
+	private Map<String, KtbsRootClient> clients;
 	
 	private String defaultRootUri;
 	public void setDefaultRootUri(String defaultRootUri) {
@@ -41,7 +41,7 @@ public class MultiUserServiceImpl implements MultiUserService {
 	// the init method
 	public void init() {
 		lastAccess = new HashMap<String, Calendar>();
-		clients = new HashMap<String, KtbsClient>();
+		clients = new HashMap<String, KtbsRootClient>();
 		
 		timer = new Timer(true);
 		TimerTask task = new TimerTask() {
@@ -60,7 +60,7 @@ public class MultiUserServiceImpl implements MultiUserService {
 	}
 
 	@Override
-	public KtbsClient getClient(String user) {
+	public KtbsRootClient getClient(String user) {
 		if(clients.get(user) == null) 
 			throw new RuntimeException("No KTBS client is opened for the user " + user + ". ");
 		 else {
@@ -74,8 +74,8 @@ public class MultiUserServiceImpl implements MultiUserService {
 		lastAccess.put(user, Calendar.getInstance());
 	}
 
-	private KtbsClientImpl makeClient() {
-		KtbsClientImpl client = new KtbsClientImpl();
+	private KtbsRootClientImpl makeClient() {
+		KtbsRootClientImpl client = new KtbsRootClientImpl(defaultRootUri);
 		
 		ApacheKtbsRestClient apacheClient = new ApacheKtbsRestClient(defaultRootUri);
 		
@@ -99,7 +99,7 @@ public class MultiUserServiceImpl implements MultiUserService {
 		proxyFactory.setDao(dao);
 
 		
-		DefaultManager resourceService = new DefaultManager();
+		DefaultResourceManager resourceService = new DefaultResourceManager();
 		resourceService.setPojoFactory(pojoFactory);
 		resourceService.setProxyFactory(proxyFactory);
 		resourceService.setDao(dao);
@@ -152,7 +152,7 @@ public class MultiUserServiceImpl implements MultiUserService {
 		if(hasClient(user))
 			return false; 
 		else {
-			KtbsClient client = makeClient();
+			KtbsRootClient client = makeClient();
 			client.setCredentials(user, password);
 			clients.put(user, client);
 			updateAccess(user);

@@ -4,15 +4,15 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.Set;
 
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
-import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
-import org.liris.ktbs.core.domain.interfaces.IMethod;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IRoot;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.core.domain.interfaces.ITrace;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IComputedTrace;
+import org.liris.ktbs.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.domain.interfaces.IMethod;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IRoot;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.ITrace;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 
 public interface ResourceService {
 	

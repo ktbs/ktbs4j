@@ -21,9 +21,10 @@
 
 		    <doctitle><![CDATA[<h1>KTBS Client for Java</h1>]]></doctitle>
 		    <bottom><![CDATA[<i>Copyright &#169; 2010 LIRIS UMR 5205 CNRS. All Rights Reserved.</i>]]></bottom>
-		    <group title="Core classes" packages="org.liris.ktbs.core*"/>
-		    <group title="The KTBS Resource API" packages="org.liris.ktbs.core.api*"/>
-		    <group title="KTBS Rest classes" packages="org.liris.ktbs.core.rest*"/>
+		    <group title="KTBS Client classes (entry point)" packages="org.liris.ktbs.client*"/>
+		    <group title="KTBS resources (Domain objects)" packages="org.liris.ktbs.core.domain*"/>
+		    <group title="Services" packages="org.liris.ktbs.service*"/>
+		    <group title="Utility classes" packages="org.liris.ktbs.utils*"/>
 			
 			<link href="http://download.oracle.com/javase/6/docs/api/"/>
 		</javadoc>

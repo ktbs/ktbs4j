@@ -2,8 +2,8 @@ package org.liris.ktbs.serial;
 
 import java.io.Reader;
 
-import org.liris.ktbs.core.ResultSet;
-import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.dao.ResultSet;
+import org.liris.ktbs.domain.interfaces.IKtbsResource;
 
 public interface Deserializer {
 	public IKtbsResource deserializeResource(String uri, Reader reader, String mimeFormat);

@@ -4,8 +4,8 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
 
 public interface StoredTraceService {
 	

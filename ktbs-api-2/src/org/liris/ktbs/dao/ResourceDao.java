@@ -3,8 +3,7 @@ package org.liris.ktbs.dao;
 import java.util.Collection;
 import java.util.List;
 
-import org.liris.ktbs.core.ResultSet;
-import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.domain.interfaces.IKtbsResource;
 
 public interface ResourceDao {
 	

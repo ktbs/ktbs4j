@@ -3,7 +3,7 @@ package org.liris.ktbs.serial;
 import java.io.Writer;
 import java.util.Collection;
 
-import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.domain.interfaces.IKtbsResource;
 
 public interface Serializer {
 	

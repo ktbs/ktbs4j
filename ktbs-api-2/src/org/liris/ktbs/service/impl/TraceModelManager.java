@@ -19,7 +19,7 @@ import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.TraceModelService;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class TraceModelManager implements TraceModelService {
+public class TraceModelManager extends RootAwareService implements TraceModelService {
 
 	private PojoFactory factory;
 	public void setFactory(PojoFactory factory) {

@@ -62,5 +62,9 @@ public class KtbsRootClientImpl implements KtbsRootClient {
 	public void setStoredTraceService(StoredTraceService storedTraceService) {
 		this.storedTraceService = storedTraceService;
 	}
-	
+
+	@Override
+	public String getRootUri() {
+		return rootUri;
+	}
 }

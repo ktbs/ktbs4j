@@ -26,9 +26,10 @@ import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.domain.interfaces.WithParameters;
 import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.utils.KtbsUtils;
 
 
-public class DefaultResourceManager implements ResourceService {
+public class DefaultResourceManager extends RootAwareService implements ResourceService {
 
 	/*
 	 * Injected by Spring
@@ -56,8 +57,8 @@ public class DefaultResourceManager implements ResourceService {
 	}
 
 	@Override
-	public IBase newBase(String rootUri, String baseLocalName, String owner) {
-		IBase base = createResource(rootUri, baseLocalName, IBase.class, false);
+	public IBase newBase(String baseLocalName, String owner) {
+		IBase base = createResource("", baseLocalName, IBase.class, false);
 
 		/*
 		 * No ktbs:owner property defined yet in the RDF format.
@@ -141,8 +142,6 @@ public class DefaultResourceManager implements ResourceService {
 		}
 	}
 
-
-
 	@Override
 	public ITraceModel newTraceModel(String baseUri, String modelLocalName) {
 		ITraceModel model = createResource(baseUri, modelLocalName, ITraceModel.class, false);
@@ -183,10 +182,11 @@ public class DefaultResourceManager implements ResourceService {
 			String localName, 
 			Class<T> cls, 
 			boolean leaf) {
-		T resource = pojoFactory.createResource(parentUri, localName, leaf, cls);
+		String absoluteParentUri = KtbsUtils.makeChildURI(rootUri, parentUri, false);
 
-		if(parentUri != null)
-			((KtbsResource)resource).setParentResource(pojoFactory.createResource(parentUri));
+		T resource = pojoFactory.createResource(absoluteParentUri, localName, leaf, cls);
+
+		((KtbsResource)resource).setParentResource(pojoFactory.createResource(absoluteParentUri));
 		return resource;
 	}
 

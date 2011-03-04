@@ -20,7 +20,7 @@ import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class StoredTraceManager implements StoredTraceService {
+public class StoredTraceManager extends RootAwareService implements StoredTraceService {
 
 	private PojoFactory factory;
 	public void setFactory(PojoFactory factory) {

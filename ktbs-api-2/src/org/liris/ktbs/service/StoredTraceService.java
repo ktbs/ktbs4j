@@ -7,6 +7,11 @@ import java.util.Map;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 
+/**
+ * 
+ * @author Damien Cram
+ *
+ */
 public interface StoredTraceService {
 	
 	/**

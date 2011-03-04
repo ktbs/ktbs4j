@@ -31,6 +31,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	</bean>
 
 	<bean id="defaultRestResourceManager" class="org.liris.ktbs.service.impl.DefaultResourceManager">
+		<property name="rootUri" value="${ktbs.root.uri}" />
 		<property name="dao" ref="restDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
@@ -45,21 +46,24 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="multiUserRootProvider" class="org.liris.ktbs.service.impl.MultiUserServiceImpl"
 		init-method="init" destroy-method="destroy">
-		<property name="defaultRootUri" value="${ktbs.root.uri}" />
+		<property name="rootUri" value="${ktbs.root.uri}" />
 	</bean>
 
 	<bean id="defaultMemoryTraceModelManager" class="org.liris.ktbs.service.impl.TraceModelManager">
+		<property name="rootUri" value="${ktbs.root.uri}" />
 		<property name="dao" ref="memoryDao" />
 		<property name="factory" ref="pojoFactory" />
 	</bean>
 
 	<bean id="traceModelRestManager" class="org.liris.ktbs.service.impl.TraceModelManager">
+		<property name="rootUri" value="${ktbs.root.uri}" />
 		<property name="dao" ref="restDao" />
 		<property name="resourceService" ref="defaultRestResourceManager" />
 		<property name="factory" ref="pojoFactory" />
 	</bean>
 
 	<bean id="defaultMemoryProxyingManager" class="org.liris.ktbs.service.impl.DefaultResourceManager">
+		<property name="rootUri" value="${ktbs.root.uri}" />
 		<property name="dao" ref="memoryDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />

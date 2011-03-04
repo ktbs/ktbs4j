@@ -20,15 +20,11 @@ import org.liris.ktbs.service.MultiUserRootProvider;
 
 import com.ibm.icu.util.Calendar;
 
-public class MultiUserServiceImpl implements MultiUserRootProvider {
+public class MultiUserServiceImpl extends RootAwareService implements MultiUserRootProvider {
 		
 	private Map<String, Calendar> lastAccess;
 	private Map<String, KtbsRootClient> clients;
 	
-	private String defaultRootUri;
-	public void setDefaultRootUri(String defaultRootUri) {
-		this.defaultRootUri = defaultRootUri;
-	}
 	
 	// timeout in minutes;
 	private int timeout = 150;
@@ -75,9 +71,9 @@ public class MultiUserServiceImpl implements MultiUserRootProvider {
 	}
 
 	private KtbsRootClientImpl makeClient() {
-		KtbsRootClientImpl client = new KtbsRootClientImpl(defaultRootUri);
+		KtbsRootClientImpl client = new KtbsRootClientImpl(rootUri);
 		
-		ApacheKtbsRestClient apacheClient = new ApacheKtbsRestClient(defaultRootUri);
+		ApacheKtbsRestClient apacheClient = new ApacheKtbsRestClient(rootUri);
 		
 		PojoFactory pojoFactory = new PojoFactory();
 		ProxyFactory proxyFactory = new ProxyFactory();
@@ -94,7 +90,7 @@ public class MultiUserServiceImpl implements MultiUserRootProvider {
 		dao.setDeserializer(deserializer);
 		dao.setLinkedResourceFactory(proxyFactory);
 		dao.setResourceFactory(pojoFactory);
-		dao.setRootUri(defaultRootUri);
+		dao.setRootUri(rootUri);
 		
 		proxyFactory.setDao(dao);
 

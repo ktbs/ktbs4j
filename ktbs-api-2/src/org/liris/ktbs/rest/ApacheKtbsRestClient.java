@@ -44,11 +44,11 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 	private String rootUri;
 
-	@Override
-	public void setRootUri(String rootUri) {
+	public ApacheKtbsRestClient(String rootUri) {
+		super();
 		this.rootUri = rootUri;
 	}
-	
+
 	private CredentialsProvider credentialsProvider;
 	private HttpClient httpClient;
 	private boolean started = false;

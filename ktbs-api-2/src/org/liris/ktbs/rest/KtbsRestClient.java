@@ -26,9 +26,6 @@ public interface KtbsRestClient {
 	 */
 	public KtbsResponse get(String resourceURI);
 
-	public void setRootUri(String ktbsRootURI);
-	
-	
 	/**
 	 * Init the http client with no athentication
 	 */

@@ -2,6 +2,7 @@ package org.liris.ktbs.core;
 
 import org.liris.ktbs.dao.UserAwareDao;
 import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.TraceModelService;
 
 /**
@@ -12,8 +13,10 @@ import org.liris.ktbs.service.TraceModelService;
  */
 public class KtbsClientImpl implements KtbsClient {
 	
+	private StoredTraceService storedTraceService;
 	private ResourceService resourceService;
 	private TraceModelService traceModelService;
+	
 	private UserAwareDao dao;
 	
 	@Override
@@ -43,4 +46,14 @@ public class KtbsClientImpl implements KtbsClient {
 		if(dao != null)
 			dao.setCredentials(username, password);
 	}
+
+	@Override
+	public StoredTraceService getStoredTraceService() {
+		return storedTraceService;
+	}
+	
+	public void setStoredTraceService(StoredTraceService storedTraceService) {
+		this.storedTraceService = storedTraceService;
+	}
+	
 }

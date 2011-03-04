@@ -22,11 +22,15 @@ public class RetroRoomTraceModel {
 
 	public static void main(String[] args) {
 		RetroRoomTraceModel app = new RetroRoomTraceModel(Ktbs.getRestClient());
-		app.create("http://localhost:8001/base1/", "visuModel");
+		app.createTM("http://localhost:8001/base1/", "visuModel");
 	}
 
+	public static void create(String base, String modelName) {
+		RetroRoomTraceModel app = new RetroRoomTraceModel(Ktbs.getRestClient());
+		app.createTM(base, modelName);
+	}
 	
-	private void create(String base, String modelName) {
+	public void createTM(String base, String modelName) {
 		ITraceModel model = traceModelService.createTraceModel(base + modelName + "/");
 		
 		IObselType retroEvent = traceModelService.newObselType(model,"RetroEvent");

@@ -18,13 +18,14 @@ import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IMethod;
 import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IObselType;
+import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 import org.liris.ktbs.core.domain.interfaces.WithParameters;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.service.ResourceService;
-import org.liris.ktbs.utils.KtbsUtils;
 
 
 public class DefaultManager implements ResourceService {
@@ -49,7 +50,7 @@ public class DefaultManager implements ResourceService {
 	}
 
 	@Override
-	public <T extends IKtbsResource> T getKtbsResource(String uri, Class<T> cls) {
+	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls) {
 		T ktbsResource = dao.get(uri,cls);
 		return ktbsResource;
 	}
@@ -160,6 +161,10 @@ public class DefaultManager implements ResourceService {
 		obsel.setBegin(begin);
 		obsel.setEnd(end);
 		obsel.setSubject(subject);
+
+		if(typeUri != null)
+			obsel.setObselType(pojoFactory.createResource(typeUri, IObselType.class));
+
 		Set<IAttributePair> pairs = new HashSet<IAttributePair>();
 		if(attributes != null) {
 			for(String key:attributes.keySet()) 
@@ -178,11 +183,8 @@ public class DefaultManager implements ResourceService {
 			String localName, 
 			Class<T> cls, 
 			boolean leaf) {
-		T resource;
-		if(localName == null)
-			resource = pojoFactory.createResource(cls);
-		else 			
-			resource = pojoFactory.createResource(KtbsUtils.makeChildURI(parentUri, localName, leaf), cls);
+		T resource = pojoFactory.createResource(parentUri, localName, leaf, cls);
+
 		if(parentUri != null)
 			((KtbsResource)resource).setParentResource(pojoFactory.createResource(parentUri));
 		return resource;
@@ -193,20 +195,55 @@ public class DefaultManager implements ResourceService {
 	}
 
 	@Override
-	public boolean saveKtbsResource(IKtbsResource resource) {
-		return saveKtbsResource(resource, false);
+	public boolean saveResource(IKtbsResource resource) {
+		return saveResource(resource, false);
 	}
 
 	@Override
-	public boolean deleteKtbsResource(String uri,
+	public boolean deleteResource(String uri,
 			boolean cascadeLinked, boolean cascadeChildren) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 
 	@Override
-	public boolean saveKtbsResource(IKtbsResource resource,
+	public boolean saveResource(IKtbsResource resource,
 			boolean cascadeChildren) {
 		return dao.save(resource, cascadeChildren);
+	}
+
+	@Override
+	public IBase getBase(String uri) {
+		return getResource(uri, IBase.class);
+	}
+
+	@Override
+	public IStoredTrace getStoredTrace(String uri) {
+		return getResource(uri, IStoredTrace.class);
+	}
+
+	@Override
+	public ITrace getTrace(String uri) {
+		return getResource(uri, ITrace.class);
+	}
+
+	@Override
+	public ITraceModel getTraceModel(String uri) {
+		return getResource(uri, ITraceModel.class);
+	}
+
+	@Override
+	public IRoot getRoot() {
+		return getResource("", IRoot.class);
+	}
+
+	@Override
+	public IMethod getMethod(String uri) {
+		return getResource(uri, IMethod.class);
+	}
+
+	@Override
+	public IComputedTrace getComputedTrace(String uri) {
+		return getResource(uri, IComputedTrace.class);
 	}
 
 }

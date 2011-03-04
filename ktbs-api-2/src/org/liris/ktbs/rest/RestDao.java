@@ -2,7 +2,9 @@ package org.liris.ktbs.rest;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,13 +47,35 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	private Serializer serializer;
 	private Deserializer deserializer;
-
+	private String rootUri;
+	
+	public void setRootUri(String rootUri) {
+		this.rootUri = rootUri;
+	}
+	
 	public void setSerializer(Serializer serializer) {
 		this.serializer = serializer;
 	}
 
 	public void setDeserializer(Deserializer deserializer) {
 		this.deserializer = deserializer;
+	}
+
+	public RestDao(KtbsRestClient client) {
+		super();
+		this.client = client;
+	}
+
+	public RestDao(Map<String, String> etags, KtbsRestClient client,
+			Serializer serializer, Deserializer deserializer,
+			ProxyFactory proxyFactory, ResourceFactory pojoFactory) {
+		super();
+		this.etags = etags;
+		this.client = client;
+		this.serializer = serializer;
+		this.deserializer = deserializer;
+		this.proxyFactory = proxyFactory;
+		this.pojoFactory = pojoFactory;
 	}
 
 	private ProxyFactory proxyFactory;
@@ -65,10 +89,6 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		this.pojoFactory = resourceFactory;
 	}
 
-	public void setClient(KtbsRestClient client) {
-		this.client = client;
-	}
-
 	public void destroy() {
 		client.endSession();
 	}
@@ -79,11 +99,14 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
-		String requestUri = uri;
+		
+		String absoluteUri = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
 
+		String requestUri = absoluteUri;
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
 			requestUri+=KtbsConstants.ABOUT_ASPECT;
 
+		log.info("Retrieving the resource " + uri);
 		KtbsResponse response = client.get(requestUri);
 
 		if(!response.hasSucceeded())
@@ -100,7 +123,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			}
 
 			T resource = deserializer.deserializeResource(
-					uri,
+					absoluteUri,
 					new StringReader(bodyAsString), 
 					requestUri, 
 					mimeType, 
@@ -123,7 +146,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			"Rest API. Modify and save its parent trace model instead.");
 		StringWriter writer = new StringWriter();
 		serializer.serializeResource(writer, resource, sendMimeType);
-		
+
+		log.info("Creating the resource " + resource.getUri());
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
 		if(response.hasSucceeded()) {
 			return get(response.getHTTPLocation(), (Class<T>)resource.getClass());
@@ -143,6 +167,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	@Override
 	public boolean save(IKtbsResource resource, boolean cascadeChildren) {
+		
 		SerializationConfig config = new SerializationConfig();
 		if(cascadeChildren) {
 			if(!KtbsUtils.isTrace(resource) && !KtbsUtils.isTraceModel(resource)) {
@@ -205,6 +230,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		if(etag == null)
 			throw new ResourceNotFoundException(updateUri);
 
+		log.info("Saving the resource " + updateUri +".");
 		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
 		saveEtag(updateUri, response);
 
@@ -223,11 +249,19 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		return save(resource, false);
 	}
 
-	private boolean saveCollection(String uriToSave, Set<? extends IKtbsResource> collection) {
+	@Override
+	public boolean postCollection(String uriToPost, List<? extends IKtbsResource> collection) {
+		throw new DaoException("Not yet implemented on any KTBS server");
+	}
+	
+	@Override
+	public boolean saveCollection(String uriToSave, Collection<? extends IKtbsResource> collection) {
 		String etag = getEtag(uriToSave);
 		StringWriter writer = new StringWriter();
 
 		serializer.serializeResourceSet(writer, collection, sendMimeType);
+		
+		log.info("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
 		KtbsResponse response = client.update(uriToSave, writer.toString(), etag);
 		if(response.hasSucceeded()) 
 			return saveEtag(uriToSave, response);
@@ -247,7 +281,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 				return false;
 		}
 		else {
-			log.warn("No etag was attached to the resource \""+uri+"\".");
+			log.debug("No etag was attached to the resource \""+uri+"\".");
 			return false;
 		}
 	}

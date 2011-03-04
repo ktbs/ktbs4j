@@ -1,12 +1,6 @@
 package org.liris.ktbs.tests;
 
-
-import junit.framework.TestCase;
-
-import org.junit.Before;
-import org.liris.ktbs.core.Ktbs;
 import org.liris.ktbs.core.domain.interfaces.IAttributePair;
-import org.liris.ktbs.core.domain.interfaces.IBase;
 import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IMethod;
@@ -14,46 +8,16 @@ import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IPropertyStatement;
 import org.liris.ktbs.core.domain.interfaces.IRelationStatement;
-import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.WithParameters;
-import org.liris.ktbs.service.ResourceService;
 
-public class ResourceManagerGetTestCase extends TestCase {
-
-	private ResourceService manager;
-	
-	@Before
-	public void setUp() throws Exception {
-		try {
-			manager = Ktbs.getRestClient().getResourceService();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void testGetRoot() {
-
-		System.out.println("Getting the root");
-		IRoot root = manager.getKtbsResource("http://localhost:8001/", IRoot.class);
-		IBase base1 = root.get("base1");
-
-		for(IMethod method: base1.getMethods()) {
-			delim();
-			displayMethod(method);
-		}
-		
-		IStoredTrace trace1 = (IStoredTrace) base1.get("t01");
-		
-		delim();
-		displayStoredTrace(trace1);
-	}
+public class KtbsDisplay {
 
 	public static void displayStoredTrace(IStoredTrace trace1) {
 		displayResource(trace1);
 		displayTrace(trace1);
-		
+
 	}
 
 	public static void displayTrace(ITrace trace1) {
@@ -63,7 +27,7 @@ public class ResourceManagerGetTestCase extends TestCase {
 		System.out.println("Transformed traces");
 		for(IComputedTrace ct:trace1.getTransformedTraces()) 
 			System.out.println("\t - " + ct.getUri());
-		
+
 		System.out.println("Obsels:");
 		for(IObsel obsel:trace1.getObsels()) {
 			System.out.println("*******");
@@ -94,31 +58,31 @@ public class ResourceManagerGetTestCase extends TestCase {
 
 	public static void display(IRelationStatement rel) {
 		System.out.println("\t" + rel.getFromObsel().getLocalName() + " --- " + rel.getRelation().getLocalName() + " ---> " + rel.getToObsel().getLocalName());
-		
+
 	}
 
 	public static void display(IAttributePair pair) {
 		System.out.println("\t" + pair.getAttributeType().getLocalName() + ":\t " + pair.getValue());
-		
+
 	}
 
 	public static void delim() {
 		System.out.println("-------------------------------------------------------------------");
 	}
 
-	private  static void displayMethod(IMethod method) {
+	public  static void displayMethod(IMethod method) {
 		displayResource(method);
 		display("Etag", method.getEtag());
 		display("Inherits", method.getInherits());
 		displayParameters(method);
 	}
-	
+
 	public static void displayParameters(WithParameters r) {
 		System.out.println("Method parameters: ");
 		for(IMethodParameter param:r.getMethodParameters()) {
 			System.out.println("\t - "+param.getName()+":\t " + param.getValue());
 		}
-		
+
 	}
 
 	public static void display(String prop, Object value) {
@@ -135,7 +99,7 @@ public class ResourceManagerGetTestCase extends TestCase {
 			labels+=first?label:(", " +label);
 			first = false;
 		}
-		
+
 		System.out.println("Labels: " + labels);
 		System.out.println("Properties: ");
 		for(IPropertyStatement stmt:r.getProperties()) {

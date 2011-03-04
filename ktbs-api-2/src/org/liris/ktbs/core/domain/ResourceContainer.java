@@ -66,7 +66,7 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 	public T get(String resourceURI) {
 		String absoluteUri = KtbsUtils.makeChildURI(getUri(), resourceURI, isChildALeaf());
 		
-		Iterator<T> it = iterator();
+		Iterator<T> it = newConcatenatingIterator();
 		while (it.hasNext()) {
 			T t = it.next();
 			if(t.getUri().equals(absoluteUri)) 
@@ -87,7 +87,7 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 	@Override
 	public boolean delete(String resourceURI) {
 		boolean delete = false;
-		Iterator<T> it = iterator();
+		Iterator<T> it = newConcatenatingIterator();
 		while (it.hasNext()) {
 			T t = it.next();
 			if(t.getUri().equals(resourceURI)) {
@@ -103,13 +103,17 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 	 */
 	@Override
 	public Iterator<T> listResources() {
-		return iterator();
+		return newConcatenatingIterator();
 	}
 
-	private ConcatenatingIterator iterator() {
+	private ConcatenatingIterator newConcatenatingIterator() {
 		return new ConcatenatingIterator(getContainedResourceCollections());
 	}
 
 	protected abstract Collection<? extends Collection<? extends T>> getContainedResourceCollections();
 
+	@Override
+	public Iterator<T> iterator() {
+		return newConcatenatingIterator();
+	}
 }

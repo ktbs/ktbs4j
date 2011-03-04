@@ -1,4 +1,4 @@
-package org.liris.ktbs.tests;
+package org.liris.ktbs.service.tests;
 
 import java.math.BigInteger;
 
@@ -26,7 +26,7 @@ public class ResourceManagerSaveTestCase extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 		manager = Ktbs.getRestClient().getResourceService();
-		root = manager.getKtbsResource("http://localhost:8001/", IRoot.class);
+		root = manager.getResource("http://localhost:8001/", IRoot.class);
 		factory = new PojoFactory();
 	}
 
@@ -36,7 +36,7 @@ public class ResourceManagerSaveTestCase extends TestCase {
 		try {
 			model = manager.newTraceModel(base1.getUri(), "monModel");
 		} catch(DaoException e) {
-			model = manager.getKtbsResource(base1.getUri()+"monModel/", ITraceModel.class);
+			model = manager.getResource(base1.getUri()+"monModel/", ITraceModel.class);
 		}
 
 
@@ -65,7 +65,7 @@ public class ResourceManagerSaveTestCase extends TestCase {
 		relType.getRanges().add(openChat);
 		model.getRelationTypes().add(relType);
 
-		manager.saveKtbsResource(model);
+		manager.saveResource(model);
 	}
 
 	public void testSaveAttributeType() {
@@ -77,7 +77,7 @@ public class ResourceManagerSaveTestCase extends TestCase {
 		trace.addLabel("Label ajouté");
 
 		// should not be saved since it was not changed
-		assertTrue(manager.saveKtbsResource(trace));
+		assertTrue(manager.saveResource(trace));
 	}
 
 	public void testSaveObsel() {
@@ -85,6 +85,6 @@ public class ResourceManagerSaveTestCase extends TestCase {
 		IObsel o = iStoredTrace.get("obs1");
 		o.setBegin(new BigInteger("1001"));
 		o.setEnd(new BigInteger("1002"));
-		assertTrue(manager.saveKtbsResource(iStoredTrace, true));
+		assertTrue(manager.saveResource(iStoredTrace, true));
 	}
 }

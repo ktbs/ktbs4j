@@ -8,7 +8,18 @@ import org.liris.ktbs.core.domain.interfaces.IObsel;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 
 public interface StoredTraceService {
+	
+	/**
+	 * Creates a new stored trace in a given base with the system 
+	 * current time as the origin.
+	 * 
+	 * @param baseUri
+	 * @return
+	 */
+	public IStoredTrace newStoredTrace(String baseUri, String traceModelUri, String defaultSubject);
+
 	public boolean saveDescription(IStoredTrace trace);
+	
 	public boolean saveObsels(IStoredTrace trace);
 
 	public IObsel newObsel(
@@ -36,7 +47,13 @@ public interface StoredTraceService {
 			long begin
 	);
 
-	public IObsel getObsel(String localName);
-	public Collection<IObsel> listObsels(long begin, long end);
-	public Collection<IObsel> listObsels(long minb, long maxb, long mine, long maxe);
+	
+	
+	public Collection<IObsel> listObsels(IStoredTrace storedTrace, long begin, long end);
+	public Collection<IObsel> listObsels(IStoredTrace storedTrace, long minb, long maxb, long mine, long maxe);
+
+	void startBufferedCollect(IStoredTrace trace);
+
+	void postBufferedObsels(IStoredTrace trace);
+	
 }

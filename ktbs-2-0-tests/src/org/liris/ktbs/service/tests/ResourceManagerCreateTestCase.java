@@ -1,4 +1,4 @@
-package org.liris.ktbs.tests;
+package org.liris.ktbs.service.tests;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -20,6 +20,8 @@ import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.tests.Examples;
+import org.liris.ktbs.tests.KtbsDisplay;
 
 public class ResourceManagerCreateTestCase extends TestCase {
 	private ResourceService manager;
@@ -28,13 +30,13 @@ public class ResourceManagerCreateTestCase extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 		manager = Ktbs.getRestClient().getResourceService();
-		root = manager.getKtbsResource("http://localhost:8001/", IRoot.class);
+		root = manager.getResource("http://localhost:8001/", IRoot.class);
 	}
 
 	@Test
 	public void testCreateBase() {
 		IBase base2 = manager.newBase(root.getUri(), "base2", "Owner de la base 2");
-		IBase base2remote = manager.getKtbsResource("http://localhost:8001/base2/", IBase.class);
+		IBase base2remote = manager.getResource("http://localhost:8001/base2/", IBase.class);
 		assertNotNull(base2remote);
 		assertEquals(base2, base2remote);
 		assertEquals(base2.getLabel(), base2remote.getLabel());
@@ -44,7 +46,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 	public void testCreateTraceModel() {
 		ITraceModel model2 = manager.newTraceModel("http://localhost:8001/base1/", "model2");
 		
-		ITraceModel model2remote = manager.getKtbsResource("http://localhost:8001/base1/model2/", ITraceModel.class);
+		ITraceModel model2remote = manager.getResource("http://localhost:8001/base1/model2/", ITraceModel.class);
 		assertNotNull(model2remote);
 		assertEquals(model2, model2remote);
 		assertEquals(model2.getLabel(), model2remote.getLabel());
@@ -60,7 +62,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				"Nestor"
 				);
 		
-		IStoredTrace t02remote = manager.getKtbsResource("http://localhost:8001/base1/t02/", IStoredTrace.class);
+		IStoredTrace t02remote = manager.getResource("http://localhost:8001/base1/t02/", IStoredTrace.class);
 		assertNotNull(t02remote);
 		assertEquals(st2, t02remote);
 		assertEquals(st2.getTraceModel(), t02remote.getTraceModel());
@@ -85,7 +87,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				parameters
 		);
 		
-		IMethod method2 = manager.getKtbsResource("http://localhost:8001/base1/mymethod/", IMethod.class);
+		IMethod method2 = manager.getResource("http://localhost:8001/base1/mymethod/", IMethod.class);
 		assertNotNull(method2);
 		assertEquals(method, method2);
 		assertEquals(method.getTypeUri(), method2.getTypeUri());
@@ -112,7 +114,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 		);
 		
 		assertNotNull(o);
-		ResourceManagerGetTestCase.displayObsel(o);
+		KtbsDisplay.displayObsel(o);
 		
 	}
 	
@@ -133,7 +135,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				null
 		);
 		
-		IComputedTrace ct2 = manager.getKtbsResource("http://localhost:8001/base1/ct1/", IComputedTrace.class);
+		IComputedTrace ct2 = manager.getResource("http://localhost:8001/base1/ct1/", IComputedTrace.class);
 		assertNotNull(ct2);
 		assertEquals(trace, ct2);
 //		assertEquals(trace.getTraceModel(), ct2.getTraceModel());

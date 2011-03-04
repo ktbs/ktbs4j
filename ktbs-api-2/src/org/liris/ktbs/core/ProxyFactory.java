@@ -3,11 +3,12 @@ package org.liris.ktbs.core;
 import java.lang.reflect.Proxy;
 import java.util.Set;
 
+import org.liris.ktbs.core.domain.AbstractResourceFactory;
 import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.dao.ResourceDao;
 
-public class ProxyFactory implements ResourceFactory{
+public class ProxyFactory extends AbstractResourceFactory implements ResourceFactory{
 	
 	private ResourceDao dao;
 	
@@ -43,4 +44,5 @@ public class ProxyFactory implements ResourceFactory{
 	public IKtbsResource createResource(String uri) {
 		return createResource(uri, IKtbsResource.class);
 	}
+
 }

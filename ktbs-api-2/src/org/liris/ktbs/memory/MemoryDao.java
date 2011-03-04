@@ -1,12 +1,15 @@
 package org.liris.ktbs.memory;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.liris.ktbs.core.ResultSet;
 import org.liris.ktbs.core.domain.ResourceFactory;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IRoot;
+import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
 
 public class MemoryDao implements ResourceDao {
@@ -61,6 +64,22 @@ public class MemoryDao implements ResourceDao {
 	@Override
 	public boolean save(IKtbsResource resource, boolean cascadeChildren) {
 		return false;
+	}
+
+	@Override
+	public boolean saveCollection(String uriToSave,
+			Collection<? extends IKtbsResource> collection) {
+		boolean saved = true;
+		for(IKtbsResource r:collection) 
+			saved&=save(r);
+		return saved;
+		
+	}
+
+	@Override
+	public boolean postCollection(String uriToSave,
+			List<? extends IKtbsResource> collection) {
+		throw new DaoException("Not yet implemented");
 	}
 
 }

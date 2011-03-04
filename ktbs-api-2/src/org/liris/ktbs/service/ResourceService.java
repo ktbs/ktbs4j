@@ -9,12 +9,22 @@ import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.core.domain.interfaces.IMethod;
 import org.liris.ktbs.core.domain.interfaces.IObsel;
+import org.liris.ktbs.core.domain.interfaces.IRoot;
 import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.core.domain.interfaces.ITrace;
 import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 public interface ResourceService {
 	
-	public <T extends IKtbsResource> T getKtbsResource(String uri, Class<T> cls);
+	public IRoot getRoot();
+	public IBase getBase(String uri);
+	public IMethod getMethod(String uri);
+	public IStoredTrace getStoredTrace(String uri);
+	public IComputedTrace getComputedTrace(String uri);
+	public ITrace getTrace(String uri);
+	public ITraceModel getTraceModel(String uri);
+	
+	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls);
 	
 	public IBase newBase(String rootUri, String baseLocalName, String owner);
 	public IStoredTrace newStoredTrace(String baseUri, String traceLocalName, String model, String origin, String defaultSubject);
@@ -50,9 +60,9 @@ public interface ResourceService {
 			);
 
 
-	public boolean deleteKtbsResource(String uri, boolean cascadeLinked, boolean cascadeChildren);
+	public boolean deleteResource(String uri, boolean cascadeLinked, boolean cascadeChildren);
 
-	public boolean saveKtbsResource(IKtbsResource resource);
+	public boolean saveResource(IKtbsResource resource);
 
-	public boolean saveKtbsResource(IKtbsResource resource, boolean cascadeChildren);
+	public boolean saveResource(IKtbsResource resource, boolean cascadeChildren);
 }

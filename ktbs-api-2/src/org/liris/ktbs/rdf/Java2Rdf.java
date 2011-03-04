@@ -1,5 +1,6 @@
 package org.liris.ktbs.rdf;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -90,7 +91,7 @@ public class Java2Rdf {
 		model.setNsPrefix("rdfs",RDFS.getURI());
 	}
 
-	public Model getModel(Set<? extends IKtbsResource> resourceSet) {
+	public Model getModel(Collection<? extends IKtbsResource> resourceSet) {
 		initModel();
 		for(IKtbsResource resource:resourceSet)
 			put(resource);

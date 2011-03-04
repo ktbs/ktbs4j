@@ -1,7 +1,7 @@
 package org.liris.ktbs.serial;
 
 import java.io.Writer;
-import java.util.Set;
+import java.util.Collection;
 
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.rdf.Java2Rdf;
@@ -32,7 +32,7 @@ public class RdfSerializer implements Serializer {
 
 	@Override
 	public void serializeResourceSet(Writer writer,
-			Set<? extends IKtbsResource> resourceSet, String mimeFormat) {
+			Collection<? extends IKtbsResource> resourceSet, String mimeFormat) {
 		serializeResourceSet(writer, resourceSet, mimeFormat, defaultConfig);
 	}
 
@@ -47,7 +47,7 @@ public class RdfSerializer implements Serializer {
 
 	@Override
 	public void serializeResourceSet(Writer writer,
-			Set<? extends IKtbsResource> resourceSet, String mimeFormat,
+			Collection<? extends IKtbsResource> resourceSet, String mimeFormat,
 			SerializationConfig config) {
 		
 		Java2Rdf mapper = createMapper(config);

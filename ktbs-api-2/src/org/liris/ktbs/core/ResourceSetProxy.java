@@ -5,11 +5,16 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
 
 public class ResourceSetProxy<T extends IKtbsResource> implements InvocationHandler {
 
+	private static final Log log = LogFactory.getLog(ResourceSetProxy.class);
+	
 	private boolean loaded;
 	private String request;
 	private ResourceDao dao;
@@ -32,6 +37,11 @@ public class ResourceSetProxy<T extends IKtbsResource> implements InvocationHand
 	throws Throwable {
 		if(!loaded) {
 			ResultSet<T> results =  dao.query(request, cls);
+			if(results == null) {
+				String message = "Could not retrieve the resource set with the query " + request;
+				log.error(message);
+				throw new DaoException(message);
+			}
 			resources = new HashSet<T>();
 			resources.addAll(results);
 			loaded = true;

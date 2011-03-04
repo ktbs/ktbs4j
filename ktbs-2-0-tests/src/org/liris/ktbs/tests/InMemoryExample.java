@@ -13,7 +13,7 @@ public class InMemoryExample {
 	public static void main(String[] args) {
 		ResourceService manager = Ktbs.getMemoryClient().getResourceService();
 		
-		IRoot root = manager.getKtbsResource("http://localhost:8001/", IRoot.class);
+		IRoot root = manager.getResource("http://localhost:8001/", IRoot.class);
 
 		IBase base1 = manager.newBase(root.getUri(), "basetoto", "Toto");
 		IBase base2 = manager.newBase(root.getUri(), "basetoto2", "Toto2");

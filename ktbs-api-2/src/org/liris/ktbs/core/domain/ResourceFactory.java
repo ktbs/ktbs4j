@@ -14,4 +14,6 @@ public interface ResourceFactory {
 	public <T extends IKtbsResource> T createResource(Class<T> cls);
 	public <T extends IKtbsResource> T createResource(String uri, Class<T> cls);
 	public IKtbsResource createResource(String uri);
+	public <T extends IKtbsResource> T createResource(String parentUri, String localName, boolean leaf,
+			Class<T> cls);
 }

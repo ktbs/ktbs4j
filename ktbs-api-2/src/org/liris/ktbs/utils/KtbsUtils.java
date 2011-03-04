@@ -1,7 +1,9 @@
 package org.liris.ktbs.utils;
 
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import org.liris.ktbs.core.domain.interfaces.ITraceModel;
 
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
+import com.ibm.icu.util.Calendar;
 
 public class KtbsUtils {
 
@@ -102,6 +105,16 @@ public class KtbsUtils {
 		return null;
 
 	}
+	
+	/**
+	 * Convert a long to a big integer.
+	 * 
+	 * @param begin
+	 * @return
+	 */
+	public static BigInteger longToBigInt(long begin) {
+		return new BigInteger(Long.toString(begin));
+	}
 
 	public static IMethodParameter parseMethodParameter(String string) {
 		int index = string.indexOf("=");
@@ -160,7 +173,21 @@ public class KtbsUtils {
 			return null;
 	}
 
+	public static final SimpleDateFormat XSD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssZ");
 
+	public static boolean isLeafType(Class<? extends IKtbsResource> cls) {
+		return IObsel.class.isAssignableFrom(cls) 
+					|| IRelationType.class.isAssignableFrom(cls) 
+					|| IAttributeType.class.isAssignableFrom(cls) 
+					|| IObselType.class.isAssignableFrom(cls) ;
+	}
+	
+	public static String nowAsXsdStringOrigin() {
+		Calendar calendar = Calendar.getInstance();
+		String nowAsXsdString = XSD_DATE_FORMAT.format(calendar.getTime());
+		return nowAsXsdString;
+	}
+	
 	/**
 	 * Create a new linked list built from an iterator.
 	 * 

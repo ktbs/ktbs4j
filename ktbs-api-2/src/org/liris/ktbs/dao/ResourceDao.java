@@ -1,5 +1,8 @@
 package org.liris.ktbs.dao;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.liris.ktbs.core.ResultSet;
 import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
 
@@ -10,5 +13,9 @@ public interface ResourceDao {
 	public boolean delete(String uri);
 	public <T extends IKtbsResource> ResultSet<T> query(String request, Class<T> cls);
 	public boolean save(IKtbsResource resource);
-	boolean save(IKtbsResource resource, boolean cascadeChildren);
+	public boolean save(IKtbsResource resource, boolean cascadeChildren);
+	public boolean saveCollection(String uriToSave,
+			Collection<? extends IKtbsResource> collection);
+	public boolean postCollection(String uriToSave,
+			List<? extends IKtbsResource> collection);
 }

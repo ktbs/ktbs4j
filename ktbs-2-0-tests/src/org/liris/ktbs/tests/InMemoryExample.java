@@ -1,8 +1,8 @@
 package org.liris.ktbs.tests;
 
-import org.liris.ktbs.core.Ktbs;
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IRoot;
+import org.liris.ktbs.client.Ktbs;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.service.ResourceService;
 
 public class InMemoryExample {
@@ -11,7 +11,7 @@ public class InMemoryExample {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ResourceService manager = Ktbs.getMemoryClient().getResourceService();
+		ResourceService manager = Ktbs.getMemoryRootClient().getResourceService();
 		
 		IRoot root = manager.getResource("http://localhost:8001/", IRoot.class);
 

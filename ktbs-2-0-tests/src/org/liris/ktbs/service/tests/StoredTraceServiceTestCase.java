@@ -9,14 +9,14 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.liris.ktbs.core.Ktbs;
-import org.liris.ktbs.core.KtbsClient;
-import org.liris.ktbs.core.MultiUserService;
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.core.domain.interfaces.ITrace;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.client.Ktbs;
+import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.ITrace;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
+import org.liris.ktbs.service.MultiUserRootProvider;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 
@@ -27,8 +27,8 @@ public class StoredTraceServiceTestCase extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		MultiUserService service = Ktbs.getMultiUserService();
-		KtbsClient clientDamien;
+		MultiUserRootProvider service = Ktbs.getMultiUserRestRootProvider();
+		KtbsRootClient clientDamien;
 		if(service.openClient("Damien", "dtotio")) {
 			clientDamien = service.getClient("Damien");
 		} else 

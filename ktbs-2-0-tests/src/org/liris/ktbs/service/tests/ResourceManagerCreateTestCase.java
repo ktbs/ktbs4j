@@ -10,15 +10,15 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.liris.ktbs.core.Ktbs;
-import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
-import org.liris.ktbs.core.domain.interfaces.IMethod;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IRoot;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.client.Ktbs;
+import org.liris.ktbs.client.KtbsConstants;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IComputedTrace;
+import org.liris.ktbs.domain.interfaces.IMethod;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IRoot;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.tests.Examples;
 import org.liris.ktbs.tests.KtbsDisplay;
@@ -29,7 +29,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		manager = Ktbs.getRestClient().getResourceService();
+		manager = Ktbs.getRestRootClient().getResourceService();
 		root = manager.getResource("http://localhost:8001/", IRoot.class);
 	}
 

@@ -6,16 +6,16 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.domain.KtbsResource;
-import org.liris.ktbs.core.domain.Obsel;
-import org.liris.ktbs.core.domain.PojoFactory;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IObselType;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.rdf.Java2Rdf;
+import org.liris.ktbs.client.KtbsConstants;
+import org.liris.ktbs.domain.KtbsResource;
+import org.liris.ktbs.domain.Obsel;
+import org.liris.ktbs.domain.PojoFactory;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IObselType;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.SerializationMode;
+import org.liris.ktbs.serial.rdf.Java2Rdf;
 import org.liris.ktbs.tests.Examples;
 
 import com.hp.hpl.jena.rdf.model.Model;

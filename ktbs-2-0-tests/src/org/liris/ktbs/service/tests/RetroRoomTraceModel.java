@@ -1,32 +1,29 @@
 package org.liris.ktbs.service.tests;
 
-import org.liris.ktbs.core.Ktbs;
-import org.liris.ktbs.core.KtbsClient;
-import org.liris.ktbs.core.domain.ResourceFactory;
-import org.liris.ktbs.core.domain.interfaces.IAttributeType;
-import org.liris.ktbs.core.domain.interfaces.IObselType;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.client.Ktbs;
+import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.domain.interfaces.IAttributeType;
+import org.liris.ktbs.domain.interfaces.IObselType;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.TraceModelService;
 
 public class RetroRoomTraceModel {
 
-	private KtbsClient client;
+	private KtbsRootClient client;
 	private TraceModelService traceModelService;
-	private ResourceFactory factory;
 	
-	public RetroRoomTraceModel(KtbsClient restClient) {
+	public RetroRoomTraceModel(KtbsRootClient restClient) {
 		this.client = restClient;
 		traceModelService = client.getTraceModelService();
-		factory = Ktbs.getPojoFactory();
 	}
 
 	public static void main(String[] args) {
-		RetroRoomTraceModel app = new RetroRoomTraceModel(Ktbs.getRestClient());
+		RetroRoomTraceModel app = new RetroRoomTraceModel(Ktbs.getRestRootClient());
 		app.createTM("http://localhost:8001/base1/", "visuModel");
 	}
 
 	public static void create(String base, String modelName) {
-		RetroRoomTraceModel app = new RetroRoomTraceModel(Ktbs.getRestClient());
+		RetroRoomTraceModel app = new RetroRoomTraceModel(Ktbs.getRestRootClient());
 		app.createTM(base, modelName);
 	}
 	

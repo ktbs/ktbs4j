@@ -5,17 +5,17 @@ import java.math.BigInteger;
 import junit.framework.TestCase;
 
 import org.junit.Before;
-import org.liris.ktbs.core.Ktbs;
-import org.liris.ktbs.core.domain.PojoFactory;
-import org.liris.ktbs.core.domain.interfaces.IAttributeType;
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IObselType;
-import org.liris.ktbs.core.domain.interfaces.IRelationType;
-import org.liris.ktbs.core.domain.interfaces.IRoot;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
+import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.dao.DaoException;
+import org.liris.ktbs.domain.PojoFactory;
+import org.liris.ktbs.domain.interfaces.IAttributeType;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IObselType;
+import org.liris.ktbs.domain.interfaces.IRelationType;
+import org.liris.ktbs.domain.interfaces.IRoot;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.ResourceService;
 
 public class ResourceManagerSaveTestCase extends TestCase {
@@ -25,7 +25,7 @@ public class ResourceManagerSaveTestCase extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		manager = Ktbs.getRestClient().getResourceService();
+		manager = Ktbs.getRestRootClient().getResourceService();
 		root = manager.getResource("http://localhost:8001/", IRoot.class);
 		factory = new PojoFactory();
 	}

@@ -1,16 +1,16 @@
 package org.liris.ktbs.tests;
 
-import org.liris.ktbs.core.domain.interfaces.IAttributePair;
-import org.liris.ktbs.core.domain.interfaces.IComputedTrace;
-import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
-import org.liris.ktbs.core.domain.interfaces.IMethod;
-import org.liris.ktbs.core.domain.interfaces.IMethodParameter;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IPropertyStatement;
-import org.liris.ktbs.core.domain.interfaces.IRelationStatement;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.core.domain.interfaces.ITrace;
-import org.liris.ktbs.core.domain.interfaces.WithParameters;
+import org.liris.ktbs.domain.interfaces.IAttributePair;
+import org.liris.ktbs.domain.interfaces.IComputedTrace;
+import org.liris.ktbs.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.domain.interfaces.IMethod;
+import org.liris.ktbs.domain.interfaces.IMethodParameter;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IPropertyStatement;
+import org.liris.ktbs.domain.interfaces.IRelationStatement;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.ITrace;
+import org.liris.ktbs.domain.interfaces.WithParameters;
 
 public class KtbsDisplay {
 

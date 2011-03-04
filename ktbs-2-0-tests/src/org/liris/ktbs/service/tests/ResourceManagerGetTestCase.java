@@ -4,10 +4,10 @@ package org.liris.ktbs.service.tests;
 import junit.framework.TestCase;
 
 import org.junit.Before;
-import org.liris.ktbs.core.Ktbs;
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IRoot;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.client.Ktbs;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IRoot;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.service.ResourceService;
 
 public class ResourceManagerGetTestCase extends TestCase {
@@ -16,11 +16,7 @@ public class ResourceManagerGetTestCase extends TestCase {
 	
 	@Before
 	public void setUp() throws Exception {
-		try {
-			manager = Ktbs.getRestClient().getResourceService();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+			manager = Ktbs.getRestRootClient().getResourceService();
 	}
 
 	public void testGet() {

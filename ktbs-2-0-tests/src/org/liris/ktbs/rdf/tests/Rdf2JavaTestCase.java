@@ -5,20 +5,20 @@ import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
-import org.liris.ktbs.core.KtbsConstants;
-import org.liris.ktbs.core.ProxyFactory;
-import org.liris.ktbs.core.domain.PojoFactory;
-import org.liris.ktbs.core.domain.UriResource;
-import org.liris.ktbs.core.domain.interfaces.IAttributeType;
-import org.liris.ktbs.core.domain.interfaces.IBase;
-import org.liris.ktbs.core.domain.interfaces.IKtbsResource;
-import org.liris.ktbs.core.domain.interfaces.IObsel;
-import org.liris.ktbs.core.domain.interfaces.IObselType;
-import org.liris.ktbs.core.domain.interfaces.IRelationType;
-import org.liris.ktbs.core.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.core.domain.interfaces.ITraceModel;
-import org.liris.ktbs.rdf.Rdf2Java;
+import org.liris.ktbs.client.KtbsConstants;
+import org.liris.ktbs.dao.ProxyFactory;
+import org.liris.ktbs.domain.PojoFactory;
+import org.liris.ktbs.domain.UriResource;
+import org.liris.ktbs.domain.interfaces.IAttributeType;
+import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IKtbsResource;
+import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IObselType;
+import org.liris.ktbs.domain.interfaces.IRelationType;
+import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.serial.DeserializationConfig;
+import org.liris.ktbs.serial.rdf.Rdf2Java;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;

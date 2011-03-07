@@ -16,6 +16,7 @@ import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
+import org.liris.ktbs.examples.KtbsClientExample2;
 import org.liris.ktbs.service.MultiUserRootProvider;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
@@ -39,7 +40,7 @@ public class StoredTraceServiceTestCase extends TestCase {
 		// init the trace model
 		ITraceModel model = resourceService.getTraceModel("http://localhost:8001/base1/visuModel/");
 		if(model == null)
-			RetroRoomTraceModel.create("http://localhost:8001/base1/", "visuModel");
+			KtbsClientExample2.create("http://localhost:8001/base1/", "visuModel");
 	}
 
 

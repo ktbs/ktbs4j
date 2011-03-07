@@ -11,11 +11,14 @@ import java.util.Set;
 
 import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.domain.Obsel;
 import org.liris.ktbs.domain.PojoFactory;
+import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.service.ObselBuilder;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.utils.KtbsUtils;
@@ -60,8 +63,11 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 			Deque<IObsel> obsels = bufferedTraceObsels.remove(trace.getUri());
 			
 			// TODO to be improved when multiple post is allowed
-			for(IObsel obsel:obsels)
+			for(IObsel obsel:obsels) {
+				if(obsel.getParentResource() == null)
+					((Obsel)obsel).setParentResource(trace);
 				dao.create(obsel);
+			}
 		}
 	}
 	
@@ -79,7 +85,7 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	@Override
 	public IObsel newObsel(IStoredTrace storedTrace, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
-			BigInteger end, String subject, Map<String, Object> attributes) {
+			BigInteger end, String subject, Set<IAttributePair> attributes) {
 		if(bufferedTraces.containsKey(storedTrace.getUri())) {
 			IObsel obsel = factory.createObsel(
 					storedTrace, 
@@ -89,26 +95,42 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 					endDT, 
 					begin, 
 					end, 
-					subject, attributes);
+					subject, 
+					attributes);
 			bufferedTraceObsels.get(storedTrace.getUri()).add(obsel);
 			return obsel;
 		} else {
-			IObsel obsel = resourceService.newObsel(
-					storedTrace.getUri(), 
-					obselLocalName, 
-					typeUri,
-					beginDT, 
-					endDT, 
-					begin, 
-					end, 
-					subject, attributes);
+			IObsel obsel = createObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT,
+					begin, end, subject, attributes);
 			return obsel;
 		}
 	}
 
+	public IObsel createObsel(IStoredTrace storedTrace, String obselLocalName,
+			String typeUri, String beginDT, String endDT, BigInteger begin,
+			BigInteger end, String subject, Set<IAttributePair> attributes) {
+		
+		if(begin != null && end == null)
+			end = begin;
+		
+		if(beginDT != null && endDT == null)
+			endDT = beginDT;
+		
+		return resourceService.newObsel(
+				storedTrace.getUri(), 
+				obselLocalName, 
+				typeUri,
+				beginDT, 
+				endDT, 
+				begin, 
+				end, 
+				subject, 
+				attributes);
+	}
+
 	@Override
 	public IObsel newObsel(IStoredTrace storedTrace, String typeUri,
-			long begin, Map<String, Object> attributes) {
+			long begin, Set<IAttributePair> attributes) {
 		return newObsel(
 				storedTrace, 
 				null,
@@ -185,5 +207,10 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 				traceModelUri, 
 				KtbsUtils.nowAsXsdStringOrigin(), 
 				defaultSubject);
+	}
+
+	@Override
+	public ObselBuilder newObselBuilder(IStoredTrace trace) {
+		return new ObselBuilder(this, trace, factory);
 	}
 }

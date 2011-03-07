@@ -2,8 +2,9 @@ package org.liris.ktbs.service;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Set;
 
+import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 
@@ -26,6 +27,8 @@ public interface StoredTraceService {
 	public boolean saveDescription(IStoredTrace trace);
 	
 	public boolean saveObsels(IStoredTrace trace);
+	
+	public ObselBuilder newObselBuilder(IStoredTrace trace);
 
 	public IObsel newObsel(
 			IStoredTrace storedTrace,
@@ -36,14 +39,14 @@ public interface StoredTraceService {
 			BigInteger begin,
 			BigInteger end,
 			String subject,
-			Map<String, Object> attributes
+			Set<IAttributePair> attributes
 			);
 	
 	public IObsel newObsel(
 			IStoredTrace storedTrace,
 			String typeUri,
 			long begin,
-			Map<String, Object> attributes
+			Set<IAttributePair> attributes
 	);
 	
 	public IObsel newObsel(

@@ -2,7 +2,9 @@ package org.liris.ktbs.domain;
 
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.Set;
 
+import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IComputedTrace;
@@ -53,7 +55,7 @@ public class PojoFactory extends AbstractResourceFactory implements ResourceFact
 			throw new IllegalStateException("Cannot create a resource of the unknown type: " + cls.getCanonicalName());
 		return cls.cast(resource);
 	}
-	
+
 	@Override
 	public IKtbsResource createResource(String uri) {
 		return createResource(uri, IKtbsResource.class);
@@ -78,7 +80,27 @@ public class PojoFactory extends AbstractResourceFactory implements ResourceFact
 						attributes.get(s)));
 			}
 		}
+
+		return obsel;
+	}
+
+	public IObsel createObsel(IStoredTrace storedTrace, String obselLocalName,
+			String typeUri, String beginDT, String endDT, BigInteger begin,
+			BigInteger end, String subject, Set<IAttributePair> attributes) {
 		
+		IObsel obsel = createResource(storedTrace.getUri(), obselLocalName, true, IObsel.class);
+
+		obsel.setBegin(begin);
+		obsel.setEnd(end);
+		obsel.setBeginDT(beginDT);
+		obsel.setEndDT(endDT);
+
+		if(typeUri != null)
+			obsel.setObselType(createResource(typeUri, IObselType.class));
+		obsel.setSubject(subject);
+
+		if(attributes != null)
+			obsel.getAttributePairs().addAll(attributes);
 		return obsel;
 	}
 }

@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.Set;
 
+import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
@@ -81,12 +82,12 @@ public interface ResourceService {
 	 * 
 	 * @param baseUri
 	 * @param traceLocalName
-	 * @param model
+	 * @param modelUri
 	 * @param origin
 	 * @param defaultSubject
 	 * @return
 	 */
-	public IStoredTrace newStoredTrace(String baseUri, String traceLocalName, String model, String origin, String defaultSubject);
+	public IStoredTrace newStoredTrace(String baseUri, String traceLocalName, String modelUri, String origin, String defaultSubject);
 	
 	/**
 	 * 
@@ -110,7 +111,6 @@ public interface ResourceService {
 	 * @param baseUri
 	 * @param methodLocalName
 	 * @param inheritedMethod
-	 * @param etag
 	 * @param parameters
 	 * @return
 	 */
@@ -118,8 +118,7 @@ public interface ResourceService {
 			String baseUri, 
 			String methodLocalName, 
 			String inheritedMethod, 
-			String etag,
-			Map<String,String> parameters
+			Map<String, String> parameters
 			);
 	
 	/**
@@ -153,7 +152,7 @@ public interface ResourceService {
 			BigInteger begin,
 			BigInteger end,
 			String subject,
-			Map<String, Object> attributes
+			Set<IAttributePair> attributes
 			);
 
 

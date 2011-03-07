@@ -122,10 +122,9 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 
 	@Override
 	public IMethod newMethod(String baseUri, String methodLocalName,
-			String inheritedMethod, String etag, Map<String,String> parameters) {
+			String inheritedMethod, Map<String,String> parameters) {
 
 		IMethod method = createResource(baseUri, methodLocalName, IMethod.class, false);
-		method.setEtag(etag);
 		method.setInherits(inheritedMethod);
 
 		setParameters(method, parameters);
@@ -152,7 +151,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	@Override
 	public IObsel newObsel(String storedTraceUri, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
-			BigInteger end, String subject, Map<String, Object> attributes) {
+			BigInteger end, String subject, Set<IAttributePair> attributes) {
 
 		IObsel obsel = createResource(storedTraceUri, obselLocalName, IObsel.class, true);
 		obsel.setBeginDT(beginDT);
@@ -166,10 +165,10 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 
 		Set<IAttributePair> pairs = new HashSet<IAttributePair>();
 		if(attributes != null) {
-			for(String key:attributes.keySet()) 
+			for(IAttributePair pair:attributes) 
 				pairs.add(new AttributePair(
-						proxyFactory.createResource(key, IAttributeType.class), 
-						attributes.get(key)
+						proxyFactory.createResource(pair.getAttributeType().getUri(), IAttributeType.class), 
+						pair.getValue()
 				));
 			obsel.setAttributePairs(pairs);
 		} 

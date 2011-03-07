@@ -18,6 +18,7 @@ import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.examples.KtbsClientExample2;
 import org.liris.ktbs.service.MultiUserRootProvider;
+import org.liris.ktbs.service.ObselBuilder;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 
@@ -64,6 +65,22 @@ public class StoredTraceServiceTestCase extends TestCase {
 		
 		assertEquals(set, traceOnServer.getObsels());
 		
+		ObselBuilder builder = storedTraceService.newObselBuilder(trace);
+		builder.setType("http://localhost:8001/base1/visuModel/RetroWorkbenchEvent");
+		builder.setBegin(120000);
+		builder.setSubject("Nestor");
+		builder.addAttribute("http://localhost:8001/base1/visuModel/from", 2);
+		builder.addAttribute("http://localhost:8001/base1/visuModel/to", 3);
+		IObsel builtObsel = builder.create();
+		set.add(builtObsel);
+		
+		traceOnServer = resourceService.getStoredTrace(trace.getUri());
+		
+		assertEquals(set, traceOnServer.getObsels());
+		
+		IObsel builtObselOnServeur = traceOnServer.get(builtObsel.getUri());
+		assertEquals(2, builtObselOnServeur.getAttributePairs().size());
+		assertEquals("http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", builtObselOnServeur.getObselType().getUri());
 	}
 
 	public void testBufferedCollect() {

@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.client.KtbsConstants;
+import org.liris.ktbs.domain.AttributePair;
+import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.domain.interfaces.IMethod;
@@ -83,7 +85,6 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				"http://localhost:8001/base1/", 
 				"mymethod", 
 				KtbsConstants.SCRIPT_PYTHON,
-				"erifuzperufpzeoiuffuopz",
 				parameters
 		);
 		
@@ -98,8 +99,8 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testObsel() {
-		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put(Examples.getMessage().getUri(), "Bonjour tout le monde");
+		Set<IAttributePair> attributes = new HashSet<IAttributePair>();
+		attributes.add(new AttributePair(Examples.getMessage(), "Bonjour tout le monde"));
 		
 		IObsel o = manager.newObsel(
 				"http://localhost:8001/base1/t01/", 

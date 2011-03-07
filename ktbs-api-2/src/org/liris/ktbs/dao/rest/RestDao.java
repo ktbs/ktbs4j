@@ -18,8 +18,10 @@ import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.dao.ResultSet;
 import org.liris.ktbs.dao.UserAwareDao;
 import org.liris.ktbs.domain.ResourceFactory;
+import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IObsel;
+import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.serial.Deserializer;
 import org.liris.ktbs.serial.LinkAxis;
@@ -48,11 +50,11 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	private Serializer serializer;
 	private Deserializer deserializer;
 	private String rootUri;
-	
+
 	public void setRootUri(String rootUri) {
 		this.rootUri = rootUri;
 	}
-	
+
 	public void setSerializer(Serializer serializer) {
 		this.serializer = serializer;
 	}
@@ -99,7 +101,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
-		
+
 		String absoluteUri = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
 
 		String requestUri = absoluteUri;
@@ -167,7 +169,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	@Override
 	public boolean save(IKtbsResource resource, boolean cascadeChildren) {
-		
+
 		SerializationConfig config = new SerializationConfig();
 		if(cascadeChildren) {
 			if(!KtbsUtils.isTrace(resource) && !KtbsUtils.isTraceModel(resource)) {
@@ -227,8 +229,13 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		 * END of fix
 		 */
 
-		if(etag == null)
-			throw new ResourceNotFoundException(updateUri);
+		if(etag == null) {
+			if(!hasETagSupport(resourceToSave.getClass())) {
+				log.warn("The resource could not be saved. Resources of type " + resourceToSave.getTypeUri() + " have not support for HTTP Etags in the KTBS.");
+				return false;
+			} else
+				throw new ResourceNotFoundException(updateUri);
+		}
 
 		log.info("Saving the resource " + updateUri +".");
 		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
@@ -244,6 +251,10 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		return hasSucceeded;
 	}
 
+	private boolean hasETagSupport(Class<? extends IKtbsResource> class1) {
+		return !IRoot.class.isAssignableFrom(class1) && !IBase.class.isAssignableFrom(class1);
+	}
+
 	@Override
 	public boolean save(IKtbsResource resource) {
 		return save(resource, false);
@@ -253,14 +264,14 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	public boolean postCollection(String uriToPost, List<? extends IKtbsResource> collection) {
 		throw new DaoException("Not yet implemented on any KTBS server");
 	}
-	
+
 	@Override
 	public boolean saveCollection(String uriToSave, Collection<? extends IKtbsResource> collection) {
 		String etag = getEtag(uriToSave);
 		StringWriter writer = new StringWriter();
 
 		serializer.serializeResourceSet(writer, collection, sendMimeType);
-		
+
 		log.info("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
 		KtbsResponse response = client.update(uriToSave, writer.toString(), etag);
 		if(response.hasSucceeded()) 

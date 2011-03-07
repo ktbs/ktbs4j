@@ -24,10 +24,11 @@ public class ThreeKeyedMap<V> {
 			this.s3 = s3;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ThreeKeyedMap<?>.Key) {
-				ThreeKeyedMap<?>.Key k = (ThreeKeyedMap<?>.Key) obj;
+			if (obj instanceof ThreeKeyedMap.Key) {
+				Key k = (Key) obj;
 				return s1.equals(k.s1)
 				&& s2.equals(s2)
 				&& s3.equals(s3);

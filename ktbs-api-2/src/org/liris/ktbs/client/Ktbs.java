@@ -1,6 +1,5 @@
 package org.liris.ktbs.client;
 
-import org.liris.ktbs.domain.ResourceFactory;
 import org.liris.ktbs.service.MultiUserRootProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

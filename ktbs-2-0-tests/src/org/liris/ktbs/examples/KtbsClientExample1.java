@@ -55,6 +55,8 @@ public class KtbsClientExample1 {
 		}
 		
 		
+		System.out.println("---------------------------");
+
 		// creates a new base
 		// the following creates a base remotely
 		IBase base2 = resourceService.newBase("base2", "Damien");
@@ -65,7 +67,6 @@ public class KtbsClientExample1 {
 		resourceService.saveResource(base2, false);
 		
 		IBase base2remote = resourceService.getBase("base2");
-		System.out.println("---------------------------");
 		for(String label:base2remote.getLabels()) 
 			System.out.println(label);
 	}

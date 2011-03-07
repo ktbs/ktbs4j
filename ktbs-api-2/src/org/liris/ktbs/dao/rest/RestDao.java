@@ -214,6 +214,11 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	private boolean save(String updateUri, IKtbsResource resourceToSave,
 			SerializationConfig config) {
+		if(!hasETagSupport(resourceToSave.getClass())) {
+			log.warn("The resource "+resourceToSave.getUri()+" could not be saved. Resources of type " + resourceToSave.getTypeUri() + " have not support for HTTP Etags in the KTBS.");
+			return false;
+		}
+
 		String etag = getEtag(updateUri);
 
 
@@ -229,13 +234,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		 * END of fix
 		 */
 
-		if(etag == null) {
-			if(!hasETagSupport(resourceToSave.getClass())) {
-				log.warn("The resource could not be saved. Resources of type " + resourceToSave.getTypeUri() + " have not support for HTTP Etags in the KTBS.");
-				return false;
-			} else
-				throw new ResourceNotFoundException(updateUri);
-		}
+		if(etag == null) 
+			throw new ResourceNotFoundException(updateUri);
 
 		log.info("Saving the resource " + updateUri +".");
 		KtbsResponse response = client.update(updateUri, writer.toString(), etag);

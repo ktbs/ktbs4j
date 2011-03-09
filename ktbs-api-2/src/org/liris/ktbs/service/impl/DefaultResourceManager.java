@@ -244,5 +244,5 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	public IComputedTrace getComputedTrace(String uri) {
 		return getResource(uri, IComputedTrace.class);
 	}
-
+	
 }

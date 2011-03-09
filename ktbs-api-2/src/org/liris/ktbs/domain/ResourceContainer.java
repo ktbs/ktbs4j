@@ -25,18 +25,18 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 		}
 
 
-		private T next;
+		private T next = null;
 
 		private void doNext() {
-			if(!currentIterator.hasNext()) {
-				if(!collectionIterator.hasNext()){
-					next = null;
-					return;
-				} else
+			next = null;
+			if(currentIterator.hasNext()) 
+				next = currentIterator.next();
+			else {
+				if(collectionIterator.hasNext()) {
 					currentIterator = collectionIterator.next().iterator();
+					doNext();
+				}
 			}
-			
-			next = currentIterator.next();
 		}
 
 		@Override
@@ -75,6 +75,15 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 		return null;
 	}
 
+	@Override
+	public <U extends T> U get(String resourceURI, Class<U> cls) {
+		T resource = get(resourceURI);
+		if(resource == null)
+			return null;
+		else 
+			return cls.cast(resource);
+	}
+	
 	private boolean isChildALeaf() {
 		boolean isTrace = ITrace.class.isAssignableFrom(getClass());
 		boolean isTraceModel = ITraceModel.class.isAssignableFrom(getClass());

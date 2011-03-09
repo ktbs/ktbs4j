@@ -1,9 +1,6 @@
 package org.liris.ktbs.service;
 
-import java.math.BigInteger;
-
 import org.liris.ktbs.domain.AttributePair;
-import org.liris.ktbs.domain.KtbsResource;
 import org.liris.ktbs.domain.Obsel;
 import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IAttributeType;

@@ -99,16 +99,19 @@ public class MultiUserServiceImpl extends RootAwareService implements MultiUserR
 		resourceService.setPojoFactory(pojoFactory);
 		resourceService.setProxyFactory(proxyFactory);
 		resourceService.setDao(dao);
+		resourceService.setRootUri(rootUri);
 		
 		TraceModelManager traceModelService = new TraceModelManager();
 		traceModelService.setFactory(pojoFactory);
 		traceModelService.setDao(dao);
 		traceModelService.setResourceService(resourceService);
+		traceModelService.setRootUri(rootUri);
 		
 		StoredTraceManager storedTraceManager = new StoredTraceManager();
 		storedTraceManager.setDao(dao);
 		storedTraceManager.setFactory(pojoFactory);
 		storedTraceManager.setResourceService(resourceService);
+		storedTraceManager.setRootUri(rootUri);
 		
 		client.setDao(dao);
 		client.setResourceService(resourceService);

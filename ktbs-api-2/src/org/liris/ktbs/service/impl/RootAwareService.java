@@ -7,4 +7,8 @@ public class RootAwareService {
 	public void setRootUri(String rootUri) {
 		this.rootUri = rootUri;
 	}
+	
+	public String getRootUri() {
+		return rootUri;
+	}
 }

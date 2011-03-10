@@ -149,7 +149,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	}
 
 	@Override
-	public IObsel newObsel(String storedTraceUri, String obselLocalName,
+	public String newObsel(String storedTraceUri, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
 			BigInteger end, String subject, Set<IAttributePair> attributes) {
 
@@ -173,7 +173,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 			obsel.setAttributePairs(pairs);
 		} 
 
-		return createAndReturn(obsel);
+		return dao.create(obsel);
 	}
 
 	private <T extends IKtbsResource> T createResource(
@@ -190,7 +190,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	}
 
 	private <T extends IKtbsResource> T createAndReturn(T resource) {
-		return dao.create(resource);
+		return dao.createAndGet(resource);
 	}
 
 	@Override

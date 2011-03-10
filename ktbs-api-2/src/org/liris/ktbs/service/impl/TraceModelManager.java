@@ -140,7 +140,7 @@ public class TraceModelManager extends RootAwareService implements TraceModelSer
 	@Override
 	public ITraceModel createTraceModel(String modelUri) {
 		try {
-			return dao.create(factory.createResource(modelUri, ITraceModel.class));
+			return dao.createAndGet(factory.createResource(modelUri, ITraceModel.class));
 		} catch(ResourceAlreadyExistException e) {
 			return dao.get(modelUri, ITraceModel.class);
 		} catch(DaoException e) {

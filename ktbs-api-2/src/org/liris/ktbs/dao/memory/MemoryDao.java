@@ -40,14 +40,14 @@ public class MemoryDao implements ResourceDao {
 	}
 
 	@Override
-	public <T extends IKtbsResource> T create(T resource) {
+	public <T extends IKtbsResource> T createAndGet(T resource) {
 		resources.put(resource.getUri(), resource);
 		return resource;
 	}
 
 	@Override
 	public boolean save(IKtbsResource resource) {
-		return create(resource) != null;
+		return createAndGet(resource) != null;
 	}
 
 	@Override
@@ -82,4 +82,9 @@ public class MemoryDao implements ResourceDao {
 		throw new DaoException("Not yet implemented");
 	}
 
+	@Override
+	public String create(IKtbsResource prototype) {
+		IKtbsResource r = createAndGet(prototype);
+		return r == null ? null: r.getUri();
+	}
 }

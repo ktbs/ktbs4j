@@ -9,7 +9,6 @@ import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IMethod;
-import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
@@ -141,9 +140,9 @@ public interface ResourceService {
 	 * @param end
 	 * @param subject
 	 * @param attributes
-	 * @return
+	 * @return the uri of the created obsel, null if none was created
 	 */
-	public IObsel newObsel(
+	public String newObsel(
 			String storedTraceUri,
 			String obselLocalName,
 			String typeUri,

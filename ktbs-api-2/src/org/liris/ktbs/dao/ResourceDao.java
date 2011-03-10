@@ -8,7 +8,16 @@ import org.liris.ktbs.domain.interfaces.IKtbsResource;
 public interface ResourceDao {
 	
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls);
-	public <T extends IKtbsResource> T create(T prototype);
+	
+	public <T extends IKtbsResource> T createAndGet(T prototype);
+	
+	/**
+	 * 
+	 * @param prototype
+	 * @return the uri of the created resource, or null if the request failed
+	 */
+	public String create(IKtbsResource prototype);
+	
 	public boolean delete(String uri);
 	public <T extends IKtbsResource> ResultSet<T> query(String request, Class<T> cls);
 	public boolean save(IKtbsResource resource);

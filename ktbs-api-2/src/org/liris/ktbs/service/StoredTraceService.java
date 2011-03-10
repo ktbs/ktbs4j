@@ -7,6 +7,7 @@ import java.util.Set;
 import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.service.impl.ObselBuilder;
 
 /**
  * 

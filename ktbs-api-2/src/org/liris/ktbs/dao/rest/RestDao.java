@@ -142,15 +142,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	}
 
 	@Override
-	public <T extends IKtbsResource> T create(T resource) {
-		if(KtbsUtils.isTraceModelElement(resource))
-			throw new DaoException("A trace model element cannot be created through the current " +
-			"Rest API. Modify and save its parent trace model instead.");
-		StringWriter writer = new StringWriter();
-		serializer.serializeResource(writer, resource, sendMimeType);
-
-		log.info("Creating the resource " + resource.getUri());
-		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
+	public <T extends IKtbsResource> T createAndGet(T resource) {
+		KtbsResponse response = doCreate(resource);
 		if(response.hasSucceeded()) {
 			return get(response.getHTTPLocation(), (Class<T>)resource.getClass());
 		} else {
@@ -162,6 +155,28 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	}
 
 
+	@Override
+	public String create(IKtbsResource resource) {
+		KtbsResponse response = doCreate(resource);
+		
+		if(response != null && response.hasSucceeded()) 
+			return response.getHTTPLocation();
+		else
+			return null;
+	}
+
+	private KtbsResponse doCreate(IKtbsResource resource) {
+		if(KtbsUtils.isTraceModelElement(resource))
+			throw new DaoException("A trace model element cannot be created through the current " +
+			"Rest API. Modify and save its parent trace model instead.");
+		StringWriter writer = new StringWriter();
+		serializer.serializeResource(writer, resource, sendMimeType);
+
+		log.info("Creating the resource " + resource.getUri());
+		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
+		return response;
+	}
+	
 	private boolean isUriAlreadyInUse(KtbsResponse response) {
 		return response.getServerMessage() != null 
 		&& response.getServerMessage().matches("400 URI Already in Use");
@@ -422,4 +437,6 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	public void setCredentials(String username, String password) {
 		client.setCredentials(username, password);
 	}
+
+	
 }

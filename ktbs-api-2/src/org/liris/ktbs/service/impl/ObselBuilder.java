@@ -1,4 +1,4 @@
-package org.liris.ktbs.service;
+package org.liris.ktbs.service.impl;
 
 import org.liris.ktbs.domain.AttributePair;
 import org.liris.ktbs.domain.Obsel;
@@ -7,7 +7,6 @@ import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
-import org.liris.ktbs.service.impl.StoredTraceManager;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class ObselBuilder {
@@ -64,7 +63,7 @@ public class ObselBuilder {
 		obsel.getAttributePairs().add(new AttributePair(att, value));
 	}
 	
-	public IObsel create() {
+	public String create() {
 		IStoredTrace parentResource = (IStoredTrace)obsel.getParentResource();
 		return storedTraceManager.createObsel(
 				parentResource==null ? null : parentResource, 

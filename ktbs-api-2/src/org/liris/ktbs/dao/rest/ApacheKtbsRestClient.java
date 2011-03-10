@@ -64,13 +64,13 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		log.info("Starting KtbsClient session for the KTBS root URI \""+rootUri+"\".");
 
-		
+
 		CacheConfig cacheConfig = new CacheConfig();  
 		cacheConfig.setMaxCacheEntries(1000);
 		cacheConfig.setMaxObjectSizeBytes(10000);
 
 		httpParams = new BasicHttpParams();
-		
+
 		/*
 		 * In order to always being aware of what resource was requested from the uri
 		 */
@@ -91,10 +91,9 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		log.debug("Creating the caching HTTP client.");
 		DefaultHttpClient defaultHttpClient = new DefaultHttpClient(httpParams);
 		this.credentialsProvider = defaultHttpClient.getCredentialsProvider();
-		
-		
+
 		httpClient = new CachingHttpClient(defaultHttpClient, cacheConfig);
-		
+
 		this.started = true;
 
 		log.info("Session started.");
@@ -132,13 +131,13 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	private String getGETMimeType() {
 		return KtbsConstants.MIME_RDF_XML;
 	}
-	
+
 	private String getPOSTMimeType() {
 		return KtbsConstants.MIME_TURTLE;
 	}
 
 	@Override
-	public KtbsResponse get(String uri) {
+	public synchronized KtbsResponse get(String uri) {
 		checkStarted(); 
 
 		HttpGet get = new HttpGet(uri);
@@ -152,7 +151,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		try {
 			response = httpClient.execute(get);
 			HttpEntity entity;
-			
+
 			if(response == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+uri+"\".");
 				ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
@@ -201,9 +200,9 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 
 	@Override
-	public KtbsResponse post(String uri, String resourceAsString) {
+	public synchronized KtbsResponse post(String uri, String resourceAsString) {
 		checkStarted(); 
-		
+
 		HttpPost post = new HttpPost(uri);
 		post.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
 
@@ -211,7 +210,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		KtbsResponseStatus ktbsResponseStatus = null;
 
 		try {
-			
+
 			log.info("POST Request content: \n" + resourceAsString);
 			post.setEntity(new StringEntity(resourceAsString, HTTP.UTF_8));
 
@@ -221,7 +220,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		}
 
 		String body = null;
-		
+
 		try {
 			log.info("Sending POST request to the KTBS: "+post.getRequestLine());
 			response = httpClient.execute(post);
@@ -238,6 +237,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 				log.debug("Response header:" + response.getStatusLine());
 				log.debug("Response body:\n" + body);
 			}
+			EntityUtils.consume(response.getEntity());
 		} catch (ClientProtocolException e) {
 			log.error("An error occured when communicating with the KTBS", e);
 			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
@@ -255,12 +255,12 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	}
 
 	@Override
-	public KtbsResponse delete(String resourceURI) {
+	public synchronized KtbsResponse delete(String resourceURI) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public KtbsResponse update(String updateUri, String resourceAsString, String etag) {
+	public synchronized KtbsResponse update(String updateUri, String resourceAsString, String etag) {
 
 		checkStarted(); 
 
@@ -273,11 +273,11 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		String body = null;
 
 		try {
-			
-			
+
+
 			put.setEntity(new StringEntity(resourceAsString, HTTP.UTF_8));
 
-		
+
 			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
 			if(log.isDebugEnabled()) {
 				log.debug("PUT body: "+resourceAsString);
@@ -296,16 +296,16 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 			}
 
 			body = EntityUtils.toString(response.getEntity());
-			
+
 			if(log.isDebugEnabled()) {
 				log.debug("Response header:" + response.getStatusLine());
 				log.debug("Response body:\n" + body);
 			}
-				/*
-				 * Cannot read the resource returned since it is written in POST syntax (i.e. turtle) and there 
-				 * is a bug reading resource in turtle send by the server.
-				 */
-				EntityUtils.consume(response.getEntity());
+			/*
+			 * Cannot read the resource returned since it is written in POST syntax (i.e. turtle) and there 
+			 * is a bug reading resource in turtle send by the server.
+			 */
+			EntityUtils.consume(response.getEntity());
 		} catch (ClientProtocolException e) {
 			log.error("An error occured when communicating with the KTBS", e);
 			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
@@ -334,11 +334,11 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 					asJavaUri.getHost(), 
 					asJavaUri.getPort()==-1?80:asJavaUri.getPort(),
 							asJavaUri.getScheme()); 
-			
+
 			credentialsProvider.setCredentials(
 					new AuthScope(targetHost.getHostName(), targetHost.getPort()), 
-			        new UsernamePasswordCredentials(username, password)
-					);
+					new UsernamePasswordCredentials(username, password)
+			);
 		}
 	}
 }

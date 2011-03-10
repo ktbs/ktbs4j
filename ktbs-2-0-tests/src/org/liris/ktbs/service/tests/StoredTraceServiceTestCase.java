@@ -18,9 +18,9 @@ import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.examples.KtbsClientExample2;
 import org.liris.ktbs.service.MultiUserRootProvider;
-import org.liris.ktbs.service.ObselBuilder;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
+import org.liris.ktbs.service.impl.ObselBuilder;
 
 public class StoredTraceServiceTestCase extends TestCase {
 
@@ -71,7 +71,8 @@ public class StoredTraceServiceTestCase extends TestCase {
 		builder.setSubject("Nestor");
 		builder.addAttribute("http://localhost:8001/base1/visuModel/from", 2);
 		builder.addAttribute("http://localhost:8001/base1/visuModel/to", 3);
-		IObsel builtObsel = builder.create();
+		String builtObselUri = builder.create();
+		IObsel builtObsel = resourceService.getResource(builtObselUri, IObsel.class);
 		set.add(builtObsel);
 		
 		traceOnServer = resourceService.getStoredTrace(trace.getUri());

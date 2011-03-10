@@ -1,5 +1,8 @@
 package org.liris.ktbs.client;
 
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
 /**
  * Constant definitions for the vocabulary defined by the KTBS in the
  * namespace "http://liris.cnrs.fr/silex/2009/ktbs#".
@@ -9,6 +12,10 @@ package org.liris.ktbs.client;
  */
 public interface KtbsConstants {
 
+	// Date helper constants
+	public static final SimpleDateFormat XSD_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	public static final TimeZone UTC_ZONE = TimeZone.getTimeZone("UTC");
+	
 	// Rest aspects defined by the KTBS
 	public static final String OBSELS_ASPECT = "@obsels";
 	public static final String ABOUT_ASPECT = "@about";

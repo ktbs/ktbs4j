@@ -1,5 +1,6 @@
 package org.liris.ktbs.serial.rdf;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +28,10 @@ import org.liris.ktbs.domain.interfaces.WithParameters;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.SerializationMode;
+import org.liris.ktbs.utils.KtbsUtils;
 
+import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -236,8 +240,8 @@ public class Java2Rdf {
 
 		putGenericResource(obsel);
 
-		putLiteral(obsel, KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
-		putLiteral(obsel, KtbsConstants.P_HAS_END_DT, obsel.getEndDT());
+		putXSDDateLiteral(obsel, KtbsConstants.P_HAS_BEGIN_DT, obsel.getBeginDT());
+		putXSDDateLiteral(obsel, KtbsConstants.P_HAS_END_DT, obsel.getEndDT());
 		putLiteral(obsel, KtbsConstants.P_HAS_BEGIN, obsel.getBegin());
 		putLiteral(obsel, KtbsConstants.P_HAS_END, obsel.getEnd());
 		putLiteral(obsel, KtbsConstants.P_HAS_SUBJECT, obsel.getSubject());
@@ -289,6 +293,22 @@ public class Java2Rdf {
 		}
 
 		putParent(obsel, KtbsConstants.P_HAS_TRACE, true);
+	}
+
+	private void putXSDDateLiteral(IKtbsResource resource, String pName, String value) {
+		if(value == null)
+			return;
+		Literal literal;
+		try {
+			KtbsUtils.parseXsdDate(value);
+			literal = model.createTypedLiteral(value, XSDDatatype.XSDdateTime);
+		} catch(ParseException e) {
+			literal = model.createLiteral(value);
+		}
+		
+		getJenaResource(resource).addLiteral(
+				model.getProperty(pName), 
+				literal);
 	}
 
 	private void putRelation(IRelationStatement stmt) {
@@ -366,7 +386,7 @@ public class Java2Rdf {
 	}
 
 	private void putTrace(ITrace trace) {
-		putLiteral(trace, KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
+		putXSDDateLiteral(trace, KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
 		putLiteral(trace, KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliesWithModel());
 		putLinkedResourceSetSameType(trace, KtbsConstants.P_HAS_SOURCE, trace.getTransformedTraces(), true);
 		putLinkedResource(trace, KtbsConstants.P_HAS_MODEL, trace.getTraceModel(), false);

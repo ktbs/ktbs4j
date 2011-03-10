@@ -3,9 +3,11 @@ package org.liris.ktbs.utils;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -173,8 +175,6 @@ public class KtbsUtils {
 			return null;
 	}
 
-	public static final SimpleDateFormat XSD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssZ");
-
 	public static boolean isLeafType(Class<? extends IKtbsResource> cls) {
 		return IObsel.class.isAssignableFrom(cls) 
 					|| IRelationType.class.isAssignableFrom(cls) 
@@ -182,9 +182,18 @@ public class KtbsUtils {
 					|| IObselType.class.isAssignableFrom(cls) ;
 	}
 	
-	public static String nowAsXsdStringOrigin() {
+	public static Date parseXsdDate(String dateString) throws ParseException {
+		SimpleDateFormat xsdDatetimeFormat = KtbsConstants.XSD_DATETIME_FORMAT;
+		xsdDatetimeFormat.setTimeZone(KtbsConstants.UTC_ZONE);
+		
+		return xsdDatetimeFormat.parse(dateString);
+	}
+	public static String now() {
 		Calendar calendar = Calendar.getInstance();
-		String nowAsXsdString = XSD_DATE_FORMAT.format(calendar.getTime());
+		SimpleDateFormat xsdDatetimeFormat = KtbsConstants.XSD_DATETIME_FORMAT;
+		xsdDatetimeFormat.setTimeZone(KtbsConstants.UTC_ZONE);
+		
+		String nowAsXsdString = xsdDatetimeFormat.format(calendar.getTime());
 		return nowAsXsdString;
 	}
 	

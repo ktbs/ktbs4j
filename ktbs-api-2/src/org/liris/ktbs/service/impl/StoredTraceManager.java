@@ -205,7 +205,7 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 		return resourceService.newStoredTrace(baseUri, 
 				generateTraceId(baseUri), 
 				traceModelUri, 
-				KtbsUtils.nowAsXsdStringOrigin(), 
+				KtbsUtils.now(), 
 				defaultSubject);
 	}
 

@@ -1,10 +1,14 @@
 package org.liris.ktbs.service.tests;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -24,6 +28,7 @@ import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.tests.Examples;
 import org.liris.ktbs.tests.KtbsDisplay;
+import org.liris.ktbs.utils.KtbsUtils;
 
 public class ResourceManagerCreateTestCase extends TestCase {
 	private ResourceService manager;
@@ -113,9 +118,23 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				"Toto",
 				attributes
 		);
-		
 		assertNotNull(o);
 		KtbsDisplay.displayObsel(o);
+		
+		IObsel o2 = manager.newObsel(
+				"http://localhost:8001/base1/t01/", 
+				null, 
+				Examples.getCloseChat().getUri(),
+				KtbsUtils.now(),
+				KtbsUtils.now(),
+				null,
+				null,
+				"Toto",
+				attributes
+		);
+		
+		assertNotNull(o2);
+		KtbsDisplay.displayObsel(o2);
 		
 	}
 	

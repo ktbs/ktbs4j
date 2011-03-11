@@ -211,7 +211,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		try {
 
-			log.info("POST Request content: \n" + resourceAsString);
+			log.debug("POST Request content: \n" + resourceAsString);
 			post.setEntity(new StringEntity(resourceAsString, HTTP.UTF_8));
 
 		} catch (UnsupportedEncodingException e) {

@@ -172,8 +172,9 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		StringWriter writer = new StringWriter();
 		serializer.serializeResource(writer, resource, sendMimeType);
 
-		log.info("Creating the resource " + resource.getUri());
+		log.info("Creating resource [uri=" + resource.getUri()==null?"anonymous":resource.getUri() + ", type: " + resource.getClass().getSimpleName() + "]");
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
+		log.info("Resource creation " + (response.hasSucceeded()?"succeeded":"failed"));
 		return response;
 	}
 	
@@ -399,6 +400,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	 */
 	private Model getEditable(Model model, String uri, Class<?> cls) {
 		String uriWothAspect = uri;
+		log.info("Retrieving the editable properties for uri " + uri);
 
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
 			uriWothAspect+=KtbsConstants.ABOUT_ASPECT;
@@ -406,7 +408,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 		KtbsResponse response = client.get(uriWothAspect+"?editable");
 		if(!response.hasSucceeded()) {
-			log.warn("Could not get the editable properties from uri: " + uri);
+			log.debug("Could not get the editable properties from uri: " + uri);
 			return null;
 		} else {
 			String modelAsString = response.getBodyAsString();

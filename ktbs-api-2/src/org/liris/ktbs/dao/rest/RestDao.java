@@ -172,7 +172,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		StringWriter writer = new StringWriter();
 		serializer.serializeResource(writer, resource, sendMimeType);
 
-		log.info("Creating resource [uri=" + resource.getUri()==null?"anonymous":resource.getUri() + ", type: " + resource.getClass().getSimpleName() + "]");
+		String uri = resource.getUri();
+		log.info("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
 		log.info("Resource creation " + (response.hasSucceeded()?"succeeded":"failed"));
 		return response;

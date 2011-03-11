@@ -1,6 +1,5 @@
 package org.liris.ktbs.serial.rdf;
 
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -302,7 +301,7 @@ public class Java2Rdf {
 		try {
 			KtbsUtils.parseXsdDate(value);
 			literal = model.createTypedLiteral(value, XSDDatatype.XSDdateTime);
-		} catch(ParseException e) {
+		} catch(Exception e) {
 			literal = model.createLiteral(value);
 		}
 		

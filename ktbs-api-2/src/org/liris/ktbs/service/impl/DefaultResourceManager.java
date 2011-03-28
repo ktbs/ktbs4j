@@ -57,7 +57,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	}
 
 	@Override
-	public IBase newBase(String baseLocalName, String owner) {
+	public String newBase(String baseLocalName, String owner) {
 		IBase base = createResource("", baseLocalName, IBase.class, false);
 
 		/*
@@ -71,11 +71,11 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 		 * base.setOwner(owner);
 		 */
 
-		return createAndReturn(base);
+		return dao.create(base);
 	}
 
 	@Override
-	public IStoredTrace newStoredTrace(String baseUri,
+	public String newStoredTrace(String baseUri,
 			String traceLocalName, String model, String origin,
 			String defaultSubject) {
 		IStoredTrace trace = createResource(baseUri, traceLocalName, IStoredTrace.class, false);
@@ -94,11 +94,11 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 
 		trace.setTraceModel(proxyFactory.createResource(model, ITraceModel.class));
 
-		return createAndReturn(trace);
+		return dao.create(trace);
 	}
 
 	@Override
-	public IComputedTrace newComputedTrace(String baseUri,
+	public String newComputedTrace(String baseUri,
 			String traceLocalName, String methodUri, Set<String> sourceTraces, Map<String,String> parameters) {
 
 		IComputedTrace trace = createResource(baseUri, traceLocalName, IComputedTrace.class, false);
@@ -108,7 +108,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 
 		setParameters(trace, parameters);
 
-		return createAndReturn(trace);
+		return dao.create(trace);
 	}
 
 	private <T extends IKtbsResource> Set<T> convertToSetOfProxies(Set<String> resourceUris, Class<T> cls) {
@@ -121,7 +121,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	}
 
 	@Override
-	public IMethod newMethod(String baseUri, String methodLocalName,
+	public String newMethod(String baseUri, String methodLocalName,
 			String inheritedMethod, Map<String,String> parameters) {
 
 		IMethod method = createResource(baseUri, methodLocalName, IMethod.class, false);
@@ -129,7 +129,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 
 		setParameters(method, parameters);
 
-		return createAndReturn(method);
+		return dao.create(method);
 	}
 
 	private void setParameters(WithParameters resource, Map<String, String> parameters) {

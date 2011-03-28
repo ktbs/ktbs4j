@@ -159,9 +159,13 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	public String create(IKtbsResource resource) {
 		KtbsResponse response = doCreate(resource);
 		
-		if(response != null && response.hasSucceeded()) 
-			return response.getHTTPLocation();
-		else
+		if(response.hasSucceeded()) {
+			String httpLocation = response.getHTTPLocation();
+			if(httpLocation == null)
+				throw new DaoException("The resource was successfully created but no HTTP location (resource URI) was attached to the response.");
+			else
+				return httpLocation;
+		} else 
 			return null;
 	}
 

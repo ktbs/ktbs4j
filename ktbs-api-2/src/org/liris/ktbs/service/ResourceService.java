@@ -70,12 +70,13 @@ public interface ResourceService {
 	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls);
 	
 	/**
-	 * Creates a new base in the KTBS
+	 * Creates a new base in the KTBS.
+	 * 
 	 * @param baseLocalName the base local name
 	 * @param owner the user name of the base's owner
-	 * @return the base object
+	 * @return the uri of the created base, null if the creation failed
 	 */
-	public IBase newBase(String baseLocalName, String owner);
+	public String newBase(String baseLocalName, String owner);
 	
 	/**
 	 * 
@@ -84,9 +85,9 @@ public interface ResourceService {
 	 * @param modelUri
 	 * @param origin
 	 * @param defaultSubject
-	 * @return
+	 * @return the uri of the created trace, null if the creation failed
 	 */
-	public IStoredTrace newStoredTrace(String baseUri, String traceLocalName, String modelUri, String origin, String defaultSubject);
+	public String newStoredTrace(String baseUri, String traceLocalName, String modelUri, String origin, String defaultSubject);
 	
 	/**
 	 * 
@@ -95,9 +96,9 @@ public interface ResourceService {
 	 * @param methodUri
 	 * @param sourceTraces
 	 * @param parameters
-	 * @return
+	 * @return the uri of the created trace, null if the creation failed
 	 */
-	public IComputedTrace newComputedTrace(
+	public String newComputedTrace(
 			String baseUri, 
 			String traceLocalName, 
 			String methodUri, 
@@ -111,9 +112,9 @@ public interface ResourceService {
 	 * @param methodLocalName
 	 * @param inheritedMethod
 	 * @param parameters
-	 * @return
+	 * @return the uri of the created method, null if the creation failed
 	 */
-	public IMethod newMethod(
+	public String newMethod(
 			String baseUri, 
 			String methodLocalName, 
 			String inheritedMethod, 
@@ -125,7 +126,7 @@ public interface ResourceService {
 	 * 
 	 * @param baseUri the uri of the base that will contain the created trace model
 	 * @param modelLocalName the name of the trace 
-	 * @return the created trace model, or null if none is created
+	 * @return the uri of the created trace model, null if the creation failed
 	 */
 	public ITraceModel newTraceModel(String baseUri, String modelLocalName);
 

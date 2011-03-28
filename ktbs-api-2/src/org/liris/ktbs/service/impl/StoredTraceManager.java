@@ -204,11 +204,15 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	public IStoredTrace newStoredTrace(String baseUri, String traceModelUri,
 			String defaultSubject) {
 
-		return resourceService.newStoredTrace(baseUri, 
-				generateTraceId(baseUri), 
-				traceModelUri, 
-				KtbsUtils.now(), 
-				defaultSubject);
+		String traceUri = resourceService.newStoredTrace(baseUri, 
+						generateTraceId(baseUri), 
+						traceModelUri, 
+						KtbsUtils.now(), 
+						defaultSubject);
+		if(traceUri == null)
+			return null;
+		else
+			return resourceService.getStoredTrace(traceUri);
 	}
 
 	@Override

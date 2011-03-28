@@ -38,7 +38,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testCreateBase() {
-		IBase base2 = manager.newBase("base2", "Owner de la base 2");
+		IBase base2 = manager.getBase(manager.newBase("base2", "Owner de la base 2"));
 		IBase base2remote = manager.getResource("http://localhost:8001/base2/", IBase.class);
 		assertNotNull(base2remote);
 		assertEquals(base2, base2remote);
@@ -57,13 +57,13 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testCreateStoredTrace() {
-		IStoredTrace st2 = manager.newStoredTrace(
+		IStoredTrace st2 = manager.getStoredTrace(manager.newStoredTrace(
 				"http://localhost:8001/base1/", 
 				"t02", 
 				"http://localhost:8001/base1/model2/", 
 				"Origine de la trace 2",
 				"Nestor"
-				);
+				));
 		
 		IStoredTrace t02remote = manager.getResource("http://localhost:8001/base1/t02/", IStoredTrace.class);
 		assertNotNull(t02remote);
@@ -82,12 +82,12 @@ public class ResourceManagerCreateTestCase extends TestCase {
 		parameters.put("script", "le code");
 		parameters.put("param2", "value du param2");
 		
-		IMethod method = manager.newMethod(
+		IMethod method = manager.getMethod(manager.newMethod(
 				"http://localhost:8001/base1/", 
 				"mymethod", 
 				KtbsConstants.SCRIPT_PYTHON,
 				parameters
-		);
+		));
 		
 		IMethod method2 = manager.getResource("http://localhost:8001/base1/mymethod/", IMethod.class);
 		assertNotNull(method2);
@@ -143,13 +143,13 @@ public class ResourceManagerCreateTestCase extends TestCase {
 		sources.add("http://localhost:8001/base1/t01/");
 		sources.add("http://localhost:8001/base1/t02/");
 		
-		IComputedTrace trace = manager.newComputedTrace(
+		IComputedTrace trace = manager.getComputedTrace(manager.newComputedTrace(
 				"http://localhost:8001/base1/", 
 				"ct1", 
 				"http://localhost:8001/base1/count/",
 				sources,
 				null
-		);
+		));
 		
 		IComputedTrace ct2 = manager.getResource("http://localhost:8001/base1/ct1/", IComputedTrace.class);
 		assertNotNull(ct2);

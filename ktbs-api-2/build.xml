@@ -14,7 +14,7 @@
 		
 	<property name="user.name" value="Damien Cram"/>
 	<property name="organisation" value="LIRIS UMR 5205 CNRS"/>
-	<property name="version" value="2.0.5"/>
+	<property name="version" value="2.0.6"/>
 	<property name="title" value="KTBS Java API"/>
 	
 	<property name="tests.dir" location="../ktbs-2-0-tests"/>

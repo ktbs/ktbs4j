@@ -124,7 +124,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	public String newMethod(String baseUri, String methodLocalName,
 			String inheritedMethod, Map<String,String> parameters) {
 
-		IMethod method = createResource(baseUri, methodLocalName, IMethod.class, false);
+		IMethod method = createResource(baseUri, methodLocalName, IMethod.class, true);
 		method.setInherits(inheritedMethod);
 
 		setParameters(method, parameters);

@@ -1,11 +1,14 @@
 package org.liris.ktbs.domain;
 
+import java.io.Serializable;
+
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IRelationStatement;
 import org.liris.ktbs.domain.interfaces.IRelationType;
 
 
-public class RelationStatement implements IRelationStatement {
+@SuppressWarnings("serial")
+public class RelationStatement implements IRelationStatement, Serializable {
 	
 	
 	private IObsel fromObsel;

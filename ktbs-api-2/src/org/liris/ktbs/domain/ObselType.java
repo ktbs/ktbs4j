@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.liris.ktbs.domain.interfaces.IObselType;
 
+@SuppressWarnings("serial")
 public class ObselType extends KtbsResource implements IObselType {
 	
 	private Set<IObselType> superObselTypes = new HashSet<IObselType>();

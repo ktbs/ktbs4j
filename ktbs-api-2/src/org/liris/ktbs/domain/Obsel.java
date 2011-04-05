@@ -9,6 +9,7 @@ import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IRelationStatement;
 
+@SuppressWarnings("serial")
 public class Obsel extends KtbsResource implements IObsel {
 	
 	private IObselType obselType;

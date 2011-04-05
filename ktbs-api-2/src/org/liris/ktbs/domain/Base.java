@@ -14,6 +14,7 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 
 
+@SuppressWarnings("serial")
 public class Base extends ResourceContainer<IKtbsResource> implements IBase {
 
 	private String owner;

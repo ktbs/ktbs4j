@@ -7,6 +7,7 @@ import org.liris.ktbs.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.domain.interfaces.WithParameters;
 
 
+@SuppressWarnings("serial")
 public class Method extends KtbsResource implements IMethod {
 
 	private String etag;

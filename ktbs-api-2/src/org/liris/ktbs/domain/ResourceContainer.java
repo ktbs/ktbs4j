@@ -10,6 +10,7 @@ import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.utils.KtbsUtils;
 
+@SuppressWarnings("serial")
 public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsResource implements IResourceContainer<T> {
 
 	private class ConcatenatingIterator implements Iterator<T> {

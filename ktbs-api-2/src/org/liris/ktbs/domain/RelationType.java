@@ -6,6 +6,7 @@ import java.util.Set;
 import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IRelationType;
 
+@SuppressWarnings("serial")
 public class RelationType extends KtbsResource implements IRelationType {
 	
 	private Set<IRelationType> superRelationTypes = new HashSet<IRelationType>();

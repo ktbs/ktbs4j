@@ -1,9 +1,12 @@
 package org.liris.ktbs.domain;
 
+import java.io.Serializable;
+
 import org.liris.ktbs.domain.interfaces.IMethodParameter;
 
 
-public class MethodParameter implements IMethodParameter {
+@SuppressWarnings("serial")
+public class MethodParameter implements IMethodParameter, Serializable {
 
 	private String name;
 	private String value;

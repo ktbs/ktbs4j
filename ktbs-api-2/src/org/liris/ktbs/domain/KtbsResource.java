@@ -1,5 +1,6 @@
 package org.liris.ktbs.domain;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,7 +12,8 @@ import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IPropertyStatement;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class KtbsResource extends UriResource implements IKtbsResource {
+@SuppressWarnings("serial")
+public class KtbsResource extends UriResource implements IKtbsResource, Serializable {
 
 	private Set<String> labels = new HashSet<String>();
 	private Set<IPropertyStatement> properties = new HashSet<IPropertyStatement>();

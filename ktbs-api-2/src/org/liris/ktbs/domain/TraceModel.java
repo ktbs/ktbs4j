@@ -12,6 +12,7 @@ import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IRelationType;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 
+@SuppressWarnings("serial")
 public class TraceModel extends ResourceContainer<IKtbsResource> implements ITraceModel {
 	
 	private Set<IObselType> obselTypes = new HashSet<IObselType>();

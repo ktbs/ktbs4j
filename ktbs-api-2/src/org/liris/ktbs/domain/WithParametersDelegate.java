@@ -1,5 +1,6 @@
 package org.liris.ktbs.domain;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,7 +8,8 @@ import org.liris.ktbs.domain.interfaces.IMethodParameter;
 import org.liris.ktbs.domain.interfaces.WithParameters;
 
 
-public class WithParametersDelegate implements WithParameters  {
+@SuppressWarnings("serial")
+public class WithParametersDelegate implements WithParameters, Serializable  {
 	
 	private Set<IMethodParameter> methodParameters = new HashSet<IMethodParameter>();
 

@@ -10,6 +10,7 @@ import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 
+@SuppressWarnings("serial")
 public class Trace extends ResourceContainer<IObsel> implements ITrace {
 	private String origin;
 	private String compliesWithModel;

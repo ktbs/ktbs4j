@@ -10,6 +10,7 @@ import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.WithParameters;
 
 
+@SuppressWarnings("serial")
 public class ComputedTrace extends Trace implements IComputedTrace {
 
 	private IMethod method;

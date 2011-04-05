@@ -178,6 +178,8 @@ public class KtbsUtils {
 	public static boolean isLeafType(Class<? extends IKtbsResource> cls) {
 		return IObsel.class.isAssignableFrom(cls) 
 					|| IRelationType.class.isAssignableFrom(cls) 
+					|| IMethod.class.isAssignableFrom(cls) 
+					|| IRelationType.class.isAssignableFrom(cls) 
 					|| IAttributeType.class.isAssignableFrom(cls) 
 					|| IObselType.class.isAssignableFrom(cls) ;
 	}

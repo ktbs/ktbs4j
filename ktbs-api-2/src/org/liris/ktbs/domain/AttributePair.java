@@ -1,9 +1,12 @@
 package org.liris.ktbs.domain;
 
+import java.io.Serializable;
+
 import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
 
-public class AttributePair implements IAttributePair {
+@SuppressWarnings("serial")
+public class AttributePair implements IAttributePair, Serializable {
 	
 	private IAttributeType attributeType;
 	private Object value;

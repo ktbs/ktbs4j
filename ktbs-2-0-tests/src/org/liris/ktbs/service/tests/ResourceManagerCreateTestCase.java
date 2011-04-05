@@ -82,12 +82,14 @@ public class ResourceManagerCreateTestCase extends TestCase {
 		parameters.put("script", "le code");
 		parameters.put("param2", "value du param2");
 		
-		IMethod method = manager.getMethod(manager.newMethod(
+		String createdMethodUri = manager.newMethod(
 				"http://localhost:8001/base1/", 
 				"mymethod", 
 				KtbsConstants.SCRIPT_PYTHON,
 				parameters
-		));
+		);
+		
+		IMethod method = manager.getMethod(createdMethodUri);
 		
 		IMethod method2 = manager.getResource("http://localhost:8001/base1/mymethod/", IMethod.class);
 		assertNotNull(method2);

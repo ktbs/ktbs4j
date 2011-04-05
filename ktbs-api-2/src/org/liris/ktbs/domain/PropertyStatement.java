@@ -1,9 +1,12 @@
 package org.liris.ktbs.domain;
 
+import java.io.Serializable;
+
 import org.liris.ktbs.domain.interfaces.IPropertyStatement;
 
 
-public class PropertyStatement implements IPropertyStatement {
+@SuppressWarnings("serial")
+public class PropertyStatement implements IPropertyStatement, Serializable {
 	
 	private final Object value;
 	private final String propertyName;

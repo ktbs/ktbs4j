@@ -2,6 +2,7 @@ package org.liris.ktbs.domain;
 
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 
+@SuppressWarnings("serial")
 public class StoredTrace extends Trace implements IStoredTrace {
 	
 	private String defaultSubject;

@@ -8,6 +8,7 @@ import java.util.Set;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IRoot;
 
+@SuppressWarnings("serial")
 public class Root extends ResourceContainer<IBase> implements IRoot {
 
 	private Set<IBase> bases = new HashSet<IBase>();

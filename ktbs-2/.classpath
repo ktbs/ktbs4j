@@ -2,10 +2,29 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JENA_2.6.3"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GUAVA_R0.7"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/APACHE_COMMONS_LOGGING_1.1.1"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/APACHE_HTTP_COMPONENTS_4.1-beta1"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SPRING_3.0.5"/>
+	<classpathentry kind="lib" path="lib/arq-2.8.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/guava-r07.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.1-beta1.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-cache-4.1-beta1.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis-2.3.4.726.jar"/>
+	<classpathentry kind="lib" path="lib/icu4j-3.4.4.jar"/>
+	<classpathentry kind="lib" path="lib/iri-0.8.jar"/>
+	<classpathentry kind="lib" path="lib/jena-2.6.3.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-2.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.5.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.asm-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.context-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.expression-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/wstx-asl-3.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.dao.rest.KtbsResponse;
 import org.liris.ktbs.domain.AttributePair;
 import org.liris.ktbs.domain.KtbsResource;
 import org.liris.ktbs.domain.MethodParameter;
@@ -243,6 +244,11 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	@Override
 	public IComputedTrace getComputedTrace(String uri) {
 		return getResource(uri, IComputedTrace.class);
+	}
+
+	@Override
+	public KtbsResponse getLastResponse() {
+		return dao.getLastResponse();
 	}
 	
 }

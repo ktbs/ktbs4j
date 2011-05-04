@@ -1,6 +1,8 @@
 package org.liris.ktbs.service.impl;
 
-public class RootAwareService {
+import org.liris.ktbs.service.IRootAwareService;
+
+public abstract class RootAwareService implements IRootAwareService {
 	
 	protected String rootUri;
 

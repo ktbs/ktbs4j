@@ -3,6 +3,7 @@ package org.liris.ktbs.dao;
 import java.util.Collection;
 import java.util.List;
 
+import org.liris.ktbs.dao.rest.KtbsResponse;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 
 public interface ResourceDao {
@@ -26,4 +27,8 @@ public interface ResourceDao {
 			Collection<? extends IKtbsResource> collection);
 	public boolean postCollection(String uriToSave,
 			List<? extends IKtbsResource> collection);
+	
+	public KtbsResponse getLastResponse();
+	
+	
 }

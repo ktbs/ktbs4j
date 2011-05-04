@@ -8,6 +8,7 @@ import java.util.Map;
 import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.dao.ResultSet;
+import org.liris.ktbs.dao.rest.KtbsResponse;
 import org.liris.ktbs.domain.ResourceFactory;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IRoot;
@@ -86,5 +87,10 @@ public class MemoryDao implements ResourceDao {
 	public String create(IKtbsResource prototype) {
 		IKtbsResource r = createAndGet(prototype);
 		return r == null ? null: r.getUri();
+	}
+
+	@Override
+	public KtbsResponse getLastResponse() {
+		throw new UnsupportedOperationException("Irrelevant for memory DAO");
 	}
 }

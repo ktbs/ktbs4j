@@ -50,6 +50,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	private Serializer serializer;
 	private Deserializer deserializer;
 	private String rootUri;
+	private KtbsResponse lastResponse;
 
 	public void setRootUri(String rootUri) {
 		this.rootUri = rootUri;
@@ -110,6 +111,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 		log.info("Retrieving the resource " + uri);
 		KtbsResponse response = client.get(requestUri);
+		this.lastResponse = response;
 
 		if(!response.hasSucceeded())
 			return null;
@@ -179,6 +181,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		String uri = resource.getUri();
 		log.info("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
+		this.lastResponse = response;
+		
 		log.info("Resource creation " + (response.hasSucceeded()?"succeeded":"failed"));
 		return response;
 	}
@@ -260,6 +264,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 		log.info("Saving the resource " + updateUri +".");
 		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
+		this.lastResponse = response;
 		saveEtag(updateUri, response);
 
 		boolean hasSucceeded = response.hasSucceeded();
@@ -295,9 +300,10 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 		log.info("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
 		KtbsResponse response = client.update(uriToSave, writer.toString(), etag);
-		if(response.hasSucceeded()) 
-			return saveEtag(uriToSave, response);
-		else
+		this.lastResponse = response;
+		if(response.hasSucceeded()) {
+			return  saveEtag(uriToSave, response);
+		} else
 			return false;
 	}
 
@@ -361,7 +367,9 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	@Override
 	public boolean delete(String uri) {
-		return client.delete(uri).hasSucceeded();
+		KtbsResponse response = client.delete(uri);
+		this.lastResponse = response;
+		return response.hasSucceeded();
 	}
 
 
@@ -371,6 +379,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 
 		KtbsResponse response = client.get(request);
+		this.lastResponse = response;
 
 		if(!response.hasSucceeded())
 			return null;
@@ -445,5 +454,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		client.setCredentials(username, password);
 	}
 
-	
+	@Override
+	public KtbsResponse getLastResponse() {
+		return lastResponse;
+	}
 }

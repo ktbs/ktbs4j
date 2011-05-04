@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.dao.rest.KtbsResponse;
 import org.liris.ktbs.dao.rest.ResourceAlreadyExistException;
 import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
@@ -16,10 +17,11 @@ import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IRelationType;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.service.ResponseAwareService;
 import org.liris.ktbs.service.TraceModelService;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class TraceModelManager extends RootAwareService implements TraceModelService {
+public class TraceModelManager extends RootAwareService implements TraceModelService, ResponseAwareService {
 
 	private PojoFactory factory;
 	public void setFactory(PojoFactory factory) {
@@ -36,6 +38,10 @@ public class TraceModelManager extends RootAwareService implements TraceModelSer
 		this.resourceService = resourceService;
 	}
 
+	@Override
+	public KtbsResponse getLastResponse() {
+		return dao.getLastResponse();
+	}
 
 	@Override
 	public IAttributeType newAttributeType(ITraceModel model, String localName,

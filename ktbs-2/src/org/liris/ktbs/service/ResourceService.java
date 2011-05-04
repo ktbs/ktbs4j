@@ -26,7 +26,7 @@ import org.liris.ktbs.domain.interfaces.ITraceModel;
  * @author Damien Cram
  *
  */
-public interface ResourceService {
+public interface ResourceService extends IRootAwareService, ResponseAwareService {
 	
 	/**
 	 * Give the root resource.

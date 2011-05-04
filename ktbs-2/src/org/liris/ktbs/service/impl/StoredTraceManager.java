@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.dao.rest.KtbsResponse;
 import org.liris.ktbs.domain.Obsel;
 import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IAttributePair;
@@ -19,15 +20,25 @@ import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.service.ResponseAwareService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class StoredTraceManager extends RootAwareService implements StoredTraceService {
+public class StoredTraceManager extends RootAwareService implements StoredTraceService, ResponseAwareService {
 
 	private PojoFactory factory;
 	public void setFactory(PojoFactory factory) {
 		this.factory = factory;
 	}
+
+	private boolean lastDelegatedToResourceManager = false;
+	@Override
+	public KtbsResponse getLastResponse() {
+		if(lastDelegatedToResourceManager)
+			return resourceService.getLastResponse();
+		return dao.getLastResponse();
+	}
+
 
 	private ResourceDao dao;
 	public void setDao(ResourceDao dao) {
@@ -35,6 +46,7 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	}
 
 	private ResourceService resourceService;
+
 	public void setResourceService(ResourceService resourceService) {
 		this.resourceService = resourceService;
 	}
@@ -65,6 +77,7 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 			for(IObsel obsel:obsels) {
 				if(obsel.getParentResource() == null)
 					((Obsel)obsel).setParentResource(trace);
+				this.lastDelegatedToResourceManager = false;
 				dao.createAndGet(obsel);
 			}
 		}
@@ -72,12 +85,15 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 
 	@Override
 	public boolean saveDescription(IStoredTrace trace) {
+		this.lastDelegatedToResourceManager = false;
+
 		return dao.save(trace, false);
 	}
 
 	@Override
 	public boolean saveObsels(IStoredTrace trace) {
 		String uriWithAspect = KtbsUtils.addAspect(trace.getUri(), KtbsConstants.OBSELS_ASPECT, KtbsConstants.ABOUT_ASPECT);
+		this.lastDelegatedToResourceManager = false;
 		return dao.saveCollection(uriWithAspect, trace.getObsels());
 	}
 
@@ -101,9 +117,13 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 		} else {
 			String obselUri = createObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT,
 					begin, end, subject, attributes);
-			if(obselUri != null)
-				return resourceService.getResource(obselUri, IObsel.class);
-			else
+			if(obselUri != null) {
+				this.lastDelegatedToResourceManager = true;
+
+				IObsel resource = resourceService.getResource(obselUri, IObsel.class);
+
+				return resource;
+			} else
 				return null;
 		}
 	}
@@ -117,6 +137,8 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 
 		if(beginDT != null && endDT == null)
 			endDT = beginDT;
+
+		this.lastDelegatedToResourceManager = true;
 
 		return resourceService.newObsel(
 				storedTrace.getUri(), 
@@ -166,6 +188,8 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 		request+="minb="+begin;
 		request+="&";
 		request+="maxe="+end;
+		this.lastDelegatedToResourceManager = false;
+
 		return dao.query(request, IObsel.class);
 	}
 
@@ -181,6 +205,8 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 		request+="mine="+mine;
 		request+="&";
 		request+="maxe="+maxe;
+		this.lastDelegatedToResourceManager = false;
+
 		return dao.query(request, IObsel.class);
 	}
 
@@ -204,15 +230,20 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	public IStoredTrace newStoredTrace(String baseUri, String traceModelUri,
 			String defaultSubject) {
 
+		this.lastDelegatedToResourceManager = true;
+
 		String traceUri = resourceService.newStoredTrace(baseUri, 
-						generateTraceId(baseUri), 
-						traceModelUri, 
-						KtbsUtils.now(), 
-						defaultSubject);
+				generateTraceId(baseUri), 
+				traceModelUri, 
+				KtbsUtils.now(), 
+				defaultSubject);
 		if(traceUri == null)
 			return null;
-		else
-			return resourceService.getStoredTrace(traceUri);
+		else {
+			IStoredTrace storedTrace = resourceService.getStoredTrace(traceUri);
+			this.lastDelegatedToResourceManager = true;
+			return storedTrace;
+		}
 	}
 
 	@Override

@@ -25,7 +25,6 @@ public class MultiUserServiceImpl extends RootAwareService implements MultiUserR
 	private Map<String, Calendar> lastAccess;
 	private Map<String, KtbsRootClient> clients;
 	
-	
 	// timeout in minutes;
 	private int timeout = 150;
 	

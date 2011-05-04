@@ -8,7 +8,7 @@ import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IRelationType;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 
-public interface TraceModelService {
+public interface TraceModelService extends IRootAwareService {
 	
 	public ITraceModel createTraceModel(String modelUri);
 	

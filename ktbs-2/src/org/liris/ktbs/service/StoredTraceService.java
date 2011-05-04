@@ -14,7 +14,7 @@ import org.liris.ktbs.service.impl.ObselBuilder;
  * @author Damien Cram
  *
  */
-public interface StoredTraceService {
+public interface StoredTraceService extends IRootAwareService {
 	
 	/**
 	 * Creates a new stored trace in a given base with the system 

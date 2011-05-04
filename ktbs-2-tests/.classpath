@@ -2,29 +2,29 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ktbs-2-0"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/arq-2.8.4.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/commons-io-2.0.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/guava-r07.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/httpclient-4.1-beta1.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/httpclient-cache-4.1-beta1.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/httpcore-4.1.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/icu4j-3.4.4.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/iri-0.8.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/jena-2.6.3.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/lucene-core-2.3.1.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/org.springframework.asm-3.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/org.springframework.beans-3.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/org.springframework.context-3.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/org.springframework.core-3.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/org.springframework.expression-3.0.5.RELEASE.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/slf4j-api-1.5.8.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/slf4j-log4j12-1.5.8.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/wstx-asl-3.2.9.jar"/>
-	<classpathentry kind="lib" path="/home/dcram/dev/ws-visu2/ktbs-2-0/lib/xercesImpl-2.7.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ktbs-2"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/arq-2.8.4.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/commons-io-2.0.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/guava-r07.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/httpclient-4.1-beta1.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/httpclient-cache-4.1-beta1.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/httpcore-4.1.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/icu4j-3.4.4.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/iri-0.8.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/jena-2.6.3.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/lucene-core-2.3.1.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/org.springframework.asm-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/org.springframework.beans-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/org.springframework.context-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/org.springframework.core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/org.springframework.expression-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/slf4j-api-1.5.8.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/slf4j-log4j12-1.5.8.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/wstx-asl-3.2.9.jar"/>
+	<classpathentry kind="lib" path="/ktbs-2/lib/xercesImpl-2.7.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

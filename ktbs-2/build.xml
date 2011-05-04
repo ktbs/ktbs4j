@@ -2,15 +2,15 @@
 
 <project default="main" basedir=".">
 
-	<property name="syslib" location="/home/dcram/lib/"/>
-	<property name="lib.commons-io"	location="${syslib}/commons-io-2.0"/>
-	<property name="lib.commons-logging"	location="${syslib}/commons-logging-1.1.1"/>
-	<property name="lib.httpcomponents-client"	location="${syslib}/httpcomponents-client-4.1-beta1/lib"/>
-	<property name="lib.httpcomponents-core"	location="${syslib}/httpcomponents-core-4.1"/>
-	<property name="lib.jena"	location="${syslib}/Jena-2.6.3/lib"/>
-	<property name="lib.junit"	location="${syslib}/junit-4.2.8"/>
-	<property name="lib.google-collections"	location="${syslib}/guava-r07"/>
-	<property name="lib.spring"	location="${syslib}/spring-framework-3.0.5.RELEASE/dist/"/>
+	<property name="migrator.lib" location="lib"/>
+	<property name="lib.commons-io"	location="${migrator.lib}/commons-io-2.0"/>
+	<property name="lib.commons-logging"	location="${migrator.lib}/commons-logging-1.1.1"/>
+	<property name="lib.httpcomponents-client"	location="${migrator.lib}/httpcomponents-client-4.1-beta1/lib"/>
+	<property name="lib.httpcomponents-core"	location="${migrator.lib}/httpcomponents-core-4.1"/>
+	<property name="lib.jena"	location="${migrator.lib}/Jena-2.6.3/lib"/>
+	<property name="lib.junit"	location="${migrator.lib}/junit-4.2.8"/>
+	<property name="lib.google-collections"	location="${migrator.lib}/guava-r07"/>
+	<property name="lib.spring"	location="${migrator.lib}/spring-framework-3.0.5.RELEASE/dist/"/>
 		
 	<property name="user.name" value="Damien Cram"/>
 	<property name="organisation" value="LIRIS UMR 5205 CNRS"/>
@@ -118,29 +118,29 @@
 	</target>
 		
 	<target name="package-3rd-party-libs" >
-		<copy file="${lib.commons-io}/commons-io-2.0.jar" todir="dist/lib"/>
-		<copy file="${lib.commons-logging}/commons-logging-1.1.1.jar" todir="dist/lib"/>
-		<copy file="${lib.httpcomponents-client}/httpclient-4.1-beta1.jar" todir="dist/lib"/>
-		<copy file="${lib.httpcomponents-client}/httpclient-cache-4.1-beta1.jar" todir="dist/lib"/>
-		<copy file="${lib.httpcomponents-client}/httpcore-4.1.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/jena-2.6.3.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/icu4j-3.4.4.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/iri-0.8.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/jena-2.6.3.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/lucene-core-2.3.1.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/stax-api-1.0.1.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/wstx-asl-3.2.9.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/arq-2.8.4.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/log4j-1.2.13.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/slf4j-api-1.5.8.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/slf4j-log4j12-1.5.8.jar" todir="dist/lib"/>
-		<copy file="${lib.jena}/xercesImpl-2.7.1.jar" todir="dist/lib"/>
-		<copy file="${lib.google-collections}/guava-r07.jar" todir="dist/lib"/>
-		<copy file="${lib.spring}/org.springframework.asm-3.0.5.RELEASE.jar" todir="dist/lib"/>
-		<copy file="${lib.spring}/org.springframework.beans-3.0.5.RELEASE.jar" todir="dist/lib"/>
-		<copy file="${lib.spring}/org.springframework.context-3.0.5.RELEASE.jar" todir="dist/lib"/>
-		<copy file="${lib.spring}/org.springframework.core-3.0.5.RELEASE.jar" todir="dist/lib"/>
-		<copy file="${lib.spring}/org.springframework.expression-3.0.5.RELEASE.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/commons-io-2.0.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/commons-logging-1.1.1.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/httpclient-4.1-beta1.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/httpclient-cache-4.1-beta1.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/httpcore-4.1.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/jena-2.6.3.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/icu4j-3.4.4.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/iri-0.8.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/jena-2.6.3.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/lucene-core-2.3.1.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/stax-api-1.0.1.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/wstx-asl-3.2.9.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/arq-2.8.4.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/log4j-1.2.13.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/slf4j-api-1.5.8.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/slf4j-log4j12-1.5.8.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/xercesImpl-2.7.1.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/guava-r07.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/org.springframework.asm-3.0.5.RELEASE.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/org.springframework.beans-3.0.5.RELEASE.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/org.springframework.context-3.0.5.RELEASE.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/org.springframework.core-3.0.5.RELEASE.jar" todir="dist/lib"/>
+		<copy file="${migrator.lib}/org.springframework.expression-3.0.5.RELEASE.jar" todir="dist/lib"/>
 	</target>
 	
 </project>

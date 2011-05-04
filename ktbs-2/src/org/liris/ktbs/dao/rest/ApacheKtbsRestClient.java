@@ -222,7 +222,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		String body = null;
 
 		try {
-			log.info("Sending POST request to the KTBS: "+post.getRequestLine());
+			log.debug("Sending POST request to the KTBS: "+post.getRequestLine());
 			response = httpClient.execute(post);
 			if(response == null)
 				ktbsResponseStatus=KtbsResponseStatus.CLIENT_ERR0R;
@@ -278,7 +278,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 			put.setEntity(new StringEntity(resourceAsString, HTTP.UTF_8));
 
 
-			log.info("Sending PUT request to the KTBS: "+put.getRequestLine());
+			log.debug("Sending PUT request to the KTBS: "+put.getRequestLine());
 			if(log.isDebugEnabled()) {
 				log.debug("PUT body: "+resourceAsString);
 			}

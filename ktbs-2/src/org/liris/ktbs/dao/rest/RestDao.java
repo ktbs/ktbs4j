@@ -109,7 +109,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
 			requestUri+=KtbsConstants.ABOUT_ASPECT;
 
-		log.info("Retrieving the resource " + uri);
+		log.debug("Retrieving the resource " + uri);
 		KtbsResponse response = client.get(requestUri);
 		this.lastResponse = response;
 
@@ -122,7 +122,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			String mimeType = response.getMimeType();
 
 			if(mimeType.equals(KtbsConstants.MIME_TURTLE)) {
-				log.info("Resolving relative uris for parsing turtle syntax against the base uri " + requestUri);
+				log.debug("Resolving relative uris for parsing turtle syntax against the base uri " + requestUri);
 				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, requestUri);
 			}
 
@@ -179,11 +179,11 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		serializer.serializeResource(writer, resource, sendMimeType);
 
 		String uri = resource.getUri();
-		log.info("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
+		log.debug("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
 		this.lastResponse = response;
 		
-		log.info("Resource creation " + (response.hasSucceeded()?"succeeded":"failed"));
+		log.debug("Resource creation " + (response.hasSucceeded()?"succeeded":"failed"));
 		return response;
 	}
 	
@@ -262,7 +262,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		if(etag == null) 
 			throw new ResourceNotFoundException(updateUri);
 
-		log.info("Saving the resource " + updateUri +".");
+		log.debug("Saving the resource " + updateUri +".");
 		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
 		this.lastResponse = response;
 		saveEtag(updateUri, response);
@@ -298,7 +298,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 		serializer.serializeResourceSet(writer, collection, sendMimeType);
 
-		log.info("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
+		log.debug("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
 		KtbsResponse response = client.update(uriToSave, writer.toString(), etag);
 		this.lastResponse = response;
 		if(response.hasSucceeded()) {
@@ -391,7 +391,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			String mimeType = response.getMimeType();
 
 			if(mimeType.equals(KtbsConstants.MIME_TURTLE)) {
-				log.info("Resolving relative uris for parsing turtle syntax against the base uri " + request);
+				log.debug("Resolving relative uris for parsing turtle syntax against the base uri " + request);
 				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, request);
 			}
 
@@ -414,7 +414,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	 */
 	private Model getEditable(Model model, String uri, Class<?> cls) {
 		String uriWothAspect = uri;
-		log.info("Retrieving the editable properties for uri " + uri);
+		log.debug("Retrieving the editable properties for uri " + uri);
 
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
 			uriWothAspect+=KtbsConstants.ABOUT_ASPECT;

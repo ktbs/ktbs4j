@@ -176,7 +176,7 @@ public class Rdf2Java {
 		if(stmt != null)
 			method.setInherits(getRdfObjectAsJavaObject(stmt.getObject()).toString());
 
-		((KtbsResource)method).setParentResource(readParent(method, KtbsConstants.P_OWNS, true, IBase.class));
+		((KtbsResource)method).setParentResource(readParent(method, KtbsConstants.P_CONTAINS, true, IBase.class));
 
 		return method;
 	}
@@ -341,10 +341,10 @@ public class Rdf2Java {
 		base.setUri(uri);
 		fillGenericResource(base);
 
-		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getStoredTraces(), false, IStoredTrace.class);
-		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getComputedTraces(), false, IComputedTrace.class);
-		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getTraceModels(), false, ITraceModel.class);
-		fillChildren(true, uri, KtbsConstants.P_OWNS, base.getMethods(), false, IMethod.class);
+		fillChildren(true, uri, KtbsConstants.P_CONTAINS, base.getStoredTraces(), false, IStoredTrace.class);
+		fillChildren(true, uri, KtbsConstants.P_CONTAINS, base.getComputedTraces(), false, IComputedTrace.class);
+		fillChildren(true, uri, KtbsConstants.P_CONTAINS, base.getTraceModels(), false, ITraceModel.class);
+		fillChildren(true, uri, KtbsConstants.P_CONTAINS, base.getMethods(), false, IMethod.class);
 
 		((KtbsResource)base).setParentResource(readParent(base, KtbsConstants.P_HAS_BASE, true, IRoot.class));
 
@@ -362,7 +362,7 @@ public class Rdf2Java {
 		trace.setSourceTraces(readLinkedResourceSetSameType(uri, KtbsConstants.P_HAS_SOURCE, false, ITrace.class));
 		trace.setMethod(readLinkedResource(uri, KtbsConstants.P_HAS_METHOD, false, IMethod.class));
 
-		((KtbsResource)trace).setParentResource(readParent(trace, KtbsConstants.P_OWNS, true, IBase.class));
+		((KtbsResource)trace).setParentResource(readParent(trace, KtbsConstants.P_CONTAINS, true, IBase.class));
 
 		return trace;
 	}
@@ -766,7 +766,7 @@ public class Rdf2Java {
 
 		trace.setDefaultSubject(getLiteralOrNull(uri, KtbsConstants.P_HAS_SUBJECT, String.class));
 
-		((KtbsResource)trace).setParentResource(readParent(trace, KtbsConstants.P_OWNS, true, IBase.class));
+		((KtbsResource)trace).setParentResource(readParent(trace, KtbsConstants.P_CONTAINS, true, IBase.class));
 
 		return trace;
 	}
@@ -821,7 +821,7 @@ public class Rdf2Java {
 				log.warn("The resource "+uri2+" has the same prefix than the trace model but is of unknown type: " + objectResource);
 		}
 
-		((KtbsResource)traceModel).setParentResource(readParent(traceModel, KtbsConstants.P_OWNS, true, IBase.class));
+		((KtbsResource)traceModel).setParentResource(readParent(traceModel, KtbsConstants.P_CONTAINS, true, IBase.class));
 
 		return traceModel;
 	}

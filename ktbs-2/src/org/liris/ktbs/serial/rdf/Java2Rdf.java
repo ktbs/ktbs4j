@@ -152,10 +152,10 @@ public class Java2Rdf {
 
 		putLiteral(base, KtbsConstants.P_HAS_OWNER, base.getOwner());
 
-		putChildren(base, KtbsConstants.P_OWNS, base.getTraceModels(), false);
-		putChildren(base, KtbsConstants.P_OWNS, base.getStoredTraces(), false);
-		putChildren(base, KtbsConstants.P_OWNS, base.getComputedTraces(), false);
-		putChildren(base, KtbsConstants.P_OWNS, base.getMethods(), false);
+		putChildren(base, KtbsConstants.P_CONTAINS, base.getTraceModels(), false);
+		putChildren(base, KtbsConstants.P_CONTAINS, base.getStoredTraces(), false);
+		putChildren(base, KtbsConstants.P_CONTAINS, base.getComputedTraces(), false);
+		putChildren(base, KtbsConstants.P_CONTAINS, base.getMethods(), false);
 
 		putParent(base, KtbsConstants.P_HAS_BASE, false);
 	}
@@ -223,7 +223,7 @@ public class Java2Rdf {
 		putStringAsResource(method, KtbsConstants.P_INHERITS, method.getInherits());
 		putLiteral(method, KtbsConstants.P_HAS_ETAG, method.getEtag());
 
-		putParent(method, KtbsConstants.P_OWNS, false);
+		putParent(method, KtbsConstants.P_CONTAINS, false);
 	}
 
 	private void putStringAsResource(IKtbsResource resource, String pName,
@@ -340,7 +340,7 @@ public class Java2Rdf {
 		putChildren(traceModel, null, traceModel.getRelationTypes(), false);
 		putChildren(traceModel, null, traceModel.getObselTypes(), false);
 
-		putParent(traceModel, KtbsConstants.P_OWNS, false);
+		putParent(traceModel, KtbsConstants.P_CONTAINS, false);
 	}
 
 	private void putAttributeType(IAttributeType attType) {
@@ -391,7 +391,7 @@ public class Java2Rdf {
 		putLinkedResource(trace, KtbsConstants.P_HAS_MODEL, trace.getTraceModel(), false);
 		putChildren(trace, KtbsConstants.P_HAS_TRACE, trace.getObsels(), true);
 
-		putParent(trace, KtbsConstants.P_OWNS, false);
+		putParent(trace, KtbsConstants.P_CONTAINS, false);
 	}
 
 	private void putGenericResource(IKtbsResource r) {

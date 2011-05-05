@@ -47,7 +47,7 @@ public interface KtbsConstants {
 
 	// Base concepts and properties
 	public static final String BASE = NAMESPACE_KTBS + "Base";
-	public static final String P_OWNS = NAMESPACE_KTBS + "owns";
+	public static final String P_CONTAINS = NAMESPACE_KTBS + "contains";
 	public static final String STORED_TRACE = NAMESPACE_KTBS + "StoredTrace";
 	public static final String COMPUTED_TRACE = NAMESPACE_KTBS + "ComputedTrace";
 	public static final String METHOD = NAMESPACE_KTBS + "Method";

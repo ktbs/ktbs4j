@@ -3,15 +3,15 @@ package org.liris.ktbs.dao;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.domain.UriResource;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IUriResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceProxy<T extends IKtbsResource> implements InvocationHandler {
 
-	private static final Log log = LogFactory.getLog(ResourceProxy.class);
+	private static final Logger log = LoggerFactory.getLogger(ResourceProxy.class);
 
 
 

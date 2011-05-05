@@ -5,13 +5,13 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceSetProxy<T extends IKtbsResource> implements InvocationHandler {
 
-	private static final Log log = LogFactory.getLog(ResourceSetProxy.class);
+	private static final Logger log = LoggerFactory.getLogger(ResourceSetProxy.class);
 	
 	private boolean loaded;
 	private String request;

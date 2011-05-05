@@ -2,21 +2,21 @@ package org.liris.ktbs.serial.rdf;
 
 import java.io.Reader;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.dao.ResultSet;
 import org.liris.ktbs.domain.ResourceFactory;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.serial.DeserializationConfig;
 import org.liris.ktbs.serial.Deserializer;
 import org.liris.ktbs.utils.KtbsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class RdfDeserializer implements Deserializer {
 
-	private static final Log log = LogFactory.getLog(RdfDeserializer.class);
+	private static final Logger log = LoggerFactory.getLogger(RdfDeserializer.class);
 	
 	public void setPojoFactory(ResourceFactory pojoFactory) {
 		this.pojoFactory = pojoFactory;

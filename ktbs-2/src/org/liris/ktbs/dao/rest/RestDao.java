@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ProxyFactory;
@@ -32,6 +30,8 @@ import org.liris.ktbs.serial.rdf.Java2Rdf;
 import org.liris.ktbs.service.impl.ResourceNotFoundException;
 import org.liris.ktbs.utils.KtbsUtils;
 import org.liris.ktbs.utils.RelativeURITurtleReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -40,7 +40,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class RestDao implements ResourceDao, UserAwareDao {
 
-	private static final Log log = LogFactory.getLog(RestDao.class);
+	private static final Logger log = LoggerFactory.getLogger(RestDao.class);
 
 	private static String sendMimeType = KtbsConstants.MIME_TURTLE;
 

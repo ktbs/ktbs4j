@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.dao.ResultSet;
 import org.liris.ktbs.domain.AttributePair;
@@ -48,6 +46,8 @@ import org.liris.ktbs.serial.DeserializationMode;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.utils.KtbsUtils;
 import org.liris.ktbs.utils.ThreeKeyedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -60,7 +60,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class Rdf2Java {
 
-	private static final Log log = LogFactory.getLog(Rdf2Java.class);
+	private static final Logger log = LoggerFactory.getLogger(Rdf2Java.class);
 
 	private ResourceFactory proxyFactory;
 	private ResourceFactory pojoFactory;

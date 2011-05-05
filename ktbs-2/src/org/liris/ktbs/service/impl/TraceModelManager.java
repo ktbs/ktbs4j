@@ -3,8 +3,6 @@ package org.liris.ktbs.service.impl;
 import java.io.Reader;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.liris.ktbs.dao.DaoException;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.dao.rest.KtbsResponse;
@@ -20,6 +18,8 @@ import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.ResponseAwareService;
 import org.liris.ktbs.service.TraceModelService;
 import org.liris.ktbs.utils.KtbsUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TraceModelManager extends RootAwareService implements TraceModelService, ResponseAwareService {
 
@@ -56,7 +56,7 @@ public class TraceModelManager extends RootAwareService implements TraceModelSer
 		return addAndSaveAndReturn(model, attType, elementSet);
 	}
 
-	private static final Log log = LogFactory.getLog(TraceModelManager.class);
+	private static final Logger log = LoggerFactory.getLogger(TraceModelManager.class);
 
 	private <T extends IKtbsResource> T addAndSaveAndReturn(ITraceModel model,
 			T element, Set<T> elementSet) {

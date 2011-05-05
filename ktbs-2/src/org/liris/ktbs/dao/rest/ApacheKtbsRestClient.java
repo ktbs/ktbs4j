@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
@@ -34,13 +32,15 @@ import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
 import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApacheKtbsRestClient implements KtbsRestClient {
 
 	public static final String MESSAGE_DELETE_NOT_SUPPORTED = "DELETE method are not supported by the KTBS server in the current version";
 	private static final String MESSAGE_CLIENT_NOT_STARTED = "The HTTP client is not started. Please call KtbsClient.startSession() before calling any KTBS remote service.";
 
-	private static Log log = LogFactory.getLog(ApacheKtbsRestClient.class);
+	private static Logger log = LoggerFactory.getLogger(ApacheKtbsRestClient.class);
 
 	private String rootUri;
 

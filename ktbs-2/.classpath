@@ -10,7 +10,11 @@
 	<classpathentry kind="lib" path="lib/httpcore-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j-3.4.4.jar"/>
 	<classpathentry kind="lib" path="lib/iri-0.8.jar"/>
-	<classpathentry kind="lib" path="lib/jena-2.6.3.jar"/>
+	<classpathentry kind="lib" path="lib/jena-2.6.3.jar" sourcepath="/home/dcram/lib/Jena-2.6.3/jena-2.6.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/dcram/lib/Jena-2.6.3/jena-2.6.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/lucene-core-2.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.asm-3.0.5.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.beans-3.0.5.RELEASE.jar"/>

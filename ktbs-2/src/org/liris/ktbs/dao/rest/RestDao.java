@@ -42,7 +42,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 	private static final Logger log = LoggerFactory.getLogger(RestDao.class);
 
-	private static String sendMimeType = KtbsConstants.MIME_TURTLE;
+	private static String sendMimeType = KtbsConstants.MIME_RDF_XML;
+	private static String receiveMimeType = KtbsConstants.MIME_RDF_XML;
 
 	private Map<String, String> etags = new HashMap<String, String>();
 	private KtbsRestClient client;
@@ -110,7 +111,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			requestUri+=KtbsConstants.ABOUT_ASPECT;
 
 		log.debug("Retrieving the resource " + uri);
-		KtbsResponse response = client.get(requestUri);
+		KtbsResponse response = client.get(requestUri, receiveMimeType);
 		this.lastResponse = response;
 
 		if(!response.hasSucceeded())
@@ -180,7 +181,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 		String uri = resource.getUri();
 		log.debug("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
-		KtbsResponse response = client.post(resource.getParentUri(), writer.toString());
+		KtbsResponse response = client.post(resource.getParentUri(), writer.toString(), sendMimeType);
 		this.lastResponse = response;
 		
 		log.debug("Resource creation " + (response.hasSucceeded()?"succeeded":"failed"));
@@ -263,7 +264,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			throw new ResourceNotFoundException(updateUri);
 
 		log.debug("Saving the resource " + updateUri +".");
-		KtbsResponse response = client.update(updateUri, writer.toString(), etag);
+		KtbsResponse response = client.update(updateUri, writer.toString(), sendMimeType, etag);
 		this.lastResponse = response;
 		saveEtag(updateUri, response);
 
@@ -299,7 +300,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		serializer.serializeResourceSet(writer, collection, sendMimeType);
 
 		log.debug("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
-		KtbsResponse response = client.update(uriToSave, writer.toString(), etag);
+		KtbsResponse response = client.update(uriToSave, writer.toString(), sendMimeType, etag);
 		this.lastResponse = response;
 		if(response.hasSucceeded()) {
 			return  saveEtag(uriToSave, response);
@@ -328,7 +329,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		String etag = etags.get(uriToSave);
 		if(etag == null) {
 			// should update the etag
-			KtbsResponse response = client.get(uriToSave);
+			KtbsResponse response = client.get(uriToSave, receiveMimeType);
 
 			if(!response.hasSucceeded() || response.getHTTPETag() == null) {
 				log.warn("Could not find an etag for the resource \""+uriToSave+"\".");
@@ -378,7 +379,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			Class<T> cls) {
 
 
-		KtbsResponse response = client.get(request);
+		KtbsResponse response = client.get(request, receiveMimeType);
 		this.lastResponse = response;
 
 		if(!response.hasSucceeded())
@@ -420,7 +421,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			uriWothAspect+=KtbsConstants.ABOUT_ASPECT;
 
 
-		KtbsResponse response = client.get(uriWothAspect+"?editable");
+		KtbsResponse response = client.get(uriWothAspect+"?editable", receiveMimeType);
 		if(!response.hasSucceeded()) {
 			log.debug("Could not get the editable properties from uri: " + uri);
 			return null;

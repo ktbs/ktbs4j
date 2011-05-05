@@ -30,7 +30,6 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.util.VersionInfo;
-import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,20 +127,12 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		}
 	}
 
-	private String getGETMimeType() {
-		return KtbsConstants.MIME_RDF_XML;
-	}
-
-	private String getPOSTMimeType() {
-		return KtbsConstants.MIME_TURTLE;
-	}
-
 	@Override
-	public synchronized KtbsResponse get(String uri) {
+	public synchronized KtbsResponse get(String uri, String mimeType) {
 		checkStarted(); 
 
 		HttpGet get = new HttpGet(uri);
-		get.addHeader(HttpHeaders.ACCEPT, getGETMimeType());
+		get.addHeader(HttpHeaders.ACCEPT,mimeType);
 
 		HttpResponse response = null;
 		IKtbsResource ktbsResource = null;
@@ -172,7 +163,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_SEE_OTHER) {
 					// redirect to the right URL
 					EntityUtils.consume(entity);
-					return get(response.getHeaders(HttpHeaders.LOCATION)[0].getValue());
+					return get(response.getHeaders(HttpHeaders.LOCATION)[0].getValue(), mimeType);
 				} else
 					ktbsResponseStatus=KtbsResponseStatus.REQUEST_FAILED;
 
@@ -200,11 +191,11 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 
 	@Override
-	public synchronized KtbsResponse post(String uri, String resourceAsString) {
+	public synchronized KtbsResponse post(String uri, String resourceAsString, String mimeType) {
 		checkStarted(); 
 
 		HttpPost post = new HttpPost(uri);
-		post.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
+		post.addHeader(HttpHeaders.CONTENT_TYPE, mimeType);
 
 		HttpResponse response = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
@@ -260,12 +251,12 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 	}
 
 	@Override
-	public synchronized KtbsResponse update(String updateUri, String resourceAsString, String etag) {
+	public synchronized KtbsResponse update(String updateUri, String resourceAsString, String mimeType, String etag) {
 
 		checkStarted(); 
 
 		HttpPut put = new HttpPut(updateUri);
-		put.addHeader(HttpHeaders.CONTENT_TYPE, getPOSTMimeType());
+		put.addHeader(HttpHeaders.CONTENT_TYPE, mimeType);
 		put.addHeader(HttpHeaders.IF_MATCH, etag);
 
 		HttpResponse response = null;

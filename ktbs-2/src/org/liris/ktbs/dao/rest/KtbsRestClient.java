@@ -24,7 +24,7 @@ public interface KtbsRestClient {
 	 * @param resourceURI the absolute resource URI to retrieve
 	 * @return the {@link KtbsResponse} object produced by this REST request
 	 */
-	public KtbsResponse get(String resourceURI);
+	public KtbsResponse get(String resourceURI, String mimeType);
 
 	/**
 	 * Init the http client with no athentication
@@ -32,7 +32,7 @@ public interface KtbsRestClient {
 	public void startSession();
 	public void endSession();
 	
-	public KtbsResponse post(String uri, String resourceAsString);
+	public KtbsResponse post(String uri, String resourceAsString, String mimeType);
 	
 	/**
 	 * Perform a DELETE request to remotely delete a KTBS resource
@@ -43,7 +43,7 @@ public interface KtbsRestClient {
 	 */
 	public KtbsResponse delete(String resourceURI);
 
-	public KtbsResponse update(String updateUri, String resourceAsString, String etag);
+	public KtbsResponse update(String updateUri, String resourceAsString, String mimeType, String etag);
 
 	public void setCredentials(String username, String password);
 }

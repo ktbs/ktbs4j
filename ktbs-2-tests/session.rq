@@ -1,3 +1,4 @@
+
 PREFIX : <http://localhost:8001/base1/model1/>
 PREFIX ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>

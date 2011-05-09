@@ -131,12 +131,12 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	String createObsel(IStoredTrace storedTrace, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
 			BigInteger end, String subject, Set<IAttributePair> attributes) {
-
-		if(begin != null && end == null)
-			end = begin;
-
-		if(beginDT != null && endDT == null)
-			endDT = beginDT;
+//
+//		if(begin != null && end == null)
+//			end = begin;
+//
+//		if(beginDT != null && endDT == null)
+//			endDT = beginDT;
 
 		this.lastDelegatedToResourceManager = true;
 

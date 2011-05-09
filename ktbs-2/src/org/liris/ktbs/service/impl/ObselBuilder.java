@@ -71,6 +71,7 @@ public class ObselBuilder {
 	
 	public String create() {
 		IStoredTrace parentResource = (IStoredTrace)obsel.getParentResource();
+		
 		return storedTraceManager.createObsel(
 				parentResource==null ? null : parentResource, 
 				obsel.getLocalName(), 

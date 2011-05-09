@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +47,6 @@ import org.liris.ktbs.domain.interfaces.ITraceModel;
 
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import com.ibm.icu.util.Calendar;
 
 public class KtbsUtils {
 
@@ -443,16 +444,26 @@ public class KtbsUtils {
 	}
 
 	public static String xsdDate(int year, int month, int day, int hours, int min, int sec) {
+		return xsdDate(year, month, day, hours, min, sec, TimeZone.getDefault());
+	}
+
+	public static String xsdDateUTC(int year, int month, int day, int hours, int min, int sec) {
+		return xsdDate(year, month, day, hours, min, sec, TimeZone.getTimeZone("UTC"));
+	}
+	
+	public static String xsdDate(int year, int month, int day, int hours, int min, int sec, TimeZone tz) {
 		Calendar calendar = Calendar.getInstance();
-		SimpleDateFormat xsdDatetimeFormat = KtbsConstants.XSD_DATETIME_FORMAT;
-		xsdDatetimeFormat.setTimeZone(KtbsConstants.UTC_ZONE);
+		calendar.setTimeZone(tz);
+		calendar.setTimeInMillis(0);
 		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.MONTH, month-1);
 		calendar.set(Calendar.DAY_OF_MONTH, day);
-		calendar.set(Calendar.HOUR, hours);
+		calendar.set(Calendar.HOUR_OF_DAY, hours);
 		calendar.set(Calendar.MINUTE, min);
 		calendar.set(Calendar.SECOND, sec);
 		
+		SimpleDateFormat xsdDatetimeFormat = KtbsConstants.XSD_DATETIME_FORMAT;
+		xsdDatetimeFormat.setTimeZone(KtbsConstants.UTC_ZONE);
 		String asXsdString = xsdDatetimeFormat.format(calendar.getTime());
 		return asXsdString;
 	}

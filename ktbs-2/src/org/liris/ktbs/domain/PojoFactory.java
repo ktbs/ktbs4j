@@ -148,7 +148,13 @@ public class PojoFactory extends AbstractResourceFactory implements ResourceFact
 		return createResource(absoluteUri, IObselType.class);
 	}
 
+	public IObsel createAnonObsel() {
+		return new Obsel();
+	}
+	
 	public IObsel createObsel(String absoluteUri) {
+		if(absoluteUri == null)
+			return createAnonObsel();
 		Obsel obsel = new Obsel();
 		obsel.setUri(absoluteUri);
 		return obsel;

@@ -250,4 +250,9 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	public ObselBuilder newObselBuilder(IStoredTrace trace) {
 		return new ObselBuilder(this, trace, factory);
 	}
+
+	@Override
+	public ObselBuilder newObselBuilder(String storedTraceUri) {
+		return new ObselBuilder(this, storedTraceUri, factory);
+	}
 }

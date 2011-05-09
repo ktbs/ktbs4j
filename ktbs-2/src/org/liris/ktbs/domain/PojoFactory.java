@@ -12,6 +12,7 @@ import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IMethod;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IObselType;
+import org.liris.ktbs.domain.interfaces.IRelationStatement;
 import org.liris.ktbs.domain.interfaces.IRelationType;
 import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
@@ -101,6 +102,55 @@ public class PojoFactory extends AbstractResourceFactory implements ResourceFact
 
 		if(attributes != null)
 			obsel.getAttributePairs().addAll(attributes);
+		return obsel;
+	}
+
+	public IAttributeType createAttributeType(String traceModelUri, String attributeLocalName) {
+		return createResource(traceModelUri, attributeLocalName, true, IAttributeType.class);
+	}
+	
+	public IRelationType createRelationType(String traceModelUri, String relationLocalName) {
+		return createResource(traceModelUri, relationLocalName, true, IRelationType.class);
+	}
+
+	public IObselType createObselType(String traceModelUri, String obselLocalName) {
+		return createResource(traceModelUri, obselLocalName, true, IObselType.class);
+	}
+
+	public ITraceModel createTraceModel(String traceModelUri) {
+		return createResource(traceModelUri, ITraceModel.class);
+	}
+
+	public IStoredTrace createStoredTrace(String storedTraceUri) {
+		return createResource(storedTraceUri, IStoredTrace.class);
+	}
+
+	public IComputedTrace createComputedTrace(String computedTraceUri) {
+		return createResource(computedTraceUri, IComputedTrace.class);
+	}
+
+	public IMethod createMethod(String methodUri) {
+		return createResource(methodUri, IMethod.class);
+	}
+
+	public IRelationStatement createRelation(String uri, String uri2,
+			String obs1Uri) {
+		return new RelationStatement(createObsel(uri), createRelationType(uri2), createObsel(obs1Uri));
+	}
+
+	public IRelationType createRelationType(String absoluteUri) {
+		return createResource(absoluteUri, IRelationType.class);
+	}
+	public IAttributeType createAttributeType(String absoluteUri) {
+		return createResource(absoluteUri, IAttributeType.class);
+	}
+	public IObselType createObselType(String absoluteUri) {
+		return createResource(absoluteUri, IObselType.class);
+	}
+
+	public IObsel createObsel(String absoluteUri) {
+		Obsel obsel = new Obsel();
+		obsel.setUri(absoluteUri);
 		return obsel;
 	}
 }

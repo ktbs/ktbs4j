@@ -1,5 +1,6 @@
 package org.liris.ktbs.client;
 
+import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.service.MultiUserRootProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -45,5 +46,9 @@ public class Ktbs {
 	 */
 	public static MultiUserRootProvider getMultiUserRestRootProvider() {
 		return (MultiUserRootProvider) getContext().getBean("multiUserRootProvider");
+	}
+
+	public static PojoFactory getPojoFactory() {
+		return (PojoFactory) getContext().getBean("pojoFactory");
 	}
 }

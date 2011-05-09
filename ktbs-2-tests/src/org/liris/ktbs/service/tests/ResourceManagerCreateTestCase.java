@@ -47,12 +47,11 @@ public class ResourceManagerCreateTestCase extends TestCase {
 	@Test
 	public void testCreateTraceModel() {
 		manager.newBase("base3", "Toto3");
-		ITraceModel model2 = manager.newTraceModel("http://localhost:8001/base3/", "model2");
+		String model2Uri = manager.newTraceModel("http://localhost:8001/base3/", "model2");
 		
 		ITraceModel model2remote = manager.getResource("http://localhost:8001/base3/model2/", ITraceModel.class);
 		assertNotNull(model2remote);
-		assertEquals(model2, model2remote);
-		assertEquals(model2.getLabel(), model2remote.getLabel());
+		assertEquals(model2Uri, model2remote.getUri());
 	}
 
 	@Test

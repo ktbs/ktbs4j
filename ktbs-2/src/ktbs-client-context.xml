@@ -13,6 +13,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<constructor-arg value="${ktbs.root.uri}"/>
 		<property name="dao" ref="restDao" />
 		<property name="resourceService" ref="defaultRestResourceManager" />
+		<property name="storedTraceService" ref="storedTraceManager" />
 		<property name="traceModelService" ref="traceModelRestManager" />
 	</bean>
 
@@ -35,6 +36,13 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<property name="dao" ref="restDao" />
 		<property name="proxyFactory" ref="proxyFactory" />
 		<property name="pojoFactory" ref="pojoFactory" />
+	</bean>
+
+	<bean id="storedTraceManager" class="org.liris.ktbs.service.impl.StoredTraceManager">
+		<property name="rootUri" value="${ktbs.root.uri}" />
+		<property name="dao" ref="restDao" />
+		<property name="factory" ref="pojoFactory" />
+		<property name="resourceService" ref="defaultRestResourceManager" />
 	</bean>
 
 	<bean id="pojoFactory" class="org.liris.ktbs.domain.PojoFactory">

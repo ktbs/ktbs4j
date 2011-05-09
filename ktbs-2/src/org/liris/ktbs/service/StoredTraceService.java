@@ -64,5 +64,7 @@ public interface StoredTraceService extends IRootAwareService {
 	void startBufferedCollect(IStoredTrace trace);
 
 	void postBufferedObsels(IStoredTrace trace);
+
+	public ObselBuilder newObselBuilder(String storedTraceUri);
 	
 }

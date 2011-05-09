@@ -6,6 +6,7 @@ import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IObselType;
+import org.liris.ktbs.domain.interfaces.IRelationType;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.utils.KtbsUtils;
 
@@ -50,6 +51,11 @@ public class ObselBuilder {
 		this.storedTraceManager = manager;
 	}
 	
+	public ObselBuilder(StoredTraceManager manager, String storedTraceUri,
+			PojoFactory factory) {
+		this(manager, factory.createStoredTrace(storedTraceUri), factory);
+	}
+
 	public void setUri(String uri) {
 		obsel.setUri(uri);
 	}
@@ -83,5 +89,9 @@ public class ObselBuilder {
 	
 	public void setType(String obsTypeUri) {
 		obsel.setObselType(factory.createResource(obsTypeUri, IObselType.class));
+	}
+
+	public void addRelation(IRelationType relationType, String obs1Uri) {
+		obsel.getOutgoingRelations().add(factory.createRelation(obsel.getUri(), relationType.getUri(), obs1Uri));
 	}
 }

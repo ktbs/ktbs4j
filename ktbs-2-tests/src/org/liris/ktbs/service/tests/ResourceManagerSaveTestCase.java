@@ -34,7 +34,8 @@ public class ResourceManagerSaveTestCase extends TestCase {
 		IBase base1 = (IBase)root.get("base1");
 		ITraceModel model;
 		try {
-			model = manager.newTraceModel(base1.getUri(), "monModel");
+			String modelUri = manager.newTraceModel(base1.getUri(), "monModel");
+			model = manager.getTraceModel(modelUri);
 		} catch(DaoException e) {
 			model = manager.getResource(base1.getUri()+"monModel/", ITraceModel.class);
 		}

@@ -143,10 +143,9 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	}
 
 	@Override
-	public ITraceModel newTraceModel(String baseUri, String modelLocalName) {
+	public String newTraceModel(String baseUri, String modelLocalName) {
 		ITraceModel model = createResource(baseUri, modelLocalName, ITraceModel.class, false);
-
-		return createAndReturn(model);
+		return dao.create(model);
 	}
 
 	@Override

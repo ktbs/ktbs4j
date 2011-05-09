@@ -442,4 +442,19 @@ public class KtbsUtils {
 		return ITraceModel.class.isAssignableFrom(cls);
 	}
 
+	public static String xsdDate(int year, int month, int day, int hours, int min, int sec) {
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat xsdDatetimeFormat = KtbsConstants.XSD_DATETIME_FORMAT;
+		xsdDatetimeFormat.setTimeZone(KtbsConstants.UTC_ZONE);
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.DAY_OF_MONTH, day);
+		calendar.set(Calendar.HOUR, hours);
+		calendar.set(Calendar.MINUTE, min);
+		calendar.set(Calendar.SECOND, sec);
+		
+		String asXsdString = xsdDatetimeFormat.format(calendar.getTime());
+		return asXsdString;
+	}
+
 }

@@ -128,7 +128,7 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 * @param modelLocalName the name of the trace 
 	 * @return the uri of the created trace model, null if the creation failed
 	 */
-	public ITraceModel newTraceModel(String baseUri, String modelLocalName);
+	public String newTraceModel(String baseUri, String modelLocalName);
 
 	/**
 	 * 

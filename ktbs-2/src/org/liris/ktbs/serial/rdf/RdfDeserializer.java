@@ -16,7 +16,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 public class RdfDeserializer implements Deserializer {
 
-	private static final Logger log = LoggerFactory.getLogger(RdfDeserializer.class);
+	private static final Logger logger = LoggerFactory.getLogger(RdfDeserializer.class);
 	
 	public void setPojoFactory(ResourceFactory pojoFactory) {
 		this.pojoFactory = pojoFactory;
@@ -45,6 +45,7 @@ public class RdfDeserializer implements Deserializer {
 		Model model = ModelFactory.createDefaultModel();
 		model.read(reader, baseUri, KtbsUtils.getJenaSyntax(mimeFormat));
 		Rdf2Java rdf2Java = new Rdf2Java(model, deserializationConfig, pojoFactory, proxyFactory);
+		this.lastDeserializedModel = model;
 		return rdf2Java;
 	}
 
@@ -63,14 +64,14 @@ public class RdfDeserializer implements Deserializer {
 	@Override
 	public IKtbsResource deserializeResource(String uri, Reader reader,
 			String baseUri, String mimeType) {
-		log.info("Deserializing the resource " + uri);
+		logger.info("Deserializing the resource " + uri);
 		long start = System.currentTimeMillis();
 		
 		Rdf2Java rdf2Java = createMapper(reader, mimeType, baseUri);
 		IKtbsResource resource = rdf2Java.getResource(uri);
-		if(log.isDebugEnabled()) {
+		if(logger.isDebugEnabled()) {
 			long end = System.currentTimeMillis();
-			log.debug("Resource deserialized in " + (end-start) + "ms.");
+			logger.debug("Resource deserialized in " + (end-start) + "ms.");
 		}
 		
 		return resource;
@@ -79,16 +80,22 @@ public class RdfDeserializer implements Deserializer {
 	@Override
 	public <T extends IKtbsResource> T deserializeResource(String uri,
 			Reader reader, String baseUri, String mimeFormat, Class<T> cls) {
-		log.info("Deserializing the resource " + uri);
+		logger.info("Deserializing the resource " + uri);
 		long start = System.currentTimeMillis();
 		
 		Rdf2Java rdf2Java = createMapper(reader, mimeFormat, baseUri);
 		T resource = rdf2Java.getResource(uri, cls);
-		if(log.isDebugEnabled()) {
+		if(logger.isDebugEnabled()) {
 			long end = System.currentTimeMillis();
-			log.debug("Resource deserialized in " + (end-start) + "ms.");
+			logger.debug("Resource deserialized in " + (end-start) + "ms.");
 		}
-		
 		return resource;
+	}
+
+	private Model lastDeserializedModel;
+	
+	@Override
+	public Model getLastDeserializedModel() {
+		return lastDeserializedModel;
 	}
 }

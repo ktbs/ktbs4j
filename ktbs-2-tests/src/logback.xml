@@ -15,7 +15,8 @@
   </appender>
   
   <logger name="org.liris.ktbs.dao.rest" level="debug"/>
-  <logger name="org.liris.ktbs.examples" level="debug"/>
+  <logger name="org.liris.ktbs.examples" level="warn"/>
+  <logger name="org.liris.ktbs.service.caching.tests" level="info"/>
   
   <root level="warn">
     <appender-ref ref="stdout"/>

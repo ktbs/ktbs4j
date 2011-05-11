@@ -44,11 +44,20 @@ import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class KtbsUtils {
+	
+	private static final Logger logger = LoggerFactory.getLogger(KtbsUtils.class);
 
 	/**
 	 * Tell if a given property name is defined is a namespace reserved by the KTBS.
@@ -468,4 +477,59 @@ public class KtbsUtils {
 		return asXsdString;
 	}
 
+	public static String guessRdfType(String bodyAsString, String uri, String syntax) {
+		Model model = ModelFactory.createDefaultModel();
+		return guessRdfType(model, uri);
+	}
+
+	public static String guessRdfType(Model model, String uri) {
+		Class<? extends IKtbsResource> cls = guessResourceType(model, uri);
+		return getRDFType(cls);
+	}
+
+	public static Class<? extends IKtbsResource> guessResourceType(Model model,
+			String uri) {
+		Class<? extends IKtbsResource> cls = null;
+
+		if(logger.isDebugEnabled()) {
+			logger.debug("There are " + model.size() + " statements in the model.");
+		}
+
+		StmtIterator it = model.listStatements(model.getResource(uri), RDF.type, (RDFNode)null);
+		if(!it.hasNext()) {
+			/*
+			 *  Maybe a TraceModel, let the method caller decide
+			 */
+			return null;
+		} else {
+			Statement statement = (Statement) it.next();
+			String rdfType = statement.getObject().asResource().getURI();
+			cls = KtbsUtils.getJavaClass(rdfType);
+			if(cls == null) {
+				// maybe an obsel
+				StmtIterator it2 = model.listStatements(
+						model.getResource(uri), 
+						model.getProperty(KtbsConstants.P_HAS_TRACE), 
+						(RDFNode)null);
+				if(!it2.hasNext())
+					throw new IllegalStateException("The rdf:type of the resource " + uri + " is neither a ktbs known type nor an obsel type (no ktbs:hasTrace property for that resource)");
+				it2.next();
+				if(it2.hasNext())
+					throw new IllegalStateException("There are more than one ktbs:hasTrace property for the resource " + uri);
+
+				// this is an obsel
+				cls = Obsel.class;
+			} 
+		}
+
+		if(it.hasNext())
+			throw new IllegalStateException("There are more than one rdf:type defined for the resource " + uri);
+		return cls;
+	}
+
+	public static String removeUriAspects(String requestUri) {
+		if(requestUri == null)
+			return null;
+		return requestUri.replaceAll(KtbsConstants.ABOUT_ASPECT, "").replaceAll(KtbsConstants.OBSELS_ASPECT, "");
+	}
 }

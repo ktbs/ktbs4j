@@ -1,5 +1,6 @@
 package org.liris.ktbs.client;
 
+import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.UserAwareDao;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
@@ -11,7 +12,7 @@ import org.liris.ktbs.service.TraceModelService;
  * @author Damien Cram
  *
  */
-public class KtbsRootClientImpl implements KtbsRootClient {
+public class KtbsRootClientImpl implements KtbsClient {
 	
 	private StoredTraceService storedTraceService;
 	private ResourceService resourceService;
@@ -66,5 +67,10 @@ public class KtbsRootClientImpl implements KtbsRootClient {
 	@Override
 	public String getRootUri() {
 		return rootUri;
+	}
+
+	@Override
+	public ProxyFactory getProxyFactory() {
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 }

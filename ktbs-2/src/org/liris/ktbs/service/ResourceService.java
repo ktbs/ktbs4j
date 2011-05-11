@@ -68,6 +68,8 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 * @return the retrieved resource object
 	 */
 	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls);
+	public IKtbsResource getResource(String uri);
+	public boolean exists(String uri);
 	
 	/**
 	 * Creates a new base in the KTBS.

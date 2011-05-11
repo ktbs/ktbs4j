@@ -25,7 +25,7 @@ public class ResourceManagerSaveTestCase extends TestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		manager = Ktbs.getRestRootClient().getResourceService();
+		manager = Ktbs.getRestClient().getResourceService();
 		root = manager.getResource("http://localhost:8001/", IRoot.class);
 		factory = new PojoFactory();
 	}

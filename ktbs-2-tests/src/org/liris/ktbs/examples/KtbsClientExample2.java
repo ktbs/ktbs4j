@@ -1,7 +1,7 @@
 package org.liris.ktbs.examples;
 
 import org.liris.ktbs.client.Ktbs;
-import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
@@ -9,21 +9,21 @@ import org.liris.ktbs.service.TraceModelService;
 
 public class KtbsClientExample2 {
 
-	private KtbsRootClient client;
+	private KtbsClient client;
 	private TraceModelService traceModelService;
 	
-	public KtbsClientExample2(KtbsRootClient restClient) {
+	public KtbsClientExample2(KtbsClient restClient) {
 		this.client = restClient;
 		traceModelService = client.getTraceModelService();
 	}
 
 	public static void main(String[] args) {
-		KtbsClientExample2 app = new KtbsClientExample2(Ktbs.getRestRootClient());
+		KtbsClientExample2 app = new KtbsClientExample2(Ktbs.getRestClient());
 		app.createTM("http://localhost:8001/base1/", "visuModel");
 	}
 
 	public static void create(String base, String modelName) {
-		KtbsClientExample2 app = new KtbsClientExample2(Ktbs.getRestRootClient());
+		KtbsClientExample2 app = new KtbsClientExample2(Ktbs.getRestClient());
 		app.createTM(base, modelName);
 	}
 	

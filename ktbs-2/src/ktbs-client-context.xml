@@ -6,11 +6,19 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<!-- Default property values -->
+		 <property name="properties">  
+		    <props>  
+		      <prop key="ktbs.root.uri">http://localhost:8001/</prop>  
+		      <prop key="ktbs.cache.timeout">60000</prop> <!-- 1 minute -->
+		      <prop key="ktbs.cache.size">2000</prop>
+		    </props>  
+		  </property>
 		<property name="locations" value="classpath:**/ktbs-client.properties" />
 	</bean>
 
 	<bean id="restRootClient" class="org.liris.ktbs.client.KtbsRootClientImpl">
-		<constructor-arg value="${ktbs.root.uri}"/>
+		<constructor-arg value="${ktbs.root.uri}" />
 		<property name="dao" ref="restDao" />
 		<property name="resourceService" ref="defaultRestResourceManager" />
 		<property name="storedTraceService" ref="storedTraceManager" />
@@ -18,7 +26,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	</bean>
 
 	<bean id="memoryRootClient" class="org.liris.ktbs.client.KtbsRootClientImpl">
-		<constructor-arg value="${ktbs.root.uri}"/>
+		<constructor-arg value="${ktbs.root.uri}" />
 		<property name="resourceService" ref="defaultMemoryProxyingManager" />
 		<property name="traceModelService" ref="defaultMemoryTraceModelManager" />
 	</bean>
@@ -51,6 +59,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 	<bean id="proxyFactory" class="org.liris.ktbs.dao.ProxyFactory">
 		<property name="dao" ref="restDao" />
 	</bean>
+
 
 	<bean id="multiUserRootProvider" class="org.liris.ktbs.service.impl.MultiUserServiceImpl"
 		init-method="init" destroy-method="destroy">
@@ -98,4 +107,45 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<constructor-arg index="0" value="${ktbs.root.uri}" />
 	</bean>
 
+	<!-- Caching beans -->
+	<bean id="restCachingDao" class="org.liris.ktbs.dao.rest.RestDao"
+		init-method="init">
+		<constructor-arg ref="apacheClient" />
+		<property name="rootUri" value="${ktbs.root.uri}" />
+		<property name="serializer" ref="rdfSerializer" />
+		<property name="deserializer" ref="cachingRdfDeserializer" />
+		<property name="linkedResourceFactory" ref="cachingProxyFactory" />
+		<property name="resourceFactory" ref="pojoFactory" />
+	</bean>
+
+	<bean id="cachingDao" class="org.liris.ktbs.dao.DefaultCachingDao"
+		init-method="init" lazy-init="true">
+		<property name="daoDelegate" ref="restCachingDao" />
+		<property name="resourceTimeOut" value="${ktbs.cache.timeout}" />
+		<property name="maxNumberOfResources" value="${ktbs.cache.size}" />
+	</bean>
+
+	<bean id="cachingProxyFactory" class="org.liris.ktbs.dao.ProxyFactory">
+		<property name="dao" ref="cachingDao" />
+	</bean>
+
+	<bean id="cachingRdfDeserializer" class="org.liris.ktbs.serial.rdf.RdfDeserializer">
+		<property name="proxyFactory" ref="cachingProxyFactory" />
+		<property name="pojoFactory" ref="pojoFactory" />
+	</bean>
+
+	<bean id="cachingRestResourceManager" class="org.liris.ktbs.service.impl.CachingResourceManager">
+		<property name="rootUri" value="${ktbs.root.uri}" />
+		<property name="dao" ref="cachingDao" />
+		<property name="proxyFactory" ref="cachingProxyFactory" />
+		<property name="pojoFactory" ref="pojoFactory" />
+	</bean>
+
+	<bean id="restCachingClient" class="org.liris.ktbs.client.KtbsRootClientImpl">
+		<constructor-arg value="${ktbs.root.uri}" />
+		<property name="dao" ref="cachingDao" />
+		<property name="resourceService" ref="cachingRestResourceManager" />
+		<property name="storedTraceService" ref="storedTraceManager" />
+		<property name="traceModelService" ref="traceModelRestManager" />
+	</bean>
 </beans>

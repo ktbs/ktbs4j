@@ -90,7 +90,7 @@ public class Rdf2Java {
 
 	public IKtbsResource getResource(String uri) {
 		reset();
-		Class<? extends IKtbsResource> cls = guessType(uri);
+		Class<? extends IKtbsResource> cls = KtbsUtils.guessResourceType(model,uri);
 		return readResource(uri, cls);
 	}
 
@@ -873,40 +873,5 @@ public class Rdf2Java {
 			return null;
 	}
 
-	private Class<? extends IKtbsResource> guessType(String uri) {
-		Class<? extends IKtbsResource> cls = null;
 
-		if(log.isDebugEnabled()) {
-			log.debug("There are " + model.size() + " statements in the model.");
-		}
-
-		StmtIterator it = model.listStatements(model.getResource(uri), RDF.type, (RDFNode)null);
-		if(!it.hasNext())
-			throw new IllegalStateException("Cannot guess the type of resource. There is no rdf:type defined for the resource " + uri);
-		if(it.hasNext()) {
-			Statement statement = (Statement) it.next();
-			String rdfType = statement.getObject().asResource().getURI();
-			cls = KtbsUtils.getJavaClass(rdfType);
-			if(cls == null) {
-				// maybe an obsel
-				StmtIterator it2 = model.listStatements(
-						model.getResource(uri), 
-						model.getProperty(KtbsConstants.P_HAS_TRACE), 
-						(RDFNode)null);
-				if(!it2.hasNext())
-					throw new IllegalStateException("The rdf:type of the resource " + uri + " is neither a ktbs known type nor an obsel type (no ktbs:hasTrace property for that resource)");
-				it2.next();
-				if(it2.hasNext())
-					throw new IllegalStateException("There are more than one ktbs:hasTrace property for the resource " + uri);
-
-				// this is an obsel
-				cls = Obsel.class;
-			} 
-		}
-
-		if(it.hasNext())
-			throw new IllegalStateException("There are more than one rdf:type defined for the resource " + uri);
-
-		return cls;
-	}
 }

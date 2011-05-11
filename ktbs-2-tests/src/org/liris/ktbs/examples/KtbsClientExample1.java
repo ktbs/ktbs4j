@@ -1,7 +1,7 @@
 package org.liris.ktbs.examples;
 
 import org.liris.ktbs.client.Ktbs;
-import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
@@ -20,7 +20,7 @@ public class KtbsClientExample1 {
 		// Get a KTBS client that uses REST to communicate
 		// with a KTBS
 		// the ktbs root uri is given in ktbs.root.uri
-		KtbsRootClient client = Ktbs.getRestRootClient();
+		KtbsClient client = Ktbs.getRestClient();
 		
 		// Display the root uri
 		System.out.println(client.getRootUri());

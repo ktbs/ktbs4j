@@ -1,5 +1,6 @@
 package org.liris.ktbs.client;
 
+import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.TraceModelService;
@@ -11,7 +12,9 @@ import org.liris.ktbs.service.TraceModelService;
  * @author Damien Cram
  *
  */
-public interface KtbsRootClient {
+public interface KtbsClient {
+	
+	public ProxyFactory getProxyFactory();
 	
 	/**
 	 * Give the uri of the KTBS root against which this client operates.

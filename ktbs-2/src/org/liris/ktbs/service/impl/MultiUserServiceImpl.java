@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.client.KtbsRootClientImpl;
 import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.rest.ApacheKtbsRestClient;
@@ -23,7 +23,7 @@ import com.ibm.icu.util.Calendar;
 public class MultiUserServiceImpl extends RootAwareService implements MultiUserRootProvider {
 		
 	private Map<String, Calendar> lastAccess;
-	private Map<String, KtbsRootClient> clients;
+	private Map<String, KtbsClient> clients;
 	
 	// timeout in minutes;
 	private int timeout = 150;
@@ -36,7 +36,7 @@ public class MultiUserServiceImpl extends RootAwareService implements MultiUserR
 	// the init method
 	public void init() {
 		lastAccess = new HashMap<String, Calendar>();
-		clients = new HashMap<String, KtbsRootClient>();
+		clients = new HashMap<String, KtbsClient>();
 		
 		timer = new Timer(true);
 		TimerTask task = new TimerTask() {
@@ -55,7 +55,7 @@ public class MultiUserServiceImpl extends RootAwareService implements MultiUserR
 	}
 
 	@Override
-	public KtbsRootClient getClient(String user) {
+	public KtbsClient getClient(String user) {
 		if(clients.get(user) == null) 
 			throw new RuntimeException("No KTBS client is opened for the user " + user + ". ");
 		 else {
@@ -150,7 +150,7 @@ public class MultiUserServiceImpl extends RootAwareService implements MultiUserR
 		if(hasClient(user))
 			return false; 
 		else {
-			KtbsRootClient client = makeClient();
+			KtbsClient client = makeClient();
 			client.setCredentials(user, password);
 			clients.put(user, client);
 			updateAccess(user);

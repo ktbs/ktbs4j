@@ -35,7 +35,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	/*
 	 * Injected by Spring
 	 */
-	private ResourceDao dao;
+	protected ResourceDao dao;
 	private ProxyFactory proxyFactory;
 	private ResourceFactory pojoFactory;
 
@@ -249,5 +249,14 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	public KtbsResponse getLastResponse() {
 		return dao.getLastResponse();
 	}
-	
+
+	@Override
+	public IKtbsResource getResource(String uri) {
+		throw new UnsupportedOperationException("Not yet supported");
+	}
+
+	@Override
+	public boolean exists(String uri) {
+		throw new UnsupportedOperationException("Not yet supported");
+	}
 }

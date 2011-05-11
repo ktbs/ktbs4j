@@ -17,7 +17,7 @@ import org.liris.ktbs.utils.KtbsUtils;
 public class DebugEscapeCharacterKTBS {
 
 	public static void main(String[] args) {
-		ResourceService manager = Ktbs.getRestRootClient().getResourceService();
+		ResourceService manager = Ktbs.getRestClient().getResourceService();
 
 //		createBaseAndTrace(manager);
 				createObsel(manager);

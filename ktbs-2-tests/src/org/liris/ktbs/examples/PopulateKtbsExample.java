@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
 import org.liris.ktbs.client.Ktbs;
-import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IMethod;
 import org.liris.ktbs.domain.interfaces.IObselType;
@@ -38,7 +37,7 @@ public class PopulateKtbsExample {
 		if(args.length > 0 && args[0] instanceof String)
 			BASE_LOCAL_NAME = args[0];
 
-		KtbsRootClient ktbsClient = Ktbs.getRestRootClient();
+		KtbsClient ktbsClient = Ktbs.getRestClient();
 
 		ResourceService service = ktbsClient.getResourceService();
 		StoredTraceService traceService = ktbsClient.getStoredTraceService();

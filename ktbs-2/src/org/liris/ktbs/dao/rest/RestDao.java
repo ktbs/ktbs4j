@@ -21,6 +21,7 @@ import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.ITrace;
+import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.serial.Deserializer;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
@@ -104,9 +105,9 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
 
-		String absoluteUri = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
+		String absoluteUriWithoutAspect = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
 
-		String requestUri = absoluteUri;
+		String requestUri = absoluteUriWithoutAspect;
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
 			requestUri+=KtbsConstants.ABOUT_ASPECT;
 
@@ -117,10 +118,12 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		if(!response.hasSucceeded())
 			return null;
 		else {
-			saveEtag(requestUri, response);
 
 			String bodyAsString = response.getBodyAsString();
+
+
 			String mimeType = response.getMimeType();
+
 
 			if(mimeType.equals(KtbsConstants.MIME_TURTLE)) {
 				log.debug("Resolving relative uris for parsing turtle syntax against the base uri " + requestUri);
@@ -128,11 +131,31 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			}
 
 			T resource = deserializer.deserializeResource(
-					absoluteUri,
+					absoluteUriWithoutAspect,
 					new StringReader(bodyAsString), 
 					requestUri, 
 					mimeType, 
 					cls);
+
+
+			String uriWithoutAspects = KtbsUtils.removeUriAspects(requestUri);
+			Class<? extends IKtbsResource> foundResourceType = KtbsUtils.guessResourceType(deserializer.getLastDeserializedModel(), uriWithoutAspects);
+
+			if(foundResourceType == null) {
+				/*
+				 * Maybe a TraceModel since KTBS returns no rdf:type statement for a ktbs:TraceModel
+				 */
+				if(!ITraceModel.class.isAssignableFrom(cls)) {
+					log.warn("Retrieved ressource {} was found to have no rdf:type statement, excepted type is \"{}\".", new Object[]{requestUri, foundResourceType, cls});
+					return null;
+				}
+			} else if(!cls.isAssignableFrom(foundResourceType)) {
+				log.warn("Retrieved ressource {} was found to be of type \"{}\" while the excepted type is \"{}\".", new Object[]{requestUri, foundResourceType, cls});
+				return null;
+			}
+
+
+			saveEtag(requestUri, response);
 
 			// This should be connected into the Rdf2Java mapper
 			if (resource instanceof ITrace) {
@@ -161,7 +184,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	@Override
 	public String create(IKtbsResource resource) {
 		KtbsResponse response = doCreate(resource);
-		
+
 		if(response.hasSucceeded()) {
 			String httpLocation = response.getHTTPLocation();
 			if(httpLocation == null)
@@ -183,11 +206,11 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		log.debug("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
 		KtbsResponse response = client.post(resource.getParentUri(), writer.toString(), sendMimeType);
 		this.lastResponse = response;
-		
+
 		log.debug("Resource creation " + (response.hasSucceeded()?"succeeded":"failed"));
 		return response;
 	}
-	
+
 	private boolean isUriAlreadyInUse(KtbsResponse response) {
 		return response.getServerMessage() != null 
 		&& response.getServerMessage().matches("400 URI Already in Use");

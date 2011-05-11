@@ -14,9 +14,14 @@ public class ResourceManagerGetTestCase extends TestCase {
 
 	private ResourceService manager;
 	
+	public static void main(String[] args) {
+		ResourceService manager;
+		manager = Ktbs.getRestClient().getResourceService();
+	}
+	
 	@Before
 	public void setUp() throws Exception {
-			manager = Ktbs.getRestRootClient().getResourceService();
+			manager = Ktbs.getRestClient().getResourceService();
 	}
 
 	public void testGet() {

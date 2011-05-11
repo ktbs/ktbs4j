@@ -1,6 +1,6 @@
 package org.liris.ktbs.service;
 
-import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.client.KtbsClient;
 
 public interface MultiUserRootProvider {
 
@@ -15,6 +15,6 @@ public interface MultiUserRootProvider {
 	 * @return the client for this user.
 	 * @throws RuntimeException when no client is instanciated for the user.
 	 */
-	public KtbsRootClient getClient(String user);
+	public KtbsClient getClient(String user);
 
 }

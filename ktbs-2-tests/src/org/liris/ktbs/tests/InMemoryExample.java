@@ -11,7 +11,7 @@ public class InMemoryExample {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ResourceService manager = Ktbs.getMemoryRootClient().getResourceService();
+		ResourceService manager = Ktbs.getMemoryClient().getResourceService();
 		
 		IRoot root = manager.getResource("http://localhost:8001/", IRoot.class);
 

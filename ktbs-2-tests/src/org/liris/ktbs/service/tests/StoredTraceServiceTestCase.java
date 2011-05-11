@@ -10,7 +10,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.liris.ktbs.client.Ktbs;
-import org.liris.ktbs.client.KtbsRootClient;
+import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
@@ -30,7 +30,7 @@ public class StoredTraceServiceTestCase extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		MultiUserRootProvider service = Ktbs.getMultiUserRestRootProvider();
-		KtbsRootClient clientDamien;
+		KtbsClient clientDamien;
 		if(service.openClient("Damien", "dtotio")) {
 			clientDamien = service.getClient("Damien");
 		} else 

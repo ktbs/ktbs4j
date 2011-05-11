@@ -118,6 +118,15 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		log.info("Session closed.");
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+	    try {
+	    	endSession();
+	    } finally {
+	        super.finalize();
+	    }
+	}
+	
 	private void checkStarted() {
 		if(!isStarted()) {
 			String message = MESSAGE_CLIENT_NOT_STARTED;

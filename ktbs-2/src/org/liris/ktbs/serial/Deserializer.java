@@ -5,6 +5,8 @@ import java.io.Reader;
 import org.liris.ktbs.dao.ResultSet;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 
+import com.hp.hpl.jena.rdf.model.Model;
+
 public interface Deserializer {
 	public IKtbsResource deserializeResource(String uri, Reader reader, String mimeFormat);
 	public IKtbsResource deserializeResource(String uri, Reader reader,
@@ -16,4 +18,5 @@ public interface Deserializer {
 	public <T extends IKtbsResource> ResultSet<T> deserializeResourceSet(Class<T> cls, Reader reader, String baseUri, String mimeFormat);
 
 	public void setDeserializationConfig(DeserializationConfig config);
+	public Model getLastDeserializedModel();
 }

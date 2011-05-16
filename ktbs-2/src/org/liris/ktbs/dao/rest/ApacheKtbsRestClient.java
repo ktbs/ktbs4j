@@ -15,6 +15,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -120,13 +121,13 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 	@Override
 	protected void finalize() throws Throwable {
-	    try {
-	    	endSession();
-	    } finally {
-	        super.finalize();
-	    }
+		try {
+			endSession();
+		} finally {
+			super.finalize();
+		}
 	}
-	
+
 	private void checkStarted() {
 		if(!isStarted()) {
 			String message = MESSAGE_CLIENT_NOT_STARTED;
@@ -256,7 +257,49 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 	@Override
 	public synchronized KtbsResponse delete(String resourceURI) {
-		throw new UnsupportedOperationException();
+		checkStarted(); 
+
+		HttpDelete delete = new HttpDelete(resourceURI);
+
+		HttpResponse response = null;
+		KtbsResponseStatus ktbsResponseStatus = null;
+
+		String body = null;
+
+		try {
+			log.debug("Sending DELETE request to the KTBS: " + delete.getRequestLine());
+			response = httpClient.execute(delete);
+			if(response == null)
+				ktbsResponseStatus=KtbsResponseStatus.CLIENT_ERR0R;
+			else {
+				int statusCode = response.getStatusLine().getStatusCode();
+				ktbsResponseStatus = statusCode==HttpStatus.SC_NO_CONTENT ?
+						KtbsResponseStatus.RESOURCE_DELETED:
+							KtbsResponseStatus.REQUEST_FAILED;
+			}
+
+			if(ktbsResponseStatus != KtbsResponseStatus.RESOURCE_DELETED)
+				// a content may exists
+				body = EntityUtils.toString(response.getEntity());
+			if(log.isDebugEnabled()) {
+				log.debug("Response header:" + response.getStatusLine());
+				log.debug("Response body:\n" + body);
+			}
+			EntityUtils.consume(response.getEntity());
+		} catch (ClientProtocolException e) {
+			log.error("An error occured when communicating with the KTBS", e);
+			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
+		} catch (IOException e) {
+			log.error("An exception occurred when reading the content of the HTTP response", e);
+			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
+		}
+
+		return new KtbsResponseImpl(
+				null, 
+				body,
+				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_DELETED, 
+				ktbsResponseStatus, 
+				response);
 	}
 
 	@Override

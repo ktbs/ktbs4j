@@ -161,11 +161,10 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 * Delete a resource from the KTBS.
 	 * 
 	 * @param uri the uri of the resource to be deleted
-	 * @param cascadeLinked true if linked resources should be deleted in cascade too
-	 * @param cascadeChildren true if children resources should be deleted in cascade too
 	 * @return true if the deletion is operated successfully, false otherwise
 	 */
-	public boolean deleteResource(String uri, boolean cascadeLinked, boolean cascadeChildren);
+	public boolean deleteResource(String uri);
+	public boolean deleteResource(IKtbsResource resource);
 
 	/**
 	 * Save a resource in the KTBS.

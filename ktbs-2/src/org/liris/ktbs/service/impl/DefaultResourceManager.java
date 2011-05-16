@@ -181,9 +181,13 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 	}
 
 	@Override
-	public boolean deleteResource(String uri,
-			boolean cascadeLinked, boolean cascadeChildren) {
-		throw new UnsupportedOperationException("Not yet implemented");
+	public boolean deleteResource(String uri) {
+		return dao.delete(uri);
+	}
+
+	@Override
+	public boolean deleteResource(IKtbsResource resource) {
+		return dao.delete(resource.getUri());
 	}
 
 	@Override

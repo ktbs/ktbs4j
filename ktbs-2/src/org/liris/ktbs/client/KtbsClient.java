@@ -24,14 +24,6 @@ public interface KtbsClient {
 	public String getRootUri();
 
 	/**
-	 * Register authentication data required for this root.
-	 * 
-	 * @param username the KTBS username
-	 * @param password the password
-	 */
-	public void setCredentials(String username, String password);
-	
-	/**
 	 * Give a service object for general KTBS resource handling.
 	 * 
 	 * @return the unique {@link ResourceService} object contained in this client

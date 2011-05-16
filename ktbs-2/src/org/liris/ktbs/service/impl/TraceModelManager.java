@@ -14,28 +14,24 @@ import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.IRelationType;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
-import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.service.IRootAwareService;
 import org.liris.ktbs.service.ResponseAwareService;
 import org.liris.ktbs.service.TraceModelService;
 import org.liris.ktbs.utils.KtbsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TraceModelManager extends RootAwareService implements TraceModelService, ResponseAwareService {
+public class TraceModelManager  implements TraceModelService, ResponseAwareService, IRootAwareService {
 
 	private PojoFactory factory;
-	public void setFactory(PojoFactory factory) {
-		this.factory = factory;
-	}
 
 	private ResourceDao dao;
-	public void setDao(ResourceDao dao) {
-		this.dao = dao;
-	}
 
-	private ResourceService resourceService;
-	public void setResourceService(ResourceService resourceService) {
-		this.resourceService = resourceService;
+	public TraceModelManager(ResourceDao dao, 
+			PojoFactory factory) {
+		super();
+		this.dao = dao;
+		this.factory = factory;
 	}
 
 	@Override
@@ -154,4 +150,10 @@ public class TraceModelManager extends RootAwareService implements TraceModelSer
 			return dao.get(modelUri, ITraceModel.class);
 		}
 	}
+	
+	@Override
+	public String getRootUri() {
+		return dao.getRootUri();
+	}
+
 }

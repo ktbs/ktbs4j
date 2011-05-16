@@ -2,8 +2,9 @@ package org.liris.ktbs.serial.rdf;
 
 import java.io.Reader;
 
+import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.ResultSet;
-import org.liris.ktbs.domain.ResourceFactory;
+import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.serial.DeserializationConfig;
 import org.liris.ktbs.serial.Deserializer;
@@ -18,18 +19,18 @@ public class RdfDeserializer implements Deserializer {
 
 	private static final Logger logger = LoggerFactory.getLogger(RdfDeserializer.class);
 	
-	public void setPojoFactory(ResourceFactory pojoFactory) {
+	public void setPojoFactory(PojoFactory pojoFactory) {
 		this.pojoFactory = pojoFactory;
 	}
 	
-	public void setProxyFactory(ResourceFactory proxyFactory) {
+	public void setProxyFactory(ProxyFactory proxyFactory) {
 		this.proxyFactory = proxyFactory;
 	}
 	
 	private DeserializationConfig deserializationConfig = new DeserializationConfig();
 	
-	private ResourceFactory pojoFactory;
-	private ResourceFactory proxyFactory;
+	private PojoFactory pojoFactory;
+	private ProxyFactory proxyFactory;
 	
 	@Override
 	public void setDeserializationConfig(DeserializationConfig deserializationConfig) {

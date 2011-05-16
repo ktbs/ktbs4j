@@ -15,19 +15,18 @@ import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.dao.ResultSet;
 import org.liris.ktbs.dao.UserAwareDao;
-import org.liris.ktbs.domain.ResourceFactory;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
-import org.liris.ktbs.serial.Deserializer;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.SerializationMode;
-import org.liris.ktbs.serial.Serializer;
+import org.liris.ktbs.serial.SerializerFactory;
 import org.liris.ktbs.serial.rdf.Java2Rdf;
+import org.liris.ktbs.serial.rdf.RdfDeserializer;
 import org.liris.ktbs.service.impl.ResourceNotFoundException;
 import org.liris.ktbs.utils.KtbsUtils;
 import org.liris.ktbs.utils.RelativeURITurtleReader;
@@ -49,51 +48,33 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	private Map<String, String> etags = new HashMap<String, String>();
 	private KtbsRestClient client;
 
-	private Serializer serializer;
-	private Deserializer deserializer;
 	private String rootUri;
 	private KtbsResponse lastResponse;
 
-	public void setRootUri(String rootUri) {
+	private SerializerFactory serializerFactory;
+	public void setSerializerFactory(SerializerFactory serializerFactory) {
+		this.serializerFactory = serializerFactory;
+	}
+	
+	@Override
+	public String getRootUri() {
+		return rootUri;
+	}
+	
+	public RestDao(KtbsRestClient client, String rootUri) {
+		super();
+		this.client = client;
 		this.rootUri = rootUri;
 	}
-
-	public void setSerializer(Serializer serializer) {
-		this.serializer = serializer;
-	}
-
-	public void setDeserializer(Deserializer deserializer) {
-		this.deserializer = deserializer;
-	}
-
-	public RestDao(KtbsRestClient client) {
-		super();
-		this.client = client;
-	}
-
-	public RestDao(Map<String, String> etags, KtbsRestClient client,
-			Serializer serializer, Deserializer deserializer,
-			ProxyFactory proxyFactory, ResourceFactory pojoFactory) {
-		super();
-		this.etags = etags;
-		this.client = client;
-		this.serializer = serializer;
-		this.deserializer = deserializer;
-		this.proxyFactory = proxyFactory;
-		this.pojoFactory = pojoFactory;
-	}
-
+	
+	/*
+	 * Injected by DaoFactory after creation
+	 */
 	private ProxyFactory proxyFactory;
-	private ResourceFactory pojoFactory;
-
-	public void setLinkedResourceFactory(ProxyFactory linkedResourceFactory) {
-		this.proxyFactory = linkedResourceFactory;
+	public void setProxyFactory(ProxyFactory proxyFactory) {
+		this.proxyFactory = proxyFactory;
 	}
-
-	public void setResourceFactory(ResourceFactory resourceFactory) {
-		this.pojoFactory = resourceFactory;
-	}
-
+	
 	public void destroy() {
 		client.endSession();
 	}
@@ -105,9 +86,10 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
 
-		String absoluteUriWithoutAspect = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
+		String absoluteUri = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
 
-		String requestUri = absoluteUriWithoutAspect;
+		String requestUri = absoluteUri;
+		
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
 			requestUri+=KtbsConstants.ABOUT_ASPECT;
 
@@ -130,8 +112,9 @@ public class RestDao implements ResourceDao, UserAwareDao {
 				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, requestUri);
 			}
 
+			RdfDeserializer deserializer = serializerFactory.newRdfDeserializer(proxyFactory);
 			T resource = deserializer.deserializeResource(
-					absoluteUriWithoutAspect,
+					absoluteUri,
 					new StringReader(bodyAsString), 
 					requestUri, 
 					mimeType, 
@@ -167,6 +150,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IKtbsResource> T createAndGet(T resource) {
 		KtbsResponse response = doCreate(resource);
@@ -200,7 +184,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			throw new DaoException("A trace model element cannot be created through the current " +
 			"Rest API. Modify and save its parent trace model instead.");
 		StringWriter writer = new StringWriter();
-		serializer.serializeResource(writer, resource, sendMimeType);
+		serializerFactory.newRdfSerializer().serializeResource(writer, resource, sendMimeType);
 
 		String uri = resource.getUri();
 		log.debug("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
@@ -320,7 +304,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		String etag = getEtag(uriToSave);
 		StringWriter writer = new StringWriter();
 
-		serializer.serializeResourceSet(writer, collection, sendMimeType);
+		serializerFactory.newRdfSerializer().serializeResourceSet(writer, collection, sendMimeType);
 
 		log.debug("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
 		KtbsResponse response = client.update(uriToSave, writer.toString(), sendMimeType, etag);
@@ -419,7 +403,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, request);
 			}
 
-			ResultSet<T> resultSet = deserializer.deserializeResourceSet(cls, new StringReader(bodyAsString), request, mimeType);
+			ResultSet<T> resultSet = serializerFactory.newRdfDeserializer(proxyFactory).deserializeResourceSet(cls, new StringReader(bodyAsString), request, mimeType);
 
 			for(T r:resultSet) {
 				// This should be connected into the Rdf2Java mapper
@@ -481,5 +465,10 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	@Override
 	public KtbsResponse getLastResponse() {
 		return lastResponse;
+	}
+
+	@Override
+	public ProxyFactory getProxyFactory() {
+		return proxyFactory;
 	}
 }

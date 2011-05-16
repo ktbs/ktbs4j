@@ -11,6 +11,7 @@ import junit.framework.TestCase;
 
 import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.client.KtbsClient;
+import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
@@ -46,20 +47,22 @@ public class StoredTraceServiceTestCase extends TestCase {
 
 
 	public void testNewObsel() {
-		IStoredTrace trace = storedTraceService.newStoredTrace(
+		
+		String traceUri = storedTraceService.newStoredTrace(
 				"http://localhost:8001/base1/", 
 				"http://localhost:8001/base1/visuModel/", 
 		"Damien");
+		IStoredTrace trace = resourceService.getStoredTrace(traceUri);
 		
 		Set<IObsel> set = new HashSet<IObsel>();
 		
-		set.add(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", 1000));
-		set.add(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroViewResizeEvent", 2000));
-		set.add(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroDoubleClickTraceLineStartCreateCommentEvent", 4000));
-		set.add(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", 4500));
-		set.add(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroViewResizeEvent", 98000));
-		set.add(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroDoubleClickTraceLineStartCreateCommentEvent", 101000));
-		set.add(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", 110000));
+		set.add(Ktbs.getPojoFactory().createObsel(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", 1000)));
+		set.add(Ktbs.getPojoFactory().createObsel(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroViewResizeEvent", 2000)));
+		set.add(Ktbs.getPojoFactory().createObsel(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroDoubleClickTraceLineStartCreateCommentEvent", 4000)));
+		set.add(Ktbs.getPojoFactory().createObsel(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", 4500)));
+		set.add(Ktbs.getPojoFactory().createObsel(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroViewResizeEvent", 98000)));
+		set.add(Ktbs.getPojoFactory().createObsel(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroDoubleClickTraceLineStartCreateCommentEvent", 101000)));
+		set.add(Ktbs.getPojoFactory().createObsel(storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", 110000)));
 		
 		ITrace traceOnServer = resourceService.getStoredTrace(trace.getUri());
 		
@@ -68,15 +71,19 @@ public class StoredTraceServiceTestCase extends TestCase {
 		ObselBuilder builder = storedTraceService.newObselBuilder(trace);
 		builder.setType("http://localhost:8001/base1/visuModel/RetroWorkbenchEvent");
 		builder.setBegin(120000);
+		builder.setEnd(140000);
 		builder.setSubject("Nestor");
 		builder.addAttribute("http://localhost:8001/base1/visuModel/from", 2);
 		builder.addAttribute("http://localhost:8001/base1/visuModel/to", 3);
 		String builtObselUri = builder.create();
+		assertNotNull(builtObselUri);
 		IObsel builtObsel = resourceService.getResource(builtObselUri, IObsel.class);
+		assertNotNull(builtObsel);
 		set.add(builtObsel);
 		
 		traceOnServer = resourceService.getStoredTrace(trace.getUri());
 		
+		Set<IObsel> obselsOnServer = traceOnServer.getObsels();
 		assertEquals(set, traceOnServer.getObsels());
 		
 		IObsel builtObselOnServeur = traceOnServer.get(builtObsel.getUri());
@@ -85,28 +92,29 @@ public class StoredTraceServiceTestCase extends TestCase {
 	}
 
 	public void testBufferedCollect() {
-		IStoredTrace trace = storedTraceService.newStoredTrace(
+		String traceUri = storedTraceService.newStoredTrace(
 				"http://localhost:8001/base1/", 
 				"http://localhost:8001/base1/visuModel/", 
 		"Damien");
+		IStoredTrace trace = resourceService.getStoredTrace(traceUri);
 		
 		storedTraceService.startBufferedCollect(trace);
 		Deque<IObsel> set = new LinkedList<IObsel>();
 		
-		IObsel o1 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s1", 1);
-		set.add(o1);
-		IObsel o2 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s2", 2);
-		set.add(o2);
-		IObsel o3 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s3", 4);
-		set.add(o3);
-		IObsel o4 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s4", 4);
-		set.add(o4);
-		IObsel o5 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s5", 6);
-		set.add(o5);
-		IObsel o6 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s6", 9);
-		set.add(o6);
-		IObsel o7 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s7", 11);
-		set.add(o7);
+		String o1 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s1", 1);
+		set.add(Ktbs.getPojoFactory().createObsel(o1));
+		String  o2 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s2", 2);
+		set.add(Ktbs.getPojoFactory().createObsel(o2));
+		String  o3 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s3", 4);
+		set.add(Ktbs.getPojoFactory().createObsel(o3));
+		String  o4 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s4", 4);
+		set.add(Ktbs.getPojoFactory().createObsel(o4));
+		String  o5 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s5", 6);
+		set.add(Ktbs.getPojoFactory().createObsel(o5));
+		String  o6 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s6", 9);
+		set.add(Ktbs.getPojoFactory().createObsel(o6));
+		String  o7 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s7", 11);
+		set.add(Ktbs.getPojoFactory().createObsel(o7));
 		
 		ITrace traceOnServer = resourceService.getStoredTrace(trace.getUri());
 		assertEquals(Collections.EMPTY_SET, resourceService.getStoredTrace(trace.getUri()).getObsels());
@@ -123,27 +131,29 @@ public class StoredTraceServiceTestCase extends TestCase {
 	}
 	
 	public void testlistObsel() {
-		IStoredTrace trace = storedTraceService.newStoredTrace(
+		String traceUri = storedTraceService.newStoredTrace(
 				"http://localhost:8001/base1/", 
 				"http://localhost:8001/base1/visuModel/", 
 		"Damien");
 		
+		IStoredTrace trace= resourceService.getStoredTrace(traceUri);
 		Set<IObsel> set = new HashSet<IObsel>();
 		
-		IObsel o1 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s1", 1);
-		set.add(o1);
-		IObsel o2 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s2", 2);
-		set.add(o2);
-		IObsel o3 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s3", 4);
-		set.add(o3);
-		IObsel o4 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s4", 4);
-		set.add(o4);
-		IObsel o5 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s5", 6);
-		set.add(o5);
-		IObsel o6 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s6", 9);
-		set.add(o6);
-		IObsel o7 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s7", 11);
-		set.add(o7);
+		String o1 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s1", 1);
+		PojoFactory f = Ktbs.getPojoFactory();
+		set.add(f.createObsel(o1));
+		String o2 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s2", 2);
+		set.add(f.createObsel(o2));
+		String o3 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s3", 4);
+		set.add(f.createObsel(o3));
+		String o4 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s4", 4);
+		set.add(f.createObsel(o4));
+		String o5 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s5", 6);
+		set.add(f.createObsel(o5));
+		String o6 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s6", 9);
+		set.add(f.createObsel(o6));
+		String o7 = storedTraceService.newObsel(trace, "http://localhost:8001/base1/visuModel/s7", 11);
+		set.add(f.createObsel(o7));
 		
 		ITrace traceOnServer = resourceService.getStoredTrace(trace.getUri());
 		assertEquals(set, traceOnServer.getObsels());
@@ -153,18 +163,17 @@ public class StoredTraceServiceTestCase extends TestCase {
 		
 		Collection<IObsel> set2 = storedTraceService.listObsels(trace, 2, 6);
 		Set<IObsel> set2expected = new HashSet<IObsel>();
-		set2expected.add(o2);
-		set2expected.add(o3);
-		set2expected.add(o4);
-		set2expected.add(o5);
+		set2expected.add(f.createObsel(o2));
+		set2expected.add(f.createObsel(o3));
+		set2expected.add(f.createObsel(o4));
+		set2expected.add(f.createObsel(o5));
 		assertEquals(set2expected, set2);
 		
 		Collection<IObsel> set3 = storedTraceService.listObsels(trace, 5, 10);
 		Set<IObsel> set3expected = new HashSet<IObsel>();
-		set3expected.add(o6);
-		set3expected.add(o5);
+		set3expected.add(f.createObsel(o6));
+		set3expected.add(f.createObsel(o5));
 		assertEquals(set3expected, set3);
-		
 	}
 
 	public void testNewStoredTrace() {
@@ -184,6 +193,5 @@ public class StoredTraceServiceTestCase extends TestCase {
 		int size2 =resourceService.getResource("http://localhost:8001/base1/", IBase.class).getStoredTraces().size();
 
 		assertEquals(size1+nb, size2);
-
 	}
 }

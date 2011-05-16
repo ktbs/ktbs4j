@@ -1,6 +1,7 @@
 package org.liris.ktbs.dao;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,10 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.liris.ktbs.dao.rest.KtbsResponse;
-import org.liris.ktbs.dao.rest.RestDao;
-import org.liris.ktbs.domain.ResourceFactory;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
-import org.liris.ktbs.serial.Deserializer;
+import org.liris.ktbs.service.IRootAwareService;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -21,10 +20,14 @@ import com.google.common.collect.TreeMultimap;
 
 public class DefaultCachingDao implements CachingDao, UserAwareDao {
 
-	public DefaultCachingDao() {
+	public DefaultCachingDao(ResourceDao daoDelegate, int maxNumberOfResources, long resourceTimeOut) {
 		super();
+		this.maxNumberOfResources = maxNumberOfResources;
+		this.resourceTimeOut = resourceTimeOut;
+		this.daoDelegate = daoDelegate;
 		initCache();
 	}
+
 
 	private class CachedResource implements Comparable<CachedResource>{
 		private IKtbsResource resource;
@@ -58,49 +61,21 @@ public class DefaultCachingDao implements CachingDao, UserAwareDao {
 			else
 				return resource.compareTo(o.resource);
 		}
+		
+		@Override
+		public String toString() {
+			return resource.toString().replaceAll(DefaultCachingDao.this.getRootUri(), "");
+		}
 	}
 
 	private ResourceDao daoDelegate;
-	public void setDeserializer(Deserializer deserializer) {
-		((RestDao)daoDelegate).setDeserializer(deserializer);
-	}
 
-	public void setResourceFactory(ResourceFactory resourceFactory) {
-		((RestDao)daoDelegate).setResourceFactory(resourceFactory);
-	}
-
-	public void destroy() {
-		((RestDao)daoDelegate).destroy();
-	}
-
-	public void init() {
-		((RestDao)daoDelegate).init();
-	}
-
-	public void setCredentials(String username, String password) {
-		((RestDao)daoDelegate).setCredentials(username, password);
-	}
-
-	public void setLinkedResourceFactory(ProxyFactory linkedResourceFactory) {
-		((RestDao)daoDelegate).setLinkedResourceFactory(linkedResourceFactory);
-	}
-
-
-	public void setDaoDelegate(ResourceDao daoDelegate) {
-		this.daoDelegate = daoDelegate;
-	}
 
 	// Timeout before a resource is considered invalid
-	private long resourceTimeOut = 60000l; // 1 hour
-	public void setResourceTimeOut(long resourceTimeOut) {
-		this.resourceTimeOut = resourceTimeOut;
-	}
+	private long resourceTimeOut;
 
 	// The maximum number of resources allowed in the cache queue
-	private int maxNumberOfResources = 2000; 
-	public void setMaxNumberOfResources(int maxNumberOfResources) {
-		this.maxNumberOfResources = maxNumberOfResources;
-	}
+	private int maxNumberOfResources; 
 
 	private Map<String, CachedResource> uriIndex;
 	private Queue<CachedResource> cacheQueue;
@@ -160,13 +135,19 @@ public class DefaultCachingDao implements CachingDao, UserAwareDao {
 
 	private synchronized void removeOlderResourcesFromCache() {
 		// remove older ressources from cache
-		while(cacheQueue.size() >= this.maxNumberOfResources) {
+		while(cacheQueue.size() > this.maxNumberOfResources) {
 			CachedResource removedResource = cacheQueue.poll();
 			timestampIndex.get(removedResource.cacheTimestamp).remove(removedResource);
 			uriIndex.remove(removedResource.getResource().getUri());
 		}
 	}
 
+
+	@Override
+	public ProxyFactory getProxyFactory() {
+		return daoDelegate.getProxyFactory();
+	}
+	
 	private synchronized void removeFromCache(String uri) {
 		if(uri == null)
 			/*
@@ -275,5 +256,30 @@ public class DefaultCachingDao implements CachingDao, UserAwareDao {
 			return this.daoDelegate.get(uri, cls);
 		else
 			return this.getFromCache(uri, cls);
+	}
+
+	@Override
+	public void setCredentials(String username, String password) {
+		((UserAwareDao)this.daoDelegate).setCredentials(username, password);
+	}
+
+	@Override
+	public String getRootUri() {
+		return ((IRootAwareService)daoDelegate).getRootUri();
+	}
+	
+	public int size() {
+		return uriIndex.size();
+	}
+
+	public Collection<IKtbsResource> getCache() {
+		Collection<IKtbsResource> cache = new LinkedList<IKtbsResource>();
+		for(CachedResource cachedResource:uriIndex.values())
+			cache.add(cachedResource.getResource());
+		return Collections.unmodifiableCollection(cache);
+	}
+
+	public Collection<String> getCacheIds() {
+		return Collections.unmodifiableCollection(uriIndex.keySet());
 	}
 }

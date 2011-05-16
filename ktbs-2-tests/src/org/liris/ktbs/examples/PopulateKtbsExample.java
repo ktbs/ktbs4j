@@ -53,7 +53,7 @@ public class PopulateKtbsExample {
 			System.exit(1);
 		}
 
-		service.newBase(BASE_LOCAL_NAME, "Toto");
+		service.newBase(BASE_LOCAL_NAME);
 		String modelUri = service.newTraceModel(BASE_LOCAL_NAME, "model1");
 
 		// Fill the trace model

@@ -1,6 +1,8 @@
 package org.liris.ktbs.service.impl;
 
 import org.liris.ktbs.dao.CachingDao;
+import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
@@ -12,6 +14,10 @@ import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.CachingResourceService;
 
 public class CachingResourceManager extends DefaultResourceManager implements CachingResourceService {
+
+	public CachingResourceManager(ResourceDao dao, PojoFactory pojoFactory) {
+		super(dao, pojoFactory);
+	}
 
 	@Override
 	public IRoot getRoot(boolean ignoreCache) {
@@ -58,6 +64,5 @@ public class CachingResourceManager extends DefaultResourceManager implements Ca
 	public IKtbsResource getResource(String uri, boolean ignoreCache) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
-
-
+	
 }

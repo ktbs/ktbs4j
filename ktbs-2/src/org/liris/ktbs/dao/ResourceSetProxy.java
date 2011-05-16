@@ -13,7 +13,7 @@ public class ResourceSetProxy<T extends IKtbsResource> implements InvocationHand
 
 	private static final Logger log = LoggerFactory.getLogger(ResourceSetProxy.class);
 	
-	private boolean loaded;
+	private boolean loaded = false;
 	private String request;
 	private ResourceDao dao;
 	private Set<T> resources = new HashSet<T>();
@@ -22,8 +22,7 @@ public class ResourceSetProxy<T extends IKtbsResource> implements InvocationHand
 	public ResourceSetProxy(
 			ResourceDao dao, 
 			String request, 
-			Class<T> cls 
-	) {
+			Class<T> cls) {
 		super();
 		this.request = request;
 		this.dao = dao;

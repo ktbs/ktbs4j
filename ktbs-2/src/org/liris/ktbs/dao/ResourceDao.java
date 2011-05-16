@@ -29,6 +29,10 @@ public interface ResourceDao {
 			List<? extends IKtbsResource> collection);
 	
 	public KtbsResponse getLastResponse();
+
+	public String getRootUri();
+
+	public ProxyFactory getProxyFactory();
 	
 	
 }

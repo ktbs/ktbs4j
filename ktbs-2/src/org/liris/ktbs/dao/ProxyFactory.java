@@ -11,10 +11,12 @@ public class ProxyFactory extends AbstractResourceFactory implements ResourceFac
 	
 	private ResourceDao dao;
 	
-	public void setDao(ResourceDao dao) {
+	
+	public ProxyFactory(ResourceDao dao) {
+		super();
 		this.dao = dao;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IKtbsResource> T createResource(String uri, Class<T> cls) {

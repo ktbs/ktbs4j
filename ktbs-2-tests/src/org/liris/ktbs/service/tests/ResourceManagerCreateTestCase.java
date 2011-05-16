@@ -37,7 +37,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testCreateBase() {
-		IBase base2 = manager.getBase(manager.newBase("base2", "Owner de la base 2"));
+		IBase base2 = manager.getBase(manager.newBase("base2"));
 		IBase base2remote = manager.getResource("http://localhost:8001/base2/", IBase.class);
 		assertNotNull(base2remote);
 		assertEquals(base2, base2remote);
@@ -46,7 +46,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testCreateTraceModel() {
-		manager.newBase("base3", "Toto3");
+		manager.newBase("base3");
 		String model2Uri = manager.newTraceModel("http://localhost:8001/base3/", "model2");
 		
 		ITraceModel model2remote = manager.getResource("http://localhost:8001/base3/model2/", ITraceModel.class);
@@ -56,7 +56,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testCreateStoredTrace() {
-		manager.newBase("base4", "Toto4");
+		manager.newBase("base4");
 		manager.newTraceModel("http://localhost:8001/base4/", "model2");
 		IStoredTrace st2 = manager.getStoredTrace(manager.newStoredTrace(
 				"http://localhost:8001/base4/", 
@@ -79,7 +79,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testMethod() {
-		manager.newBase("base5", "Toto5");
+		manager.newBase("base5");
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("script", "le code");
 		parameters.put("param2", "value du param2");
@@ -104,7 +104,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 
 	@Test
 	public void testObsel() throws InterruptedException {
-		manager.newBase("base6", "Toto6");
+		manager.newBase("base6");
 		manager.newTraceModel("http://localhost:8001/base6/", "model6");
 		manager.newStoredTrace(
 				"http://localhost:8001/base6/", 
@@ -156,7 +156,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 	
 	@Test
 	public void testCreateComputedTrace() {
-		assertNotNull(manager.newBase("base7", "Toto7"));
+		assertNotNull(manager.newBase("base7"));
 		
 		assertNotNull(manager.newTraceModel("http://localhost:8001/base7/", "model7"));
 		

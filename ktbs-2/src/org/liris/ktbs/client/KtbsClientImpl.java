@@ -1,7 +1,7 @@
 package org.liris.ktbs.client;
 
 import org.liris.ktbs.dao.ProxyFactory;
-import org.liris.ktbs.dao.UserAwareDao;
+import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.TraceModelService;
@@ -12,19 +12,22 @@ import org.liris.ktbs.service.TraceModelService;
  * @author Damien Cram
  *
  */
-public class KtbsRootClientImpl implements KtbsClient {
+public class KtbsClientImpl implements KtbsClient {
 	
-	private StoredTraceService storedTraceService;
 	private ResourceService resourceService;
+	private StoredTraceService storedTraceService;
 	private TraceModelService traceModelService;
-	
-	private UserAwareDao dao;
+	private ResourceDao dao;
 	
 	private String rootUri;
 	
-	public KtbsRootClientImpl(String rootUri) {
+	KtbsClientImpl(String rootUri, ResourceDao dao, ResourceService resourceService, StoredTraceService storedTraceService, TraceModelService traceModelService) {
 		super();
 		this.rootUri = rootUri;
+		this.resourceService = resourceService;
+		this.storedTraceService = storedTraceService;
+		this.traceModelService = traceModelService;
+		this.dao = dao;
 	}
 
 	@Override
@@ -32,13 +35,6 @@ public class KtbsRootClientImpl implements KtbsClient {
 		return resourceService;
 	}
 	
-	public void setResourceService(ResourceService resourceService) {
-		this.resourceService = resourceService;
-	}
-	
-	public void setDao(UserAwareDao dao) {
-		this.dao = dao;
-	}
 	
 	@Override
 	public TraceModelService getTraceModelService() {
@@ -50,20 +46,10 @@ public class KtbsRootClientImpl implements KtbsClient {
 	}
 
 	@Override
-	public void setCredentials(String username, String password) {
-		if(dao != null)
-			dao.setCredentials(username, password);
-	}
-
-	@Override
 	public StoredTraceService getStoredTraceService() {
 		return storedTraceService;
 	}
 	
-	public void setStoredTraceService(StoredTraceService storedTraceService) {
-		this.storedTraceService = storedTraceService;
-	}
-
 	@Override
 	public String getRootUri() {
 		return rootUri;
@@ -71,6 +57,6 @@ public class KtbsRootClientImpl implements KtbsClient {
 
 	@Override
 	public ProxyFactory getProxyFactory() {
-		throw new UnsupportedOperationException("Not yet implemented");
+		return dao.getProxyFactory();
 	}
 }

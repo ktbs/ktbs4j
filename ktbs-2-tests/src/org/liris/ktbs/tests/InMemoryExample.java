@@ -15,8 +15,8 @@ public class InMemoryExample {
 		
 		IRoot root = manager.getResource("http://localhost:8001/", IRoot.class);
 
-		IBase base1 = manager.getBase(manager.newBase("basetoto", "Toto"));
-		IBase base2 = manager.getBase(manager.newBase("basetoto2", "Toto2"));
-		IBase base3 = manager.getBase(manager.newBase("basetoto3", "Toto3"));
+		IBase base1 = manager.getBase(manager.newBase("basetoto"));
+		IBase base2 = manager.getBase(manager.newBase("basetoto2"));
+		IBase base3 = manager.getBase(manager.newBase("basetoto3"));
 	}
 }

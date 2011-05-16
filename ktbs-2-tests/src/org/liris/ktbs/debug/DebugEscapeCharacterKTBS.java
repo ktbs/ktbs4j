@@ -53,7 +53,7 @@ public class DebugEscapeCharacterKTBS {
 	private static void createBaseAndTrace(
 			ResourceService manager) {
 		IRoot root = manager.getResource("http://localhost:8001/", IRoot.class);
-		manager.newBase("base6", "Toto6");
+		manager.newBase("base6");
 		manager.newTraceModel("http://localhost:8001/base6/", "model6");
 		manager.newStoredTrace(
 				"http://localhost:8001/base6/", 

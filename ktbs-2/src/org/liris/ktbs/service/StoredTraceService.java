@@ -23,7 +23,7 @@ public interface StoredTraceService extends IRootAwareService {
 	 * @param baseUri
 	 * @return
 	 */
-	public IStoredTrace newStoredTrace(String baseUri, String traceModelUri, String defaultSubject);
+	public String newStoredTrace(String baseUri, String traceModelUri, String defaultSubject);
 
 	public boolean saveDescription(IStoredTrace trace);
 	
@@ -31,7 +31,7 @@ public interface StoredTraceService extends IRootAwareService {
 	
 	public ObselBuilder newObselBuilder(IStoredTrace trace);
 
-	public IObsel newObsel(
+	public String newObsel(
 			IStoredTrace storedTrace,
 			String obselLocalName,
 			String typeUri,
@@ -43,14 +43,14 @@ public interface StoredTraceService extends IRootAwareService {
 			Set<IAttributePair> attributes
 			);
 	
-	public IObsel newObsel(
+	public String newObsel(
 			IStoredTrace storedTrace,
 			String typeUri,
 			long begin,
 			Set<IAttributePair> attributes
 	);
 	
-	public IObsel newObsel(
+	public String newObsel(
 			IStoredTrace storedTrace,
 			String typeUri,
 			long begin

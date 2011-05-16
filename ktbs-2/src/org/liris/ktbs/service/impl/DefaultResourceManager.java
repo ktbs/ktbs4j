@@ -5,13 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.dao.rest.KtbsResponse;
 import org.liris.ktbs.domain.AttributePair;
 import org.liris.ktbs.domain.KtbsResource;
 import org.liris.ktbs.domain.MethodParameter;
-import org.liris.ktbs.domain.ResourceFactory;
+import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IBase;
@@ -26,29 +25,23 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.domain.interfaces.WithParameters;
+import org.liris.ktbs.service.IRootAwareService;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.utils.KtbsUtils;
 
 
-public class DefaultResourceManager extends RootAwareService implements ResourceService {
+public class DefaultResourceManager implements ResourceService, IRootAwareService {
 
 	/*
 	 * Injected by Spring
 	 */
 	protected ResourceDao dao;
-	private ProxyFactory proxyFactory;
-	private ResourceFactory pojoFactory;
+	private PojoFactory pojoFactory;
 
-	public void setDao(ResourceDao dao) {
+	public DefaultResourceManager(ResourceDao dao, PojoFactory pojoFactory) {
+		super();
 		this.dao = dao;
-	}
-
-	public void setPojoFactory(ResourceFactory pojoFactory) {
 		this.pojoFactory = pojoFactory;
-	}
-
-	public void setProxyFactory(ProxyFactory proxyFactory) {
-		this.proxyFactory = proxyFactory;
 	}
 
 	@Override
@@ -58,19 +51,8 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	}
 
 	@Override
-	public String newBase(String baseLocalName, String owner) {
+	public String newBase(String baseLocalName) {
 		IBase base = createResource("", baseLocalName, IBase.class, false);
-
-		/*
-		 * No ktbs:owner property defined yet in the RDF format.
-		 * Put a label instead
-		 */
-		if(owner != null)
-			base.getLabels().add("owner: " + owner);
-
-		/*
-		 * base.setOwner(owner);
-		 */
 
 		return dao.create(base);
 	}
@@ -93,7 +75,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 		 * trace.setDefaultSubject(defaultSubject);
 		 */
 
-		trace.setTraceModel(proxyFactory.createResource(model, ITraceModel.class));
+		trace.setTraceModel(dao.getProxyFactory().createResource(model, ITraceModel.class));
 
 		return dao.create(trace);
 	}
@@ -103,7 +85,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 			String traceLocalName, String methodUri, Set<String> sourceTraces, Map<String,String> parameters) {
 
 		IComputedTrace trace = createResource(baseUri, traceLocalName, IComputedTrace.class, false);
-		trace.setMethod(proxyFactory.createResource(methodUri, IMethod.class));
+		trace.setMethod(dao.getProxyFactory().createResource(methodUri, IMethod.class));
 
 		trace.setSourceTraces(convertToSetOfProxies(sourceTraces, ITrace.class));
 
@@ -117,7 +99,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 		if(resourceUris == null)
 			return proxySet;
 		for(String sourceTraceUri:resourceUris) 
-			proxySet.add(proxyFactory.createResource(sourceTraceUri, cls));
+			proxySet.add(dao.getProxyFactory().createResource(sourceTraceUri, cls));
 		return proxySet;
 	}
 
@@ -167,7 +149,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 		if(attributes != null) {
 			for(IAttributePair pair:attributes) 
 				pairs.add(new AttributePair(
-						proxyFactory.createResource(pair.getAttributeType().getUri(), IAttributeType.class), 
+						dao.getProxyFactory().createResource(pair.getAttributeType().getUri(), IAttributeType.class), 
 						pair.getValue()
 				));
 			obsel.setAttributePairs(pairs);
@@ -181,7 +163,7 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 			String localName, 
 			Class<T> cls, 
 			boolean leaf) {
-		String absoluteParentUri = KtbsUtils.makeChildURI(rootUri, parentUri, false);
+		String absoluteParentUri = KtbsUtils.makeChildURI(getRootUri(), parentUri, false);
 
 		T resource = pojoFactory.createResource(absoluteParentUri, localName, leaf, cls);
 
@@ -258,5 +240,15 @@ public class DefaultResourceManager extends RootAwareService implements Resource
 	@Override
 	public boolean exists(String uri) {
 		throw new UnsupportedOperationException("Not yet supported");
+	}
+
+	@Override
+	public String getRootUri() {
+		return dao.getRootUri();
+	}
+	
+	
+	public ResourceDao getDao() {
+		return dao;
 	}
 }

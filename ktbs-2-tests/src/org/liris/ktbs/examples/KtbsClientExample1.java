@@ -59,7 +59,7 @@ public class KtbsClientExample1 {
 
 		// creates a new base
 		// the following creates a base remotely
-		IBase base2 = resourceService.getBase(resourceService.newBase("base2", "Damien"));
+		IBase base2 = resourceService.getBase(resourceService.newBase("base2"));
 		
 		base2.addLabel("Base créée par l'API Java 2.0");
 		

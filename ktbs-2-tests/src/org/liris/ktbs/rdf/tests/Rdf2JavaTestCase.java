@@ -30,7 +30,7 @@ public class Rdf2JavaTestCase extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		model = ModelFactory.createDefaultModel();
-		mapper = new Rdf2Java(model, new DeserializationConfig(), new PojoFactory(), new ProxyFactory());
+		mapper = new Rdf2Java(model, new DeserializationConfig(), new PojoFactory(), new ProxyFactory(null));
 		
 	}
 	

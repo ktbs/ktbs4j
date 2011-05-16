@@ -19,17 +19,13 @@ import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
+import org.liris.ktbs.service.IRootAwareService;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.ResponseAwareService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.utils.KtbsUtils;
 
-public class StoredTraceManager extends RootAwareService implements StoredTraceService, ResponseAwareService {
-
-	private PojoFactory factory;
-	public void setFactory(PojoFactory factory) {
-		this.factory = factory;
-	}
+public class StoredTraceManager implements StoredTraceService, ResponseAwareService, IRootAwareService {
 
 	private boolean lastDelegatedToResourceManager = false;
 	@Override
@@ -39,21 +35,19 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 		return dao.getLastResponse();
 	}
 
-
-	private ResourceDao dao;
-	public void setDao(ResourceDao dao) {
-		this.dao = dao;
-	}
-
 	private ResourceService resourceService;
-
-	public void setResourceService(ResourceService resourceService) {
-		this.resourceService = resourceService;
-	}
+	private ResourceDao dao;
+	private PojoFactory pojoFactory;
 
 	private Map<String, IStoredTrace> bufferedTraces = new HashMap<String, IStoredTrace>();
 	private Map<String, Deque<IObsel>> bufferedTraceObsels = new HashMap<String, Deque<IObsel>>();
 
+	public StoredTraceManager(ResourceService resourceService, ResourceDao dao, PojoFactory pojoFactory) {
+		super();
+		this.resourceService = resourceService;
+		this.pojoFactory = pojoFactory;
+		this.dao = dao;
+	}
 
 	@Override
 	public void startBufferedCollect(IStoredTrace trace) {
@@ -98,11 +92,11 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	}
 
 	@Override
-	public IObsel newObsel(IStoredTrace storedTrace, String obselLocalName,
+	public String newObsel(IStoredTrace storedTrace, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
 			BigInteger end, String subject, Set<IAttributePair> attributes) {
 		if(bufferedTraces.containsKey(storedTrace.getUri())) {
-			IObsel obsel = factory.createObsel(
+			IObsel obsel = pojoFactory.createObsel(
 					storedTrace, 
 					obselLocalName, 
 					typeUri,
@@ -113,30 +107,16 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 					subject, 
 					attributes);
 			bufferedTraceObsels.get(storedTrace.getUri()).add(obsel);
-			return obsel;
+			return obsel.getUri();
 		} else {
-			String obselUri = createObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT,
+			return createObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT,
 					begin, end, subject, attributes);
-			if(obselUri != null) {
-				this.lastDelegatedToResourceManager = true;
-
-				IObsel resource = resourceService.getResource(obselUri, IObsel.class);
-
-				return resource;
-			} else
-				return null;
 		}
 	}
 
 	String createObsel(IStoredTrace storedTrace, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
 			BigInteger end, String subject, Set<IAttributePair> attributes) {
-//
-//		if(begin != null && end == null)
-//			end = begin;
-//
-//		if(beginDT != null && endDT == null)
-//			endDT = beginDT;
 
 		this.lastDelegatedToResourceManager = true;
 
@@ -153,7 +133,7 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	}
 
 	@Override
-	public IObsel newObsel(IStoredTrace storedTrace, String typeUri,
+	public String newObsel(IStoredTrace storedTrace, String typeUri,
 			long begin, Set<IAttributePair> attributes) {
 		return newObsel(
 				storedTrace, 
@@ -168,7 +148,7 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	}
 
 	@Override
-	public IObsel newObsel(IStoredTrace storedTrace, String typeUri, long begin) {
+	public String newObsel(IStoredTrace storedTrace, String typeUri, long begin) {
 		return newObsel(
 				storedTrace, 
 				null,
@@ -227,7 +207,7 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 	}
 
 	@Override
-	public IStoredTrace newStoredTrace(String baseUri, String traceModelUri,
+	public String newStoredTrace(String baseUri, String traceModelUri,
 			String defaultSubject) {
 
 		this.lastDelegatedToResourceManager = true;
@@ -237,22 +217,23 @@ public class StoredTraceManager extends RootAwareService implements StoredTraceS
 				traceModelUri, 
 				KtbsUtils.now(), 
 				defaultSubject);
-		if(traceUri == null)
-			return null;
-		else {
-			IStoredTrace storedTrace = resourceService.getStoredTrace(traceUri);
-			this.lastDelegatedToResourceManager = true;
-			return storedTrace;
-		}
+		
+		return traceUri;
 	}
 
 	@Override
 	public ObselBuilder newObselBuilder(IStoredTrace trace) {
-		return new ObselBuilder(this, trace, factory);
+		return new ObselBuilder(this, trace, pojoFactory);
 	}
 
 	@Override
 	public ObselBuilder newObselBuilder(String storedTraceUri) {
-		return new ObselBuilder(this, storedTraceUri, factory);
+		return new ObselBuilder(this, storedTraceUri, pojoFactory);
 	}
+	
+	@Override
+	public String getRootUri() {
+		return dao.getRootUri();
+	}
+
 }

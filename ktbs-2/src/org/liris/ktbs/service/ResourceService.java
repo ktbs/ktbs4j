@@ -75,10 +75,9 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 * Creates a new base in the KTBS.
 	 * 
 	 * @param baseLocalName the base local name
-	 * @param owner the user name of the base's owner
 	 * @return the uri of the created base, null if the creation failed
 	 */
-	public String newBase(String baseLocalName, String owner);
+	public String newBase(String baseLocalName);
 	
 	/**
 	 * 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.liris.ktbs.client.KtbsConstants;
+import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.ResultSet;
 import org.liris.ktbs.domain.AttributePair;
 import org.liris.ktbs.domain.AttributeType;
@@ -17,10 +18,10 @@ import org.liris.ktbs.domain.Method;
 import org.liris.ktbs.domain.MethodParameter;
 import org.liris.ktbs.domain.Obsel;
 import org.liris.ktbs.domain.ObselType;
+import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.PropertyStatement;
 import org.liris.ktbs.domain.RelationStatement;
 import org.liris.ktbs.domain.RelationType;
-import org.liris.ktbs.domain.ResourceFactory;
 import org.liris.ktbs.domain.Root;
 import org.liris.ktbs.domain.StoredTrace;
 import org.liris.ktbs.domain.Trace;
@@ -60,17 +61,17 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 
 public class Rdf2Java {
 
-	private static final Logger log = LoggerFactory.getLogger(Rdf2Java.class);
+	private static final Logger logger = LoggerFactory.getLogger(Rdf2Java.class);
 
-	private ResourceFactory proxyFactory;
-	private ResourceFactory pojoFactory;
+	private ProxyFactory proxyFactory;
+	private PojoFactory pojoFactory;
 
 	private DeserializationConfig config;
 
 	private Model model;
 	private Map<String, IKtbsResource> alreadyReadResources = new HashMap<String, IKtbsResource>();
 
-	public Rdf2Java(Model model, DeserializationConfig config, ResourceFactory pojoFactory, ResourceFactory proxyFactory) {
+	public Rdf2Java(Model model, DeserializationConfig config, PojoFactory pojoFactory, ProxyFactory proxyFactory) {
 		super();
 		this.model = model;
 		this.config = config;
@@ -261,16 +262,16 @@ public class Rdf2Java {
 
 	private <T extends IKtbsResource> Set<T> readLinkedResourceSet(String uri, String pName,
 			boolean inverse, Class<T> cls) {
-		return readLinkedResourceSetOnAxis(uri, pName, inverse, cls, LinkAxis.LINKED);
+		return readLinkedResourceSetOnAxis(uri, pName, inverse, cls, LinkAxis.LINKED, null);
 	}
 
 	private <T extends IKtbsResource> Set<T> readLinkedResourceSetSameType(String uri, String pName,
 			boolean inverse, Class<T> cls) {
-		return readLinkedResourceSetOnAxis(uri, pName, inverse, cls, LinkAxis.LINKED_SAME_TYPE);
+		return readLinkedResourceSetOnAxis(uri, pName, inverse, cls, LinkAxis.LINKED_SAME_TYPE, null);
 	}
 
 	private <T extends IKtbsResource> Set<T> readLinkedResourceSetOnAxis(String uri, String pName,
-			boolean inverse, Class<T> cls, LinkAxis axis) {
+			boolean inverse, Class<T> cls, LinkAxis axis, String resourceSetQuery) {
 
 		if(config.getMode(axis) == DeserializationMode.NULL)
 			return null;
@@ -288,7 +289,14 @@ public class Rdf2Java {
 			}
 		}
 
-		Set<T> resourceSet = new HashSet<T>();
+		
+		Set<T> resourceSet;
+		if(resourceSetQuery != null) {
+			logger.debug("Creating a ResourceSetProxy, query: {}, class: {}", resourceSetQuery, cls);
+			return proxyFactory.createResourceSetProxy(resourceSetQuery, cls);
+		} else {
+			// Creates a naive resource set
+		resourceSet = new HashSet<T>();
 		for(String linkedResourceUri:linkedResourceUris) {
 			if(config.getMode(axis) == DeserializationMode.PROXY) 
 				resourceSet.add(proxyFactory.createResource(linkedResourceUri, cls));
@@ -297,8 +305,9 @@ public class Rdf2Java {
 			else if(config.getMode(axis) == DeserializationMode.CASCADE)
 				resourceSet.add(readResource(linkedResourceUri, cls));
 			else 
-				log.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
+				logger.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
 		} 
+		}
 
 		return resourceSet;
 	}
@@ -328,7 +337,7 @@ public class Rdf2Java {
 		else if(config.getMode(axis) == DeserializationMode.CASCADE)
 			return readResource(linkedResourceuri, cls);
 
-		log.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
+		logger.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
 		return null;
 	}
 
@@ -543,7 +552,7 @@ public class Rdf2Java {
 		else if(config.getMode(LinkAxis.LINKED_SAME_TYPE) == DeserializationMode.CASCADE) 
 			obsel = readObsel(obselUri);
 		else
-			log.warn("Unknown deserialisation option: " + config.getMode(LinkAxis.LINKED_SAME_TYPE));
+			logger.warn("Unknown deserialisation option: " + config.getMode(LinkAxis.LINKED_SAME_TYPE));
 		return obsel;
 	}
 
@@ -818,7 +827,7 @@ public class Rdf2Java {
 				 * In some cases, a statement [(attributeType|obselType|relationType)Uri, RDF.type, ktbs:TraceModel]
 				 * seems to be present in the model in addition to the expected rdf:type of the trace model element
 				 */
-				log.warn("The resource "+uri2+" has the same prefix than the trace model but is of unknown type: " + objectResource);
+				logger.warn("The resource "+uri2+" has the same prefix than the trace model but is of unknown type: " + objectResource);
 		}
 
 		((KtbsResource)traceModel).setParentResource(readParent(traceModel, KtbsConstants.P_CONTAINS, true, IBase.class));
@@ -838,7 +847,7 @@ public class Rdf2Java {
 		else if(config.getChildMode() == DeserializationMode.CASCADE)
 			return readResource(childUri, cls);
 		else {
-			log.warn("Unknown deserialization mode for the child axis: " + config.getChildMode());
+			logger.warn("Unknown deserialization mode for the child axis: " + config.getChildMode());
 			return null;
 		}
 	}

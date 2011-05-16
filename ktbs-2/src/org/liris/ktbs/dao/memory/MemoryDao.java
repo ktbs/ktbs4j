@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.liris.ktbs.dao.DaoException;
+import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.dao.ResultSet;
 import org.liris.ktbs.dao.rest.KtbsResponse;
-import org.liris.ktbs.domain.ResourceFactory;
+import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IRoot;
 
@@ -18,18 +19,19 @@ public class MemoryDao implements ResourceDao {
 	private Map<String, IKtbsResource> resources = new HashMap<String, IKtbsResource>();
 
 	private String rootUri;
-	private ResourceFactory factory;
+	private PojoFactory pojoFactory;
+	private ProxyFactory proxyFactory;
+
 	
-	public void setFactory(ResourceFactory factory) {
-		this.factory = factory;
-	}
-	
-	public void setRootUri(String rootUri) {
+	public MemoryDao(String rootUri, PojoFactory pojoFactory) {
+		super();
 		this.rootUri = rootUri;
+		this.pojoFactory = pojoFactory;
+		this.proxyFactory = new ProxyFactory(this);
 	}
-	
+
 	public void init() {
-		resources.put(rootUri, factory.createResource(rootUri, IRoot.class));
+		resources.put(rootUri, pojoFactory.createResource(rootUri, IRoot.class));
 	}
 	
 	@Override
@@ -92,5 +94,15 @@ public class MemoryDao implements ResourceDao {
 	@Override
 	public KtbsResponse getLastResponse() {
 		throw new UnsupportedOperationException("Irrelevant for memory DAO");
+	}
+
+	@Override
+	public String getRootUri() {
+		return rootUri;
+	}
+
+	@Override
+	public ProxyFactory getProxyFactory() {
+		return proxyFactory;
 	}
 }

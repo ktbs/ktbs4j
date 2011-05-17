@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:ktbs='http://liris.cnrs.fr/silex/2009/ktbs#'
+  xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+>
+  <ktbs:AttributeType rdf:about="NatureSujetGenerateur">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#String</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain>
+      <ktbs:ObselType rdf:about="ActionInstructeur">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ActionInstructeur</rdfs:label>
+      </ktbs:ObselType>
+    </ktbs:hasAttributeDomain>
+    <ktbs:hasAttributeDomain>
+      <ktbs:ObselType rdf:about="ActionOperateur">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ActionOperateur</rdfs:label>
+      </ktbs:ObselType>
+    </ktbs:hasAttributeDomain>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="DateDebut">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#DATETIME</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain>
+      <ktbs:ObselType rdf:about="telephonie">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">telephonie</rdfs:label>
+      </ktbs:ObselType>
+    </ktbs:hasAttributeDomain>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain>
+      <ktbs:ObselType rdf:about="alarme">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">alarme</rdfs:label>
+      </ktbs:ObselType>
+    </ktbs:hasAttributeDomain>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <rdf:Description rdf:about="http://localhost:8001/dino/">
+    <ktbs:contains>
+      <ktbs:TraceModel rdf:about="">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">modèle de m-Trace première</rdfs:label>
+      </ktbs:TraceModel>
+    </ktbs:contains>
+  </rdf:Description>
+  <ktbs:AttributeType rdf:about="Valeur">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#String</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="IDObserve">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#STRING</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="Evenement">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#String</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="alarme"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="NumOrdre">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#Integer</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="IDSujetGenerateur">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#STRING</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="PopulationGenerateur">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#String</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="SousSystemeElementaire">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#String</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="DateFin">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#DATETIME</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="telephonie"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="alarme"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="Label">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#STRING</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="Materiel">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#String</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+  <ktbs:AttributeType rdf:about="RoleSujetGenerateur">
+    <ktbs:hasAttributeRange rdf:datatype="http://www.w3.org/2001/XMLSchema#string">http://www.w3.org/2001/XMLSchema#String</ktbs:hasAttributeRange>
+    <ktbs:hasAttributeDomain rdf:resource="ActionInstructeur"/>
+    <ktbs:hasAttributeDomain rdf:resource="ActionOperateur"/>
+  </ktbs:AttributeType>
+</rdf:RDF>

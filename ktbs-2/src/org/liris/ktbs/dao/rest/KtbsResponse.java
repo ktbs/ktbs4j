@@ -62,4 +62,11 @@ public interface KtbsResponse {
 	public String getBodyAsString();
 
 	public int getHttpStatusCode();
+
+	/**
+	 * Give the uri that has been used in the header of the underlying HTTP request.
+	 * 
+	 * @return the uri
+	 */
+	public String getRequestUri();
 }

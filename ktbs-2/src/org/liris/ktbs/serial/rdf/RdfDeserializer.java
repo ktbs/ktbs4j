@@ -44,7 +44,8 @@ public class RdfDeserializer implements Deserializer {
 
 	private Rdf2Java createMapper(Reader reader, String mimeFormat, String baseUri) {
 		Model model = ModelFactory.createDefaultModel();
-		model.read(reader, baseUri, KtbsUtils.getJenaSyntax(mimeFormat));
+		String jenaSyntax = KtbsUtils.getJenaSyntax(mimeFormat);
+		model.read(reader, baseUri, jenaSyntax);
 		Rdf2Java rdf2Java = new Rdf2Java(model, deserializationConfig, pojoFactory, proxyFactory);
 		this.lastDeserializedModel = model;
 		return rdf2Java;

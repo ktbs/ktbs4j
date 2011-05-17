@@ -173,7 +173,9 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_SEE_OTHER) {
 					// redirect to the right URL
 					EntityUtils.consume(entity);
-					return get(response.getHeaders(HttpHeaders.LOCATION)[0].getValue(), mimeType);
+					String location = response.getHeaders(HttpHeaders.LOCATION)[0].getValue();
+					KtbsResponse ktbsResponse = get(location, mimeType);
+					return ktbsResponse;
 				} else
 					ktbsResponseStatus=KtbsResponseStatus.REQUEST_FAILED;
 
@@ -192,6 +194,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		return new KtbsResponseImpl(
 				ktbsResource,
+				uri,
 				body,
 				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_RETRIEVED, 
 				ktbsResponseStatus, 
@@ -249,6 +252,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		return new KtbsResponseImpl(
 				null, 
+				uri,
 				body,
 				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED, 
 				ktbsResponseStatus, 
@@ -295,7 +299,8 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 		}
 
 		return new KtbsResponseImpl(
-				null, 
+				null,
+				resourceURI,
 				body,
 				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_DELETED, 
 				ktbsResponseStatus, 
@@ -362,6 +367,7 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		return new KtbsResponseImpl(
 				null, 
+				updateUri,
 				body, 
 				(ktbsResponseStatus==KtbsResponseStatus.RESOURCE_UPDATED || ktbsResponseStatus==KtbsResponseStatus.RESOURCE_CREATED), 
 				ktbsResponseStatus, 

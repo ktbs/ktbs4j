@@ -14,16 +14,22 @@ public class KtbsResponseImpl implements KtbsResponse {
 	private KtbsResponseStatus ktbsResponseStatus;
 	private HttpResponse httpResponse;
 	private String contentAsString;
+	private String requestUri;
+	
+	@Override
+	public String getRequestUri() {
+		return requestUri;
+	}
 
-	public KtbsResponseImpl(IKtbsResource resource, String body, boolean executedWithSuccess,
+	public KtbsResponseImpl(IKtbsResource resource, String requestUri, String body, boolean executedWithSuccess,
 			KtbsResponseStatus ktbsResponseStatus,
 			HttpResponse httpResponse) {
 		super();
 		this.resource = resource;
+		this.requestUri = requestUri;
 		this.executedWithSuccess = executedWithSuccess;
 		this.ktbsResponseStatus = ktbsResponseStatus;
 		this.httpResponse = httpResponse;
-
 		this.contentAsString = body;
 	}
 

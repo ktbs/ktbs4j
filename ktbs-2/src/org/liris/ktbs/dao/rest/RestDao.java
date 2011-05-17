@@ -86,15 +86,13 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
 
-		String absoluteUri = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
+		String absoluteResourceUri = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
 
-		String requestUri = absoluteUri;
-		
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
-			requestUri+=KtbsConstants.ABOUT_ASPECT;
+			absoluteResourceUri+=KtbsConstants.ABOUT_ASPECT;
 
 		log.debug("Retrieving the resource " + uri);
-		KtbsResponse response = client.get(requestUri, receiveMimeType);
+		KtbsResponse response = client.get(absoluteResourceUri, receiveMimeType);
 		this.lastResponse = response;
 
 		if(!response.hasSucceeded())
@@ -108,37 +106,38 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 
 			if(mimeType.equals(KtbsConstants.MIME_TURTLE)) {
-				log.debug("Resolving relative uris for parsing turtle syntax against the base uri " + requestUri);
-				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, requestUri);
+				log.debug("Resolving relative uris for parsing turtle syntax against the base uri " + response.getRequestUri());
+				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, response.getRequestUri());
 			}
 
 			RdfDeserializer deserializer = serializerFactory.newRdfDeserializer(proxyFactory);
 			T resource = deserializer.deserializeResource(
-					absoluteUri,
+					KtbsUtils.removeUriAspects(absoluteResourceUri),
 					new StringReader(bodyAsString), 
-					requestUri, 
+					response.getRequestUri(), 
 					mimeType, 
 					cls);
 
 
-			String uriWithoutAspects = KtbsUtils.removeUriAspects(requestUri);
-			Class<? extends IKtbsResource> foundResourceType = KtbsUtils.guessResourceType(deserializer.getLastDeserializedModel(), uriWithoutAspects);
+			Class<? extends IKtbsResource> foundResourceType = KtbsUtils.guessResourceType(
+					deserializer.getLastDeserializedModel(), 
+					KtbsUtils.removeUriAspects(absoluteResourceUri));
 
 			if(foundResourceType == null) {
 				/*
 				 * Maybe a TraceModel since KTBS returns no rdf:type statement for a ktbs:TraceModel
 				 */
 				if(!ITraceModel.class.isAssignableFrom(cls)) {
-					log.warn("Retrieved ressource {} was found to have no rdf:type statement, excepted type is \"{}\".", new Object[]{requestUri, foundResourceType, cls});
+					log.warn("Retrieved ressource {} was found to have no rdf:type statement, excepted type is \"{}\".", new Object[]{response.getRequestUri(), foundResourceType, cls});
 					return null;
 				}
 			} else if(!cls.isAssignableFrom(foundResourceType)) {
-				log.warn("Retrieved ressource {} was found to be of type \"{}\" while the excepted type is \"{}\".", new Object[]{requestUri, foundResourceType, cls});
+				log.warn("Retrieved ressource {} was found to be of type \"{}\" while the excepted type is \"{}\".", new Object[]{response.getRequestUri(), foundResourceType, cls});
 				return null;
 			}
 
 
-			saveEtag(requestUri, response);
+			saveEtag(response.getRequestUri(), response);
 
 			// This should be connected into the Rdf2Java mapper
 			if (resource instanceof ITrace) {

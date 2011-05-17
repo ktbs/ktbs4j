@@ -1,4 +1,0 @@
-#!/bin/sh
-
-sh run-examples.sh PopulateKtbsExample $1
-

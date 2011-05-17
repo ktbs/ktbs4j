@@ -289,24 +289,24 @@ public class Rdf2Java {
 			}
 		}
 
-		
+
 		Set<T> resourceSet;
 		if(resourceSetQuery != null) {
 			logger.debug("Creating a ResourceSetProxy, query: {}, class: {}", resourceSetQuery, cls);
 			return proxyFactory.createResourceSetProxy(resourceSetQuery, cls);
 		} else {
 			// Creates a naive resource set
-		resourceSet = new HashSet<T>();
-		for(String linkedResourceUri:linkedResourceUris) {
-			if(config.getMode(axis) == DeserializationMode.PROXY) 
-				resourceSet.add(proxyFactory.createResource(linkedResourceUri, cls));
-			else if(config.getMode(axis) == DeserializationMode.URI_IN_PLAIN)
-				resourceSet.add(pojoFactory.createResource(linkedResourceUri, cls));
-			else if(config.getMode(axis) == DeserializationMode.CASCADE)
-				resourceSet.add(readResource(linkedResourceUri, cls));
-			else 
-				logger.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
-		} 
+			resourceSet = new HashSet<T>();
+			for(String linkedResourceUri:linkedResourceUris) {
+				if(config.getMode(axis) == DeserializationMode.PROXY) 
+					resourceSet.add(proxyFactory.createResource(linkedResourceUri, cls));
+				else if(config.getMode(axis) == DeserializationMode.URI_IN_PLAIN)
+					resourceSet.add(pojoFactory.createResource(linkedResourceUri, cls));
+				else if(config.getMode(axis) == DeserializationMode.CASCADE)
+					resourceSet.add(readResource(linkedResourceUri, cls));
+				else 
+					logger.warn("No action was performed for deserializing the resource linked by the property " + pName + " to the resource " + uri + ".");
+			} 
 		}
 
 		return resourceSet;
@@ -823,11 +823,12 @@ public class Rdf2Java {
 					continue;
 				traceModel.getAttributeTypes().add(attType);
 			} else
-				/*
-				 * In some cases, a statement [(attributeType|obselType|relationType)Uri, RDF.type, ktbs:TraceModel]
-				 * seems to be present in the model in addition to the expected rdf:type of the trace model element
-				 */
-				logger.warn("The resource "+uri2+" has the same prefix than the trace model but is of unknown type: " + objectResource);
+				if(!objectResource.equals(KtbsConstants.TRACE_MODEL))
+					/*
+					 * In some cases, a statement [(attributeType|obselType|relationType)Uri, RDF.type, ktbs:TraceModel]
+					 * seems to be present in the model in addition to the expected rdf:type of the trace model element
+					 */
+					logger.warn("The resource "+uri2+" has the same prefix than the trace model but is of unknown type: " + objectResource);
 		}
 
 		((KtbsResource)traceModel).setParentResource(readParent(traceModel, KtbsConstants.P_CONTAINS, true, IBase.class));

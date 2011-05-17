@@ -1,5 +1,6 @@
 package org.liris.ktbs.utils;
 
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -522,8 +523,23 @@ public class KtbsUtils {
 			} 
 		}
 
-		if(it.hasNext())
-			throw new IllegalStateException("There are more than one rdf:type defined for the resource " + uri);
+		if(it.hasNext()) {
+			StringWriter modelStringWriter = new StringWriter();
+			model.write(modelStringWriter, KtbsConstants.JENA_TURTLE, "");
+
+			StringWriter stmtStringWriter = new StringWriter();
+			StmtIterator it3 = model.listStatements(model.getResource(uri), RDF.type, (RDFNode)null);
+			while (it3.hasNext()) {
+				Statement statement = (Statement) it3.next();
+				stmtStringWriter.write(statement.toString());
+				stmtStringWriter.write("\n");
+			}
+			logger.warn("There are more than one rdf:type defined for the resource {}. Statements are : \n{}\nComplete model is : \n{}", 
+					new Object[]{uri, 
+					stmtStringWriter.toString(),
+					modelStringWriter.toString()
+			});
+		}
 		return cls;
 	}
 

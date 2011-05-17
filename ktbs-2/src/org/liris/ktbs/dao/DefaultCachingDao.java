@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.liris.ktbs.dao.rest.KtbsResponse;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
-import org.liris.ktbs.service.IRootAwareService;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -109,6 +108,7 @@ public class DefaultCachingDao implements CachingDao, UserAwareDao {
 		this.timestampIndex = Multimaps.synchronizedSortedSetMultimap(map);
 	}
 
+	@Override
 	public synchronized void clearCache() {
 		initCache();
 	}
@@ -142,13 +142,18 @@ public class DefaultCachingDao implements CachingDao, UserAwareDao {
 		}
 	}
 
-
 	@Override
 	public ProxyFactory getProxyFactory() {
 		return daoDelegate.getProxyFactory();
 	}
 	
-	private synchronized void removeFromCache(String uri) {
+	@Override
+	public void removeFromCache(IKtbsResource resource) {
+		removeFromCache(resource.getUri());
+	}
+	
+	@Override
+	public synchronized void removeFromCache(String uri) {
 		if(uri == null)
 			/*
 			 * anonymous resource, cannot be in cache
@@ -265,7 +270,7 @@ public class DefaultCachingDao implements CachingDao, UserAwareDao {
 
 	@Override
 	public String getRootUri() {
-		return ((IRootAwareService)daoDelegate).getRootUri();
+		return daoDelegate.getRootUri();
 	}
 	
 	public int size() {

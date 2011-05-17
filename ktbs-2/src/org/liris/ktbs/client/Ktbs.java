@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.liris.ktbs.domain.PojoFactory;
-import org.liris.ktbs.service.MultiUserRootProvider;
+import org.liris.ktbs.service.MultiUserClientProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -130,9 +130,9 @@ public class Ktbs {
 	 * 
 	 * @return the root client provider object
 	 */
-	public static MultiUserRootProvider getMultiUserRestRootProvider(String uri) {
+	public static MultiUserClientProvider getMultiUserRestClientProvider(String uri) {
 		String rootUri = getRootUri(uri);
-			MultiUserRootProvider multiUserRootProvider = getClientFactory().createMultiUserProvider(rootUri);
+			MultiUserClientProvider multiUserRootProvider = getClientFactory().createMultiUserProvider(rootUri);
 
 		return multiUserRootProvider;
 	}
@@ -141,8 +141,8 @@ public class Ktbs {
 	 * 
 	 * @return
 	 */
-	public static MultiUserRootProvider getMultiUserRestRootProvider() {
-		return getMultiUserRestRootProvider(null);
+	public static MultiUserClientProvider getMultiUserRestClientProvider() {
+		return getMultiUserRestClientProvider(null);
 	}
 
 	/**

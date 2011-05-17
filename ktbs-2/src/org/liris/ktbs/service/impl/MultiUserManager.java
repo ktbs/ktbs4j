@@ -11,11 +11,11 @@ import java.util.TimerTask;
 import org.liris.ktbs.client.ClientFactory;
 import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.service.IRootAwareService;
-import org.liris.ktbs.service.MultiUserRootProvider;
+import org.liris.ktbs.service.MultiUserClientProvider;
 
 import com.ibm.icu.util.Calendar;
 
-public class MultiUserManager  implements MultiUserRootProvider, IRootAwareService {
+public class MultiUserManager  implements MultiUserClientProvider, IRootAwareService {
 		
 	private Map<String, Calendar> lastAccess = new HashMap<String, Calendar>();
 	private Map<String, KtbsClient> clients = new HashMap<String, KtbsClient>();

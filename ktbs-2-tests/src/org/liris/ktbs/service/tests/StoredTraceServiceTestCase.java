@@ -18,7 +18,7 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.examples.KtbsClientExample2;
-import org.liris.ktbs.service.MultiUserRootProvider;
+import org.liris.ktbs.service.MultiUserClientProvider;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.impl.ObselBuilder;
@@ -30,7 +30,7 @@ public class StoredTraceServiceTestCase extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		MultiUserRootProvider service = Ktbs.getMultiUserRestRootProvider();
+		MultiUserClientProvider service = Ktbs.getMultiUserRestClientProvider();
 		KtbsClient clientDamien;
 		if(service.openClient("Damien", "dtotio")) {
 			clientDamien = service.getClient("Damien");

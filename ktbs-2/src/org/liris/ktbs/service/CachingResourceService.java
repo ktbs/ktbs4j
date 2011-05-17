@@ -10,6 +10,24 @@ import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 
 public interface CachingResourceService extends ResourceService {
+
+	/**
+	 * 
+	 */
+	public void clearCache();
+	
+	/**
+	 * 
+	 * @param resource
+	 */
+	public void removeFromCache(IKtbsResource resource);
+	
+	/**
+	 * 
+	 * @param resourceUri
+	 */
+	public void removeFromCache(String resourceUri);
+	
 	
 	public IRoot getRoot(boolean ignoreCache);
 	

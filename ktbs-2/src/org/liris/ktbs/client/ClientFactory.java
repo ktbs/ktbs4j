@@ -2,7 +2,7 @@ package org.liris.ktbs.client;
 
 import org.liris.ktbs.dao.DaoFactory;
 import org.liris.ktbs.dao.ResourceDao;
-import org.liris.ktbs.service.MultiUserRootProvider;
+import org.liris.ktbs.service.MultiUserClientProvider;
 import org.liris.ktbs.service.ServiceFactory;
 import org.liris.ktbs.service.impl.MultiUserManager;
 
@@ -49,7 +49,7 @@ public class ClientFactory {
 		return client;
 	}
 
-	public MultiUserRootProvider createMultiUserProvider(String rootUri) {
+	public MultiUserClientProvider createMultiUserProvider(String rootUri) {
 		return new MultiUserManager(rootUri, this);
 	}
 

@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.domain.interfaces.IBase;
-import org.liris.ktbs.service.MultiUserRootProvider;
+import org.liris.ktbs.service.MultiUserClientProvider;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.TraceModelService;
@@ -23,7 +23,7 @@ public class LoadTests extends TestCase {
 		memoryClient.getStoredTraceService();
 		memoryClient.getTraceModelService();
 
-		MultiUserRootProvider provider = Ktbs.getMultiUserRestRootProvider();
+		MultiUserClientProvider provider = Ktbs.getMultiUserRestClientProvider();
 		provider.openClient("Damien", "");
 		KtbsClient client = provider.getClient("Damien");
 		ResourceService service = client.getResourceService();

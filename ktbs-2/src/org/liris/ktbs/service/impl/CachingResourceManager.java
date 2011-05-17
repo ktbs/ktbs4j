@@ -64,5 +64,19 @@ public class CachingResourceManager extends DefaultResourceManager implements Ca
 	public IKtbsResource getResource(String uri, boolean ignoreCache) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
-	
+
+	@Override
+	public void clearCache() {
+		((CachingDao)dao).clearCache();
+	}
+
+	@Override
+	public void removeFromCache(IKtbsResource resource) {
+		((CachingDao)dao).removeFromCache(resource);
+	}
+
+	@Override
+	public void removeFromCache(String resourceUri) {
+		((CachingDao)dao).removeFromCache(resourceUri);
+	}
 }

@@ -2,9 +2,21 @@ package org.liris.ktbs.service;
 
 import org.liris.ktbs.client.KtbsClient;
 
-public interface MultiUserRootProvider {
+public interface MultiUserClientProvider {
 
+	/**
+	 * 
+	 * @param user
+	 * @param password
+	 * @return
+	 */
 	public boolean openClient(String user, String password);
+	
+	/**
+	 * 
+	 * @param user
+	 * @return
+	 */
 	public boolean hasClient(String user);
 	
 	/**

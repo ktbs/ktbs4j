@@ -25,12 +25,40 @@ public interface StoredTraceService extends IRootAwareService {
 	 */
 	public String newStoredTrace(String baseUri, String traceModelUri, String defaultSubject);
 
+	/**
+	 * 
+	 * @param trace
+	 * @return
+	 */
 	public boolean saveDescription(IStoredTrace trace);
 	
+	/**
+	 * 
+	 * @param trace
+	 * @return
+	 */
 	public boolean saveObsels(IStoredTrace trace);
 	
+	/**
+	 * 
+	 * @param trace
+	 * @return
+	 */
 	public ObselBuilder newObselBuilder(IStoredTrace trace);
 
+	/**
+	 * 
+	 * @param storedTrace
+	 * @param obselLocalName
+	 * @param typeUri
+	 * @param beginDT
+	 * @param endDT
+	 * @param begin
+	 * @param end
+	 * @param subject
+	 * @param attributes
+	 * @return
+	 */
 	public String newObsel(
 			IStoredTrace storedTrace,
 			String obselLocalName,
@@ -43,6 +71,14 @@ public interface StoredTraceService extends IRootAwareService {
 			Set<IAttributePair> attributes
 			);
 	
+	/**
+	 * 
+	 * @param storedTrace
+	 * @param typeUri
+	 * @param begin
+	 * @param attributes
+	 * @return
+	 */
 	public String newObsel(
 			IStoredTrace storedTrace,
 			String typeUri,
@@ -50,6 +86,13 @@ public interface StoredTraceService extends IRootAwareService {
 			Set<IAttributePair> attributes
 	);
 	
+	/**
+	 * 
+	 * @param storedTrace
+	 * @param typeUri
+	 * @param begin
+	 * @return
+	 */
 	public String newObsel(
 			IStoredTrace storedTrace,
 			String typeUri,
@@ -57,14 +100,55 @@ public interface StoredTraceService extends IRootAwareService {
 	);
 
 	
-	
+	/**
+	 * 
+	 * @param storedTrace
+	 * @param begin
+	 * @param end
+	 * @return
+	 */
 	public Collection<IObsel> listObsels(IStoredTrace storedTrace, long begin, long end);
+	
+	/**
+	 * 
+	 * @param storedTrace
+	 * @param minb
+	 * @param maxb
+	 * @param mine
+	 * @param maxe
+	 * @return
+	 */
 	public Collection<IObsel> listObsels(IStoredTrace storedTrace, long minb, long maxb, long mine, long maxe);
 
+	/**
+	 * 
+	 * @param trace
+	 */
 	void startBufferedCollect(IStoredTrace trace);
 
+	/**
+	 * 
+	 * @param trace
+	 */
 	void postBufferedObsels(IStoredTrace trace);
 
+	/**
+	 * 
+	 * @param storedTraceUri
+	 * @return
+	 */
 	public ObselBuilder newObselBuilder(String storedTraceUri);
+
+	/**
+	 * 
+	 * @param trace
+	 * @param typeUri
+	 * @param begin
+	 * @param attributes
+	 * @return
+	 */
+	public String newObsel(IStoredTrace trace, String typeUri, long begin,
+			Object[] attributes);
+	
 	
 }

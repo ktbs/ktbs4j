@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="pojoFactory" class="org.liris.ktbs.domain.PojoFactory"/>
+	<bean id="serviceFactory" class="org.liris.ktbs.service.ServiceFactory">
+		<property name="pojoFactory" ref="pojoFactory"/>
+	</bean>
+	
+	<bean id="serializerFactory" class="org.liris.ktbs.serial.SerializerFactory">
+		<property name="pojoFactory" ref="pojoFactory"/>
+	</bean>
+
+	<bean id="daoFactory" class="org.liris.ktbs.dao.DaoFactory">
+		<property name="pojoFactory" ref="pojoFactory"/>
+		<property name="serializerFactory" ref="serializerFactory"/>
+	</bean>
+	
+	<bean id="clientFactory" class="org.liris.ktbs.client.ClientFactory">
+		<property name="daoFactory" ref="daoFactory"/>
+		<property name="serviceFactory" ref="serviceFactory"/>
+	</bean>
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	    <property name="properties">
+		    <props>
+			    <prop key="user.name">default</prop>
+			    <prop key="user.password">default</prop>
+			    <prop key="ktbs.root.uri">http://localhost:8001/</prop>
+			    <prop key="ktbs.cache.size">2000</prop>
+			    <prop key="ktbs.cache.timeout">60000</prop>
+		    </props>
+	    </property>
+	    <property name="locations">
+	        <value>classpath:ktbs4j.properties</value>
+	    </property>
+	</bean>
+
+	<bean id="restClient" class="org.liris.ktbs.client.KtbsClient" factory-bean="clientFactory" factory-method="createRestClient">
+		<constructor-arg value="${ktbs.root.uri}"/>
+		<constructor-arg value="${user.name}"/>
+		<constructor-arg value="${user.password}"/>
+	</bean>
+
+	<bean id="memoryClient" class="org.liris.ktbs.client.KtbsClient" factory-bean="clientFactory" factory-method="createMemoryClient">
+		<constructor-arg value="${ktbs.root.uri}"/>
+	</bean>
+
+	
+	<bean id="restCachingClient" class="org.liris.ktbs.client.KtbsClient" factory-bean="clientFactory" factory-method="createRestCachingClient">
+		<constructor-arg value="${ktbs.root.uri}"/>
+		<constructor-arg value="${user.name}"/>
+		<constructor-arg value="${user.password}"/>
+		<constructor-arg value="${ktbs.cache.size}"/>
+		<constructor-arg value="${ktbs.cache.timeout}"/>
+	</bean>
+</beans>

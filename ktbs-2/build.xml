@@ -4,8 +4,9 @@
 
 	<property name="user.name" value="Damien Cram"/>
 	<property name="organisation" value="LIRIS UMR 5205 CNRS"/>
-	<property name="version" value="2.3.4"/>
-	<property name="title" value="KTBS Java API"/>
+	<property name="app.name" value="ktbs4j"/>
+	<property name="version" value="2.3.7"/>
+	<property name="title" value="ktbs4j - A Java API and client for the KTBS"/>
 	
 	<property name="tests.dir" location="../ktbs-2-tests"/>
 	<property name="tests.src" location="${tests.dir}/src"/>
@@ -13,7 +14,7 @@
 	<property name="examples.relative.path" value="org/liris/ktbs/examples/"/>
 	<property name="examples-src.dir" location="${tests.src}/${examples.relative.path}"/>
 	<property name="examples-class.dir" location="${tests.bin}/${examples.relative.path}"/>
-	<property name="ktbs.properties.filename" value="ktbs-client.properties"/>
+	<property name="ktbs.properties.filename" value="${app.name}.properties"/>
 	<property name="logback.filename" value="logback.xml"/>
 	
 	<target name="main">
@@ -66,7 +67,7 @@
 	</target>
 
 	<target name="jar-sources" >
-	<jar destfile="dist/ktbs-client-${version}-src.jar">
+	<jar destfile="dist/${app.name}-${version}-src.jar">
 	 	  <fileset dir="src"/>
 	 	  <manifest>
 	 		   <attribute name="Built-By" value="${user.name}"/>
@@ -83,8 +84,9 @@
 	</target>
 	
 	<target name="jar-classes" >
-	<jar destfile="dist/ktbs-client-${version}.jar">
+	<jar destfile="dist/${app.name}-${version}.jar">
 	 	  <fileset dir="bin"/>
+	 	  <fileset file="${tests.src}/${ktbs.properties.filename}"/>
 	 	  <manifest>
 	 		   <attribute name="Built-By" value="${user.name}"/>
 	 		   <section name="common">
@@ -103,16 +105,16 @@
 
 	<target name="deploy-red5-visu2" depends="jar-classes" >
 		<delete>
-		    <fileset dir="/home/dcram/Applications/red5-0.8.0-java5/webapps/visu2/WEB-INF/lib" includes="ktbs-client-*.jar"/>
+		    <fileset dir="/home/dcram/Applications/red5-0.8.0-java5/webapps/visu2/WEB-INF/lib" includes="${app.name}-*.jar"/>
 		  </delete>
-		<copy file="dist/ktbs-client-${version}.jar" todir="/home/dcram/Applications/red5-0.8.0-java5/webapps/visu2/WEB-INF/lib"/>
+		<copy file="dist/${app.name}-${version}.jar" todir="/home/dcram/Applications/red5-0.8.0-java5/webapps/visu2/WEB-INF/lib"/>
 	</target>
 
 	<target name="deploy-dev-visu2" depends="jar-classes">
 		<delete>
-		    <fileset dir="/home/dcram/dev/ws-visu2/visu/VisuServeur/visu/webapp/WEB-INF/lib" includes="ktbs-client-*.jar"/>
+		    <fileset dir="/home/dcram/dev/ws-visu2/visu/VisuServeur/visu/webapp/WEB-INF/lib" includes="${app.name}-*.jar"/>
 		  </delete>
-		<copy file="dist/ktbs-client-${version}.jar" todir="/home/dcram/dev/ws-visu2/visu/VisuServeur/visu/webapp/WEB-INF/lib"/>
+		<copy file="dist/${app.name}-${version}.jar" todir="/home/dcram/dev/ws-visu2/visu/VisuServeur/visu/webapp/WEB-INF/lib"/>
 	</target>
 		
 	<target name="package-3rd-party-libs" >

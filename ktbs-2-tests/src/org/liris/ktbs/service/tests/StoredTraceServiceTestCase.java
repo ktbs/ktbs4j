@@ -9,6 +9,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.liris.ktbs.client.ClientFactory;
 import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.domain.PojoFactory;
@@ -18,7 +19,6 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.examples.KtbsClientExample2;
-import org.liris.ktbs.service.MultiUserClientProvider;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.impl.ObselBuilder;
@@ -30,12 +30,8 @@ public class StoredTraceServiceTestCase extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		MultiUserClientProvider service = Ktbs.getMultiUserRestClientProvider();
-		KtbsClient clientDamien;
-		if(service.openClient("Damien", "dtotio")) {
-			clientDamien = service.getClient("Damien");
-		} else 
-			clientDamien = service.getClient("Damien");
+		ClientFactory service = Ktbs.getClientFactory();
+		KtbsClient clientDamien = service.createRestClient("http://localhost:8001/", "Damien", "dtotio");
 		storedTraceService = clientDamien.getStoredTraceService();
 		resourceService = clientDamien.getResourceService();
 		
@@ -45,7 +41,56 @@ public class StoredTraceServiceTestCase extends TestCase {
 			KtbsClientExample2.create("http://localhost:8001/base1/", "visuModel");
 	}
 
+	private void testNewObsel2() {
+		KtbsClient ktbsClient = Ktbs.getRestClient();
 
+		// get the resource service
+		ResourceService resourceService = ktbsClient.getResourceService();
+		
+		// retrieve the stored trace t01
+		IStoredTrace t01 = resourceService.getStoredTrace("/base1/t01/");
+		
+		// get the stored trace service
+		StoredTraceService storedTraceService = ktbsClient.getStoredTraceService();
+		
+		// collect a new anonymous obsel with begin time and end time set to 1000
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/OpenChat", 1000);
+		
+		// collect a new anonymous obsel with begin time and end time set to 3000
+		// and with two attributes
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/SendMsg", 3000, new Object[]{
+				"http://localhost:8001/base1/model1/message", "Hello world !",
+				"http://localhost:8001/base1/model1/lang", "english"
+		});
+	}
+
+	private void testNewObsel3() {
+		KtbsClient ktbsClient = Ktbs.getRestClient();
+		
+		// get the resource service
+		ResourceService resourceService = ktbsClient.getResourceService();
+		
+		// retrieve the stored trace t01
+		IStoredTrace t01 = resourceService.getStoredTrace("/base1/t01/");
+		// get the stored trace service
+		StoredTraceService storedTraceService = ktbsClient.getStoredTraceService();
+		
+		// open a new obsel buffer for the trace t01
+		storedTraceService.startBufferedCollect(t01);
+		
+		// collect some obsels
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/OpenChat", 1000);
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/SendMsg", 3000, new Object[]{
+				"http://localhost:8001/base1/model1/message", "Hello world !",
+				"http://localhost:8001/base1/model1/lang", "english"
+		});
+		
+		// create all obsels in t01's buffer
+		storedTraceService.postBufferedObsels(t01);
+		
+		
+	}
+	
 	public void testNewObsel() {
 		
 		String traceUri = storedTraceService.newStoredTrace(

@@ -25,7 +25,6 @@ public class DebugRdfParser {
 	public static void main(String[] args) throws FileNotFoundException {
 //		checkReturnedModel();
 		KtbsClient client = Ktbs.getRestClient("http://localhost:8001/");
-		
 		ResourceService service = client.getResourceService();
 		IObselType cc = service.getResource("http://localhost:8001/dino/0/alarme", IObselType.class);
 		System.out.println(cc);

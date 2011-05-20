@@ -12,9 +12,11 @@ import java.util.Set;
 import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.dao.rest.KtbsResponse;
+import org.liris.ktbs.domain.AttributePair;
 import org.liris.ktbs.domain.Obsel;
 import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.domain.interfaces.IAttributePair;
+import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IKtbsResource;
 import org.liris.ktbs.domain.interfaces.IObsel;
@@ -217,7 +219,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 				traceModelUri, 
 				KtbsUtils.now(), 
 				defaultSubject);
-		
+
 		return traceUri;
 	}
 
@@ -230,10 +232,41 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 	public ObselBuilder newObselBuilder(String storedTraceUri) {
 		return new ObselBuilder(this, storedTraceUri, pojoFactory);
 	}
-	
+
 	@Override
 	public String getRootUri() {
 		return dao.getRootUri();
+	}
+
+	@Override
+	public String newObsel(IStoredTrace trace, String typeUri, long begin,
+			Object[] attributes) {
+
+		Set<IAttributePair> att = new HashSet<IAttributePair>();
+		if(attributes != null) {
+			if(attributes.length%2==1)
+				throw new IllegalArgumentException("Must provide an even number of strings.");
+
+			for(int i=0; i<attributes.length; i+=2) {
+				Object attTypeObject = attributes[2*i];
+				if(attTypeObject == null)
+					throw new IllegalArgumentException("Must provide a non null attribut type");
+				
+				IAttributeType attType;
+				if(attTypeObject instanceof String)
+					attType = this.pojoFactory.createAttributeType((String)attTypeObject);
+				else if(attTypeObject instanceof IAttributeType)
+					attType = (IAttributeType)attTypeObject;
+				else
+					throw new IllegalArgumentException("Must provide a String or a IAttributeType as attribute types.");
+					
+				Object attValue = attributes[2*i+1];
+				att.add(new AttributePair(attType, attValue));
+			}
+		}
+		
+		return newObsel(trace, typeUri, begin, att);
+
 	}
 
 }

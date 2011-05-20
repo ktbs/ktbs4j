@@ -2,10 +2,13 @@ package org.liris.ktbs.client;
 
 import org.liris.ktbs.dao.DaoFactory;
 import org.liris.ktbs.dao.ResourceDao;
-import org.liris.ktbs.service.MultiUserClientProvider;
 import org.liris.ktbs.service.ServiceFactory;
-import org.liris.ktbs.service.impl.MultiUserManager;
 
+/**
+ * 
+ * @author dcram
+ *
+ */
 public class ClientFactory {
 	
 	private DaoFactory daoFactory;
@@ -19,24 +22,48 @@ public class ClientFactory {
 		this.serviceFactory = serviceFactory;
 	}
 	
+	/**
+	 * 
+	 * @param rootUri
+	 * @return
+	 */
 	public KtbsClient createRestClient(String rootUri) {
 		ResourceDao dao = daoFactory.createRestDao(rootUri);
 		KtbsClientImpl client = createClient(rootUri, dao, false);
 		return client;
 	}
 
+	/**
+	 * 
+	 * @param rootUri
+	 * @param size
+	 * @param timeout
+	 * @return
+	 */
 	public KtbsClient createRestCachingClient(String rootUri, Integer size, Long timeout) {
 		ResourceDao dao = daoFactory.createRestCachingDao(rootUri, size, timeout);
 		KtbsClientImpl client = createClient(rootUri, dao, true);
 		return client;
 	}
 
+	/**
+	 * 
+	 * @param rootUri
+	 * @return
+	 */
 	public KtbsClient createMemoryClient(String rootUri) {
 		ResourceDao dao = daoFactory.createMemoryDao(rootUri);
 		KtbsClientImpl client = createClient(rootUri, dao, false);
 		return client;
 	}
 
+	/**
+	 * 
+	 * @param rootUri
+	 * @param dao
+	 * @param caching
+	 * @return
+	 */
 	private KtbsClientImpl createClient(String rootUri, ResourceDao dao,
 			boolean caching) {
 		KtbsClientImpl client = new KtbsClientImpl(
@@ -49,10 +76,13 @@ public class ClientFactory {
 		return client;
 	}
 
-	public MultiUserClientProvider createMultiUserProvider(String rootUri) {
-		return new MultiUserManager(rootUri, this);
-	}
-
+	/**
+	 * 
+	 * @param rootUri
+	 * @param user
+	 * @param password
+	 * @return
+	 */
 	public KtbsClient createRestClient(String rootUri, String user,
 			String password) {
 		ResourceDao dao = daoFactory.createRestDao(rootUri, user, password);
@@ -60,6 +90,15 @@ public class ClientFactory {
 		return client;
 	}
 
+	/**
+	 * 
+	 * @param rootUri
+	 * @param user
+	 * @param password
+	 * @param size
+	 * @param timeout
+	 * @return
+	 */
 	public KtbsClient createRestCachingClient(String rootUri, String user, String password, Integer size, Long timeout) {
 		ResourceDao dao = daoFactory.createRestCachingDao(rootUri, user, password, size, timeout);
 		KtbsClientImpl client = createClient(rootUri, dao, true);

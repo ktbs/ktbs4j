@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.liris.ktbs.client.Ktbs;
+import org.liris.ktbs.client.KtbsClient;
 import org.liris.ktbs.dao.DefaultCachingDao;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IComputedTrace;
@@ -13,9 +14,11 @@ import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
+import org.liris.ktbs.service.CachingResourceService;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.impl.CachingResourceManager;
 import org.liris.ktbs.test.utils.Chrono;
+import org.liris.ktbs.utils.KtbsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,83 @@ public class CachingResourceManagerTestCase extends TestCase {
 		defaultManager = Ktbs.getRestClient().getResourceService();
 	}
 
+	public void testExemple() {
+		
+		// get the caching client
+		// max size: 1000 resources, timeout: 10 seconds
+		KtbsClient restCachingClient = Ktbs.getRestCachingClient("http://localhost:8001/", 1000, 10000l);
+		
+		// get the caching resource
+		ResourceService resourceservice = restCachingClient.getResourceService();
+		
+		
+		// produce two underlying GET request and cache the resources
+		IBase base1 = resourceservice.getRoot().get("base1");
+
+		// retrieved from cache
+		IBase base1Again = resourceservice.getRoot().get("base1");
+		
+		// give access to manual caching management
+		CachingResourceService cachingService = (CachingResourceService)resourceservice;
+		
+		// produce an underlying GET request and update the cache with new version
+		IBase base1FromServer = cachingService.getBase("/base1/", true);
+		
+		
+		
+	}
+
+	public void testExemple2() {
+		
+		// get the caching client
+		// max size: 1000 resources, timeout: 10 seconds
+		KtbsClient restCachingClient = Ktbs.getRestCachingClient("http://localhost:8001/", 1000, 10000l);
+		
+		// get the caching resource
+		ResourceService resourceService = restCachingClient.getResourceService();
+		
+		
+		// produce two underlying GET requests and cache the resources
+		IBase base1 = resourceService.getBase("base1");
+		
+		// base1 contains only one stored trace: t01
+		assertEquals(1, base1.getStoredTraces().size());
+		
+		// generate an underlying POST request
+		resourceService.newStoredTrace(
+				base1.getUri(), 
+				"t02", 
+				"http://localhost:8001/base1/model1/", 
+				KtbsUtils.now(), 
+				"Damien Cram");
+		
+		// retrieve base1 via the resourceService again
+		IBase base1Again = resourceService.getBase("base1");
+		
+		// there is still only t01 in base1Again
+		assertEquals(1, base1Again.getStoredTraces().size());
+		
+		// because base1 and base1Again are now the same Java objects
+		// and nothing has been changed locally
+		assertTrue(base1 == base1Again);
+		
+		// base1 must be retrieved from the service explicitely
+		CachingResourceService cachingService = (CachingResourceService)resourceService;
+		IBase base1Again2 = cachingService.getBase("base1", true);
+		
+		// now it is OK
+		assertEquals(2, base1Again2.getStoredTraces().size());
+		assertFalse(base1 == base1Again2);
+		
+		// alternative: remove base1 from cache
+		cachingService.removeFromCache(base1);
+		assertEquals(2, resourceService.getBase("base1").getStoredTraces().size());
+
+		// alternative 2: clear the cache
+		cachingService.clearCache();
+		assertEquals(2, resourceService.getBase("base1").getStoredTraces().size());
+	}
+	
 	public void testGet() {
 
 		IRoot root = cachingManager.getRoot();

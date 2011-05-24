@@ -5,6 +5,7 @@ import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IObselType;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 
+
 public class RetroRoomTraceModelFiller extends TraceModelFiller {
 
 	@Override

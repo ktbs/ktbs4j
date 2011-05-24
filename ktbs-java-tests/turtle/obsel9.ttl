@@ -1,9 +1,0 @@
-@prefix : <http://localhost:8001/base1/model1/>.
-@prefix ktbs: <http://liris.cnrs.fr/silex/2009/ktbs#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-
- <http://localhost:8001/base1/t01/obs8> a :SendMsg;
-     ktbs:hasBegin "12000"^^<http://www.w3.org/2001/XMLSchema#integer>;
-     ktbs:hasEnd "14000"^^<http://www.w3.org/2001/XMLSchema#integer>;
-     ktbs:hasSubject "Tonton Nestor 2";
-     :message "Salut les vieux".

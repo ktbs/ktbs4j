@@ -1,9 +1,0 @@
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix : <http://liris.cnrs.fr/silex/2009/ktbs#> .
-
-<http://localhost:8001/base1/> :owns <http://localhost:8001/base1/model1/> .
-
-<http://localhost:8001/base1/model1/>
-    a :TraceModel ;
-    rdfs:label "An example model 1".
-

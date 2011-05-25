@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.liris.ktbs.domain.PojoFactory;
+import org.liris.ktbs.serial.DeserializationConfig;
+import org.liris.ktbs.serial.SerializationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -55,7 +57,13 @@ public class Ktbs {
 		String rootUri = getRootUri(uri);
 		String userName2 = getUserName(userName);
 		String userPassword2 = getUserPassword(userPassword);
-		KtbsClient client = getClientFactory().createRestClient(rootUri, userName2, userPassword2);
+		KtbsClient client = getClientFactory().createRestClient(
+				rootUri, 
+				userName2, 
+				userPassword2,
+				new SerializationConfig(),
+				new DeserializationConfig()
+				);
 		return client;
 	}
 

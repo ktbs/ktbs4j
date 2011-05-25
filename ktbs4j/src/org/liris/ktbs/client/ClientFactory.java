@@ -2,6 +2,9 @@ package org.liris.ktbs.client;
 
 import org.liris.ktbs.dao.DaoFactory;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.dao.rest.RestDao;
+import org.liris.ktbs.serial.DeserializationConfig;
+import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.service.ServiceFactory;
 
 /**
@@ -76,16 +79,34 @@ public class ClientFactory {
 		return client;
 	}
 
+	public KtbsClient createRestClient(
+			String rootUri, 
+			String user,
+			String password
+	) {
+		ResourceDao dao = daoFactory.createRestDao(rootUri, user, password);
+		KtbsClientImpl client = createClient(rootUri, dao, false);
+		return client;
+	}
 	/**
 	 * 
 	 * @param rootUri
 	 * @param user
 	 * @param password
+	 * @param serializationConfig
+	 * @param deSerializationConfig
 	 * @return
 	 */
-	public KtbsClient createRestClient(String rootUri, String user,
-			String password) {
-		ResourceDao dao = daoFactory.createRestDao(rootUri, user, password);
+	public KtbsClient createRestClient(
+			String rootUri, 
+			String user,
+			String password,
+			SerializationConfig serializationConfig,
+			DeserializationConfig deSerializationConfig
+			) {
+		RestDao dao = (RestDao)daoFactory.createRestDao(rootUri, user, password);
+		dao.setDefaultDeserializationConfig(deSerializationConfig);
+		dao.setDefaultSerializationConfig(serializationConfig);
 		KtbsClientImpl client = createClient(rootUri, dao, false);
 		return client;
 	}
@@ -99,8 +120,42 @@ public class ClientFactory {
 	 * @param timeout
 	 * @return
 	 */
-	public KtbsClient createRestCachingClient(String rootUri, String user, String password, Integer size, Long timeout) {
+	public KtbsClient createRestCachingClient(
+			String rootUri, 
+			String user, 
+			String password, 
+			Integer size, 
+			Long timeout
+			) {
 		ResourceDao dao = daoFactory.createRestCachingDao(rootUri, user, password, size, timeout);
+		KtbsClientImpl client = createClient(rootUri, dao, true);
+		return client;
+	}
+	
+	/**
+	 * 
+	 * @param rootUri
+	 * @param user
+	 * @param password
+	 * @param size
+	 * @param timeout
+	 * @param serializationConfig
+	 * @param deSerializationConfig
+	 * @return
+	 */
+	public KtbsClient createRestCachingClient(
+			String rootUri, 
+			String user, 
+			String password, 
+			Integer size, 
+			Long timeout,
+			SerializationConfig serializationConfig,
+			DeserializationConfig deSerializationConfig
+	) {
+		RestDao dao = (RestDao)daoFactory.createRestCachingDao(rootUri, user, password, size, timeout);
+		dao.setDefaultDeserializationConfig(deSerializationConfig);
+		dao.setDefaultSerializationConfig(serializationConfig);
+		
 		KtbsClientImpl client = createClient(rootUri, dao, true);
 		return client;
 	}

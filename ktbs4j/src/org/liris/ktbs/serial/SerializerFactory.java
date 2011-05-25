@@ -14,26 +14,17 @@ public class SerializerFactory {
 	}
 
 	public Serializer newRdfSerializer(SerializationConfig config) {
-		Serializer rdfSerializer = newRdfSerializer();
+		RdfSerializer rdfSerializer = new RdfSerializer();
 		rdfSerializer.setSerializationConfig(config);
 		return rdfSerializer;
 	}
 
-	public Serializer newRdfSerializer() {
-		RdfSerializer rdfSerializer = new RdfSerializer();
-		return rdfSerializer;
-	}
 
 	public RdfDeserializer newRdfDeserializer(ProxyFactory proxyFactory, DeserializationConfig config) {
-		RdfDeserializer deserializer = newRdfDeserializer(proxyFactory);
-		deserializer.setDeserializationConfig(config);
-		return deserializer;
-	}
-
-	public RdfDeserializer newRdfDeserializer(ProxyFactory proxyFactory) {
 		RdfDeserializer rdfDeserializer = new RdfDeserializer();
 		rdfDeserializer.setPojoFactory(pojoFactory);
 		rdfDeserializer.setProxyFactory(proxyFactory);
+		rdfDeserializer.setDeserializationConfig(config);
 		return rdfDeserializer;
 	}
 }

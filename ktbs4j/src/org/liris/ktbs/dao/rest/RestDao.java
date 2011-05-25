@@ -21,6 +21,7 @@ import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
+import org.liris.ktbs.serial.DeserializationConfig;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.SerializationMode;
@@ -51,6 +52,18 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	private String rootUri;
 	private KtbsResponse lastResponse;
 
+	private SerializationConfig defaultSerializationConfig = new SerializationConfig();
+	public void setDefaultSerializationConfig(
+			SerializationConfig defaultSerializationConfig) {
+		this.defaultSerializationConfig = defaultSerializationConfig;
+	}
+	
+	private DeserializationConfig defaultDeserializationConfig = new DeserializationConfig();
+	public void setDefaultDeserializationConfig(
+			DeserializationConfig defaultDeserializationConfig) {
+		this.defaultDeserializationConfig = defaultDeserializationConfig;
+	}
+	
 	private SerializerFactory serializerFactory;
 	public void setSerializerFactory(SerializerFactory serializerFactory) {
 		this.serializerFactory = serializerFactory;
@@ -110,7 +123,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, response.getRequestUri());
 			}
 
-			RdfDeserializer deserializer = serializerFactory.newRdfDeserializer(proxyFactory);
+			RdfDeserializer deserializer = serializerFactory.newRdfDeserializer(proxyFactory, defaultDeserializationConfig);
 			T resource = deserializer.deserializeResource(
 					KtbsUtils.removeUriAspects(absoluteResourceUri),
 					new StringReader(bodyAsString), 
@@ -183,7 +196,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			throw new DaoException("A trace model element cannot be created through the current " +
 			"Rest API. Modify and save its parent trace model instead.");
 		StringWriter writer = new StringWriter();
-		serializerFactory.newRdfSerializer().serializeResource(writer, resource, sendMimeType);
+		serializerFactory.newRdfSerializer(defaultSerializationConfig).serializeResource(writer, resource, sendMimeType);
 
 		String uri = resource.getUri();
 		log.debug("Creating resource [" + (uri==null?"anonymous":("uri: "+uri)) + ", type: " + resource.getClass().getSimpleName() + "]");
@@ -303,7 +316,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		String etag = getEtag(uriToSave);
 		StringWriter writer = new StringWriter();
 
-		serializerFactory.newRdfSerializer().serializeResourceSet(writer, collection, sendMimeType);
+		serializerFactory.newRdfSerializer(defaultSerializationConfig).serializeResourceSet(writer, collection, sendMimeType);
 
 		log.debug("Saving a collection of resources (nb= "+collection.size()+") at uri " + uriToSave);
 		KtbsResponse response = client.update(uriToSave, writer.toString(), sendMimeType, etag);
@@ -402,7 +415,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 				bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, request);
 			}
 
-			ResultSet<T> resultSet = serializerFactory.newRdfDeserializer(proxyFactory).deserializeResourceSet(cls, new StringReader(bodyAsString), request, mimeType);
+			ResultSet<T> resultSet = serializerFactory.newRdfDeserializer(proxyFactory, defaultDeserializationConfig).deserializeResourceSet(cls, new StringReader(bodyAsString), request, mimeType);
 
 			for(T r:resultSet) {
 				// This should be connected into the Rdf2Java mapper

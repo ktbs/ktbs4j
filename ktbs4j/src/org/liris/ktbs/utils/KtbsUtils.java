@@ -453,6 +453,20 @@ public class KtbsUtils {
 		return ITraceModel.class.isAssignableFrom(cls);
 	}
 
+	public static String xsdDate(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		
+		return xsdDate(
+				c.get(Calendar.YEAR), 
+				c.get(Calendar.MONTH) +1, 
+				c.get(Calendar.DAY_OF_MONTH), 
+				c.get(Calendar.HOUR_OF_DAY), 
+				c.get(Calendar.MINUTE), 
+				c.get(Calendar.SECOND) 
+				);
+	}
+	
 	public static String xsdDate(int year, int month, int day, int hours, int min, int sec) {
 		return xsdDate(year, month, day, hours, min, sec, TimeZone.getDefault());
 	}

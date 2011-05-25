@@ -1,11 +1,16 @@
 package org.liris.ktbs.service.impl;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,6 +66,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void postBufferedObsels(IStoredTrace trace) {
 		if(!bufferedTraces.containsKey(trace.getUri()))
@@ -68,6 +74,30 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 		else {
 			bufferedTraces.remove(trace.getUri());
 			Deque<IObsel> obsels = bufferedTraceObsels.remove(trace.getUri());
+
+			// sort the collection
+			Collections.sort((List<IObsel>)obsels, new Comparator<IObsel>() {
+				@Override
+				public int compare(IObsel o1, IObsel o2) {
+					if(o1.getEndDT() == null && o2.getEndDT() == null) {
+						if(o1.getEnd() == null || o2.getEnd() == null)
+							return 0;
+						else {
+							return o1.getEnd().compareTo(o2.getEnd());
+						}
+					} else if(o1.getEndDT() == null ||o2.getEndDT() == null)
+						return 0;
+					else {
+						try {
+							Date d1 = KtbsUtils.parseXsdDate(o1.getEndDT());
+							Date d2 = KtbsUtils.parseXsdDate(o2.getEndDT());
+							return d1.compareTo(d2);
+						} catch (ParseException e) {
+							return 0;
+						}
+					}
+				}
+			});
 
 			// TODO to be improved when multiple post is allowed
 			for(IObsel obsel:obsels) {
@@ -251,7 +281,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 				Object attTypeObject = attributes[2*i];
 				if(attTypeObject == null)
 					throw new IllegalArgumentException("Must provide a non null attribut type");
-				
+
 				IAttributeType attType;
 				if(attTypeObject instanceof String)
 					attType = this.pojoFactory.createAttributeType((String)attTypeObject);
@@ -259,12 +289,12 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 					attType = (IAttributeType)attTypeObject;
 				else
 					throw new IllegalArgumentException("Must provide a String or a IAttributeType as attribute types.");
-					
+
 				Object attValue = attributes[2*i+1];
 				att.add(new AttributePair(attType, attValue));
 			}
 		}
-		
+
 		return newObsel(trace, typeUri, begin, att);
 
 	}

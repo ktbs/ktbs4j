@@ -20,9 +20,9 @@ import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
+import org.liris.ktbs.rdf.tests.Examples;
 import org.liris.ktbs.service.ResourceService;
-import org.liris.ktbs.tests.Examples;
-import org.liris.ktbs.tests.KtbsDisplay;
+import org.liris.ktbs.test.utils.ResourceDisplayer;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class ResourceManagerCreateTestCase extends TestCase {
@@ -63,6 +63,10 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				"t02", 
 				"http://localhost:8001/base4/model2/", 
 				"Origine de la trace 2",
+				null,
+				null,
+				null,
+				null,
 				"Nestor"
 				));
 		
@@ -111,6 +115,10 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				"t02", 
 				"http://localhost:8001/base6/model6/", 
 				KtbsUtils.now(),
+				null,
+				null,
+				null,
+				null,
 				"Nestor"
 				);
 				
@@ -129,7 +137,7 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				attributes
 		);
 		assertNotNull(o);
-		KtbsDisplay.displayObsel(manager.getResource(o, IObsel.class));
+		ResourceDisplayer.displayObsel(manager.getResource(o, IObsel.class));
 		
 		// Ensure that the absolute obsel timestamp of o2 is after the relative timestamp of o (1000)
 		Thread.sleep(1500);
@@ -165,6 +173,10 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				"t01", 
 				"http://localhost:8001/base7/model7/", 
 				"Origine de la trace 2",
+				null,
+				null,
+				null,
+				null,
 				"Nestor"
 				));
 		
@@ -173,6 +185,10 @@ public class ResourceManagerCreateTestCase extends TestCase {
 				"t02", 
 				"http://localhost:8001/base7/model7/", 
 				"Origine de la trace 2",
+				null,
+				null,
+				null,
+				null,
 				"Nestor"
 		));
 		

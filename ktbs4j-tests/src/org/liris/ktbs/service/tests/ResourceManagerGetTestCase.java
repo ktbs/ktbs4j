@@ -33,6 +33,10 @@ public class ResourceManagerGetTestCase extends TestCase {
 				"t02", 
 				"http://localhost:8001/base1/model1/", 
 				KtbsUtils.now(), 
+				null,
+				null,
+				null,
+				null,
 				"Damien Cram");
 
 		// generate an underlying GET request

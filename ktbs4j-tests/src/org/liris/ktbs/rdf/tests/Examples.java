@@ -1,4 +1,4 @@
-package org.liris.ktbs.tests;
+package org.liris.ktbs.rdf.tests;
 
 import java.math.BigInteger;
 import java.util.HashMap;

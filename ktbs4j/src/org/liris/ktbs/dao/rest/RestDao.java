@@ -274,7 +274,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		 * 
 		 * serializer.serializeResource(writer, resource, sendMimeType, config);
 		 */
-		temporaryFix(resourceToSave, config, writer);
+//		temporaryFix(resourceToSave, config, writer); // fix removed because it is not suitable for editable but unset properties
 		/*
 		 * END of fix
 		 */

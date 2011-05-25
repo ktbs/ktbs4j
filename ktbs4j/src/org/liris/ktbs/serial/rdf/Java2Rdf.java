@@ -385,6 +385,12 @@ public class Java2Rdf {
 	}
 
 	private void putTrace(ITrace trace) {
+		
+		putXSDDateLiteral(trace, KtbsConstants.P_HAS_TRACE_BEGIN_DT, trace.getTraceBeginDT());
+		putXSDDateLiteral(trace, KtbsConstants.P_HAS_TRACE_END_DT, trace.getTraceEndDT());
+		putLiteral(trace, KtbsConstants.P_HAS_TRACE_BEGIN, trace.getTraceBegin());
+		putLiteral(trace, KtbsConstants.P_HAS_TRACE_END, trace.getTraceEnd());
+		
 		putXSDDateLiteral(trace, KtbsConstants.P_HAS_ORIGIN, trace.getOrigin());
 		putLiteral(trace, KtbsConstants.P_COMPLIES_WITH_MODEL, trace.getCompliesWithModel());
 		putLinkedResourceSetSameType(trace, KtbsConstants.P_HAS_SOURCE, trace.getTransformedTraces(), true);

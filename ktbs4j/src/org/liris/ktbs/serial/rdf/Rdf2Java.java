@@ -57,8 +57,6 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
-
-
 public class Rdf2Java {
 
 	private static final Logger logger = LoggerFactory.getLogger(Rdf2Java.class);
@@ -446,6 +444,26 @@ public class Rdf2Java {
 		Object origin = getLiteral(trace.getUri(), KtbsConstants.P_HAS_ORIGIN);
 		if(origin != null)
 			trace.setOrigin(origin.toString());
+
+		// begin
+		Object traceBegin = getLiteral(trace.getUri(), KtbsConstants.P_HAS_TRACE_BEGIN);
+		if(traceBegin != null)
+			trace.setTraceBegin(new BigInteger(traceBegin.toString()));
+
+		// traceBeginDT
+		Object traceBeginDT = getLiteral(trace.getUri(), KtbsConstants.P_HAS_TRACE_BEGIN_DT);
+		if(traceBeginDT != null)
+			trace.setTraceBeginDT(traceBeginDT.toString());
+
+		// begin
+		Object traceEnd = getLiteral(trace.getUri(), KtbsConstants.P_HAS_TRACE_END);
+		if(traceEnd != null)
+			trace.setTraceEnd(new BigInteger(traceEnd.toString()));
+
+		// traceEndDT
+		Object traceEndDT = getLiteral(trace.getUri(), KtbsConstants.P_HAS_TRACE_END_DT);
+		if(traceEndDT != null)
+			trace.setTraceEndDT(traceEndDT.toString());
 
 		// complies with model
 		trace.setCompliesWithModel(getLiteralOrNull(trace.getUri(), KtbsConstants.P_COMPLIES_WITH_MODEL, String.class));

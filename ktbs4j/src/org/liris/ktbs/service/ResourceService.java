@@ -85,10 +85,24 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 * @param traceLocalName
 	 * @param modelUri
 	 * @param origin
+	 * @param traceBegin
+	 * @param traceBeginDT
+	 * @param traceEnd
+	 * @param traceEndDT
 	 * @param defaultSubject
 	 * @return the uri of the created trace, null if the creation failed
 	 */
-	public String newStoredTrace(String baseUri, String traceLocalName, String modelUri, String origin, String defaultSubject);
+	public String newStoredTrace(
+			String baseUri, 
+			String traceLocalName, 
+			String modelUri, 
+			String origin,
+			BigInteger traceBegin,
+			String traceBeginDT,
+			BigInteger traceEnd,
+			String traceEndDT,
+			String defaultSubject
+			);
 	
 	/**
 	 * 

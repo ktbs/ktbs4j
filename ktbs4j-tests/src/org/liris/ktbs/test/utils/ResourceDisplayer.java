@@ -1,4 +1,4 @@
-package org.liris.ktbs.tests;
+package org.liris.ktbs.test.utils;
 
 import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IComputedTrace;
@@ -12,7 +12,7 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.WithParameters;
 
-public class KtbsDisplay {
+public class ResourceDisplayer {
 
 	public static void displayStoredTrace(IStoredTrace trace1) {
 		displayResource(trace1);

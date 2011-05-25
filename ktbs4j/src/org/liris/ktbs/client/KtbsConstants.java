@@ -54,6 +54,10 @@ public interface KtbsConstants {
 	public static final String TRACE_MODEL = NAMESPACE_KTBS + "TraceModel";
 
 	// Trace properties
+	public static final String P_HAS_TRACE_BEGIN = NAMESPACE_KTBS + "hasTraceBegin";
+	public static final String P_HAS_TRACE_BEGIN_DT = NAMESPACE_KTBS + "hasTraceBeginDT";
+	public static final String P_HAS_TRACE_END = NAMESPACE_KTBS + "hasTraceEnd";
+	public static final String P_HAS_TRACE_END_DT = NAMESPACE_KTBS + "hasTraceEndDT";
 	public static final String P_HAS_ORIGIN = NAMESPACE_KTBS + "hasOrigin";
 	public static final String P_DESCRIPTION_OF = NAMESPACE_KTBS + "descriptionOf";
 	public static final String P_COMPLIES_WITH_MODEL = NAMESPACE_KTBS + "compliesWithModel";

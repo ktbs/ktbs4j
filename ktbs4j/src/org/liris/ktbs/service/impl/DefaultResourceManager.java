@@ -57,28 +57,6 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 		return dao.create(base);
 	}
 
-	@Override
-	public String newStoredTrace(String baseUri,
-			String traceLocalName, String model, String origin,
-			String defaultSubject) {
-		IStoredTrace trace = createResource(baseUri, traceLocalName, IStoredTrace.class, false);
-		trace.setOrigin(origin);
-
-		/*
-		 * No ktbs:hasSubject property defined yet in the RDF format for a StoredTrace.
-		 * Put a label instead
-		 */
-		if(defaultSubject != null)
-			trace.getLabels().add("subject: " + defaultSubject);
-
-		/*
-		 * trace.setDefaultSubject(defaultSubject);
-		 */
-
-		trace.setTraceModel(dao.getProxyFactory().createResource(model, ITraceModel.class));
-
-		return dao.create(trace);
-	}
 
 	@Override
 	public String newComputedTrace(String baseUri,
@@ -254,5 +232,34 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 	
 	public ResourceDao getDao() {
 		return dao;
+	}
+
+	@Override
+	public String newStoredTrace(String baseUri, String traceLocalName,
+			String modelUri, String origin, BigInteger traceBegin,
+			String traceBeginDT, BigInteger traceEnd, String traceEndDT,
+			String defaultSubject) {
+		
+		IStoredTrace trace = createResource(baseUri, traceLocalName, IStoredTrace.class, false);
+		trace.setOrigin(origin);
+		trace.setTraceBegin(traceBegin);
+		trace.setTraceBeginDT(traceBeginDT);
+		trace.setTraceEnd(traceEnd);
+		trace.setTraceEndDT(traceEndDT);
+
+		/*
+		 * No ktbs:hasSubject property defined yet in the RDF format for a StoredTrace.
+		 * Put a label instead
+		 */
+		if(defaultSubject != null)
+			trace.getLabels().add("subject: " + defaultSubject);
+
+		/*
+		 * trace.setDefaultSubject(defaultSubject);
+		 */
+
+		trace.setTraceModel(dao.getProxyFactory().createResource(modelUri, ITraceModel.class));
+
+		return dao.create(trace);
 	}
 }

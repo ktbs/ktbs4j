@@ -88,6 +88,10 @@ public class CachingResourceManagerTestCase extends TestCase {
 				"t02", 
 				"http://localhost:8001/base1/model1/", 
 				KtbsUtils.now(), 
+				null, 
+				null, 
+				null, 
+				null, 
 				"Damien Cram");
 		
 		// retrieve base1 via the resourceService again

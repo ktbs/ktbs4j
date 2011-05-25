@@ -149,19 +149,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 	String createObsel(IStoredTrace storedTrace, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
 			BigInteger end, String subject, Set<IAttributePair> attributes) {
-
-		this.lastDelegatedToResourceManager = true;
-
-		return resourceService.newObsel(
-				storedTrace.getUri(), 
-				obselLocalName, 
-				typeUri,
-				beginDT, 
-				endDT, 
-				begin, 
-				end, 
-				subject, 
-				attributes);
+		return newObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT, begin, end, subject, attributes);
 	}
 
 	@Override
@@ -244,10 +232,15 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 
 		this.lastDelegatedToResourceManager = true;
 
+		String now = KtbsUtils.now();
 		String traceUri = resourceService.newStoredTrace(baseUri, 
 				generateTraceId(baseUri), 
 				traceModelUri, 
-				KtbsUtils.now(), 
+				now,
+				null,
+				now,
+				null,
+				null,
 				defaultSubject);
 
 		return traceUri;

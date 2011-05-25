@@ -16,7 +16,6 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.serial.SerializationConfig;
 import org.liris.ktbs.serial.SerializationMode;
 import org.liris.ktbs.serial.rdf.Java2Rdf;
-import org.liris.ktbs.tests.Examples;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;

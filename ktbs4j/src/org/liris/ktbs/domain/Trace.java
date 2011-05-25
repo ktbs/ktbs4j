@@ -1,5 +1,6 @@
 package org.liris.ktbs.domain;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,6 +13,10 @@ import org.liris.ktbs.domain.interfaces.ITraceModel;
 
 @SuppressWarnings("serial")
 public class Trace extends ResourceContainer<IObsel> implements ITrace {
+	private String traceBeginDT;
+	private String traceEndDT;
+	private BigInteger traceBegin;
+	private BigInteger traceEnd;
 	private String origin;
 	private String compliesWithModel;
 	private ITraceModel traceModel;
@@ -99,6 +104,47 @@ public class Trace extends ResourceContainer<IObsel> implements ITrace {
 		this.obsels = obsels;
 	}
 
+	
+	@Override
+	public String getTraceBeginDT() {
+		return traceBeginDT;
+	}
+
+	@Override
+	public void setTraceBeginDT(String traceBeginDT) {
+		this.traceBeginDT = traceBeginDT;
+	}
+
+	@Override
+	public String getTraceEndDT() {
+		return traceEndDT;
+	}
+
+	@Override
+	public void setTraceEndDT(String traceEndDT) {
+		this.traceEndDT = traceEndDT;
+	}
+
+	@Override
+	public BigInteger getTraceBegin() {
+		return traceBegin;
+	}
+
+	@Override
+	public void setTraceBegin(BigInteger traceBegin) {
+		this.traceBegin = traceBegin;
+	}
+
+	@Override
+	public BigInteger getTraceEnd() {
+		return traceEnd;
+	}
+
+	@Override
+	public void setTraceEnd(BigInteger traceEnd) {
+		this.traceEnd = traceEnd;
+	}
+	
 	@Override
 	protected Collection<? extends Collection<? extends IObsel>> getContainedResourceCollections() {
 		LinkedList<Set<IObsel>> linkedList = new LinkedList<Set<IObsel>>();

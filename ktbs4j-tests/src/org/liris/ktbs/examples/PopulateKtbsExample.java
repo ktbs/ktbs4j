@@ -66,7 +66,11 @@ public class PopulateKtbsExample {
 				"t01", 
 				modelUri, 
 				KtbsUtils.xsdDateUTC(2010, 4, 28, 18, 9, 0), 
-		"Toto");
+				null,
+				null,
+				null,
+				null,
+				"Toto");
 
 		// the count method
 		Map<String, String> params = new HashMap<String, String>();

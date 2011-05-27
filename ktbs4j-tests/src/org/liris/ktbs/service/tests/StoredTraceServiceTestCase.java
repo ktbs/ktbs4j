@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.junit.Before;
 import org.liris.ktbs.client.ClientFactory;
 import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.client.KtbsClient;
@@ -22,14 +24,23 @@ import org.liris.ktbs.examples.KtbsClientExample2;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.impl.ObselBuilder;
+import org.liris.ktbs.test.utils.KtbsServer;
+import org.liris.ktbs.utils.KtbsUtils;
 
 public class StoredTraceServiceTestCase extends TestCase {
 
 	private StoredTraceService storedTraceService;
 	private ResourceService resourceService;
 
-	@Override
-	protected void setUp() throws Exception {
+	private KtbsServer ktbsServer;
+	
+	@Before
+	public void setUp() throws Exception {
+		ktbsServer = KtbsServer.newInstance("http://localhost:8001/", System.err);
+		ktbsServer.start();
+		ktbsServer.populateKtbs();
+		ktbsServer.populateT01();
+
 		ClientFactory service = Ktbs.getClientFactory();
 		KtbsClient clientDamien = service.createRestClient("http://localhost:8001/", "Damien", "dtotio");
 		storedTraceService = clientDamien.getStoredTraceService();
@@ -40,8 +51,14 @@ public class StoredTraceServiceTestCase extends TestCase {
 		if(model == null)
 			KtbsClientExample2.create("http://localhost:8001/base1/", "visuModel");
 	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		ktbsServer.stop();
+		super.tearDown();
+	}
 
-	private void testNewObsel2() {
+	public void testNewObsel2() {
 		KtbsClient ktbsClient = Ktbs.getRestClient();
 
 		// get the resource service
@@ -49,22 +66,27 @@ public class StoredTraceServiceTestCase extends TestCase {
 		
 		// retrieve the stored trace t01
 		IStoredTrace t01 = resourceService.getStoredTrace("/base1/t01/");
+		assertEquals(4, resourceService.getStoredTrace("/base1/t01/").getObsels().size());
 		
 		// get the stored trace service
 		StoredTraceService storedTraceService = ktbsClient.getStoredTraceService();
 		
 		// collect a new anonymous obsel with begin time and end time set to 1000
-		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/OpenChat", 1000);
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/OpenChat", 100000);
+		
+		
+		assertEquals(5, resourceService.getStoredTrace("/base1/t01/").getObsels().size());
 		
 		// collect a new anonymous obsel with begin time and end time set to 3000
 		// and with two attributes
-		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/SendMsg", 3000, new Object[]{
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/SendMsg", 300000, new Object[]{
 				"http://localhost:8001/base1/model1/message", "Hello world !",
 				"http://localhost:8001/base1/model1/lang", "english"
 		});
+		assertEquals(6, resourceService.getStoredTrace("/base1/t01/").getObsels().size());
 	}
 
-	private void testNewObsel3() {
+	public void testNewObsel3() {
 		KtbsClient ktbsClient = Ktbs.getRestClient();
 		
 		// get the resource service
@@ -79,15 +101,16 @@ public class StoredTraceServiceTestCase extends TestCase {
 		storedTraceService.startBufferedCollect(t01);
 		
 		// collect some obsels
-		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/OpenChat", 1000);
-		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/SendMsg", 3000, new Object[]{
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/OpenChat", 100000);
+		storedTraceService.newObsel(t01, "http://localhost:8001/base1/model1/SendMsg", 200000, new Object[]{
 				"http://localhost:8001/base1/model1/message", "Hello world !",
 				"http://localhost:8001/base1/model1/lang", "english"
 		});
 		
 		// create all obsels in t01's buffer
 		storedTraceService.postBufferedObsels(t01);
-		
+
+		assertEquals(6, resourceService.getStoredTrace("/base1/t01/").getObsels().size());
 		
 	}
 	
@@ -136,6 +159,80 @@ public class StoredTraceServiceTestCase extends TestCase {
 		assertEquals("http://localhost:8001/base1/visuModel/RetroWorkbenchEvent", builtObselOnServeur.getObselType().getUri());
 	}
 
+	/*
+	 * Tests the bufferized creation of obsels when obsels are not in right order
+	 */
+	public void testBufferedCollectWithSort() {
+		
+		KtbsClient ktbsClient = Ktbs.getRestClient();
+		
+		String t02Uri = resourceService.newStoredTrace("/base1/", "t02", "http://localhost:8001/base1/model1/",KtbsUtils.now(),null,null,null,null,"Nestor");
+		StoredTraceService storedTraceService = ktbsClient.getStoredTraceService();
+		
+		IStoredTrace t02 = resourceService.getStoredTrace(t02Uri);
+		storedTraceService.startBufferedCollect(t02);
+		storedTraceService.newObsel(t02, "http://localhost:8001/base1/model1/OpenChat", 2000);
+		storedTraceService.newObsel(t02, "http://localhost:8001/base1/model1/SendMsg", 1000, new Object[]{
+				"http://localhost:8001/base1/model1/message", "Hello world !",
+				"http://localhost:8001/base1/model1/lang", "english"
+		});
+		
+		storedTraceService.postBufferedObsels(t02);
+		assertEquals(2, resourceService.getStoredTrace("/base1/t02/").getObsels().size());
+		
+		
+		// Test the reordering with absolute dates on 3 obsels
+		String t03Uri = resourceService.newStoredTrace(
+				"/base1/", 
+				"t03", 
+				"http://localhost:8001/base1/model1/",
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 0),
+				null,null,null,null,"Nestor");
+		
+		IStoredTrace t03 = resourceService.getStoredTrace(t03Uri);
+		storedTraceService.startBufferedCollect(t03);
+		storedTraceService.newObsel(t03, null, "http://localhost:8001/base1/model1/OpenChat", 
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 2),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 4),
+				null, 
+				null, 
+				null, 
+				null);
+		storedTraceService.newObsel(t03, null, "http://localhost:8001/base1/model1/OpenChat", 
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 3),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 3),
+				null, 
+				null, 
+				null, 
+				null);
+		storedTraceService.newObsel(t03, null, "http://localhost:8001/base1/model1/OpenChat", 
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 1),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 5),
+				null, 
+				null, 
+				null, 
+				null);
+		storedTraceService.postBufferedObsels(t03);
+		assertEquals(3, resourceService.getStoredTrace("/base1/t03/").getObsels().size());
+		
+		
+		// Test the reordering with random relative dates on 10 obsels
+		String t04Uri = resourceService.newStoredTrace(
+				"/base1/", 
+				"t04", 
+				"http://localhost:8001/base1/model1/",
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 0),
+				null,null,null,null,"Nestor");
+		IStoredTrace t04 = resourceService.getStoredTrace(t04Uri);
+		storedTraceService.startBufferedCollect(t04);
+		for(int i=0; i<10; i++) {
+			storedTraceService.newObsel(t04, "http://localhost:8001/base1/model1/OpenChat", new Random().nextInt(30000));
+		}
+		
+		storedTraceService.postBufferedObsels(t04);
+		assertEquals(10, resourceService.getStoredTrace("/base1/t04/").getObsels().size());
+	}
+	
 	public void testBufferedCollect() {
 		String traceUri = storedTraceService.newStoredTrace(
 				"http://localhost:8001/base1/", 

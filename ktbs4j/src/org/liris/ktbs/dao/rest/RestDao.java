@@ -99,7 +99,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
 
-		String absoluteResourceUri = KtbsUtils.makeChildURI(rootUri, uri, KtbsUtils.isLeafType(cls));
+		String absoluteResourceUri = KtbsUtils.makeAbsoluteURI(rootUri, uri, KtbsUtils.isLeafType(cls));
 
 		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
 			absoluteResourceUri+=KtbsConstants.ABOUT_ASPECT;
@@ -268,17 +268,22 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 
 		StringWriter writer = new StringWriter();
-
 		/*
 		 * KTBS FIX should use the serializer when KTBS is debugged for update resource: 
 		 * 
 		 * serializer.serializeResource(writer, resource, sendMimeType, config);
 		 */
-//		temporaryFix(resourceToSave, config, writer); // fix removed because it is not suitable for editable but unset properties
+		
+		temporaryFix(resourceToSave, config, writer); // fix removed because it is not suitable for editable but unset properties
 		/*
 		 * END of fix
 		 */
 
+		
+		// otherwise (when bug is fixed on KTBS)
+//		serializerFactory.newRdfSerializer(config).serializeResource(writer, resourceToSave, sendMimeType);
+		
+		
 		if(etag == null) 
 			throw new ResourceNotFoundException(updateUri);
 

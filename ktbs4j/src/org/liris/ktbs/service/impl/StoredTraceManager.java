@@ -104,7 +104,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 				if(obsel.getParentResource() == null)
 					((Obsel)obsel).setParentResource(trace);
 				this.lastDelegatedToResourceManager = false;
-				dao.createAndGet(obsel);
+				dao.create(obsel);
 			}
 		}
 	}
@@ -141,8 +141,10 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 			bufferedTraceObsels.get(storedTrace.getUri()).add(obsel);
 			return obsel.getUri();
 		} else {
-			return createObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT,
+			this.lastDelegatedToResourceManager = true;
+			String newObsel = resourceService.newObsel(storedTrace.getUri(), obselLocalName, typeUri, beginDT, endDT,
 					begin, end, subject, attributes);
+			return newObsel;
 		}
 	}
 
@@ -220,7 +222,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 
 		String name;
 		do 
-			name = KtbsUtils.makeChildURI(baseUri,"storedTrace" + cnt++, false);
+			name = KtbsUtils.makeAbsoluteURI(baseUri,"storedTrace" + cnt++, false);
 		while(uris.contains(name));
 
 		return name;
@@ -271,7 +273,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 				throw new IllegalArgumentException("Must provide an even number of strings.");
 
 			for(int i=0; i<attributes.length; i+=2) {
-				Object attTypeObject = attributes[2*i];
+				Object attTypeObject = attributes[i];
 				if(attTypeObject == null)
 					throw new IllegalArgumentException("Must provide a non null attribut type");
 
@@ -283,7 +285,7 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 				else
 					throw new IllegalArgumentException("Must provide a String or a IAttributeType as attribute types.");
 
-				Object attValue = attributes[2*i+1];
+				Object attValue = attributes[i+1];
 				att.add(new AttributePair(attType, attValue));
 			}
 		}

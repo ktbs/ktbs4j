@@ -10,6 +10,6 @@ public abstract class AbstractResourceFactory implements ResourceFactory {
 		if(localName == null)
 			return createResource(cls);
 		else 			
-			return createResource(KtbsUtils.makeChildURI(parentUri, localName, leaf), cls);
+			return createResource(KtbsUtils.makeAbsoluteURI(parentUri, localName, leaf), cls);
 	}
 }

@@ -42,7 +42,7 @@ public class TraceModelManager  implements TraceModelService, ResponseAwareServi
 	@Override
 	public IAttributeType newAttributeType(ITraceModel model, String localName,
 			IObselType domain) {
-		IAttributeType attType = factory.createResource(KtbsUtils.makeChildURI(model.getUri(), localName, true), IAttributeType.class);
+		IAttributeType attType = factory.createResource(KtbsUtils.makeAbsoluteURI(model.getUri(), localName, true), IAttributeType.class);
 
 		if(domain != null)
 			attType.getDomains().add(domain);
@@ -78,7 +78,7 @@ public class TraceModelManager  implements TraceModelService, ResponseAwareServi
 	@Override
 	public IRelationType newRelationType(ITraceModel model, String localName,
 			IObselType domain, IObselType range) {
-		IRelationType relType = factory.createResource(KtbsUtils.makeChildURI(model.getUri(), localName, true), IRelationType.class);
+		IRelationType relType = factory.createResource(KtbsUtils.makeAbsoluteURI(model.getUri(), localName, true), IRelationType.class);
 
 		if(domain != null)
 			relType.getDomains().add(domain);
@@ -97,7 +97,7 @@ public class TraceModelManager  implements TraceModelService, ResponseAwareServi
 	@Override
 	public IObselType newObselType(ITraceModel model, String localName,
 			IObsel superType) {
-		IObselType obsType = factory.createResource(KtbsUtils.makeChildURI(model.getUri(), localName, true), IObselType.class);
+		IObselType obsType = factory.createResource(KtbsUtils.makeAbsoluteURI(model.getUri(), localName, true), IObselType.class);
 
 		if(superType != null)
 			obsType.getSuperObselTypes().add(obsType);

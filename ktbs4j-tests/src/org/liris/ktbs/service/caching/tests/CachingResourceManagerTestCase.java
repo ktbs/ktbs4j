@@ -18,6 +18,7 @@ import org.liris.ktbs.service.CachingResourceService;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.impl.CachingResourceManager;
 import org.liris.ktbs.test.utils.Chrono;
+import org.liris.ktbs.test.utils.KtbsServer;
 import org.liris.ktbs.utils.KtbsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +35,24 @@ public class CachingResourceManagerTestCase extends TestCase {
 	private ResourceService cachingManager;
 	private ResourceService defaultManager;
 
+	private KtbsServer ktbsServer;
+	
 	@Before
 	public void setUp() throws Exception {
+		ktbsServer = KtbsServer.newInstance("http://localhost:8001/", System.err);
+		ktbsServer.start();
+		ktbsServer.populateKtbs();
+		ktbsServer.populateT01();
 		cachingManager = Ktbs.getRestCachingClient(1000, 10000l).getResourceService();
 		defaultManager = Ktbs.getRestClient().getResourceService();
 	}
-
+	
+	@Override
+	protected void tearDown() throws Exception {
+		ktbsServer.stop();
+		super.tearDown();
+	}
+	
 	public void testExemple() {
 		
 		// get the caching client
@@ -69,8 +82,8 @@ public class CachingResourceManagerTestCase extends TestCase {
 	public void testExemple2() {
 		
 		// get the caching client
-		// max size: 1000 resources, timeout: 10 seconds
-		KtbsClient restCachingClient = Ktbs.getRestCachingClient("http://localhost:8001/", 1000, 10000l);
+		// max size: 1000 resources, timeout: 2000 seconds
+		KtbsClient restCachingClient = Ktbs.getRestCachingClient("http://localhost:8001/", 1000, 2000000l);
 		
 		// get the caching resource
 		ResourceService resourceService = restCachingClient.getResourceService();

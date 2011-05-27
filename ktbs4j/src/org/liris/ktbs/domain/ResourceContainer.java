@@ -65,7 +65,7 @@ public abstract class ResourceContainer<T extends IKtbsResource> extends KtbsRes
 	 */
 	@Override
 	public T get(String resourceURI) {
-		String absoluteUri = KtbsUtils.makeChildURI(getUri(), resourceURI, isChildALeaf());
+		String absoluteUri = KtbsUtils.makeAbsoluteURI(getUri(), resourceURI, isChildALeaf());
 		
 		Iterator<T> it = newConcatenatingIterator();
 		while (it.hasNext()) {

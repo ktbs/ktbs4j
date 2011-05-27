@@ -3,7 +3,7 @@
 
  <http://localhost:8001/base1/> a ktbs:Base;
      rdfs:label "A trace base";
-     ktbs:owns <http://localhost:8001/base1/count/>,
+     ktbs:contains <http://localhost:8001/base1/count/>,
          <http://localhost:8001/base1/count1/>,
          <http://localhost:8001/base1/count2/>,
          <http://localhost:8001/base1/filter/>,

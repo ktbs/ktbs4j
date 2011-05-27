@@ -46,7 +46,8 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 
 	@Override
 	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls) {
-		T ktbsResource = dao.get(uri,cls);
+		String absoluteResourceUri = KtbsUtils.makeAbsoluteURI(getRootUri(), uri, KtbsUtils.isLeafType(cls));
+		T ktbsResource = dao.get(absoluteResourceUri,cls);
 		return ktbsResource;
 	}
 
@@ -141,7 +142,7 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 			String localName, 
 			Class<T> cls, 
 			boolean leaf) {
-		String absoluteParentUri = KtbsUtils.makeChildURI(getRootUri(), parentUri, false);
+		String absoluteParentUri = KtbsUtils.makeAbsoluteURI(getRootUri(), parentUri, false);
 
 		T resource = pojoFactory.createResource(absoluteParentUri, localName, leaf, cls);
 

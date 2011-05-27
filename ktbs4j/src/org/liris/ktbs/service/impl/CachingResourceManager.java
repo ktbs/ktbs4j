@@ -12,11 +12,47 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.CachingResourceService;
+import org.liris.ktbs.utils.KtbsUtils;
 
 public class CachingResourceManager extends DefaultResourceManager implements CachingResourceService {
 
 	public CachingResourceManager(ResourceDao dao, PojoFactory pojoFactory) {
 		super(dao, pojoFactory);
+	}
+
+	@Override
+	public IRoot getRoot() {
+		return getResource(getRootUri(), IRoot.class, false);
+	}
+	
+	@Override
+	public IBase getBase(String uri) {
+		return getResource(uri, IBase.class, false);
+	}
+	
+	@Override
+	public IMethod getMethod(String uri) {
+		return getResource(uri, IMethod.class, false);
+	}
+	
+	@Override
+	public IStoredTrace getStoredTrace(String uri) {
+		return getResource(uri, IStoredTrace.class, false);
+	}
+	
+	@Override
+	public IComputedTrace getComputedTrace(String uri) {
+		return getResource(uri, IComputedTrace.class, false);
+	}
+	
+	@Override
+	public ITrace getTrace(String uri) {
+		return getResource(uri, ITrace.class, false);
+	}
+	
+	@Override
+	public ITraceModel getTraceModel(String uri) {
+		return getResource(uri, ITraceModel.class, false);
 	}
 
 	@Override
@@ -57,7 +93,8 @@ public class CachingResourceManager extends DefaultResourceManager implements Ca
 	@Override
 	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls,
 			boolean ignoreCache) {
-		return ((CachingDao)dao).get(uri, cls, ignoreCache);
+		String absoluteResourceUri = KtbsUtils.makeAbsoluteURI(getRootUri(), uri, KtbsUtils.isLeafType(cls));
+		return ((CachingDao)dao).get(absoluteResourceUri, cls, ignoreCache);
 	}
 
 	@Override

@@ -17,17 +17,30 @@ import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.test.utils.KtbsServer;
 
 public class ResourceManagerSaveTestCase extends TestCase {
 	private ResourceService manager;
 	private PojoFactory factory;
 	private IRoot root;
 
+
+	private KtbsServer ktbsServer;
 	@Before
 	public void setUp() throws Exception {
+		ktbsServer = KtbsServer.newInstance("http://localhost:8001/", System.err);
+		ktbsServer.start();
+		ktbsServer.populateKtbs();
+		ktbsServer.populateT01();
 		manager = Ktbs.getRestClient().getResourceService();
 		root = manager.getResource("http://localhost:8001/", IRoot.class);
-		factory = new PojoFactory();
+		factory = Ktbs.getPojoFactory();
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		ktbsServer.stop();
+		super.tearDown();
 	}
 
 	public void testSaveTraceModel() {

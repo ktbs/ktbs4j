@@ -17,22 +17,31 @@ import org.liris.ktbs.domain.interfaces.IAttributePair;
 import org.liris.ktbs.domain.interfaces.IBase;
 import org.liris.ktbs.domain.interfaces.IMethod;
 import org.liris.ktbs.domain.interfaces.IObsel;
-import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
 import org.liris.ktbs.rdf.tests.Examples;
 import org.liris.ktbs.service.ResourceService;
+import org.liris.ktbs.test.utils.KtbsServer;
 import org.liris.ktbs.test.utils.ResourceDisplayer;
 import org.liris.ktbs.utils.KtbsUtils;
 
 public class ResourceManagerCreateTestCase extends TestCase {
 	private ResourceService manager;
-	private IRoot root;
 
+	private KtbsServer ktbsServer;
 	@Before
 	public void setUp() throws Exception {
+		ktbsServer = KtbsServer.newInstance("http://localhost:8001/", System.err);
+		ktbsServer.start();
+		ktbsServer.populateKtbs();
+		ktbsServer.populateT01();
 		manager = Ktbs.getRestClient().getResourceService();
-		root = manager.getResource("http://localhost:8001/", IRoot.class);
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		ktbsServer.stop();
+		super.tearDown();
 	}
 
 	@Test

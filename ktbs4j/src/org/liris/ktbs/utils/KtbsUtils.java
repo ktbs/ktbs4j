@@ -56,6 +56,11 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+/**
+ * 
+ * @author Damien Cram
+ *
+ */
 public class KtbsUtils {
 	
 	private static final Logger logger = LoggerFactory.getLogger(KtbsUtils.class);
@@ -394,11 +399,11 @@ public class KtbsUtils {
 	 * its parent's or absolute.
 	 * 
 	 * @param parentURI the uri of the parent
-	 * @param childURI the uri, either relative or absolute, of the child.
+	 * @param descendantURI the uri, either relative or absolute, of the child.
 	 * @return the absolute child URI
 	 */
-	public static String makeChildURI(String parentURI, String childURI, boolean leaf) {
-		URI child = URI.create(childURI);
+	public static String makeAbsoluteURI(String parentURI, String descendantURI, boolean leaf) {
+		URI child = URI.create(descendantURI);
 		String uri;
 		if(child.isAbsolute())
 			uri = child.normalize().toString();

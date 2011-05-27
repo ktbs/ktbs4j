@@ -6,6 +6,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.client.KtbsConstants;
 import org.liris.ktbs.domain.KtbsResource;
 import org.liris.ktbs.domain.Obsel;
@@ -33,7 +34,7 @@ public class Java2RdfTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		model = ModelFactory.createDefaultModel();
 		mapper = new Java2Rdf(new SerializationConfig());
-		pojoFactory = new PojoFactory();
+		pojoFactory = Ktbs.getPojoFactory();
 		System.out.println("----------------------------------------------------------------------");
 	}
 	

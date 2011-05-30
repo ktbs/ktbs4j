@@ -24,37 +24,69 @@ import org.liris.ktbs.domain.interfaces.ITraceModel;
  * </p>
  * 
  * @author Damien Cram
- *
+ * @see CachingResourceService
+ * @see TraceModelService
+ * @see StoredTraceService
  */
 public interface ResourceService extends IRootAwareService, ResponseAwareService {
 	
 	/**
-	 * Give the root resource.
+	 * Retrieve the root of the KTBS.
 	 * 
-	 * @return the root object
+	 * @return the root object, null
+	 * if the underlying request failed
 	 */
 	public IRoot getRoot();
 	
 	/**
 	 * Retrieve a base from the KTBS.
 	 * 
-	 * @param uri the base uri
-	 * @return the base object
+	 * @param uri the base uri (either relative to the root or absolute)
+	 * @return the base object, null 
+	 * if no base exists for that uri or 
+	 * if the underlying request failed
 	 */
 	public IBase getBase(String uri);
 	
 	/**
 	 * Retrieve a method from the KTBS.
 	 * 
-	 * @param uri the uri of the method
-	 * @return the method object
+	 * @param uri the uri of the method (either relative to the root or absolute)
+	 * @return the method object, null 
+	 * if no method exists for that uri or 
+	 * if the underlying request failed
 	 */
 	public IMethod getMethod(String uri);
 	
+	/**
+	 * Retrieve a stored trace from the KTBS.
+	 * 
+	 * @param uri the uri of the stored trace (either relative to the root or absolute)
+	 * @return the stored trace object, null 
+	 * if no stored trace exists for that uri or 
+	 * if the underlying request failed
+	 */
 	public IStoredTrace getStoredTrace(String uri);
 	
+	/**
+	 * Retrieve a computed trace from the KTBS.
+	 * 
+	 * @param uri the uri of the computed trace (either relative to the root or absolute)
+	 * @return the computed trace object, null 
+	 * if no computed trace exists for that uri or 
+	 * if the underlying request failed
+	 */
 	public IComputedTrace getComputedTrace(String uri);
 	
+	
+	/**
+	 * Retrieve a trace from the KTBS.
+	 * 
+	 * @param uri the uri of the trace (either relative to the root or absolute)
+	 * @return the trace object, null 
+	 * if no trace exists for that uri or 
+	 * if the underlying request failed
+	 */
 	public ITrace getTrace(String uri);
 	
 	public ITraceModel getTraceModel(String uri);
@@ -68,7 +100,20 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 * @return the retrieved resource object
 	 */
 	public <T extends IKtbsResource> T getResource(String uri, Class<T> cls);
+	
+	/**
+	 * 
+	 * @param uri
+	 * @return
+	 */
 	public IKtbsResource getResource(String uri);
+	
+	/**
+	 * Tells if a resource is defined in the KTBS for a given uri.
+	 * 
+	 * @param uri the uri of the resource
+	 * @return true if the uri is defined in the KTBS, false otherwise
+	 */
 	public boolean exists(String uri);
 	
 	/**
@@ -79,17 +124,19 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 */
 	public String newBase(String baseLocalName);
 	
+
 	/**
+	 * Creates a new stored trace in the KTBS.
 	 * 
-	 * @param baseUri
-	 * @param traceLocalName
-	 * @param modelUri
-	 * @param origin
-	 * @param traceBegin
-	 * @param traceBeginDT
-	 * @param traceEnd
-	 * @param traceEndDT
-	 * @param defaultSubject
+	 * @param baseUri the uri of the parent base containing the new trace (either relative to the root or absolute)
+	 * @param traceLocalName the name of the trace to create (null if anonymous)
+	 * @param modelUri the absolute uri of the trace model
+	 * @param origin the origin of the new strace
+	 * @param traceBegin the trace begin date (relative to the origin)
+	 * @param traceBeginDT the trace absolute begin date
+	 * @param traceEnd the trace end date (relative to the origin)
+	 * @param traceEndDT the trace absolute end date
+	 * @param defaultSubject the default subject
 	 * @return the uri of the created trace, null if the creation failed
 	 */
 	public String newStoredTrace(
@@ -105,12 +152,16 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 			);
 	
 	/**
+	 * Creates a new computed trace in the KTBS.
 	 * 
-	 * @param baseUri
-	 * @param traceLocalName
-	 * @param methodUri
-	 * @param sourceTraces
-	 * @param parameters
+	 * @param baseUri the uri of the parent base containing the new trace (either relative to the root or absolute)
+	 * @param traceLocalName the name of the trace to create (null if anonymous)
+	 * @param methodUri the absolute uri of the method used to produce 
+	 * the computed trace from the source traces
+	 * @param sourceTraces the uris of the traces given as input to 
+	 * the transformation process that will produce the computed trace
+	 * trace transformation on the KTBS server
+	 * @param parameters the KTBS parameters overwriting the transformation
 	 * @return the uri of the created trace, null if the creation failed
 	 */
 	public String newComputedTrace(
@@ -122,11 +173,12 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 			);
 	
 	/**
+	 * Creates a new method in the KTBS.
 	 * 
-	 * @param baseUri
-	 * @param methodLocalName
-	 * @param inheritedMethod
-	 * @param parameters
+	 * @param baseUri the uri of the parent base containing the new method (either relative to the root or absolute)
+	 * @param methodLocalName the name of the method to create (null if anonymous)
+	 * @param inheritedMethod the uri of the parent method that the created method will extend
+	 * @param parameters the parameters that configures the method
 	 * @return the uri of the created method, null if the creation failed
 	 */
 	public String newMethod(
@@ -139,23 +191,24 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	/**
 	 * Creates a new trace model in the KTBS.
 	 * 
-	 * @param baseUri the uri of the base that will contain the created trace model
-	 * @param modelLocalName the name of the trace 
+	 * @param baseUri the uri of the base containing the created trace model (either relative to the root or absolute)
+	 * @param modelLocalName the name of the trace (null if anonymous)
 	 * @return the uri of the created trace model, null if the creation failed
 	 */
 	public String newTraceModel(String baseUri, String modelLocalName);
 
 	/**
+	 * Creates a new obsel in the KTBS.
 	 * 
-	 * @param storedTraceUri
-	 * @param obselLocalName
-	 * @param typeUri
-	 * @param beginDT
-	 * @param endDT
-	 * @param begin
-	 * @param end
-	 * @param subject
-	 * @param attributes
+	 * @param storedTraceUri the uri of the parent stored trace ((either relative to the root or absolute)
+	 * @param obselLocalName the local name of the new obsel (null if anonymous)
+	 * @param typeUri the uri of the obsel type
+	 * @param beginDT the absolute begin date
+	 * @param endDT the absolute end date
+	 * @param begin the begin date (relative to the parent trace's origin)
+	 * @param end the end date (relative to the parent trace's origin)
+	 * @param subject the subject of this obsel
+	 * @param attributes the attributes pairs of the obsel
 	 * @return the uri of the created obsel, null if none was created
 	 */
 	public String newObsel(
@@ -175,9 +228,16 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 	 * Delete a resource from the KTBS.
 	 * 
 	 * @param uri the uri of the resource to be deleted
-	 * @return true if the deletion is operated successfully, false otherwise
+	 * @return true if the deletion has operated successfully, false otherwise
 	 */
 	public boolean deleteResource(String uri);
+	
+	/**
+	 * Delete a resource from the KTBS.
+	 * 
+	 * @param resource the resource to be deleted
+	 * @return true if the deletion has operated successfully, false otherwise
+	 */
 	public boolean deleteResource(IKtbsResource resource);
 
 	/**

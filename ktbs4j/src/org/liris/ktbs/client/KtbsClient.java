@@ -17,28 +17,28 @@ public interface KtbsClient {
 	public ProxyFactory getProxyFactory();
 	
 	/**
-	 * Give the uri of the KTBS root against which this client operates.
+	 * Gives the uri of the KTBS root against which this client operates.
 	 * 
 	 * @return the root uri
 	 */
 	public String getRootUri();
 
 	/**
-	 * Give a service object for general KTBS resource handling.
+	 * Gives a service object for general KTBS resource handling.
 	 * 
 	 * @return the unique {@link ResourceService} object contained in this client
 	 */
 	public ResourceService getResourceService();
 	
 	/**
-	 * Give a service object for trace model manipulation.
+	 * Gives a service object for trace model manipulation.
 	 * 
 	 * @return the unique {@link TraceModelService} object contained in this client
 	 */
 	public TraceModelService getTraceModelService();
 
 	/**
-	 * Give a service object for trace collection.
+	 * Gives a service object for trace collection.
 	 * 
 	 * @return the unique {@link StoredTraceService} object contained in this client
 	 */

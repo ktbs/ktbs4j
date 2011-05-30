@@ -10,9 +10,11 @@ import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.service.impl.ObselBuilder;
 
 /**
+ * Provides convenient method for handling stored traces, 
+ * collecting traces, and collecting traces with buffers.
  * 
  * @author Damien Cram
- *
+ * @see ResourceService
  */
 public interface StoredTraceService extends IRootAwareService {
 	

@@ -12,10 +12,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * The entry point of the KTBS Java API. It provides root clients to the user.
+ * The entry point of the KTBS Java API. It provides KTBS clients to the user.
  * 
  * @author Damien Cram
- *
+ * @see ClientFactory
  */
 public class Ktbs {
 
@@ -37,21 +37,22 @@ public class Ktbs {
 	/**
 	 * Creates a client that manipulate KTBS resources through the REST API.
 	 * 
-	 * @param uri
-	 * @return
+	 * @param uri the uri of the KtbsRoot
+	 * @return a Rest client bound to the KtbsRoot uri
 	 */
 	public static KtbsClient getRestClient(String uri) {
 		String rootUri = getRootUri(uri);
-			KtbsClient client = getClientFactory().createRestClient(rootUri);
+		KtbsClient client = getClientFactory().createRestClient(rootUri);
 		return client;
 	}
 
 	/**
+	 * Creates a client that manipulate KTBS resources through the REST API.
 	 * 
-	 * @param uri
-	 * @param userName
-	 * @param userPassword
-	 * @return
+	 * @param uri the uri of the KtbsRoot
+	 * @param userName the user name for the underlying HTTP authentication
+	 * @param userPassword the user password for the underlying HTTP authentication
+	 * @return a Rest client bound to the KtbsRoot uri
 	 */
 	public static KtbsClient getRestClient(String uri, String userName, String userPassword) {
 		String rootUri = getRootUri(uri);
@@ -63,7 +64,7 @@ public class Ktbs {
 				userPassword2,
 				new SerializationConfig(),
 				new DeserializationConfig()
-				);
+		);
 		return client;
 	}
 
@@ -71,8 +72,9 @@ public class Ktbs {
 	private static ClientFactory clientFactory;
 
 	/**
+	 * Gives the client factory singleton used to create customized instances of {@link KtbsClient}.
 	 * 
-	 * @return
+	 * @return the client factory
 	 */
 	public static ClientFactory getClientFactory() {
 		if (clientFactory == null) {
@@ -82,20 +84,42 @@ public class Ktbs {
 	}
 
 	/**
+	 * Give a factory that create KTBS resources in the form of POJOs
+	 * (Plain Old Java Object). Each resource created with this factory 
+	 * must to belinked manually to other KTBS resources and are not bound 
+	 * to any service.
+	 *  
+	 * @return the pojo factory singleton object
+	 */
+	public static PojoFactory getPojoFactory() {
+		return getContext().getBean("pojoFactory", PojoFactory.class);
+	}
+
+	/**
+	 * Creates a client that manipulates KTBS resources through 
+	 * the REST API. 
 	 * 
-	 * @return
+	 * <p>
+	 * Its root uri is taken in the system property
+	 * <code>ktbs.root.uri</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in the classpath.
+	 * </p>
+	 * 
+	 * @return a Rest client bound to the KtbsRoot uri
 	 */
 	public static KtbsClient getRestClient() {
 		return getRestClient(null);
 	}
 
 	/**
+	 * Give a root client that manipulate KTBS resources through the REST API 
+	 * and that supports in-memory caching.
 	 * 
-	 * Give a root client that manipulate KTBS resources through the REST API.
-	 * @param uri
-	 * @param size
-	 * @param timeout
-	 * @return
+	 * @param uri the uri of the KtbsRoot
+	 * @param size the maximum number of resources that can be held at a time in the cache queue
+	 * @param timeout the duration (in milliseconds) before a resource gets considered as out of date and removed from the cache
+	 * @return a Rest client bound to the KtbsRoot uri and that supports 
+	 * resource in-memory caching
 	 */
 	public static KtbsClient getRestCachingClient(String uri, Integer size, Long timeout) {
 		String rootUri = getRootUri(uri);
@@ -107,13 +131,16 @@ public class Ktbs {
 	}
 
 	/**
+	 * Give a root client that manipulate KTBS resources through the REST API 
+	 * and that supports in-memory caching.
 	 * 
-	 * @param uri
-	 * @param size
-	 * @param timeout
-	 * @param userName
-	 * @param userPassword
-	 * @return
+	 * @param uri the uri of the KtbsRoot
+	 * @param size the maximum number of resources that can be held at a time in the cache queue
+	 * @param timeout the duration (in milliseconds) before a resource gets considered as out of date and removed from the cache
+	 * @param userName the user name for the underlying HTTP authentication
+	 * @param userPassword the user password for the underlying HTTP authentication
+	 * @return a Rest client bound to the KtbsRoot uri and that supports 
+	 * resource in-memory caching
 	 */
 	public static KtbsClient getRestCachingClient(String uri, Integer size, Long timeout, String userName, String userPassword) {
 		String rootUri = getRootUri(uri);
@@ -127,64 +154,118 @@ public class Ktbs {
 				userPassword2,
 				cacheMaxsize, 
 				cacheTimeout);
-		
+
 		return client;
 	}
 
 	/**
+	 * Give a root client that manipulate KTBS resources through the REST API 
+	 * and that supports in-memory caching.
 	 * 
-	 * @param size
-	 * @param timeout
-	 * @return
+	 * <p>
+	 * Its root uri is taken in the system property
+	 * <code>ktbs.root.uri</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in classpath.
+	 * </p>
+	 * 
+	 * @param size the maximum number of resources that can be held at a time in the cache queue
+	 * @param timeout the duration (in milliseconds) before a resource gets considered as out of date and removed from the cache
+	 * @return a Rest client bound to the KtbsRoot uri and that supports 
+	 * resource in-memory caching
 	 */
 	public static KtbsClient getRestCachingClient(Integer size, Long timeout) {
 		return getRestCachingClient(null, size, timeout);
 	}
 
 	/**
+	 * Give a root client that manipulate KTBS resources through the REST API 
+	 * and that supports in-memory caching.
 	 * 
-	 * @param uri
-	 * @return
+	 * <p>
+	 * <ul>
+	 * <li>Its cache size is taken in the system property
+	 * <code>ktbs.cache.size</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in classpath.</li>
+	 * <li>Its cache timeout is taken in the system property
+	 * <code>ktbs.cache.timeout</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in classpath.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param uri the uri of the KtbsRoot
+	 * @return a Rest client bound to the KtbsRoot uri and that supports 
+	 * resource in-memory caching
 	 */
 	public static KtbsClient getRestCachingClient(String uri) {
 		return getRestCachingClient(uri, null, null);
 	}
 
 	/**
+	 * Give a root client that manipulate KTBS resources through the REST API 
+	 * and that supports in-memory caching.
 	 * 
-	 * @return
+	 * <p>
+	 * <ul>
+	 * <li>Its cache size is taken in the system property
+	 * <code>ktbs.cache.size</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in classpath.</li>
+	 * <li>Its cache timeout is taken in the system property
+	 * <code>ktbs.cache.timeout</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in classpath.</li>
+	 * <li>Its root uri is taken in the system property
+	 * <code>ktbs.root.uri</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in classpath.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return a Rest client bound to the KtbsRoot uri and that supports 
+	 * resource in-memory caching
 	 */
 	public static KtbsClient getRestCachingClient() {
 		return getRestCachingClient(null, null, null);
 	}
 
 	/**
-	 * Give a root client that manipulate KTBS resources in memory.
+	 * Give a KTBS client that manipulates KTBS resources in memory.
 	 * 
-	 * @return the root client
+	 * <p>
+	 * No underlying protocol for resource persistance. Resoures are removed 
+	 * from memory and disappear for ever after the program exits.
+	 * </p>
+	 * 
+	 * @param uri the uri of the KtbsRoot
+	 * @return the in-memory KTBS client bound to that uri
 	 */
 	public static KtbsClient getMemoryClient(String uri) {
 		String rootUri = getRootUri(uri);
-			KtbsClient client = getClientFactory().createMemoryClient(rootUri);
+		KtbsClient client = getClientFactory().createMemoryClient(rootUri);
 		return client;
 	}
 
+
 	/**
+	 * Give a KTBS client that manipulates KTBS resources in memory.
 	 * 
-	 * @return
+	 * <p>
+	 * No underlying protocol for resource persistance. Resoures are removed 
+	 * from memory and disappear for ever after the program exits.
+	 * </p>
+
+	 * <p>
+	 * <ul>
+	 * <li>Its root uri is taken in the system property
+	 * <code>ktbs.root.uri</code> if set, or is read from the file 
+	 * <code>ktbs4j.properties</code> if it exists in classpath.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the in-memory KTBS client bound to that uri
 	 */
 	public static KtbsClient getMemoryClient() {
 		return getMemoryClient(null);
 	}
 
 
-	/**
-	 * 
-	 * @return
-	 */
-	public static PojoFactory getPojoFactory() {
-		return (PojoFactory) getContext().getBean("pojoFactory");
-	}
 
 	private static Properties properties;
 

@@ -97,6 +97,51 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	}
 
 	@Override
+	public IKtbsResource get(String uri) {
+	    
+	    String absoluteResourceUri = KtbsUtils.makeAbsoluteURI(rootUri, uri);
+	    
+	    log.debug("Retrieving the resource " + uri);
+	    KtbsResponse response = client.get(absoluteResourceUri, receiveMimeType);
+	    this.lastResponse = response;
+	    
+	    if(!response.hasSucceeded())
+		return null;
+	    else {
+		
+		String bodyAsString = response.getBodyAsString();
+		
+		
+		String mimeType = response.getMimeType();
+		
+		
+		if(mimeType.equals(KtbsConstants.MIME_TURTLE)) {
+		    log.debug("Resolving relative uris for parsing turtle syntax against the base uri " + response.getRequestUri());
+		    bodyAsString = new RelativeURITurtleReader().resolve(bodyAsString, response.getRequestUri());
+		}
+		
+		RdfDeserializer deserializer = serializerFactory.newRdfDeserializer(proxyFactory, defaultDeserializationConfig);
+		IKtbsResource resource = deserializer.deserializeResource(
+			KtbsUtils.removeUriAspects(absoluteResourceUri),
+			new StringReader(bodyAsString), 
+			response.getRequestUri(), 
+			mimeType, 
+			KtbsUtils.guessResourceType(bodyAsString, mimeType, response.getRequestUri(), KtbsUtils.removeUriAspects(absoluteResourceUri)));
+		
+		
+		saveEtag(response.getRequestUri(), response);
+		
+		// This should be connected into the Rdf2Java mapper
+		if (resource instanceof ITrace) {
+		    ITrace trace = (ITrace) resource;
+		    connectObselsQueryToTrace(trace);
+		}
+		
+		return resource;
+	    }
+	}
+	
+	@Override
 	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
 
 		String absoluteResourceUri = KtbsUtils.makeAbsoluteURI(rootUri, uri, KtbsUtils.isLeafType(cls));

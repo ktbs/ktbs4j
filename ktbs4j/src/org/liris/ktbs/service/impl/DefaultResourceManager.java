@@ -217,12 +217,12 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 
 	@Override
 	public IKtbsResource getResource(String uri) {
-		throw new UnsupportedOperationException("Not yet supported");
+	    return dao.get(uri);
 	}
 
 	@Override
 	public boolean exists(String uri) {
-		throw new UnsupportedOperationException("Not yet supported");
+		return getResource(uri) != null;
 	}
 
 	@Override

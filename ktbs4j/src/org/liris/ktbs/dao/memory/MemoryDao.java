@@ -16,93 +16,104 @@ import org.liris.ktbs.domain.interfaces.IRoot;
 
 public class MemoryDao implements ResourceDao {
 
-	private Map<String, IKtbsResource> resources = new HashMap<String, IKtbsResource>();
+    private Map<String, IKtbsResource> resources = new HashMap<String, IKtbsResource>();
 
-	private String rootUri;
-	private PojoFactory pojoFactory;
-	private ProxyFactory proxyFactory;
+    private String rootUri;
+    private PojoFactory pojoFactory;
+    private ProxyFactory proxyFactory;
 
-	
-	public MemoryDao(String rootUri, PojoFactory pojoFactory) {
-		super();
-		this.rootUri = rootUri;
-		this.pojoFactory = pojoFactory;
-		this.proxyFactory = new ProxyFactory(this);
-	}
 
-	public void init() {
-		resources.put(rootUri, pojoFactory.createResource(rootUri, IRoot.class));
-	}
-	
-	@Override
-	public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
-		if(resources.containsKey(uri))
-			return cls.cast(resources.get(uri));
-		else
-			return null;
-	}
+    public MemoryDao(String rootUri, PojoFactory pojoFactory) {
+	super();
+	this.rootUri = rootUri;
+	this.pojoFactory = pojoFactory;
+	this.proxyFactory = new ProxyFactory(this);
+    }
 
-	@Override
-	public <T extends IKtbsResource> T createAndGet(T resource) {
-		resources.put(resource.getUri(), resource);
-		return resource;
-	}
+    public void init() {
+	resources.put(rootUri, pojoFactory.createResource(rootUri, IRoot.class));
+    }
 
-	@Override
-	public boolean save(IKtbsResource resource) {
-		return createAndGet(resource) != null;
-	}
+    @Override
+    public <T extends IKtbsResource> T get(String uri, Class<T> cls) {
+	if(uri == null)
+	    return null;
+	else
+	    return cls.cast(get(uri));
+    }
 
-	@Override
-	public boolean delete(String uri) {
-		return resources.remove(uri) != null;
-	}
+    @Override
+    public <T extends IKtbsResource> T createAndGet(T resource) {
+	resources.put(resource.getUri(), resource);
+	return resource;
+    }
 
-	@Override
-	public <T extends IKtbsResource> ResultSet<T> query(String request,
-			Class<T> cls) {
-		throw new UnsupportedOperationException("The memory Dao does not support any query language");
-	}
+    @Override
+    public boolean save(IKtbsResource resource) {
+	return createAndGet(resource) != null;
+    }
 
-	@Override
-	public boolean save(IKtbsResource resource, boolean cascadeChildren) {
-		return false;
-	}
+    @Override
+    public boolean delete(String uri) {
+	return resources.remove(uri) != null;
+    }
 
-	@Override
-	public boolean saveCollection(String uriToSave,
-			Collection<? extends IKtbsResource> collection) {
-		boolean saved = true;
-		for(IKtbsResource r:collection) 
-			saved&=save(r);
-		return saved;
-		
-	}
+    @Override
+    public <T extends IKtbsResource> ResultSet<T> query(String request,
+	    Class<T> cls) {
+	throw new UnsupportedOperationException("The memory Dao does not support any query language");
+    }
 
-	@Override
-	public boolean postCollection(String uriToSave,
-			List<? extends IKtbsResource> collection) {
-		throw new DaoException("Not yet implemented");
-	}
+    @Override
+    public boolean save(IKtbsResource resource, boolean cascadeChildren) {
+	return false;
+    }
 
-	@Override
-	public String create(IKtbsResource prototype) {
-		IKtbsResource r = createAndGet(prototype);
-		return r == null ? null: r.getUri();
-	}
+    @Override
+    public boolean saveCollection(String uriToSave,
+	    Collection<? extends IKtbsResource> collection) {
+	boolean saved = true;
+	for(IKtbsResource r:collection) 
+	    saved&=save(r);
+	return saved;
 
-	@Override
-	public KtbsResponse getLastResponse() {
-		throw new UnsupportedOperationException("Irrelevant for memory DAO");
-	}
+    }
 
-	@Override
-	public String getRootUri() {
-		return rootUri;
-	}
+    @Override
+    public boolean postCollection(String uriToSave,
+	    List<? extends IKtbsResource> collection) {
+	throw new DaoException("Not yet implemented");
+    }
 
-	@Override
-	public ProxyFactory getProxyFactory() {
-		return proxyFactory;
-	}
+    @Override
+    public String create(IKtbsResource prototype) {
+	IKtbsResource r = createAndGet(prototype);
+	return r == null ? null: r.getUri();
+    }
+
+    @Override
+    public KtbsResponse getLastResponse() {
+	throw new UnsupportedOperationException("Irrelevant for memory DAO");
+    }
+
+    @Override
+    public String getRootUri() {
+	return rootUri;
+    }
+
+    @Override
+    public ProxyFactory getProxyFactory() {
+	return proxyFactory;
+    }
+
+    /* (non-Javadoc)
+     * @see org.liris.ktbs.dao.ResourceDao#get(java.lang.String)
+     */
+    @Override
+    public IKtbsResource get(String uri) {
+	if(resources.containsKey(uri))
+	    return resources.get(uri);
+	else
+	    return null;
+    }
 }

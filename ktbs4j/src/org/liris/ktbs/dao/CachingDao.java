@@ -30,5 +30,12 @@ public interface CachingDao extends ResourceDao {
 	 * @param resourceUri
 	 */
 	public void removeFromCache(String resourceUri);
+
+	/**.
+	 * @param absoluteResourceUri
+	 * @param ignoreCache
+	 * @return
+	 */
+	public IKtbsResource get(String uri, boolean ignoreCache);
 }
 

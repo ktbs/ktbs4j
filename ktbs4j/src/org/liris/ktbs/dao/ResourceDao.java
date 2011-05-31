@@ -33,6 +33,8 @@ public interface ResourceDao {
 	public String getRootUri();
 
 	public ProxyFactory getProxyFactory();
+
+	public IKtbsResource get(String uri);
 	
 	
 }

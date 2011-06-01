@@ -5,7 +5,7 @@
 	<property name="user.name" value="Damien Cram"/>
 	<property name="organisation" value="LIRIS UMR 5205 CNRS"/>
 	<property name="app.name" value="ktbs4j"/>
-	<property name="version" value="2.3.11"/>
+	<property name="version" value="2.3.13-rev185"/>
 	<property name="title" value="ktbs4j - A Java API and client for the KTBS"/>
 	
 	<property name="tests.dir" location="../${app.name}-tests"/>

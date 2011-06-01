@@ -212,7 +212,8 @@ public class RestDao implements ResourceDao, UserAwareDao {
 	public <T extends IKtbsResource> T createAndGet(T resource) {
 		KtbsResponse response = doCreate(resource);
 		if(response.hasSucceeded()) {
-			return get(response.getHTTPLocation(), (Class<T>)resource.getClass());
+			
+			return (T) get(response.getHTTPLocation(), KtbsUtils.getJavaInterface(resource.getClass()));
 		} else {
 			if(isUriAlreadyInUse(response)) {
 				throw new ResourceAlreadyExistException(resource.getUri());
@@ -335,7 +336,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		log.debug("Saving the resource " + updateUri +".");
 		KtbsResponse response = client.update(updateUri, writer.toString(), sendMimeType, etag);
 		this.lastResponse = response;
-		saveEtag(updateUri, response);
+		saveEtag(response.getRequestUri(), response);
 
 		boolean hasSucceeded = response.hasSucceeded();
 		if(hasSucceeded)
@@ -372,7 +373,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		KtbsResponse response = client.update(uriToSave, writer.toString(), sendMimeType, etag);
 		this.lastResponse = response;
 		if(response.hasSucceeded()) {
-			return  saveEtag(uriToSave, response);
+			return  saveEtag(lastResponse.getRequestUri(), response);
 		} else
 			return false;
 	}
@@ -455,7 +456,7 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			return null;
 		else {
 			if(response.getHTTPETag() != null)
-				saveEtag(request, response);
+				saveEtag(response.getRequestUri(), response);
 
 			String bodyAsString = response.getBodyAsString();
 			String mimeType = response.getMimeType();

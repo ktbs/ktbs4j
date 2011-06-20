@@ -21,7 +21,7 @@ public class KtbsServer {
 		server.populateT01();
 	}
 	
-	public static final String KTBS_HOME = "/home/dcram/Applications/ktbs/";
+	public static final String KTBS_HOME = "/home/damien/Applications/ktbs/";
 	
 	public static final String KTBS_COMMAND = KTBS_HOME + "bin/ktbs";
 	public static final String POPULATE_KTBS_COMMAND = KTBS_HOME + "tests/populate-ktbs";

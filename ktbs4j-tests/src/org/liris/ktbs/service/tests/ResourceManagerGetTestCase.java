@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.liris.ktbs.client.Ktbs;
 import org.liris.ktbs.domain.interfaces.IBase;
+import org.liris.ktbs.domain.interfaces.IComputedTrace;
 import org.liris.ktbs.domain.interfaces.IObsel;
 import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
@@ -110,6 +111,20 @@ public class ResourceManagerGetTestCase extends TestCase {
 		assertNotNull(trace1);
 		assertEquals(4, trace1.getObsels().size());
 
+		testComputedTrace("count1", 1);
+		testComputedTrace("count2", 3);
+		testComputedTrace("filtered1", 3);
+		testComputedTrace("filtered2", 2);
+		testComputedTrace("fusioned1", 6);
+		testComputedTrace("helloworld1", 1);
+		testComputedTrace("session1", 1);
+
+	}
+
+	private void testComputedTrace(String name, int expectedSize) {
+		IComputedTrace trace = service.getComputedTrace("base1/" + name);
+		assertNotNull(trace);
+		assertEquals(expectedSize, trace.getObsels().size());
 	}
 
 

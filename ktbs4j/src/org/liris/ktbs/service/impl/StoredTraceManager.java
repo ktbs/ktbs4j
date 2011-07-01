@@ -150,8 +150,33 @@ public class StoredTraceManager implements StoredTraceService, ResponseAwareServ
 
 	String createObsel(IStoredTrace storedTrace, String obselLocalName,
 			String typeUri, String beginDT, String endDT, BigInteger begin,
-			BigInteger end, String subject, Set<IAttributePair> attributes) {
-		return newObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT, begin, end, subject, attributes);
+			BigInteger end, String subject, Set<IAttributePair> attributes, Set<String> labels) {
+		return newObsel(storedTrace, obselLocalName, typeUri, beginDT, endDT, begin, end, subject, attributes, labels);
+	}
+	@Override
+	public String newObsel(IStoredTrace storedTrace, String obselLocalName,
+		String typeUri, String beginDT, String endDT, BigInteger begin,
+		BigInteger end, String subject, Set<IAttributePair> attributes, Set<String> labels) {
+	    if(bufferedTraces.containsKey(storedTrace.getUri())) {
+		IObsel obsel = pojoFactory.createObsel(
+			storedTrace, 
+			obselLocalName, 
+			typeUri,
+			beginDT, 
+			endDT, 
+			begin, 
+			end, 
+			subject, 
+			attributes,
+			labels);
+		bufferedTraceObsels.get(storedTrace.getUri()).add(obsel);
+		return obsel.getUri();
+	    } else {
+		this.lastDelegatedToResourceManager = true;
+		String newObsel = resourceService.newObsel(storedTrace.getUri(), obselLocalName, typeUri, beginDT, endDT,
+			begin, end, subject, attributes, labels);
+		return newObsel;
+	    }
 	}
 
 	@Override

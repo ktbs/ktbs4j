@@ -13,7 +13,7 @@ import java.util.TimeZone;
 public interface KtbsConstants {
 
 	// Date helper constants
-	public static final SimpleDateFormat XSD_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	public static final SimpleDateFormat XSD_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	public static final TimeZone UTC_ZONE = TimeZone.getTimeZone("UTC");
 	
 	// Rest aspects defined by the KTBS

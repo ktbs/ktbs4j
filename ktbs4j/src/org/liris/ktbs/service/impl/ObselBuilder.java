@@ -81,7 +81,8 @@ public class ObselBuilder {
 				obsel.getBegin(), 
 				obsel.getEnd(), 
 				obsel.getSubject(), 
-				obsel.getAttributePairs());
+				obsel.getAttributePairs(),
+				obsel.getLabels());
 	}
 
 	public void setType(IObselType obsType) {

@@ -72,6 +72,32 @@ public interface StoredTraceService extends IRootAwareService {
 			String subject,
 			Set<IAttributePair> attributes
 			);
+	/**
+	 * 
+	 * @param storedTrace
+	 * @param obselLocalName
+	 * @param typeUri
+	 * @param beginDT
+	 * @param endDT
+	 * @param begin
+	 * @param end
+	 * @param subject
+	 * @param attributes
+	 * @param labels
+	 * @return
+	 */
+	public String newObsel(
+		IStoredTrace storedTrace,
+		String obselLocalName,
+		String typeUri,
+		String beginDT,
+		String endDT,
+		BigInteger begin,
+		BigInteger end,
+		String subject,
+		Set<IAttributePair> attributes,
+		Set<String> labels
+	);
 	
 	/**
 	 * 

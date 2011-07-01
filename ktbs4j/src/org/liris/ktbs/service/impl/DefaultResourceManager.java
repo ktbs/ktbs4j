@@ -136,6 +136,34 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 
 		return dao.create(obsel);
 	}
+	@Override
+	public String newObsel(String storedTraceUri, String obselLocalName,
+		String typeUri, String beginDT, String endDT, BigInteger begin,
+		BigInteger end, String subject, Set<IAttributePair> attributes, Set<String> labels) {
+	    
+	    IObsel obsel = createResource(storedTraceUri, obselLocalName, IObsel.class, true);
+	    obsel.setBeginDT(beginDT);
+	    obsel.setEndDT(endDT);
+	    obsel.setBegin(begin);
+	    obsel.setEnd(end);
+	    obsel.setSubject(subject);
+	    obsel.setLabels(labels);
+	    
+	    if(typeUri != null)
+		obsel.setObselType(pojoFactory.createResource(typeUri, IObselType.class));
+	    
+	    Set<IAttributePair> pairs = new HashSet<IAttributePair>();
+	    if(attributes != null) {
+		for(IAttributePair pair:attributes) 
+		    pairs.add(new AttributePair(
+			    dao.getProxyFactory().createResource(pair.getAttributeType().getUri(), IAttributeType.class), 
+			    pair.getValue()
+		    ));
+		obsel.setAttributePairs(pairs);
+	    } 
+	    
+	    return dao.create(obsel);
+	}
 
 	private <T extends IKtbsResource> T createResource(
 			String parentUri, 

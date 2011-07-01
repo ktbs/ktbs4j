@@ -222,6 +222,33 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 			String subject,
 			Set<IAttributePair> attributes
 			);
+	/**
+	 * Creates a new obsel in the KTBS.
+	 * 
+	 * @param storedTraceUri the uri of the parent stored trace ((either relative to the root or absolute)
+	 * @param obselLocalName the local name of the new obsel (null if anonymous)
+	 * @param typeUri the uri of the obsel type
+	 * @param beginDT the absolute begin date
+	 * @param endDT the absolute end date
+	 * @param begin the begin date (relative to the parent trace's origin)
+	 * @param end the end date (relative to the parent trace's origin)
+	 * @param subject the subject of this obsel
+	 * @param attributes the attributes pairs of the obsel
+	 * @param labels the labels of obsel
+	 * @return the uri of the created obsel, null if none was created
+	 */
+	public String newObsel(
+		String storedTraceUri,
+		String obselLocalName,
+		String typeUri,
+		String beginDT,
+		String endDT,
+		BigInteger begin,
+		BigInteger end,
+		String subject,
+		Set<IAttributePair> attributes,
+		Set<String> labels
+	);
 
 
 	/**

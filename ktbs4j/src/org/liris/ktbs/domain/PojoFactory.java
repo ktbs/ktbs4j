@@ -104,6 +104,26 @@ public class PojoFactory extends AbstractResourceFactory implements ResourceFact
 			obsel.getAttributePairs().addAll(attributes);
 		return obsel;
 	}
+	public IObsel createObsel(IStoredTrace storedTrace, String obselLocalName,
+		String typeUri, String beginDT, String endDT, BigInteger begin,
+		BigInteger end, String subject, Set<IAttributePair> attributes, Set<String> labels) {
+	    
+	    IObsel obsel = createResource(storedTrace.getUri(), obselLocalName, true, IObsel.class);
+	    
+	    obsel.setBegin(begin);
+	    obsel.setEnd(end);
+	    obsel.setBeginDT(beginDT);
+	    obsel.setEndDT(endDT);
+	    obsel.setLabels(labels);
+	    
+	    if(typeUri != null)
+		obsel.setObselType(createResource(typeUri, IObselType.class));
+	    obsel.setSubject(subject);
+	    
+	    if(attributes != null)
+		obsel.getAttributePairs().addAll(attributes);
+	    return obsel;
+	}
 
 	public IAttributeType createAttributeType(String traceModelUri, String attributeLocalName) {
 		return createResource(traceModelUri, attributeLocalName, true, IAttributeType.class);

@@ -1,0 +1,3 @@
+IMPORTANT: in order to run the unit-tests, you should replace the class
+variable KTBS_HOME in org.liris.ktbs.test.utils.KtbsServer by the correct
+path.

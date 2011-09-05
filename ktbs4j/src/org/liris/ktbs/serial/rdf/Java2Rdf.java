@@ -34,6 +34,7 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.impl.LiteralImpl;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
@@ -513,6 +514,19 @@ public class Java2Rdf {
 		getJenaResource(resource).addLiteral(
 				model.getProperty(pName), 
 				value);
+	}
+
+	/*
+	 * Put a literal in a model if it exists - ensure that strings are converted
+	 * to *plain* literals instead of explicitly typing them with xsd:string.
+	 */
+	private void putLiteral(IKtbsResource resource, String pName, String value) {
+		if(value == null)
+			return;
+		Literal lit = model.createLiteral(value);
+		getJenaResource(resource).addLiteral(
+				model.getProperty(pName), 
+				lit);
 	}
 
 	private void putRdfType(IKtbsResource resource, String typeUri) {

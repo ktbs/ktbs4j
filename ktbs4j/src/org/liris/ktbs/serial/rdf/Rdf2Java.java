@@ -26,6 +26,7 @@ import org.liris.ktbs.domain.Root;
 import org.liris.ktbs.domain.StoredTrace;
 import org.liris.ktbs.domain.Trace;
 import org.liris.ktbs.domain.TraceModel;
+import org.liris.ktbs.domain.UriResource;
 import org.liris.ktbs.domain.WithParametersDelegate;
 import org.liris.ktbs.domain.interfaces.IAttributeType;
 import org.liris.ktbs.domain.interfaces.IBase;
@@ -692,7 +693,8 @@ public class Rdf2Java {
 				(RDFNode)null);
 		while (it.hasNext()) {
 			Statement statement = (Statement) it.next();
-			attType.getRanges().add(statement.getObject().asLiteral().getString());
+			String object_uri = statement.getObject().asResource().getURI();
+			attType.getRanges().add(new UriResource(object_uri));
 		}
 
 		// always cascade the deserialization to the parent trace model for a trace model child

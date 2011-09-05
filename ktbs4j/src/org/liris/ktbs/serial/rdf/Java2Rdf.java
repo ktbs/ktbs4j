@@ -23,6 +23,7 @@ import org.liris.ktbs.domain.interfaces.IRoot;
 import org.liris.ktbs.domain.interfaces.IStoredTrace;
 import org.liris.ktbs.domain.interfaces.ITrace;
 import org.liris.ktbs.domain.interfaces.ITraceModel;
+import org.liris.ktbs.domain.interfaces.IUriResource;
 import org.liris.ktbs.domain.interfaces.WithParameters;
 import org.liris.ktbs.serial.LinkAxis;
 import org.liris.ktbs.serial.SerializationConfig;
@@ -73,7 +74,7 @@ public class Java2Rdf {
 	 * 
 	 * Supports anonym Ktbs resources (i.e. KTBS resources with null uris)
 	 */
-	private Resource getJenaResource(IKtbsResource resource) {
+	private Resource getJenaResource(IUriResource resource) {
 		if(resource == null)
 			throw new IllegalStateException("Should never be called on a null resource");
 		if(!jenaResources.containsKey(resource)) {
@@ -351,7 +352,7 @@ public class Java2Rdf {
 
 		putGenericResource(attType);
 		putLinkedResourceSet(attType, KtbsConstants.P_HAS_ATTRIBUTE_DOMAIN, attType.getDomains(), false);
-		putLiteralSet(attType, KtbsConstants.P_HAS_ATTRIBUTE_RANGE, attType.getRanges());
+		putLinkedResourceSet(attType, KtbsConstants.P_HAS_ATTRIBUTE_RANGE, attType.getRanges(), false);
 
 		putParent(attType, null, false);
 	}
@@ -425,7 +426,7 @@ public class Java2Rdf {
 		putResource(resource, pName, objectResource, false);
 	}
 
-	private void putResource(IKtbsResource subjectResource, String pName, IKtbsResource objectResource, boolean inverse) {
+	private void putResource(IKtbsResource subjectResource, String pName, IUriResource objectResource, boolean inverse) {
 		if(pName == null)
 			return;
 
@@ -452,7 +453,7 @@ public class Java2Rdf {
 			putLinkedResourceSameType(resource, pName, r, inverse);
 	}
 
-	private <T extends IKtbsResource> void putLinkedResourceSet(IKtbsResource resource, String pName, Set<T> set, boolean inverse) {
+	private <T extends IUriResource> void putLinkedResourceSet(IKtbsResource resource, String pName, Set<T> set, boolean inverse) {
 		for(T r:set)
 			putLinkedResource(resource, pName, r, inverse);
 	}
@@ -461,11 +462,11 @@ public class Java2Rdf {
 		putLinkedResourceWRTAxis(resource, pName, r, inverse, LinkAxis.LINKED_SAME_TYPE);
 	}
 
-	private <T extends IKtbsResource> void putLinkedResource(IKtbsResource resource, String pName, T r, boolean inverse) {
+	private <T extends IUriResource> void putLinkedResource(IKtbsResource resource, String pName, T r, boolean inverse) {
 		putLinkedResourceWRTAxis(resource, pName, r, inverse, LinkAxis.LINKED);
 	}
 
-	private <T extends IKtbsResource> void putLinkedResourceWRTAxis(IKtbsResource resource, String pName, T r,
+	private <T extends IUriResource> void putLinkedResourceWRTAxis(IKtbsResource resource, String pName, T r,
 			boolean inverse, LinkAxis axis) {
 		if(r == null)
 			return;
@@ -474,12 +475,13 @@ public class Java2Rdf {
 			return;
 		} else if(config.getMode(axis) == SerializationMode.CASCADE) {
 			putResource(resource, pName, r, inverse);
-			put(r);
+			put((IKtbsResource)r);
 		} else if(config.getMode(axis) == SerializationMode.URI) {
 			putResource(resource, pName, r, inverse);
 		} else if(config.getMode(axis) == SerializationMode.URI_AND_TYPE) {
 			putResource(resource, pName, r, inverse);
-			putRdfType(r, r.getTypeUri());
+			IKtbsResource kr = (IKtbsResource)r;
+			putRdfType(kr, kr.getTypeUri());
 		} else if(config.getMode(axis) == SerializationMode.POJO_PROPERTY) 
 			throw new UnsupportedOperationException("Not yet supported");
 	}

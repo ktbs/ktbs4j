@@ -40,6 +40,7 @@ public interface KtbsConstants {
 	// KTBS vocabulary
 	public static final String NAMESPACE_KTBS = "http://liris.cnrs.fr/silex/2009/ktbs#";
 	public static final String NAMESPACE_RDFREST = "http://liris.cnrs.fr/silex/2009/rdfrest#";
+	public static final String NAMESPACE_RDFS = "http://www.w3.org/2000/01/rdf-schema#";
 
 	// KTBS Root concepts and properties
 	public static final String ROOT = NAMESPACE_KTBS + "KtbsRoot";
@@ -96,7 +97,7 @@ public interface KtbsConstants {
 	public static final String FILTER = NAMESPACE_KTBS + "filter";
 	public static final String FUSION = NAMESPACE_KTBS + "fusion";
 	public static final String SPARQL = NAMESPACE_KTBS + "sparql";
-	public static final String COMMENT = NAMESPACE_KTBS + "comment";
+	public static final String COMMENT = NAMESPACE_RDFS + "comment";
 	public static final String SUPER_METHOD = NAMESPACE_KTBS + "supermethod";
 	
 	public static final int HTTP_CODE_RESOURCE_NOT_FOUND = 404;

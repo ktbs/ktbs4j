@@ -168,6 +168,7 @@ public class Rdf2Java {
 
 		Method method = new Method();
 		method.setUri(uri);
+		fillGenericResource(method);
 		method.setWithMethodParameterDelegate(readResourceWithParameters(method.getUri()));
 
 		method.setEtag(getLiteralOrNull(method.getUri(), KtbsConstants.P_HAS_ETAG, String.class));
@@ -407,8 +408,7 @@ public class Rdf2Java {
 			Statement statement = (Statement) it.next();
 			if(statement.getPredicate().equals(RDFS.label))
 				resource.getLabels().add(statement.getObject().asLiteral().getString());
-			else if(KtbsUtils.hasReservedNamespace(statement.getPredicate().getURI())
-			)
+			else if(KtbsUtils.hasReservedNamespace(statement.getPredicate().getURI()) && !statement.getPredicate().equals(RDFS.comment))
 				continue;
 			else
 				resource.getProperties().add(new PropertyStatement(

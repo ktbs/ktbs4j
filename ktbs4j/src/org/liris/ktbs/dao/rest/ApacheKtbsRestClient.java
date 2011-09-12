@@ -3,7 +3,10 @@ package org.liris.ktbs.dao.rest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
@@ -42,6 +45,8 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 	private static Logger log = LoggerFactory.getLogger(ApacheKtbsRestClient.class);
 
+	private static Map<String, KtbsResponse> uriCacheEtagBody = new HashMap<String, KtbsResponse>();
+	
 	private String rootUri;
 
 	public ApacheKtbsRestClient(String rootUri) {
@@ -143,39 +148,71 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 		HttpGet get = new HttpGet(uri);
 		get.addHeader(HttpHeaders.ACCEPT,mimeType);
+		
+		KtbsResponse responseCached = getUriCacheEtagBody().get(uri);
+		if(responseCached != null){
+		    if(responseCached.getHTTPETag() != null){
+			get.addHeader(HttpHeaders.IF_NONE_MATCH,responseCached.getHTTPETag());			
+		    }
+		}
+		
+		
+		
 
 		HttpResponse response = null;
 		IKtbsResource ktbsResource = null;
 		KtbsResponseStatus ktbsResponseStatus = null;
 
 		String body = null;
+		boolean mustCache = false;
 		try {
 			response = httpClient.execute(get);
 			HttpEntity entity;
-
+			
+			
 			if(response == null) {
 				log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+uri+"\".");
 				ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
 			} else {
 
 				entity = response.getEntity();
-				if(entity == null) {
+				
+				
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_SEE_OTHER) {
+					// redirect to the right URL
+					if(entity != null){
+					    EntityUtils.consume(entity);
+					}
+					String location = response.getHeaders(HttpHeaders.LOCATION)[0].getValue();
+					KtbsResponse ktbsResponse = get(location, mimeType);
+					return ktbsResponse;
+				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
+					// use body from cache
+				    	if(entity != null){
+					    EntityUtils.consume(entity);
+					}
+					return responseCached;
+				}else if(entity == null) {
 					log.warn("Impossible to read the resource in the response sent by the KTBS server for the resource URI \""+uri+"\".");
 					ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R;
 				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 					body = EntityUtils.toString(response.getEntity(), "UTF-8");
+					Header[] headers = response.getHeaders(HttpHeaders.ETAG);
+					if( headers != null && headers.length > 0){
+					    if(headers.length > 1){
+						log.error("Multiple etag not implemented yet");
+					    }else{
+						mustCache = true;
+					    }
+					}
+					
+					
 					if(log.isDebugEnabled()) {
 						log.debug("Response header:" + response.getStatusLine());
 						log.debug("Response body:\n" + body);
 					}
 
 					ktbsResponseStatus=KtbsResponseStatus.RESOURCE_RETRIEVED;
-				} else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_SEE_OTHER) {
-					// redirect to the right URL
-					EntityUtils.consume(entity);
-					String location = response.getHeaders(HttpHeaders.LOCATION)[0].getValue();
-					KtbsResponse ktbsResponse = get(location, mimeType);
-					return ktbsResponse;
 				} else
 					ktbsResponseStatus=KtbsResponseStatus.REQUEST_FAILED;
 
@@ -191,14 +228,19 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 
 			ktbsResponseStatus = KtbsResponseStatus.CLIENT_ERR0R; 
 		} 
-
-		return new KtbsResponseImpl(
+		
+		KtbsResponseImpl ktbsResponseImpl =  new KtbsResponseImpl(
 				ktbsResource,
 				uri,
 				body,
 				ktbsResponseStatus==KtbsResponseStatus.RESOURCE_RETRIEVED, 
 				ktbsResponseStatus, 
 				response);
+		if(mustCache){
+		    getUriCacheEtagBody().put(uri, ktbsResponseImpl);
+		}
+		return ktbsResponseImpl;
+		
 	}
 
 
@@ -390,4 +432,13 @@ public class ApacheKtbsRestClient implements KtbsRestClient {
 			);
 		}
 	}
+
+	public static void setUriCacheEtagBody(Map<String, KtbsResponse> uriCacheEtagBody) {
+	    ApacheKtbsRestClient.uriCacheEtagBody = uriCacheEtagBody;
+	}
+
+	public static Map<String, KtbsResponse> getUriCacheEtagBody() {
+	    return uriCacheEtagBody;
+	}
+
 }

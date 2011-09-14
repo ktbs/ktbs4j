@@ -41,6 +41,7 @@ public interface KtbsConstants {
 	public static final String NAMESPACE_KTBS = "http://liris.cnrs.fr/silex/2009/ktbs#";
 	public static final String NAMESPACE_RDFREST = "http://liris.cnrs.fr/silex/2009/rdfrest#";
 	public static final String NAMESPACE_RDFS = "http://www.w3.org/2000/01/rdf-schema#";
+	public static final String NAMESPACE_XSD = "http://www.w3.org/2001/XMLSchema#";
 
 	// KTBS Root concepts and properties
 	public static final String ROOT = NAMESPACE_KTBS + "KtbsRoot";

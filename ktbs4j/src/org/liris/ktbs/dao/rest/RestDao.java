@@ -312,23 +312,11 @@ public class RestDao implements ResourceDao, UserAwareDao {
 
 		String etag = getEtag(updateUri);
 
-
 		StringWriter writer = new StringWriter();
-		/*
-		 * KTBS FIX should use the serializer when KTBS is debugged for update resource: 
-		 * 
-		 * serializer.serializeResource(writer, resource, sendMimeType, config);
-		 */
 		
-		temporaryFix(resourceToSave, config, writer); // fix removed because it is not suitable for editable but unset properties
-		/*
-		 * END of fix
-		 */
-
-		
-		// otherwise (when bug is fixed on KTBS)
-//		serializerFactory.newRdfSerializer(config).serializeResource(writer, resourceToSave, sendMimeType);
-		
+		Java2Rdf java2Rdf = new Java2Rdf(config);
+		Model model = java2Rdf.getModel(resourceToSave);
+		model.write(writer, KtbsUtils.getJenaSyntax(sendMimeType), "");
 		
 		if(etag == null) 
 			throw new ResourceNotFoundException(updateUri);
@@ -411,31 +399,6 @@ public class RestDao implements ResourceDao, UserAwareDao {
 		return etags.get(uriToSave);
 	}
 
-	private void temporaryFix(IKtbsResource resource,
-			SerializationConfig config, StringWriter writer) {
-		Java2Rdf java2Rdf = new Java2Rdf(config);
-		Model model = java2Rdf.getModel(resource);
-		Model editableModel = getEditable(model, resource.getUri(), resource.getClass());
-		if(editableModel != null) {
-			Set<String> editableProperties = new TreeSet<String>();
-			StmtIterator it = editableModel.listStatements();
-			while (it.hasNext()) {
-				Statement statement = (Statement) it.next();
-				editableProperties.add(statement.getPredicate().getURI());
-			}
-
-			it = model.listStatements();
-			while (it.hasNext()) {
-				Statement statement = (Statement) it.next();
-				if(!editableProperties.contains(statement.getPredicate().getURI())) {
-					log.warn("A non-editable statement has been removed from the rdf sent to KTBS: " + statement);
-					it.remove();
-				}
-			}
-		}
-		model.write(writer, KtbsUtils.getJenaSyntax(sendMimeType), "");
-	}
-
 	@Override
 	public boolean delete(String uri) {
 		KtbsResponse response = client.delete(uri);
@@ -477,41 +440,6 @@ public class RestDao implements ResourceDao, UserAwareDao {
 			}
 			return resultSet;
 		}
-	}
-
-	/*
-	 * Temporary fix for the KTBS not accepting property in reserved namespace to be saved.
-	 * 
-	 */
-	private Model getEditable(Model model, String uri, Class<?> cls) {
-		String uriWothAspect = uri;
-		log.debug("Retrieving the editable properties for uri " + uri);
-
-		if(ITrace.class.isAssignableFrom(cls) && !uri.endsWith(KtbsConstants.ABOUT_ASPECT))
-			uriWothAspect+=KtbsConstants.ABOUT_ASPECT;
-
-
-		KtbsResponse response = client.get(uriWothAspect+"?editable", receiveMimeType);
-		if(!response.hasSucceeded()) {
-			log.debug("Could not get the editable properties from uri: " + uri);
-			return null;
-		} else {
-			String modelAsString = response.getBodyAsString();
-			Model editableModel = ModelFactory.createDefaultModel();
-			try {
-				String uriWithoutAspect = uriWothAspect.replaceAll(KtbsConstants.ABOUT_ASPECT, "").replaceAll(KtbsConstants.OBSELS_ASPECT, "");
-
-				editableModel.read(new StringReader(modelAsString), uriWothAspect, KtbsUtils.getJenaSyntax(response.getMimeType()));
-
-
-
-			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-			return editableModel;
-		}
-
 	}
 
 	private void connectObselsQueryToTrace(ITrace trace) {

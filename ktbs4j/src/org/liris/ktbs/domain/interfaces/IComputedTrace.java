@@ -12,6 +12,14 @@ public interface IComputedTrace extends ITrace, WithParameters {
 
 	public void setSourceTraces(Set<ITrace> sourceTraces);
 
+	public ITrace getIntermediateSource();
+
+	public void setIntermediateSource(ITrace sourceTraces);
+
+	public Boolean getIsIntermediateSource();
+	
+	public void setIsIntermediateSource(Boolean isIntermediateSourceOfComputedTrace);
+
 	public Set<IMethodParameter> getMethodParameters();
 
 	public void setMethodParameters(Set<IMethodParameter> methodParameters);

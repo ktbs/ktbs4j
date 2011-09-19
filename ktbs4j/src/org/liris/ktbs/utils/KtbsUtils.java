@@ -461,7 +461,7 @@ public class KtbsUtils {
 	}
 
 	public static String xsdDate(int year, int month, int day, int hours, int min, int sec) {
-		return xsdDate(year, month, day, hours, min, sec, TimeZone.getDefault());
+		return xsdDate(year, month, day, hours, min, sec, TimeZone.getTimeZone("Europe/Paris"));
 	}
 
 	public static String xsdDateUTC(int year, int month, int day, int hours, int min, int sec) {
@@ -480,7 +480,11 @@ public class KtbsUtils {
 		calendar.set(Calendar.SECOND, sec);
 
 		SimpleDateFormat xsdDatetimeFormat = KtbsConstants.XSD_DATETIME_FORMAT;
-		xsdDatetimeFormat.setTimeZone(KtbsConstants.UTC_ZONE);
+		if(tz == null){
+		    xsdDatetimeFormat.setTimeZone(KtbsConstants.UTC_ZONE);
+		}else{
+		    xsdDatetimeFormat.setTimeZone(tz);
+		}
 		String asXsdString = xsdDatetimeFormat.format(calendar.getTime());
 		return asXsdString;
 	}

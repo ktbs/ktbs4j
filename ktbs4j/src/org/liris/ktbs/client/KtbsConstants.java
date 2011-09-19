@@ -65,6 +65,7 @@ public interface KtbsConstants {
 	public static final String P_COMPLIES_WITH_MODEL = NAMESPACE_KTBS + "compliesWithModel";
 	public static final String P_HAS_MODEL = NAMESPACE_KTBS + "hasModel";
 	public static final String P_HAS_SOURCE = NAMESPACE_KTBS + "hasSource";
+	public static final String P_HAS_INTERMEDIATE_SOURCE = NAMESPACE_KTBS + "hasIntermediateSource";
 
 	// Trace model concepts and properties
 	public static final String RELATION_TYPE = NAMESPACE_KTBS + "RelationType";

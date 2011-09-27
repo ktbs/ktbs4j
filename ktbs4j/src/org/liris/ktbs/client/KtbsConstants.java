@@ -13,7 +13,7 @@ import java.util.TimeZone;
 public interface KtbsConstants {
 
 	// Date helper constants
-	public static final SimpleDateFormat XSD_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	public static final SimpleDateFormat XSD_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'");
 	public static final TimeZone UTC_ZONE = TimeZone.getTimeZone("UTC");
 	
 	// Rest aspects defined by the KTBS
@@ -99,6 +99,7 @@ public interface KtbsConstants {
 	public static final String FILTER = NAMESPACE_KTBS + "filter";
 	public static final String FUSION = NAMESPACE_KTBS + "fusion";
 	public static final String SPARQL = NAMESPACE_KTBS + "sparql";
+	public static final String EXTERNAL = NAMESPACE_KTBS + "external";;
 	public static final String COMMENT = NAMESPACE_RDFS + "comment";
 	public static final String SUPER_METHOD = NAMESPACE_KTBS + "supermethod";
 	

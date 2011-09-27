@@ -2,6 +2,7 @@ package org.liris.ktbs.client;
 
 import org.liris.ktbs.dao.ProxyFactory;
 import org.liris.ktbs.dao.ResourceDao;
+import org.liris.ktbs.service.ComputedTraceService;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.TraceModelService;
@@ -17,6 +18,7 @@ public class KtbsClientImpl implements KtbsClient {
 	private ResourceService resourceService;
 	private StoredTraceService storedTraceService;
 	private TraceModelService traceModelService;
+	private ComputedTraceService computedTraceService;
 	private ResourceDao dao;
 	
 	private String rootUri;
@@ -48,6 +50,11 @@ public class KtbsClientImpl implements KtbsClient {
 	@Override
 	public StoredTraceService getStoredTraceService() {
 		return storedTraceService;
+	}
+	
+	@Override
+	public ComputedTraceService getComputedTraceService() {
+	    return computedTraceService;
 	}
 	
 	@Override

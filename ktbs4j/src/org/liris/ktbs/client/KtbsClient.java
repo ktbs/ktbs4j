@@ -1,6 +1,7 @@
 package org.liris.ktbs.client;
 
 import org.liris.ktbs.dao.ProxyFactory;
+import org.liris.ktbs.service.ComputedTraceService;
 import org.liris.ktbs.service.ResourceService;
 import org.liris.ktbs.service.StoredTraceService;
 import org.liris.ktbs.service.TraceModelService;
@@ -38,10 +39,17 @@ public interface KtbsClient {
 	public TraceModelService getTraceModelService();
 
 	/**
-	 * Gives a service object for trace collection.
+	 * Gives a service object for storedTrace collection.
 	 * 
 	 * @return the unique {@link StoredTraceService} object contained in this client
 	 */
 	public StoredTraceService getStoredTraceService();
+	
+	/**
+	 * Gives a service object for ComputedTrace collection.
+	 * 
+	 * @return the unique {@link ComputedTraceService} object contained in this client
+	 */
+	public ComputedTraceService getComputedTraceService();
 
 }

@@ -456,19 +456,20 @@ public class KtbsUtils {
 				c.get(Calendar.DAY_OF_MONTH), 
 				c.get(Calendar.HOUR_OF_DAY), 
 				c.get(Calendar.MINUTE), 
-				c.get(Calendar.SECOND) 
+				c.get(Calendar.SECOND),
+				c.get(Calendar.MILLISECOND)
 		);
 	}
 
-	public static String xsdDate(int year, int month, int day, int hours, int min, int sec) {
-		return xsdDate(year, month, day, hours, min, sec, TimeZone.getTimeZone("Europe/Paris"));
+	public static String xsdDate(int year, int month, int day, int hours, int min, int sec, int milisec) {
+		return xsdDate(year, month, day, hours, min, sec, milisec, TimeZone.getTimeZone("Europe/Paris"));
 	}
 
-	public static String xsdDateUTC(int year, int month, int day, int hours, int min, int sec) {
-		return xsdDate(year, month, day, hours, min, sec, TimeZone.getTimeZone("UTC"));
+	public static String xsdDateUTC(int year, int month, int day, int hours, int min, int sec, int milisec) {
+		return xsdDate(year, month, day, hours, min, sec, milisec, TimeZone.getTimeZone("UTC"));
 	}
 
-	public static String xsdDate(int year, int month, int day, int hours, int min, int sec, TimeZone tz) {
+	public static String xsdDate(int year, int month, int day, int hours, int min, int sec,int milisec, TimeZone tz) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeZone(tz);
 		calendar.setTimeInMillis(0);
@@ -478,6 +479,7 @@ public class KtbsUtils {
 		calendar.set(Calendar.HOUR_OF_DAY, hours);
 		calendar.set(Calendar.MINUTE, min);
 		calendar.set(Calendar.SECOND, sec);
+		calendar.set(Calendar.MILLISECOND, milisec);
 
 		SimpleDateFormat xsdDatetimeFormat = KtbsConstants.XSD_DATETIME_FORMAT;
 		if(tz == null){

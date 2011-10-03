@@ -73,6 +73,20 @@ public class DefaultResourceManager implements ResourceService, IRootAwareServic
 		return dao.create(trace);
 	}
 
+	@Override
+	public String newComputedTrace(String baseUri,
+			String traceLocalName, String methodUri, Set<String> sourceTraces, Map<String,String> parameters, String label) {
+
+		IComputedTrace trace = createResource(baseUri, traceLocalName, IComputedTrace.class, false);
+		trace.setMethod(dao.getProxyFactory().createResource(methodUri, IMethod.class));
+
+		trace.setSourceTraces(convertToSetOfProxies(sourceTraces, ITrace.class));
+		trace.addLabel(label);
+		setParameters(trace, parameters);
+
+		return dao.create(trace);
+	}
+	
 	private <T extends IKtbsResource> Set<T> convertToSetOfProxies(Set<String> resourceUris, Class<T> cls) {
 		Set<T> proxySet = new HashSet<T>();
 		if(resourceUris == null)

@@ -173,6 +173,29 @@ public interface ResourceService extends IRootAwareService, ResponseAwareService
 			);
 	
 	/**
+	 * Creates a new computed trace in the KTBS.
+	 * 
+	 * @param baseUri the uri of the parent base containing the new trace (either relative to the root or absolute)
+	 * @param traceLocalName the name of the trace to create (null if anonymous)
+	 * @param methodUri the absolute uri of the method used to produce 
+	 * the computed trace from the source traces
+	 * @param sourceTraces the uris of the traces given as input to 
+	 * the transformation process that will produce the computed trace
+	 * trace transformation on the KTBS server
+	 * @param parameters the KTBS parameters overwriting the transformation
+	 * @param label
+	 * @return the uri of the created trace, null if the creation failed
+	 */
+	public String newComputedTrace(
+			String baseUri, 
+			String traceLocalName, 
+			String methodUri, 
+			Set<String> sourceTraces,
+			Map<String,String> parameters,
+			String label
+			);
+	
+	/**
 	 * Creates a new method in the KTBS.
 	 * 
 	 * @param baseUri the uri of the parent base containing the new method (either relative to the root or absolute)

@@ -370,8 +370,8 @@ public class Rdf2Java {
 		trace.setWithMethodParameterDelegate(readResourceWithParameters(trace.getUri()));
 		trace.setSourceTraces(readLinkedResourceSetSameType(uri, KtbsConstants.P_HAS_SOURCE, false, ITrace.class));
 		trace.setMethod(readLinkedResource(uri, KtbsConstants.P_HAS_METHOD, false, IMethod.class));
-		trace.setIntermediateSource(readLinkedResource(uri, KtbsConstants.P_HAS_INTERMEDIATE_SOURCE, false, ITrace.class));
-		trace.setIsIntermediateSource(trace.getIntermediateSource() == null? true:false);
+		trace.setIntermediateSource(readLinkedResourceSet(uri, KtbsConstants.P_HAS_INTERMEDIATE_SOURCE, false, ITrace.class));
+		trace.setIsIntermediateSource((trace.getIntermediateSource() == null || trace.getIntermediateSource().size() == 0)? true:false);
 		
 		
 		((KtbsResource)trace).setParentResource(readParent(trace, KtbsConstants.P_CONTAINS, true, IBase.class));

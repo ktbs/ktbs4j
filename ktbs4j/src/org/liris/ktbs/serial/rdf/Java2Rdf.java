@@ -213,9 +213,8 @@ public class Java2Rdf {
 		putTransformationResource(trace);
 		putLinkedResourceSetSameType(trace, KtbsConstants.P_HAS_SOURCE, trace.getSourceTraces(), false);
 		putLinkedResource(trace, KtbsConstants.P_HAS_METHOD, trace.getMethod(), false);
-		putLinkedResource(trace, KtbsConstants.P_HAS_INTERMEDIATE_SOURCE, trace.getIntermediateSource(), true);
-		putLiteral(trace, KtbsConstants.P_HAS_INTERMEDIATE_SOURCE, trace.getIsIntermediateSource());		
-		
+		if(trace.getIntermediateSource() != null)
+		putLinkedResourceSet(trace, KtbsConstants.P_HAS_INTERMEDIATE_SOURCE, trace.getIntermediateSource(), true);
 	}
 
 	private void putMethod(IMethod method) {

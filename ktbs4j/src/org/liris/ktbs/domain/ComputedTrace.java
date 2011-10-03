@@ -14,7 +14,7 @@ import org.liris.ktbs.domain.interfaces.WithParameters;
 public class ComputedTrace extends Trace implements IComputedTrace {
 
 	private IMethod method;
-	private ITrace intermediateSource;
+	private Set<ITrace> intermediateSource;
 	private Boolean isIntermediateSource;
 	
 	private Set<ITrace> sourceTraces = new HashSet<ITrace>();
@@ -78,11 +78,11 @@ public class ComputedTrace extends Trace implements IComputedTrace {
 	}
 	
 	@Override
-	public void setIntermediateSource(ITrace intermediateSource) {
+	public void setIntermediateSource(Set<ITrace> intermediateSource) {
 	    this.intermediateSource = intermediateSource;
 	}
 
-	public ITrace getIntermediateSource() {
+	public Set<ITrace> getIntermediateSource() {
 	    return intermediateSource;
 	}
 

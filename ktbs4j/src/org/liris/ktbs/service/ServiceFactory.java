@@ -3,6 +3,7 @@ package org.liris.ktbs.service;
 import org.liris.ktbs.dao.ResourceDao;
 import org.liris.ktbs.domain.PojoFactory;
 import org.liris.ktbs.service.impl.CachingResourceManager;
+import org.liris.ktbs.service.impl.ComputedTraceManager;
 import org.liris.ktbs.service.impl.DefaultResourceManager;
 import org.liris.ktbs.service.impl.StoredTraceManager;
 import org.liris.ktbs.service.impl.TraceModelManager;
@@ -30,6 +31,15 @@ public class ServiceFactory {
 				pojoFactory
 				);
 		return storedTraceManager;
+	}
+	public ComputedTraceService createComputedTraceService(ResourceDao dao, boolean caching) {
+	    ResourceService resource = createResourceService(dao, caching);
+	    ComputedTraceManager storedTraceManager = new ComputedTraceManager(
+		    resource, 
+		    dao, 
+		    pojoFactory
+	    );
+	    return storedTraceManager;
 	}
 	
 	public TraceModelService createTraceModelService(ResourceDao dao,boolean caching) {

@@ -75,6 +75,7 @@ public class ClientFactory {
 				dao, 
 				serviceFactory.createResourceService(dao, caching), 
 				serviceFactory.createStoredTraceService(dao, caching), 
+				serviceFactory.createComputedTraceService(dao, caching), 
 				serviceFactory.createTraceModelService(dao, caching)
 				);
 		return client;

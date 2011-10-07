@@ -23,11 +23,12 @@ public class KtbsClientImpl implements KtbsClient {
 	
 	private String rootUri;
 	
-	KtbsClientImpl(String rootUri, ResourceDao dao, ResourceService resourceService, StoredTraceService storedTraceService, TraceModelService traceModelService) {
+	KtbsClientImpl(String rootUri, ResourceDao dao, ResourceService resourceService, StoredTraceService storedTraceService,ComputedTraceService computedTraceService, TraceModelService traceModelService) {
 		super();
 		this.rootUri = rootUri;
 		this.resourceService = resourceService;
 		this.storedTraceService = storedTraceService;
+		this.computedTraceService = computedTraceService;
 		this.traceModelService = traceModelService;
 		this.dao = dao;
 	}

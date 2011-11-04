@@ -34,6 +34,7 @@ import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.impl.PropertyImpl;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -423,8 +424,14 @@ public class Java2Rdf {
 		
 		putLiteralSet(r, RDFS.label.getURI(), r.getLabels());
 
-		for(IPropertyStatement stmt:r.getProperties())
+		for(IPropertyStatement stmt:r.getProperties()){
+		    if(stmt.getProperty().toString().contains(KtbsConstants.METADATA)){
+			getJenaResource(r).addProperty(new PropertyImpl(stmt.getProperty()),
+				model.getProperty(stmt.getValue().toString()));
+		    }else{
 			putLiteral(r, stmt.getProperty(), stmt.getValue());
+		    }
+		}
 	}
 
 	//------------------------------------------------------------------------------

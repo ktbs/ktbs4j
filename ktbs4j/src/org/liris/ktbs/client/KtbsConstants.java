@@ -42,6 +42,7 @@ public interface KtbsConstants {
 	public static final String NAMESPACE_RDFREST = "http://liris.cnrs.fr/silex/2009/rdfrest#";
 	public static final String NAMESPACE_RDFS = "http://www.w3.org/2000/01/rdf-schema#";
 	public static final String NAMESPACE_XSD = "http://www.w3.org/2001/XMLSchema#";
+	public static final String NAMESPACE_D3KODE = "htp://liris.d3kode.org/";
 
 	// KTBS Root concepts and properties
 	public static final String ROOT = NAMESPACE_KTBS + "KtbsRoot";
@@ -77,7 +78,7 @@ public interface KtbsConstants {
 	public static final String P_HAS_RELATION_RANGE = NAMESPACE_KTBS + "hasRelationRange";
 	public static final String P_HAS_SUPER_RELATION_TYPE = NAMESPACE_KTBS + "hasSuperRelationType";
 	public static final String P_HAS_SUPER_OBSEL_TYPE = NAMESPACE_KTBS + "hasSuperObselType";
-	
+	public static final String METADATA = NAMESPACE_D3KODE + "metadata#";
 	
 	// Obsel Properties
 	public static final String P_HAS_BEGIN = NAMESPACE_KTBS + "hasBegin";
@@ -102,6 +103,12 @@ public interface KtbsConstants {
 	public static final String EXTERNAL = NAMESPACE_KTBS + "external";;
 	public static final String COMMENT = NAMESPACE_RDFS + "comment";
 	public static final String SUPER_METHOD = NAMESPACE_KTBS + "supermethod";
+	//Method parameters
+	public static final String PARAMETER_SUBMETHODS = "submethods";
+	public static final String PARAMETER_SPARQL = "sparql";
+	public static final String PARAMETER_MODEL = "model";
+	public static final String PARAMETER_COMMAND_LINE = "command-line";
+	public static final String PARAMETER_FORMAT = "format";
 	
 	public static final int HTTP_CODE_RESOURCE_NOT_FOUND = 404;
 	

@@ -65,7 +65,7 @@ public class PopulateKtbsExample {
 				BASE_LOCAL_NAME, 
 				"t01", 
 				modelUri, 
-				KtbsUtils.xsdDateUTC(2010, 4, 28, 18, 9, 0), 
+				KtbsUtils.xsdDateUTC(2010, 4, 28, 18, 9, 0, 0), 
 				null,
 				null,
 				null,
@@ -137,7 +137,7 @@ public class PopulateKtbsExample {
 		obs.setType((IObselType)traceModel.get("OpenChat"));
 		obs.setEnd(1000);
 		obs.setSubject("béa");
-		obs.setBeginDT(KtbsUtils.xsdDateUTC(2010,4,28,18,9,1));
+		obs.setBeginDT(KtbsUtils.xsdDateUTC(2010,4,28,18,9,1, 0));
 		obs.addAttribute((IAttributeType)traceModel.get("channel"), "#my-channel");
 		String obs1Uri = obs.create();
 
@@ -167,7 +167,7 @@ public class PopulateKtbsExample {
 		obs = traceService.newObselBuilder(t01Uri);
 		obs.setType((IObselType)traceModel.get("CloseChat"));
 		obs.setBegin(7000);
-		obs.setEndDT(KtbsUtils.xsdDateUTC(2010, 4, 28, 18, 9, 7));
+		obs.setEndDT(KtbsUtils.xsdDateUTC(2010, 4, 28, 18, 9, 7, 0));
 		obs.setSubject("béa");
 		obs.addRelation((IRelationType)traceModel.get("onChannel"), obs1Uri);
 		String obs4Uri = obs.create();

@@ -186,28 +186,28 @@ public class StoredTraceServiceTestCase extends TestCase {
 				"/base1/", 
 				"t03", 
 				"http://localhost:8001/base1/model1/",
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 0),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 0,0),
 				null,null,null,null,"Nestor");
 		
 		IStoredTrace t03 = resourceService.getStoredTrace(t03Uri);
 		storedTraceService.startBufferedCollect(t03);
 		storedTraceService.newObsel(t03, null, "http://localhost:8001/base1/model1/OpenChat", 
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 2),
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 4),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 2,0),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 4,0),
 				null, 
 				null, 
 				null, 
 				null);
 		storedTraceService.newObsel(t03, null, "http://localhost:8001/base1/model1/OpenChat", 
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 3),
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 3),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 3,0),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 3,0),
 				null, 
 				null, 
 				null, 
 				null);
 		storedTraceService.newObsel(t03, null, "http://localhost:8001/base1/model1/OpenChat", 
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 1),
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 5),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 1,0),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 5,0),
 				null, 
 				null, 
 				null, 
@@ -221,7 +221,7 @@ public class StoredTraceServiceTestCase extends TestCase {
 				"/base1/", 
 				"t04", 
 				"http://localhost:8001/base1/model1/",
-				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 0),
+				KtbsUtils.xsdDateUTC(2011, 5, 27, 10, 0, 0,0),
 				null,null,null,null,"Nestor");
 		IStoredTrace t04 = resourceService.getStoredTrace(t04Uri);
 		storedTraceService.startBufferedCollect(t04);
